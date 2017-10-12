@@ -16,13 +16,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Hexo/</loc>
-        <lastmod>2017-10-12T19:21:01.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/LoopBack/</loc>
         <lastmod>2017-10-12T19:21:25.287Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -114,14 +107,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2017-10-12T20:24:19.595Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2017-10-12T20:24:19.595Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
