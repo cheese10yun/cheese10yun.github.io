@@ -13,7 +13,6 @@
     <link rel="shortcut icon" href="/img/ironman-draw.png">
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-S3-Upload/">
     <title>
         
           Node AWS S3 업로드 - Yun Blog | 기술 블로그
@@ -224,7 +223,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>Node.Js에서 AWS S3업로드 예제입니다. 본 예제의 전체 소스는 <a href="https://github.com/cheese10yun/node-yun" target="_blank" rel="external nofollow noopener noreferrer">GitHub</a>에서 참고할 수 있습니다.<br>
+                <p>Node.Js에서 AWS S3업로드 예제입니다. 본 예제의 전체 소스는 <a href="https://github.com/cheese10yun/node-yun" rel="external nofollow noopener noreferrer" target="_blank">GitHub</a>에서 참고할 수 있습니다.<br>
 <strong><em>S3에 관련된 설정이 완료됐다는 가정하에 포스팅을 진행하겠습니다.</em></strong></p>
 <h4><span id="필수-패키지-설치">필수 패키지 설치</span></h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install formidable --save</div><div class="line">npm install async --save</div><div class="line">npm install aws-sdk --save</div></pre></td></tr></table></figure>
@@ -250,7 +249,7 @@
 <p><code><b>UploadService.js S3 &amp; formidable설정 </b></code></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span></div><div class="line">    formidable = <span class="built_in">require</span>(<span class="string">'formidable'</span>),</div><div class="line">    AWS = <span class="built_in">require</span>(<span class="string">'aws-sdk'</span>),</div><div class="line">    Upload = &#123;&#125;;</div><div class="line">AWS.config.region = <span class="string">'ap-northeast-2'</span>; <span class="comment">//지역 서울 설정</span></div><div class="line"><span class="keyword">var</span> s3 = <span class="keyword">new</span> AWS.S3();</div><div class="line"><span class="keyword">var</span> form = <span class="keyword">new</span> formidable.IncomingForm(&#123;</div><div class="line">    encoding: <span class="string">'utf-8'</span>,</div><div class="line">    multiples: <span class="literal">true</span>,</div><div class="line">    keepExtensions: <span class="literal">false</span> <span class="comment">//확장자 제거</span></div><div class="line">&#125;);</div><div class="line"><span class="comment">/*S3 버킷 설정*/</span></div><div class="line"><span class="keyword">var</span> params = &#123;</div><div class="line">    Bucket: <span class="string">'BucketName'</span>,</div><div class="line">    Key: <span class="literal">null</span>,</div><div class="line">    ACL: <span class="string">'public-read'</span>,</div><div class="line">    Body: <span class="literal">null</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p><code><b>aws_access_key_id, aws_secret_access_key</b></code>값을 소스코드에 입력하시는 것은 보안상 바람직하지 않습니다.<br>
-<a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html" target="_blank" rel="external nofollow noopener noreferrer">AWS Document</a>를 참고하세요.</p>
+<a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html" rel="external nofollow noopener noreferrer" target="_blank">AWS Document</a>를 참고하세요.</p>
 <p><code><b>var params = {…}</b></code> 객체는 AWS S3업로드에 대한 정보 입니다.</p>
 <ul>
 <li>Bucket :  S3 Bucket 이름을 지정합니다.</li>
@@ -431,15 +430,6 @@ RSS 링크도 하단에 추가하였으니 추가해주시면 감사하겠습니
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
-                
-                    <li>
-                        <a href="/feed.xml">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
                 
                 
                 

@@ -13,7 +13,6 @@
     <link rel="shortcut icon" href="/img/ironman-draw.png">
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/API-CALL/">
     <title>
         
           Node 다른 서버 API 호출 - Yun Blog | 기술 블로그
@@ -222,7 +221,7 @@
 
                 <p>노드 서버에서 다른 API를 호출하는 방법을 소개해드리겠습니다. 물론 프론트에서 Ajax를 이용해서 다른 서버의 API를 간단하게 호출할 수 있지만 Ajax로 간단하게 호출할 수 있지만, 해당 API를 호출한 이후 자신의 서버에 해당 기록을 남겨야 하는 경우는 프론트가 아닌 백에서 처리해야 합니다.</p>
 <p><strong><em>저희 서비스 예를 들어 설명하면 노드 서버에서 제휴 모바일 게임의 포인트를 Credit 할 수 있는 기능이 있습니다. 이때 게임 서버의 API를 호출을 Node 서버에서 진행해야 해당 기록을 데이터베이스에 남길 수 있습니다.</em></strong></p>
-<p><strong>전체소스는 <a href="https://github.com/cheese10yun/node-yun" target="_blank" rel="external nofollow noopener noreferrer">Github</a>에서 확인할수있습니다. 전체소스를 보시는 것을 권장합니다.</strong></p>
+<p><strong>전체소스는 <a href="https://github.com/cheese10yun/node-yun" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에서 확인할수있습니다. 전체소스를 보시는 것을 권장합니다.</strong></p>
 <h6><span id="필수-패키지-설치">필수 패키지 설치</span></h6>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install request --save</div></pre></td></tr></table></figure>
 <h6><span id="전체-소스">전체 소스</span></h6>
@@ -237,11 +236,11 @@
 <li>headers: JSON으로 API를 받을 예정이니 Content-Type을 JSON 으로 설정합니다.</li>
 <li>url : 해당 API의 URL을 의마합니다. 특정 요청에 따라서 달라질 예정이니 null 처리했습니다.</li>
 <li>body : POST,PUT, DEL 등 body값을 전달해주는 객체로 사용됩니다.</li>
-<li>HOST, PORT, BASE_PATH = <a href="http://localhost:3500/api/v1" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:3500/api/v1</a> 로 됩니다.</li>
+<li>HOST, PORT, BASE_PATH = <a href="http://localhost:3500/api/v1" rel="external nofollow noopener noreferrer" target="_blank">http://localhost:3500/api/v1</a> 로 됩니다.</li>
 </ul>
 <h6><span id="로그인-api를-호출-오는-로직으로-간단하게-설명해드리겠습니다">로그인 API를 호출 오는 로직으로 간단하게 설명해드리겠습니다.</span></h6>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> &#123;</div><div class="line">    login : <span class="function"><span class="keyword">function</span> (<span class="params">user_id, password, callback</span>) </span>&#123;</div><div class="line">        OPTIONS.url = HOST + <span class="string">':'</span> + PORT + BASE_PATH + <span class="string">'/login'</span>;</div><div class="line">        OPTIONS.body = <span class="built_in">JSON</span>.stringify(&#123;</div><div class="line">            <span class="string">"user_id"</span>: user_id,</div><div class="line">            <span class="string">"password"</span>: password</div><div class="line">        &#125;);</div><div class="line">        request.post(OPTIONS, <span class="function"><span class="keyword">function</span> (<span class="params">err, res, result</span>) </span>&#123;</div><div class="line">            statusCodeErrorHandler(res.statusCode, callback, result);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>이전 블로그에서 포스팅했던 API인 <a href="https://cheese10yun.github.io/passport-mysql">Login API</a>를 호출해보겠습니다. 최종적인 url 값인 <code><b><a href="http://localhost:3500/api/v1/login" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:3500/api/v1/login</a></b></code>로body 값으로 넘길 user_id, password를 바인딩 시켜줍니다.</p>
+<p>이전 블로그에서 포스팅했던 API인 <a href="https://cheese10yun.github.io/passport-mysql">Login API</a>를 호출해보겠습니다. 최종적인 url 값인 <code><b><a href="http://localhost:3500/api/v1/login" rel="external nofollow noopener noreferrer" target="_blank">http://localhost:3500/api/v1/login</a></b></code>로body 값으로 넘길 user_id, password를 바인딩 시켜줍니다.</p>
 <p>타 서버의 API를 호출이 완료되면 <code><b>statusCodeErrorHandler</b></code> 메서드를 통해서 에러 핸들링 작업을 진행하게 됩니다.</p>
 <p><strong><em>예제는 같은 로컬 서버의 API를 호출하는 예제 이긴 합니다.(다른 서버를 못구해서… 어쩔수업싱 로컬을 호출했습니다.)</em></strong></p>
 <p><code><b>statusCodeErrorHandler</b></code> 에러 헨들링</p>
@@ -259,7 +258,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> API_Call = <span class="built_in">require</span>(<span class="string">'../service/API_Call'</span>)(<span class="string">'another'</span>);</div><div class="line">router.post(<span class="string">'/login/another/api'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span></div><div class="line">        user_id = req.body.user_id,</div><div class="line">        password = req.body.password;</div><div class="line"></div><div class="line">    API_Call.login(user_id, password, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (!err) &#123;</div><div class="line">            res.json(result);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            res.json(err);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 <p><code><b>API_Call.js</b></code>를 require 시킬 경우 <code><b>(‘another’)</b></code>를 인자로 넘겨주게되면<br>
 위에서 설명한 <code><b>HOST 설정</b></code>에서 HOST가 결정됩니다.</p>
-<p><code><b><a href="http://localhost:3500/api/v1/login/another/api" target="_blank" rel="external nofollow noopener noreferrer">http://localhost:3500/api/v1/login/another/api</a></b></code>를 호출하게되면 넘겨 받은 user_id, password를 <code><b>API_Call.login</b></code>에게<br>
+<p><code><b><a href="http://localhost:3500/api/v1/login/another/api" rel="external nofollow noopener noreferrer" target="_blank">http://localhost:3500/api/v1/login/another/api</a></b></code>를 호출하게되면 넘겨 받은 user_id, password를 <code><b>API_Call.login</b></code>에게<br>
 전달되고  <code><b>statusCodeErrorHandler</b></code>를 통해서 최종적으로 callback으로 <code><b>err, result</b></code>를 JSON으로 클라이언트에게 넘겨집니다.</p>
 <p><img src="https://i.imgur.com/BpezpxV.png" alt=""></p>
 <p><strong>Postman을 이용해서 api/v1/login/another/api 를 호출한 결과입니다.</strong></p>
@@ -280,7 +279,7 @@
                     
                     
                         <li class="next">
-                            <a href="/blog-start-part2/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">Next Post &rarr;</a>
+                            <a href="/mysql-multiple-insert/" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -411,15 +410,6 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
-                
-                    <li>
-                        <a href="/feed.xml">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
                 
                 
                 

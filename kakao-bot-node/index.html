@@ -13,7 +13,6 @@
     <link rel="shortcut icon" href="/img/ironman-draw.png">
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/kakao-bot-node/">
     <title>
         
           Node.JS로 카카오봇 만들기 - Yun Blog | 기술 블로그
@@ -222,7 +221,7 @@
 
                 <iframe src="https://ghbtns.com/github-btn.html?user=cheese10yun&repo=KaKaoBot-Node&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 <iframe src="https://ghbtns.com/github-btn.html?user=cheese10yun&type=follow&count=true&size=large" frameborder="0" scrolling="0" width="220px" height="30px"></iframe>
-<p><strong>전체소스는 <a href="https://github.com/cheese10yun/Node-Boot" target="_blank" rel="external nofollow noopener noreferrer">GitHub branch develop-base</a>에서 확인할 수 있습니다.</strong></p>
+<p><strong>전체소스는 <a href="https://github.com/cheese10yun/Node-Boot" rel="external nofollow noopener noreferrer" target="_blank">GitHub branch develop-base</a>에서 확인할 수 있습니다.</strong></p>
 <h2><span id="옐로우-아이디-등록-링크">옐로우 아이디 등록 </span></h2>
 <p><img src="http://i.imgur.com/68DXtkf.png" alt="옐로우아이디 등록"></p>
 <p><img src="http://i.imgur.com/J9bloey.png" alt="옐로우아이디 경고"></p>
@@ -288,7 +287,7 @@
 </tr>
 </tbody>
 </table>
-<p><a href="https://github.com/plusfriend/auto_reply" target="_blank" rel="external nofollow noopener noreferrer">출저 : 카카오톡 플러스친구/옐로아이디 API v. 2.0 개요</a></p>
+<p><a href="https://github.com/plusfriend/auto_reply" rel="external nofollow noopener noreferrer" target="_blank">출저 : 카카오톡 플러스친구/옐로아이디 API v. 2.0 개요</a></p>
 <h2><span id="node-api-설정">Node API 설정</span></h2>
 <h3><span id="node-keyboard-api">Node keyboard API</span></h3>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">router.get(<span class="string">'/keyboard'</span>, (req, res) =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> menu = &#123;</div><div class="line">      type: <span class="string">'buttons'</span>,</div><div class="line">      buttons: [<span class="string">"메뉴1"</span>, <span class="string">"메뉴2"</span>, <span class="string">"메뉴3"</span>]</div><div class="line">  &#125;;</div><div class="line"></div><div class="line">  res.set(&#123;</div><div class="line">      <span class="string">'content-type'</span>: <span class="string">'application/json'</span></div><div class="line">  &#125;).send(<span class="built_in">JSON</span>.stringify(menu));</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
@@ -470,15 +469,6 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
-                
-                    <li>
-                        <a href="/feed.xml">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
                 
                 
                 
