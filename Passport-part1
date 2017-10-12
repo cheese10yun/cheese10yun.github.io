@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/Passport-part1/">
+    <link rel="canonical" href="https://cheese10yun.github.io/Passport-part1">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -268,12 +268,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/mysql-node/" data-toggle="tooltip" data-placement="top" title="Node.JS + Mysql 연동">&larr; Previous Post</a>
+                            <a href="/mysql-node" data-toggle="tooltip" data-placement="top" title="Node.JS + Mysql 연동">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/PM2/" data-toggle="tooltip" data-placement="top" title="PM2 이용한 Node 프로세스 관리">Next Post &rarr;</a>
+                            <a href="/PM2" data-toggle="tooltip" data-placement="top" title="PM2 이용한 Node 프로세스 관리">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -347,8 +347,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/Passport-part1/";
-    var disqus_url = "https://cheese10yun.github.io/Passport-part1/";
+    var disqus_identifier = "https://cheese10yun.github.io/Passport-part1";
+    var disqus_url = "https://cheese10yun.github.io/Passport-part1";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

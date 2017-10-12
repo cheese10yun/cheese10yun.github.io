@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/aws-s3-imgage-/">
+    <link rel="canonical" href="https://cheese10yun.github.io/aws-s3-imgage-">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -337,12 +337,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/loopback-begin/" data-toggle="tooltip" data-placement="top" title="Loopback 시작하기">&larr; Previous Post</a>
+                            <a href="/loopback-begin" data-toggle="tooltip" data-placement="top" title="Loopback 시작하기">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/kakao-bot-node/" data-toggle="tooltip" data-placement="top" title="Node.JS로 카카오봇 만들기">Next Post &rarr;</a>
+                            <a href="/kakao-bot-node" data-toggle="tooltip" data-placement="top" title="Node.JS로 카카오봇 만들기">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -424,8 +424,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/aws-s3-imgage-/";
-    var disqus_url = "https://cheese10yun.github.io/aws-s3-imgage-/";
+    var disqus_identifier = "https://cheese10yun.github.io/aws-s3-imgage-";
+    var disqus_url = "https://cheese10yun.github.io/aws-s3-imgage-";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

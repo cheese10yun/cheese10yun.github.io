@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/kakao-bot-node/">
+    <link rel="canonical" href="https://cheese10yun.github.io/kakao-bot-node">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -330,12 +330,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/aws-s3-imgage-/" data-toggle="tooltip" data-placement="top" title="AWS S3 업로드시 이미지 최적화">&larr; Previous Post</a>
+                            <a href="/aws-s3-imgage-" data-toggle="tooltip" data-placement="top" title="AWS S3 업로드시 이미지 최적화">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/npm-sudo-err/" data-toggle="tooltip" data-placement="top" title="npm sudo 권한으로 설치시 오류 해결">Next Post &rarr;</a>
+                            <a href="/npm-sudo-err" data-toggle="tooltip" data-placement="top" title="npm sudo 권한으로 설치시 오류 해결">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -409,8 +409,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/kakao-bot-node/";
-    var disqus_url = "https://cheese10yun.github.io/kakao-bot-node/";
+    var disqus_identifier = "https://cheese10yun.github.io/kakao-bot-node";
+    var disqus_url = "https://cheese10yun.github.io/kakao-bot-node";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

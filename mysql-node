@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Loopback 시작하기 - Yun Blog | 기술 블로그
+          Node.JS + Mysql 연동 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/loopback-begin/">
+    <link rel="canonical" href="https://cheese10yun.github.io/mysql-node">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -92,16 +92,14 @@
                             
                               <a class="tag" href="/tags/#Node" title="Node">Node</a>
                             
-                              <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
-                            
-                              <a class="tag" href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
+                              <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
                             
                         </div>
-                        <h1>Loopback 시작하기</h1>
+                        <h1>Node.JS + Mysql 연동</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-05-05
+                            2017-01-05
                         </span>
                     </div>
                 
@@ -218,70 +216,32 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.</p>
-<p><strong>공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.</strong></p>
-<h3><span id="loopback-특징">Loopback 특징</span></h3>
-<ul>
-<li>정말 빠르게 REST API를 만들수 있습니다.</li>
-<li>기본적으로 API Document를 Swagger 만들어줍니다.</li>
-<li>CLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.</li>
-<li>다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.</li>
-</ul>
-<h3><span id="loopback-설치">Loopback 설치</span></h3>
-<ul>
-<li>기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g loopback-cli</div></pre></td></tr></table></figure>
-<h3><span id="hello-world-프로젝트-설정">Hello world 프로젝트 설정</span></h3>
-<p><strong>루프백의 기초적인 특징을 알아보겠습니다.</strong></p>
-<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ lb</div><div class="line">? 애플리케이션 이름은 무엇입니까? hello-world</div><div class="line">? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world</div><div class="line">  <span class="keyword">create</span> hello-world/</div><div class="line">    info 작업 디렉토리를 hello-world(으)로 번경</div><div class="line"></div><div class="line">? 사용하려는 LoopBack 버전은 무엇입니까? <span class="number">3</span>.x (current)</div><div class="line">? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, includi</div><div class="line">ng a single vanilla Message <span class="keyword">and</span> a single remote <span class="function"><span class="keyword">method</span>)</span></div></pre></td></tr></table></figure>
-<ul>
-<li>터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.</li>
-<li>프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.</li>
-<li>버전은 3.x 최신 버전을 선택합니다.</li>
-<li>예상하는 애플리케이션 종류는  hello-world를 선택합니다.</li>
-</ul>
-<h3><span id="hello-world-프로젝트-실행">Hello world 프로젝트 실행</span></h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> hello-world/</div><div class="line">$ node .</div></pre></td></tr></table></figure>
-<ul>
-<li>위에서 <code>CLI</code>로 생성한 프로젝트 디렉토리로 이동합니다.</li>
-<li><code>node .</code> 명령어로 프로젝트를 실행 합니다.</li>
-<li><code>http://0.0.0.0:3000/explorer</code>로 이동합니다.</li>
-<li>API Document <code>Swagger</code>가 정상적으로 출력되면 아래 그림과 같습니다.</li>
-</ul>
-<h3><span id="api-document">API Document</span></h3>
-<p><img src="http://i.imgur.com/D9cINil.png" alt=""></p>
-<ul>
-<li>Loopback 기본 <code>User</code>모델을 기반으로 User API를 만들어 줍니다.</li>
-<li>User API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.</li>
-</ul>
-<h4><span id="post-users-회원-가입">POST /Users (회원 가입)</span></h4>
-<p><img src="http://i.imgur.com/ako0hjq.png" alt=""></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"realm"</span>: <span class="string">"string"</span>,</div><div class="line">  <span class="attr">"username"</span>: <span class="string">"loopback"</span>,</div><div class="line">  <span class="attr">"email"</span>: <span class="string">"loopback@loopback.com"</span>,</div><div class="line">  <span class="attr">"password"</span>: <span class="string">"loopback"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li><code>data</code>에 JSON 타입으로 해당 데이터를 입력합니다.</li>
-<li><strong><em>기본설정인 In-memory db에 저장됩니다.</em></strong></li>
-</ul>
-<h4><span id="post-userslogin-로그인">POST /Users/login (로그인)</span></h4>
-<p><img src="http://i.imgur.com/0W8k2M9.png" alt=""></p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"email"</span>: <span class="string">"loopback@loopback.com"</span>,</div><div class="line">  <span class="attr">"password"</span>: <span class="string">"loopback"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li><code>credentials</code> 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.</li>
-<li>회원 정보가 일치할 경우 <code>Response Body</code>에 <code>AccessToekn</code> 정보를 넘겨 줍니다.</li>
-<li><code>AccessToekn.id</code>의 값 <code>KIjxd....</code>을 오른쪽 상단 ToKen Set에 입력합니다.</li>
-<li>loopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.</li>
-<li><code>AccessToekn</code> 모델 또한 Loopback의 기본 제공 모델중 하나입니다.</li>
-</ul>
-<h4><span id="get-usersid-해당-회원-조회">GET /Users/{id} (해당 회원 조회)</span></h4>
-<p><img src="http://i.imgur.com/gWBT25M.png" alt=""></p>
-<ul>
-<li><code>id</code> 파라마터에 <code>AccessToekn</code>에서 발급 받은 <code>userId</code>를 입력합니다.</li>
-<li>자신의 정보를 조회할 수 있습니다.</li>
-<li>자신의 이외의 회원 정보를 조회할 경우 아래와 같은 <code>StatusCode</code> 401를 리턴 받습니다.</li>
-</ul>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"error"</span>: &#123;</div><div class="line">    <span class="attr">"statusCode"</span>: <span class="number">401</span>,</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"Error"</span>,</div><div class="line">    <span class="attr">"message"</span>: <span class="string">"권한 필수"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3><span id="결론">결론</span></h3>
-<p>루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.</p>
+                <p>안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 정리할 내용은 Node + Mysql 연동입니다. 이미 수많은 예제가 있으나 앞으로 포스팅할 내용들이 데이터베이스가 필수적으로 필요하니 간단 정리 및 간단하게 팁?을 소개하여드리겠습니다.</p>
+<p>저희 회사 개발 환경은 각자 로컬에서 개발을 진행하고, 어느 정도 개발이 완료되면 테스트 서버에서 QA를 진행하고 실제 서버에 반영시키는 방식으로 진행하고 있습니다.</p>
+<p>그래서 데이터 베이스도 로컬, 데브 서버, 리얼서버 이렇게 3개의 정보를 갖고 있어야 합니다. 또 개발 중간중간에 실서버의 데이터 베이스의 접근이 필요할 경우도 더러 있습니다. 이러한 경우에 간단하게 프로퍼티를 이용해서 데이터베이스 정보를 변경할 수 있는  팁을 알려드리겠습니다. 아래에 링크도 있으니 이해가 안 되시면 참조하시길 바랍니다.</p>
+<p><a href="https://github.com/cheese10yun/node-yun" target="_blank" rel="external">Branch develop-mysql</a></p>
+<h3><span id="mysql-모듈설치">mysql 모듈설치</span></h3>
+<p><em>우선 필요 모듈부터 설치를 진행합니다. 데이터베이스 설치 및 설정은 다른 블로그에서 많이 다루고 있으니 생략하겠습니다.</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install mysql --save</div></pre></td></tr></table></figure>
+<p><code>db_info.js</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    local: &#123; <span class="comment">// localhost</span></div><div class="line">      host: <span class="string">'localhost'</span>,</div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      user: <span class="string">'root'</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;,</div><div class="line">    real: &#123; <span class="comment">// real server db info</span></div><div class="line">      host: <span class="string">''</span>,</div><div class="line">      port: <span class="string">''</span>,</div><div class="line">      user: <span class="string">''</span>,</div><div class="line">      password: <span class="string">'!'</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;,</div><div class="line">    dev: &#123; <span class="comment">// dev server db info</span></div><div class="line">      host: <span class="string">''</span>,</div><div class="line">      port: <span class="string">''</span>,</div><div class="line">      user: <span class="string">''</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<p>데이터베이스의 정보가 저장돼있는 곳입니다. 로컬 환경, 실제 서버 환경, 테스트 서버 환경에 필요한 정보를 입력해주세요.</p>
+<p><code>db_con.js</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mysql = <span class="built_in">require</span>(<span class="string">'mysql'</span>);</div><div class="line"><span class="keyword">var</span> config = <span class="built_in">require</span>(<span class="string">'../db/db_info'</span>).local;</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    init: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> mysql.createConnection(&#123;</div><div class="line">        host: config.host,</div><div class="line">        port: config.port,</div><div class="line">        user: config.user,</div><div class="line">        password: config.password,</div><div class="line">        database: config.database</div><div class="line">      &#125;)</div><div class="line">    &#125;,</div><div class="line"></div><div class="line">    test_open: <span class="function"><span class="keyword">function</span> (<span class="params">con</span>) </span>&#123;</div><div class="line">      con.connect(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (err) &#123;</div><div class="line">          <span class="built_in">console</span>.error(<span class="string">'mysql connection error :'</span> + err);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          <span class="built_in">console</span>.info(<span class="string">'mysql is connected successfully.'</span>);</div><div class="line">        &#125;</div><div class="line">      &#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>데이터베이에 커넥트 하는 부분을 담당합니다. config 변수를 보시면 local 프로퍼티를 이용해서 db_info.js에 있는 local 객체를 config 변수에 바인딩시킵니다.</p>
+<p>init 메서드를 보시면 방금 바인딩시킨 config 값의 기반으로  mysql connection을 생성이 가능합니다. 또 <code>var config = require('../db/db_info').(XXX)</code> 이런 형태로 <code>db_info.js</code>에 저장돼있는 데이터베이스의 정보를 손쉽게 변경이 가능합니다.</p>
+<p><strong>router에서 사용하기 (1)</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mysql_dbc = <span class="built_in">require</span>(<span class="string">'../db/db_con'</span>)();</div><div class="line"><span class="keyword">var</span> connection = mysql_dbc.init();</div><div class="line">mysql_dbc.test_open(connection);</div></pre></td></tr></table></figure>
+<p>mysql_dbc 변수에  db_con의 값을 require을 시키고, 위에서 설명한 init 메서드를 통해서 생성된 Mysql Connnection을 변수 connection에 저장시킵니다</p>
+<p><strong>router에서 사용하기 (2)</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">router.get(<span class="string">'/mysql/test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> stmt = <span class="string">'select *from ....'</span>;</div><div class="line">  connection.query(stmt, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    .....</div><div class="line">  &#125;)</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>위에서 설명한 connection 객체를 이용해서 쿼리 작업을 진행하시면 됩니다.</p>
+<p><img src="https://i.imgur.com/yloTaE9.png" alt="EC2 Innound"></p>
+<p>서버를 실행시키면 입력된 데이터베이스와 연결이 되고 <code>test_open</code> 메서드를 통해서 데이터베이스의 컨넥션이 제대로 생성이 됐나 간단한 로그로 출력됩니다. 이처럼 서버를 실행시켰을 때 데이터베이스와 제대로 연결되었는지 정보를 출력하시는 것을 권장합니다.</p>
+<h3><span id="마무리">마무리</span></h3>
+<p>이번 포스팅 내용은 짧긴 짧았지만 생각을 정리하고, 코드를 작성하고 또 그것을 문서로 다시 작성하는 것은 상당히 시간이 거리는 작업인 거 같습니다.  그래도 점점 익숙해지고 있기도 하고, 블로그를 포스팅한 날은 조회수를 보는 재미도 있습니다. 그런 의미로 좋아요, 공유하기 좀 부탁드리겠습니다…</p>
+<p>포스팅하다 보면 “아 이 내용이 먼저 나와야 이걸 설명하기가 편할 거 같아” 이런 생각이 계속 들어 제가 하고 싶은 포스팅하고 싶은 내용보다는 좀 더 앞부분을 계속 설명해드렸던 거 같습니다. 그래도 제가 전하고 싶은 기술 천천히, 꾸준하게 포스팅해 나아가겠습니다.</p>
+<p>긴글 읽어주셔서 감사합니다. 조만간에 찾아 뵙겠습니다.</p>
 
                 
 
@@ -290,12 +250,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/loopback-board/" data-toggle="tooltip" data-placement="top" title="Loopback 게시판 만들기 (1)">&larr; Previous Post</a>
+                            <a href="/passport-mysql" data-toggle="tooltip" data-placement="top" title="Node Passport를 이용한 Login + Mysql">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/aws-s3-imgage-/" data-toggle="tooltip" data-placement="top" title="AWS S3 업로드시 이미지 최적화">Next Post &rarr;</a>
+                            <a href="/Passport-part1" data-toggle="tooltip" data-placement="top" title="Passport를 이용한 Login">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -325,7 +285,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Loopback 특징</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Loopback 설치</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Hello world 프로젝트 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Hello world 프로젝트 실행</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">API Document</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">POST /Users (회원 가입)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">POST /Users/login (로그인)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">GET /Users/{id} (해당 회원 조회)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">결론</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">mysql 모듈설치</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
         
         </div>
       </aside>
@@ -347,9 +307,7 @@
                        
                           <a class="tag" href="/tags/#Node" title="Node">Node</a>
                         
-                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
-                        
-                          <a class="tag" href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
+                          <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
                         
                     </div>
                 </section>
@@ -369,8 +327,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/loopback-begin/";
-    var disqus_url = "https://cheese10yun.github.io/loopback-begin/";
+    var disqus_identifier = "https://cheese10yun.github.io/mysql-node";
+    var disqus_url = "https://cheese10yun.github.io/mysql-node";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

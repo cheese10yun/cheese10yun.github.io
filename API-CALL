@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/API-CALL/">
+    <link rel="canonical" href="https://cheese10yun.github.io/API-CALL">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -273,12 +273,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/Node-AWS-S3-Upload/" data-toggle="tooltip" data-placement="top" title="Node AWS S3 업로드">&larr; Previous Post</a>
+                            <a href="/Node-AWS-S3-Upload" data-toggle="tooltip" data-placement="top" title="Node AWS S3 업로드">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/blog-start-part2/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">Next Post &rarr;</a>
+                            <a href="/blog-start-part2" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -352,8 +352,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/API-CALL/";
-    var disqus_url = "https://cheese10yun.github.io/API-CALL/";
+    var disqus_identifier = "https://cheese10yun.github.io/API-CALL";
+    var disqus_url = "https://cheese10yun.github.io/API-CALL";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          신입 개발자 포트폴리오 - Yun Blog | 기술 블로그
+          신입 개발자 취업도전기 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/new-developer-portfolio/">
+    <link rel="canonical" href="https://cheese10yun.github.io/new-Developer-work-challenge">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -91,11 +91,11 @@
                         <div class="tags">
                             
                         </div>
-                        <h1>신입 개발자 포트폴리오</h1>
+                        <h1>신입 개발자 취업도전기</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-12
+                            2016-12-13
                         </span>
                     </div>
                 
@@ -212,7 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <iframe src="//www.slideshare.net/slideshow/embed_code/key/rXKJHS550jGgUP" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/ssuser565d51/ss-60845940" title="신입 개발자 포트폴리오" target="_blank">신입 개발자 포트폴리오</a> </strong> from <strong><a target="_blank" href="//www.slideshare.net/ssuser565d51">남윤 김</a></strong> </div>
+                <iframe src="//www.slideshare.net/slideshow/embed_code/key/viQSK55PAfHjGE" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/ssuser565d51/ss-61448739" title="신입 개발자 취업도전기" target="_blank">신입 개발자 취업도전기</a> </strong> from <strong><a target="_blank" href="//www.slideshare.net/ssuser565d51">남윤 김</a></strong> </div>
                 
 
                 <hr>
@@ -220,9 +220,13 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/Node-AWS-Nginx/" data-toggle="tooltip" data-placement="top" title="AWS EC2 Nginx Node.js 설정">&larr; Previous Post</a>
+                            <a href="/webStrom-part1" data-toggle="tooltip" data-placement="top" title="WebStorm 어디까지 써봤니? part 1">&larr; Previous Post</a>
                         </li>
                     
+                    
+                        <li class="next">
+                            <a href="/Node-AWS-Nginx" data-toggle="tooltip" data-placement="top" title="AWS EC2 Nginx Node.js 설정">Next Post &rarr;</a>
+                        </li>
                     
                 </ul>
 
@@ -289,8 +293,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/new-developer-portfolio/";
-    var disqus_url = "https://cheese10yun.github.io/new-developer-portfolio/";
+    var disqus_identifier = "https://cheese10yun.github.io/new-Developer-work-challenge";
+    var disqus_url = "https://cheese10yun.github.io/new-Developer-work-challenge";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Bootstrap Modal 입력값 초기화 - Yun Blog | 기술 블로그
+          Loopback 시작하기 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/bootstrap-modall/">
+    <link rel="canonical" href="https://cheese10yun.github.io/loopback-begin">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -90,16 +90,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Bootstrap" title="Bootstrap">Bootstrap</a>
+                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
                             
-                              <a class="tag" href="/tags/#Modal" title="Modal">Modal</a>
+                              <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                            
+                              <a class="tag" href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
                             
                         </div>
-                        <h1>Bootstrap Modal 입력값 초기화</h1>
+                        <h1>Loopback 시작하기</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-10
+                            2017-05-05
                         </span>
                     </div>
                 
@@ -216,12 +218,70 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><img src="https://i.imgur.com/SHu3JYX.png" alt="EC2 Innound"></p>
-<p>부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">'.modal'</span>).on(<span class="string">'hidden.bs.modal'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'modal close'</span>);</div><div class="line">  $(<span class="keyword">this</span>).find(<span class="string">'form'</span>)[<span class="number">0</span>].reset()</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h3><span id="활용방법">활용방법</span></h3>
-<p>해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.</p>
-<p>생각 보다 내용이 없네요…</p>
+                <p>최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.</p>
+<p><strong>공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.</strong></p>
+<h3><span id="loopback-특징">Loopback 특징</span></h3>
+<ul>
+<li>정말 빠르게 REST API를 만들수 있습니다.</li>
+<li>기본적으로 API Document를 Swagger 만들어줍니다.</li>
+<li>CLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.</li>
+<li>다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.</li>
+</ul>
+<h3><span id="loopback-설치">Loopback 설치</span></h3>
+<ul>
+<li>기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g loopback-cli</div></pre></td></tr></table></figure>
+<h3><span id="hello-world-프로젝트-설정">Hello world 프로젝트 설정</span></h3>
+<p><strong>루프백의 기초적인 특징을 알아보겠습니다.</strong></p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ lb</div><div class="line">? 애플리케이션 이름은 무엇입니까? hello-world</div><div class="line">? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world</div><div class="line">  <span class="keyword">create</span> hello-world/</div><div class="line">    info 작업 디렉토리를 hello-world(으)로 번경</div><div class="line"></div><div class="line">? 사용하려는 LoopBack 버전은 무엇입니까? <span class="number">3</span>.x (current)</div><div class="line">? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, includi</div><div class="line">ng a single vanilla Message <span class="keyword">and</span> a single remote <span class="function"><span class="keyword">method</span>)</span></div></pre></td></tr></table></figure>
+<ul>
+<li>터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.</li>
+<li>프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.</li>
+<li>버전은 3.x 최신 버전을 선택합니다.</li>
+<li>예상하는 애플리케이션 종류는  hello-world를 선택합니다.</li>
+</ul>
+<h3><span id="hello-world-프로젝트-실행">Hello world 프로젝트 실행</span></h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> hello-world/</div><div class="line">$ node .</div></pre></td></tr></table></figure>
+<ul>
+<li>위에서 <code>CLI</code>로 생성한 프로젝트 디렉토리로 이동합니다.</li>
+<li><code>node .</code> 명령어로 프로젝트를 실행 합니다.</li>
+<li><code>http://0.0.0.0:3000/explorer</code>로 이동합니다.</li>
+<li>API Document <code>Swagger</code>가 정상적으로 출력되면 아래 그림과 같습니다.</li>
+</ul>
+<h3><span id="api-document">API Document</span></h3>
+<p><img src="http://i.imgur.com/D9cINil.png" alt=""></p>
+<ul>
+<li>Loopback 기본 <code>User</code>모델을 기반으로 User API를 만들어 줍니다.</li>
+<li>User API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.</li>
+</ul>
+<h4><span id="post-users-회원-가입">POST /Users (회원 가입)</span></h4>
+<p><img src="http://i.imgur.com/ako0hjq.png" alt=""></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"realm"</span>: <span class="string">"string"</span>,</div><div class="line">  <span class="attr">"username"</span>: <span class="string">"loopback"</span>,</div><div class="line">  <span class="attr">"email"</span>: <span class="string">"loopback@loopback.com"</span>,</div><div class="line">  <span class="attr">"password"</span>: <span class="string">"loopback"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>data</code>에 JSON 타입으로 해당 데이터를 입력합니다.</li>
+<li><strong><em>기본설정인 In-memory db에 저장됩니다.</em></strong></li>
+</ul>
+<h4><span id="post-userslogin-로그인">POST /Users/login (로그인)</span></h4>
+<p><img src="http://i.imgur.com/0W8k2M9.png" alt=""></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"email"</span>: <span class="string">"loopback@loopback.com"</span>,</div><div class="line">  <span class="attr">"password"</span>: <span class="string">"loopback"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>credentials</code> 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.</li>
+<li>회원 정보가 일치할 경우 <code>Response Body</code>에 <code>AccessToekn</code> 정보를 넘겨 줍니다.</li>
+<li><code>AccessToekn.id</code>의 값 <code>KIjxd....</code>을 오른쪽 상단 ToKen Set에 입력합니다.</li>
+<li>loopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.</li>
+<li><code>AccessToekn</code> 모델 또한 Loopback의 기본 제공 모델중 하나입니다.</li>
+</ul>
+<h4><span id="get-usersid-해당-회원-조회">GET /Users/{id} (해당 회원 조회)</span></h4>
+<p><img src="http://i.imgur.com/gWBT25M.png" alt=""></p>
+<ul>
+<li><code>id</code> 파라마터에 <code>AccessToekn</code>에서 발급 받은 <code>userId</code>를 입력합니다.</li>
+<li>자신의 정보를 조회할 수 있습니다.</li>
+<li>자신의 이외의 회원 정보를 조회할 경우 아래와 같은 <code>StatusCode</code> 401를 리턴 받습니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"error"</span>: &#123;</div><div class="line">    <span class="attr">"statusCode"</span>: <span class="number">401</span>,</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"Error"</span>,</div><div class="line">    <span class="attr">"message"</span>: <span class="string">"권한 필수"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="결론">결론</span></h3>
+<p>루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.</p>
 
                 
 
@@ -230,12 +290,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/crontab-api/" data-toggle="tooltip" data-placement="top" title="Crontab을 이용한 노드 API 호출">&larr; Previous Post</a>
+                            <a href="/loopback-board" data-toggle="tooltip" data-placement="top" title="Loopback 게시판 만들기 (1)">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/passport-mysql/" data-toggle="tooltip" data-placement="top" title="Node Passport를 이용한 Login + Mysql">Next Post &rarr;</a>
+                            <a href="/aws-s3-imgage-" data-toggle="tooltip" data-placement="top" title="AWS S3 업로드시 이미지 최적화">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -265,7 +325,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">활용방법</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Loopback 특징</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Loopback 설치</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Hello world 프로젝트 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Hello world 프로젝트 실행</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">API Document</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">POST /Users (회원 가입)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">POST /Users/login (로그인)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">GET /Users/{id} (해당 회원 조회)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">결론</span></a></li></ol>
         
         </div>
       </aside>
@@ -285,9 +345,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Bootstrap" title="Bootstrap">Bootstrap</a>
+                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
                         
-                          <a class="tag" href="/tags/#Modal" title="Modal">Modal</a>
+                          <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+                        
+                          <a class="tag" href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
                         
                     </div>
                 </section>
@@ -307,8 +369,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/bootstrap-modall/";
-    var disqus_url = "https://cheese10yun.github.io/bootstrap-modall/";
+    var disqus_identifier = "https://cheese10yun.github.io/loopback-begin";
+    var disqus_url = "https://cheese10yun.github.io/loopback-begin";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/passport-thirdpart-loginl/">
+    <link rel="canonical" href="https://cheese10yun.github.io/passport-thirdpart-loginl">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -275,12 +275,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/blog-start/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">&larr; Previous Post</a>
+                            <a href="/blog-start" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/crontab-api/" data-toggle="tooltip" data-placement="top" title="Crontab을 이용한 노드 API 호출">Next Post &rarr;</a>
+                            <a href="/crontab-api" data-toggle="tooltip" data-placement="top" title="Crontab을 이용한 노드 API 호출">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -360,8 +360,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/passport-thirdpart-loginl/";
-    var disqus_url = "https://cheese10yun.github.io/passport-thirdpart-loginl/";
+    var disqus_identifier = "https://cheese10yun.github.io/passport-thirdpart-loginl";
+    var disqus_url = "https://cheese10yun.github.io/passport-thirdpart-loginl";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -252,12 +252,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/API-CALL/" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">&larr; Previous Post</a>
+                            <a href="/API-CALL" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/mysql-multiple-insert/" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">Next Post &rarr;</a>
+                            <a href="/mysql-multiple-insert" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -327,8 +327,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/blog-start-part2/";
-    var disqus_url = "https://cheese10yun.github.io/blog-start-part2/";
+    var disqus_identifier = "https://cheese10yun.github.io/blog-start-part2";
+    var disqus_url = "https://cheese10yun.github.io/blog-start-part2";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

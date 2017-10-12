@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          WebStorm 어디까지 써봤니? part 1 - Yun Blog | 기술 블로그
+          Node Mysql Multiple Insert - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/webStrom-part1/">
+    <link rel="canonical" href="https://cheese10yun.github.io/mysql-multiple-insert">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -90,14 +90,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#WebStorm" title="WebStorm">WebStorm</a>
+                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                            
+                              <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
+                            
+                              <a class="tag" href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
                             
                         </div>
-                        <h1>WebStorm 어디까지 써봤니? part 1</h1>
+                        <h1>Node Mysql Multiple Insert</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-18
+                            2017-01-31
                         </span>
                     </div>
                 
@@ -214,34 +218,18 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 회사 내의 기술 스펙이 거의 자바스크립트를 기반으로 두고 있어 기존에 사용해왔던 IntelliJ에서 WebStrom으로 변경하게 되었습니다. 그래서 이번 기회에 Webstrom에 좀 더 친숙해지고 사용법을 읽힐 겸 간단하게 정리해봅니다.<br>
-물론 WebStrom 뿐만 아니라 JetBrains사의 IDE에서 공통적으로 사용이 가능합니다.</p>
-<p>단축키는 Mac OS 기반으로 알려드리겠습니다.</p>
-<h3><span id="동일-문자열-변경">동일 문자열 변경</span></h3>
-<p><img src="https://i.imgur.com/fAMA6Or.gif" alt="⌘ + ⌃ + g" title="⌘ + ⌃ + g"><br>
-<strong><em>⌘ + ⌃ + g</em></strong></p>
-<p>코드를 작성하다가 동일한 문자열을 변경해야 하는 경우는 빈번하게 발생합니다. 위 그림과 같이 특정 변수를 모두 변경해야 하는 경우가 대표적인 예입니다. 변수가 2~3이면 귀찮지 않은데 위 와 같은 경우에는 크게 귀찮아집니다. 이럴 때 유용하게 사용하는 기능입니다.</p>
-<p>변경하고 싶은 문자열을 드래그 이후 <strong><em>command + control + g</em></strong>  단축키를 입력하면 동일 문자열을 한 번에 변경이 가능합니다.</p>
-<h3><span id="동일한-위치-문자열-변경">동일한 위치 문자열 변경</span></h3>
-<p><img src="https://i.imgur.com/Z5IYg6w.gif" alt="⌥  + dra" title="⌥  + drag"><br>
-<strong><em>⌥  + drag</em></strong></p>
-<p>동일 문자열과 비슷한 기능입니다. 만약 변경 대상이 동일한 문자열이 아닐 경우도 위와 같이 발생할 수 있습니다. 이러한 경우에 <strong><em>Alt + 마우스 드래그</em></strong>를 통해서 한 번에 변경하실 수 있습니다. 이 기능 익숙해지면 다양하게 사용할 수 있습니다.</p>
-<h3><span id="복사-리스트">복사 리스트</span></h3>
-<p><img src="https://i.imgur.com/6ClfGhw.gif" alt="⌘  + ⇧ + v "></p>
-<p>개발을 하면서 우리는 수없이 정말 수없이 복사 붙여 넣기를 합니다… 이럴 때 가장 불편한 점 중에 하나는 새로 복사할 때마다 이전 복사한 내용들이 없어진다는 점이죠.</p>
-<p>이러한 경우에 <strong><em>command + shift + v</em></strong>를 사용하시면 간단하게 해결됩니다. 단축키를 입력하시면 복사한 리스트들 출력되고 해당 리스트에서 엔터키를 입력하면 됩니다</p>
-<h3><span id="live-template">Live Template</span></h3>
-<p><img src="https://i.imgur.com/ojSSHaC.gif" alt="console.log()"><br>
-<img src="https://i.imgur.com/SPMRe1P.gif" alt="console.log()"></p>
-<p>코드를 작성하다 보면 중간중간 결과 값을 확인하기 위해서 <code>console.log('')</code>를 사용해서 확인 작업을 수없이 진행하게 됩니다. 이러한 반복적인 코드와 예약 어를 정의하고 예약 어를 통해서 코드를 불러오는 기능이 Live Template입니다.</p>
-<p>저 같은 경우에는 예약어 clog로 <code>console.log('')</code>를 간단하게 작성합니다. 물론 이러한 간단한 코드는 그때그때 작성해도 크게 불 펴하지는 않지만 코드량이 길어지면 점점 귀찮아지기 시작합니다.</p>
-<p>api를 호출하는 ajax 같은 코드도 빈번하게 작성되는 코드다 보니 위 그림과 같이 ajg 예약어로  ajax get 코드를 간단하게 작성하실 수 있습니다.</p>
-<p>하지만 저 같은 신입의 경우 해당 코드를 어느 정도 숙지가 완료되었을 때 Live Template에 추가하는 것을 권장드립니다. 코드를 숙지하지 않고 IDE기능을 통해서만 작성하는 것은 좋은 습관은 아니라고 생각합니다.</p>
-<h3><span id="live-template-등록-방법">Live Template 등록 방법</span></h3>
-<p><img src="https://i.imgur.com/SPMRe1P.gif" alt="Live Template"></p>
-<p><strong>⌘ + ,단축키</strong>를 통해서 설정에 들어가시면 Live Template 항목에서 해당 언어의 Template을 설정할 수 있습니다. 자바스크립트뿐만 아니라 다양하 언어의 Template 지정할 수 있습니다. <strong><em>반드시 하단에 Define을 클릭하시고 해당 언어를 다시 한번 정의해주셔야 됩니다.</em></strong></p>
-<p>이번에 소개해드린 기능들은 제가 가장 많이 사용하고, 유용하게 사용하는 기능들입니다. 앞으로는 좀 더 막강한 기능들을 공부해서 소개하여드리도록 하겠습니다.</p>
-<p>조금이나마 도움이 되셨기를 바랍니다. 긴 글 읽어주셔서 감사드립니다.</p>
+                <p>데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.<br>
+이러한 경우에 <strong><em>반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.</em></strong></p>
+<p><img src="https://i.imgur.com/0v9jD2z.png" alt=""><br>
+위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> stmt_multiple_insert = <span class="string">'insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values ?;'</span>; <span class="comment">// 쿼리문</span></div><div class="line"><span class="keyword">var</span> values = [</div><div class="line">    [<span class="string">'user_001'</span>, <span class="string">'pw_01'</span>, <span class="string">'name_01'</span>, <span class="string">'email_01@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_002'</span>, <span class="string">'pw_02'</span>, <span class="string">'name_02'</span>, <span class="string">'email_02@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_003'</span>, <span class="string">'pw_03'</span>, <span class="string">'name_03'</span>, <span class="string">'email_03@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_004'</span>, <span class="string">'pw_04'</span>, <span class="string">'name_04'</span>, <span class="string">'email_04@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_005'</span>, <span class="string">'pw_05'</span>, <span class="string">'name_05'</span>, <span class="string">'email_05@a.com'</span>, <span class="string">'2016-10-10'</span>]</div><div class="line">];</div><div class="line"></div><div class="line"><span class="keyword">var</span> str_query = connection.query(stmt_multiple_insert, [values], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">        <span class="built_in">console</span>.log(err);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(str_query.sql);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>구조는 간단합니다. <strong><em>쿼리문은 입력값과 1:1로 대응시키고, 입력값은</em></strong> <code><b>var values</b></code> <strong><em>처럼 배열형태로 선언합니다.</em></strong></p>
+<p><code><b>var str_query = connection.query(…)</b></code> 이렇게 connection 객체를 변수로 할당시키고 <code><b>console.log(str_query.sql)</b></code><br>
+으로 해당 쿼리를 확인할 수 있습니다.</p>
+<p>쿼리문을 확인하기 위한 작업이라서 실제 배포하는 소스코드에서는 사용하지 않는 것을 권장합니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//해당 쿼리문</div><div class="line">insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values</div><div class="line">(&apos;user_001&apos;, &apos;pw_01&apos;, &apos;name_01&apos;, &apos;email_01@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_002&apos;, &apos;pw_02&apos;, &apos;name_02&apos;, &apos;email_02@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_003&apos;, &apos;pw_03&apos;, &apos;name_03&apos;, &apos;email_03@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_004&apos;, &apos;pw_04&apos;, &apos;name_04&apos;, &apos;email_04@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_005&apos;, &apos;pw_05&apos;, &apos;name_05&apos;, &apos;email_05@a.com&apos;, &apos;2016-10-10&apos;);</div></pre></td></tr></table></figure>
+<h3><span id="마무리">마무리</span></h3>
+<p>뭐 별 내용이 없네요…</p>
 
                 
 
@@ -250,12 +238,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/PM2/" data-toggle="tooltip" data-placement="top" title="PM2 이용한 Node 프로세스 관리">&larr; Previous Post</a>
+                            <a href="/blog-start-part2" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/new-Developer-work-challenge/" data-toggle="tooltip" data-placement="top" title="신입 개발자 취업도전기">Next Post &rarr;</a>
+                            <a href="/blog-start" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -280,17 +268,6 @@
             <!-- Tabe of Content -->
             <!-- Table of Contents -->
 
-    
-      <aside id="sidebar">
-        <div id="toc" class="toc-article">
-        <strong class="toc-title">Contents</strong>
-        
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">동일 문자열 변경</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">동일한 위치 문자열 변경</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">복사 리스트</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Live Template</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Live Template 등록 방법</span></a></li></ol>
-        
-        </div>
-      </aside>
-    
-
                 
             <!-- Sidebar Container -->
             <div class="
@@ -305,7 +282,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#WebStorm" title="WebStorm">WebStorm</a>
+                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                        
+                          <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
+                        
+                          <a class="tag" href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
                         
                     </div>
                 </section>
@@ -325,8 +306,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/webStrom-part1/";
-    var disqus_url = "https://cheese10yun.github.io/webStrom-part1/";
+    var disqus_identifier = "https://cheese10yun.github.io/mysql-multiple-insert";
+    var disqus_url = "https://cheese10yun.github.io/mysql-multiple-insert";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

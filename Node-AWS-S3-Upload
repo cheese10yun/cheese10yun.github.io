@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-S3-Upload/">
+    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-S3-Upload">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -293,12 +293,12 @@ RSS 링크도 하단에 추가하였으니 추가해주시면 감사하겠습니
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/npm-sudo-err/" data-toggle="tooltip" data-placement="top" title="npm sudo 권한으로 설치시 오류 해결">&larr; Previous Post</a>
+                            <a href="/npm-sudo-err" data-toggle="tooltip" data-placement="top" title="npm sudo 권한으로 설치시 오류 해결">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/API-CALL/" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">Next Post &rarr;</a>
+                            <a href="/API-CALL" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -380,8 +380,8 @@ RSS 링크도 하단에 추가하였으니 추가해주시면 감사하겠습니
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/Node-AWS-S3-Upload/";
-    var disqus_url = "https://cheese10yun.github.io/Node-AWS-S3-Upload/";
+    var disqus_identifier = "https://cheese10yun.github.io/Node-AWS-S3-Upload";
+    var disqus_url = "https://cheese10yun.github.io/Node-AWS-S3-Upload";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
