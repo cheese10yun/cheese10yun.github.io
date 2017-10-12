@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="http://yoursite-url/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/home-bg-2-dark.png') 
+            /*config*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>Yun Blog</h1>
+                        <!--<hr class="small">-->
+                        <span class="subheading">기술 블로</span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2017/05/27/loopback-board/">
+        <h2 class="post-title">
+            Loopback 게시판 만들기 (1)
+        </h2>
+        <h3 class="post-subtitle">
+            초간단 게시판 만들기
+        </h3>
+        <div class="post-content-preview">
+            Loopback 으로 게시판을 만드는 프로젝트를 진행하겠습니다. 앞선 포스팅에서 설명 드렸다시피 Loopback은 정말 빠르게 REST API를 만들어 낼 수 있습니다. 회원 가입, 로그인, 로그아웃, ACL, 설정 등 매번 구현해야 하는 귀찮은 로직들을 내부 Model을 사용해서 빠르게 만들 수 있습니다. 하지만 이렇게 말로 설명해 드리는 것보다 웹......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-05-27
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+            
+              <a href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/05/05/loopback-begin/">
+        <h2 class="post-title">
+            Loopback 시작하기
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.
+공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-05-05
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+            
+              <a href="/tags/#LoopBack" title="LoopBack">LoopBack</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/03/18/hexo-theme-beantech/">
+        <h2 class="post-title">
+            [Hexo] Theme BeanTech
+        </h2>
+        <h3 class="post-subtitle">
+            This is hexo theme Demo.
+        </h3>
+        <div class="post-content-preview">
+            
+Ported Theme of Hux Blog, Thank Huxpro for designing such a flawless theme.
+This BeanTech theme created by YuHsuan modified from the original Porter Kaijun
+
+
+
+
+Usage
+
+I publish the whole project f......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-03-18
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Blog" title="Blog">Blog</a>
+            
+              <a href="/tags/#Hexo" title="Hexo">Hexo</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/03/04/aws-s3-imgage-/">
+        <h2 class="post-title">
+            AWS S3 업로드시 이미지 최적화
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.
+Github클릭해서 전체 소스를 보시는 것을 권장합니다.
+작업순서
+
+formid......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-03-04
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#AWS" title="AWS">AWS</a>
+            
+              <a href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+            
+              <a href="/tags/#imagemin" title="imagemin">imagemin</a>
+            
+              <a href="/tags/#S3" title="S3">S3</a>
+            
+              <a href="/tags/#Image" title="Image">Image</a>
+            
+              <a href="/tags/#Upload" title="Upload">Upload</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/02/16/kakao-bot-node/">
+        <h2 class="post-title">
+            Node.JS로 카카오봇 만들기
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            전체소스는 GitHub branch develop-base에서 확인할 수 있습니다.
+옐로우 아이디 등록 
+
+
+해당 프로필은 하번 설정하면 변경이 불가능합니다. 이 작업이 완료되면 2 ~ 3일 이후에 옐로우아이디가 발급됩니다. 발급되기 전까지 Node API 서버를 구성합니다. 자세한 설명은 아래에 있습니다.
+
+API형 자동읍답 설정하기 선택
+
+앱 등록......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-02-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Kakao" title="Kakao">Kakao</a>
+            
+              <a href="/tags/#Bot" title="Bot">Bot</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/02/11/npm-sudo-err/">
+        <h2 class="post-title">
+            npm sudo 권한으로 설치시 오류 해결
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1-bash: sodu: command not found
+NPM으로 모듈을 설치할 때 sudo 권한으로 설치할 경우 위와 같은 오류가 발생할 경우가 있다.
+1234sudo ln -s /usr/local/bin/node /usr/bin/nodesudo ln -s /usr/local/lib/node /usr/lib/nodesudo ln -s /usr/lo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-02-11
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#NPM" title="NPM">NPM</a>
+            
+              <a href="/tags/#Error" title="Error">Error</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/02/08/Node-AWS-S3-Upload/">
+        <h2 class="post-title">
+            Node AWS S3 업로드
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Node.Js에서 AWS S3업로드 예제입니다. 본 예제의 전체 소스는 GitHub에서 참고할 수 있습니다.
+S3에 관련된 설정이 완료됐다는 가정하에 포스팅을 진행하겠습니다.
+필수 패키지 설치
+123npm install formidable --savenpm install async --savenpm install aws-sdk --save
+
+formi......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-02-08
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#AWS" title="AWS">AWS</a>
+            
+              <a href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
+            
+              <a href="/tags/#imagemin" title="imagemin">imagemin</a>
+            
+              <a href="/tags/#S3" title="S3">S3</a>
+            
+              <a href="/tags/#Image" title="Image">Image</a>
+            
+              <a href="/tags/#Upload" title="Upload">Upload</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/02/05/API-CALL/">
+        <h2 class="post-title">
+            Node 다른 서버 API 호출
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            노드 서버에서 다른 API를 호출하는 방법을 소개해드리겠습니다. 물론 프론트에서 Ajax를 이용해서 다른 서버의 API를 간단하게 호출할 수 있지만 Ajax로 간단하게 호출할 수 있지만, 해당 API를 호출한 이후 자신의 서버에 해당 기록을 남겨야 하는 경우는 프론트가 아닌 백에서 처리해야 합니다.
+저희 서비스 예를 들어 설명하면 노드 서버에서 제휴 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-02-05
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#API" title="API">API</a>
+            
+              <a href="/tags/#Call" title="Call">Call</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/31/mysql-multiple-insert/">
+        <h2 class="post-title">
+            Node Mysql Multiple Insert
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.
+이러한 경우에 반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.
+
+위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.
+123......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-31
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+            
+              <a href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/31/blog-start-part2/">
+        <h2 class="post-title">
+            블로그를 시작하려는 당신에게(2)
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            블로그를 시작하려는 당신에게(1)에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.
+이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?누구나 관종의 피는 가지고 있으니 말이다.
+네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-31
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Blog" title="Blog">Blog</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+    
+        <li class="next">
+            <a href="/archives/2/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+            </div>
+
+          <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#Node" title="Node" rel="14">Node</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#AWS" title="AWS" rel="3">AWS</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#JavaScript" title="JavaScript" rel="4">JavaScript</a>
+            
+        
+            
+            <a href="/tags/#imagemin" title="imagemin" rel="2">imagemin</a>
+            
+        
+            
+            <a href="/tags/#S3" title="S3" rel="2">S3</a>
+            
+        
+            
+            <a href="/tags/#Image" title="Image" rel="2">Image</a>
+            
+        
+            
+            <a href="/tags/#Upload" title="Upload" rel="2">Upload</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Login" title="Login" rel="3">Login</a>
+            
+        
+            
+            <a href="/tags/#Passport" title="Passport" rel="3">Passport</a>
+            
+        
+            
+            <a href="/tags/#Blog" title="Blog" rel="2">Blog</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Kakao" title="Kakao" rel="2">Kakao</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#LoopBack" title="LoopBack" rel="2">LoopBack</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+</section>
+
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/ironman-draw.png" />
+        
+
+        
+            <p>초고수가 되자</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+            
+            
+
+            
+
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/cheese10yun">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+            
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>RECENT POSTS</h3>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/2017/05/27/loopback-board/">Loopback 게시판 만들기 (1)</a>
+        </li>
+      
+        <li>
+          <a href="/2017/05/05/loopback-begin/">Loopback 시작하기</a>
+        </li>
+      
+        <li>
+          <a href="/2017/03/18/hexo-theme-beantech/">[Hexo] Theme BeanTech</a>
+        </li>
+      
+        <li>
+          <a href="/2017/03/04/aws-s3-imgage-/">AWS S3 업로드시 이미지 최적화</a>
+        </li>
+      
+        <li>
+          <a href="/2017/02/16/kakao-bot-node/">Node.JS로 카카오봇 만들기</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        <hr>
+    
+        <!-- Friends Blog -->
+
+        <hr>
+    
+</div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/cheese10yun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yoursite-url/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://yoursite-url/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

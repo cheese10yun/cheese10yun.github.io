@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="http://yoursite-url/archives/2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/home-bg-2-dark.png') 
+            /*config*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="site-heading">
+                        <h1>Yun Blog</h1>
+                        <!--<hr class="small">-->
+                        <span class="subheading">기술 블로</span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                <!-- Main Content -->
+
+
+<div class="post-preview">
+
+    <a href="/2017/01/28/blog-start/">
+        <h2 class="post-title">
+            블로그를 시작하려는 당신에게
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            블로그 포스팅을 하면서 이것저것 불편 하점을 느끼다 보니 Brunch에서 Tistory로 또 Tistory에서 GitHub Page
+로 어느덧 3번의 블로그 이전을 강행? 하게 되었다.
+
+개발자란 조금 더 게을러 지기 위해 더 부지런해지는 거 같다…
+나도 이제 좀 게을러지고 싶다…
+
+각 블로그 사이트들은 장단점이 있고 그것을 모르고 사용했으니 당연한 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-28
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/21/passport-thirdpart-loginl/">
+        <h2 class="post-title">
+            Passport를 이용한 네이버, 카카오, 페이스북 로그인
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+이전에 Passport 간단로그인 Passport 데이터베이스 연동을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 페이스북, 카카오, 네이버 로그인 및 회원 가입 기능을 포스팅해보겠습니다. Passport에 대해서 기초지식이 없으시며 앞서 포스티한 주제를 보시는 것을 권장드립니다. 또한 GitHub develop-passpo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-21
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Login" title="Login">Login</a>
+            
+              <a href="/tags/#Passport" title="Passport">Passport</a>
+            
+              <a href="/tags/#Kakao" title="Kakao">Kakao</a>
+            
+              <a href="/tags/#Naver" title="Naver">Naver</a>
+            
+              <a href="/tags/#Facebook" title="Facebook">Facebook</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/11/crontab-api/">
+        <h2 class="post-title">
+            Crontab을 이용한 노드 API 호출
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 포스팅할 주제는 Crontab을 이용해서 특정 시점에Node API를 호출하는 내용입니다. GitHub Brnacb develop-crontab-api에 소스코드 참고해주세요
+Crontab 간단 설명
+Crontab은 스케줄링을 관리해주는 프로그램으로 특정 시간에 사용자가 직성한 스크립트나......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-11
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Crontab" title="Crontab">Crontab</a>
+            
+              <a href="/tags/#Scheduler" title="Scheduler">Scheduler</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/10/bootstrap-modall/">
+        <h2 class="post-title">
+            Bootstrap Modal 입력값 초기화
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.
+1234$('.modal').on('hidden.bs.modal', function (e) &#123;    console.log('modal close')......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Bootstrap" title="Bootstrap">Bootstrap</a>
+            
+              <a href="/tags/#Modal" title="Modal">Modal</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/07/passport-mysql/">
+        <h2 class="post-title">
+            Node Passport를 이용한 Login + Mysql
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이전 포스팅에서는 데이터베이스 연결 없이 가단 한 문자열로 비교로 Passport를 이용해서 사용자 인증 절차를 진행했었습니다.
+이전에 간략하게 데이터베이스 연동도 포스팅했고, 이제 단순 문자열 비교가 아닌 데이터베이스를 활용하여 Passport Login 포스팅을 진행하겠습니다.
+블로그를 보고......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-07
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Login" title="Login">Login</a>
+            
+              <a href="/tags/#Passport" title="Passport">Passport</a>
+            
+              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/05/mysql-node/">
+        <h2 class="post-title">
+            Node.JS + Mysql 연동
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 정리할 내용은 Node + Mysql 연동입니다. 이미 수많은 예제가 있으나 앞으로 포스팅할 내용들이 데이터베이스가 필수적으로 필요하니 간단 정리 및 간단하게 팁?을 소개하여드리겠습니다.
+저희 회사 개발 환경은 각자 로컬에서 개발을 진행하고, 어느 정도 개발이 완료되면 테스트 서버에서 Q......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-05
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2017/01/01/Passport-part1/">
+        <h2 class="post-title">
+            Passport를 이용한 Login
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+안녕하세요 스타트업에서 근무 중인 신입 개발자입니다. 포스팅 주제는 Passport Login입니다. 사실 passport는 다른 블로그에서도 더 깊고 잘 정리한 글들이 많아서 정리하지 않으려고 했습니다. 하지만 앞으로 passport를 이용한 소셜 로그인, rest api login 처리, 데이터베이스 연동 등을 정리할 예정이라 비교적 간단하게 설......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-01-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#Login" title="Login">Login</a>
+            
+              <a href="/tags/#Passport" title="Passport">Passport</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/12/20/PM2/">
+        <h2 class="post-title">
+            PM2 이용한 Node 프로세스 관리
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 저희는 Node 프로세스 관리를 PM2 모듈을 이용해서 관리하고 있습니다. PM2에 대한 기초지식이 있으신 분들은 3번 항목만 보셔도 좋습니다.
+
+PM2 소개 및 설치
+PM2 명령어
+쉘 스크립트 PM2 제어
+
+1. PM2 소개 및 설치
+개발 중에 에러를 만나면 노드  서버가 강제로 죽어 버리는 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2016-12-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Node" title="Node">Node</a>
+            
+              <a href="/tags/#PM2" title="PM2">PM2</a>
+            
+              <a href="/tags/#Process Management" title="Process Management">Process Management</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/12/18/webStrom-part1/">
+        <h2 class="post-title">
+            WebStorm 어디까지 써봤니? part 1
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 회사 내의 기술 스펙이 거의 자바스크립트를 기반으로 두고 있어 기존에 사용해왔던 IntelliJ에서 WebStrom으로 변경하게 되었습니다. 그래서 이번 기회에 Webstrom에 좀 더 친숙해지고 사용법을 읽힐 겸 간단하게 정리해봅니다.
+물론 WebStrom 뿐만 아니라 JetBrains사의 I......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2016-12-18
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#WebStorm" title="WebStorm">WebStorm</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/12/13/new-Developer-work-challenge/">
+        <h2 class="post-title">
+            신입 개발자 취업도전기
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+                신입 개발자 취업도전기  from 남윤 김 ...
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2016-12-13
+        </p>
+        <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+        <li class="previous">
+            <a href="/">&larr; Newer Posts</a>
+        </li>
+    
+    
+        <li class="next">
+            <a href="/archives/3/">Older Posts &rarr;</a>
+        </li>
+    
+</ul>
+
+
+
+                <!-- 如果开启评论功能 -->
+                
+            </div>
+
+          <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+            
+            <a href="/tags/#Node" title="Node" rel="14">Node</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#AWS" title="AWS" rel="3">AWS</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#JavaScript" title="JavaScript" rel="4">JavaScript</a>
+            
+        
+            
+            <a href="/tags/#imagemin" title="imagemin" rel="2">imagemin</a>
+            
+        
+            
+            <a href="/tags/#S3" title="S3" rel="2">S3</a>
+            
+        
+            
+            <a href="/tags/#Image" title="Image" rel="2">Image</a>
+            
+        
+            
+            <a href="/tags/#Upload" title="Upload" rel="2">Upload</a>
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Login" title="Login" rel="3">Login</a>
+            
+        
+            
+            <a href="/tags/#Passport" title="Passport" rel="3">Passport</a>
+            
+        
+            
+            <a href="/tags/#Blog" title="Blog" rel="2">Blog</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Kakao" title="Kakao" rel="2">Kakao</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#LoopBack" title="LoopBack" rel="2">LoopBack</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+</section>
+
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
+
+        
+            <img id = "avatar_pic" src="/img/ironman-draw.png" />
+        
+
+        
+            <p>초고수가 되자</p>
+        
+
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+            
+            
+
+            
+
+            
+
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/cheese10yun">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+            
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>RECENT POSTS</h3>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/2017/05/27/loopback-board/">Loopback 게시판 만들기 (1)</a>
+        </li>
+      
+        <li>
+          <a href="/2017/05/05/loopback-begin/">Loopback 시작하기</a>
+        </li>
+      
+        <li>
+          <a href="/2017/03/18/hexo-theme-beantech/">[Hexo] Theme BeanTech</a>
+        </li>
+      
+        <li>
+          <a href="/2017/03/04/aws-s3-imgage-/">AWS S3 업로드시 이미지 최적화</a>
+        </li>
+      
+        <li>
+          <a href="/2017/02/16/kakao-bot-node/">Node.JS로 카카오봇 만들기</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        <hr>
+    
+        <!-- Friends Blog -->
+
+        <hr>
+    
+</div>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/cheese10yun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yoursite-url/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://yoursite-url/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

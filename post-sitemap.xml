@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>http://yoursite-url</loc>
+        <changefreq>daily</changefreq>
+        <priority>1</priority>
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/02/05/API-CALL/</loc>
+        <lastmod>2017-10-12T18:49:35.176Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/10/bootstrap-modall/</loc>
+        <lastmod>2017-10-12T18:32:54.386Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/05/27/loopback-board/</loc>
+        <lastmod>2017-10-12T18:15:57.285Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2016/12/12/new-developer-portfolio/</loc>
+        <lastmod>2017-10-12T17:07:56.773Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2016/12/13/new-Developer-work-challenge/</loc>
+        <lastmod>2017-10-12T17:07:44.154Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2016/12/13/Node-AWS-Nginx/</loc>
+        <lastmod>2017-10-12T17:07:34.737Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2016/12/18/webStrom-part1/</loc>
+        <lastmod>2017-10-12T17:07:27.167Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2016/12/20/PM2/</loc>
+        <lastmod>2017-10-12T17:07:19.598Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/01/Passport-part1/</loc>
+        <lastmod>2017-10-12T17:07:02.592Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/05/mysql-node/</loc>
+        <lastmod>2017-10-12T17:06:55.625Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/07/passport-mysql/</loc>
+        <lastmod>2017-10-12T17:06:46.627Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/11/crontab-api/</loc>
+        <lastmod>2017-10-12T17:06:29.922Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/21/passport-thirdpart-loginl/</loc>
+        <lastmod>2017-10-12T17:05:53.047Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/28/blog-start/</loc>
+        <lastmod>2017-10-12T17:05:35.729Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/31/blog-start-part2/</loc>
+        <lastmod>2017-10-12T17:05:25.164Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/01/31/mysql-multiple-insert/</loc>
+        <lastmod>2017-10-12T17:05:12.240Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/02/08/Node-AWS-S3-Upload/</loc>
+        <lastmod>2017-10-12T17:04:48.499Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/02/11/npm-sudo-err/</loc>
+        <lastmod>2017-10-12T17:04:34.189Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/02/16/kakao-bot-node/</loc>
+        <lastmod>2017-10-12T17:04:25.505Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/03/04/aws-s3-imgage-/</loc>
+        <lastmod>2017-10-12T17:04:15.475Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/05/05/loopback-begin/</loc>
+        <lastmod>2017-10-12T17:04:01.931Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://yoursite-url/2017/03/18/hexo-theme-beantech/</loc>
+        <lastmod>2017-10-12T13:35:05.172Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+</urlset>
+<!-- XML Sitemap generated by Hexo SEO Friendly Sitemap Generator -->
