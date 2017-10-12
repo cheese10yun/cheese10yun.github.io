@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Yun Blog</title>
+  <icon>https://www.gravatar.com/avatar/d313a2c442931458ed624a3999d75011</icon>
+  <subtitle>기술 블로</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://cheese10yun.github.io/"/>
+  <updated>2017-10-12T18:15:57.285Z</updated>
+  <id>https://cheese10yun.github.io/</id>
+  
+  <author>
+    <name>Yun</name>
+    <email>cheese10yun@gmail.com</email>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Loopback 게시판 만들기 (1)</title>
+    <link href="https://cheese10yun.github.io/loopback-board/"/>
+    <id>https://cheese10yun.github.io/loopback-board/</id>
+    <published>2017-05-26T15:00:00.000Z</published>
+    <updated>2017-10-12T18:15:57.285Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Loopback 으로 게시판을 만드는 프로젝트를 진행하겠습니다. 앞선 포스팅에서 설명 드렸다시피 Loopback은 정말 빠르게 REST API를 만들어 낼 수 있습니다. 회원 가입, 로그인, 로그아웃, ACL, 설정 등 매번 구현해야 하는
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="JavaScript" scheme="https://cheese10yun.github.io/tags/JavaScript/"/>
+    
+      <category term="LoopBack" scheme="https://cheese10yun.github.io/tags/LoopBack/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Loopback 시작하기</title>
+    <link href="https://cheese10yun.github.io/loopback-begin/"/>
+    <id>https://cheese10yun.github.io/loopback-begin/</id>
+    <published>2017-05-04T15:00:00.000Z</published>
+    <updated>2017-10-12T19:21:25.287Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="JavaScript" scheme="https://cheese10yun.github.io/tags/JavaScript/"/>
+    
+      <category term="LoopBack" scheme="https://cheese10yun.github.io/tags/LoopBack/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>AWS S3 업로드시 이미지 최적화</title>
+    <link href="https://cheese10yun.github.io/aws-s3-imgage-/"/>
+    <id>https://cheese10yun.github.io/aws-s3-imgage-/</id>
+    <published>2017-03-03T15:00:00.000Z</published>
+    <updated>2017-10-12T20:20:48.982Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;&lt;em&gt;AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다.&lt;/em&gt;&lt;/strong&gt; &lt;code&gt;formidable&lt;/code&gt; 업로드 ,
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
+    
+      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
+    
+      <category term="JavaScript" scheme="https://cheese10yun.github.io/tags/JavaScript/"/>
+    
+      <category term="Image" scheme="https://cheese10yun.github.io/tags/Image/"/>
+    
+      <category term="Upload" scheme="https://cheese10yun.github.io/tags/Upload/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node.JS로 카카오봇 만들기</title>
+    <link href="https://cheese10yun.github.io/kakao-bot-node/"/>
+    <id>https://cheese10yun.github.io/kakao-bot-node/</id>
+    <published>2017-02-15T15:00:00.000Z</published>
+    <updated>2017-10-12T21:31:52.969Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;iframe src=&quot;https://ghbtns.com/github-btn.html?user=cheese10yun&amp;repo=KaKaoBot-Node&amp;type=star&amp;count=true&amp;size=large&quot; frameborder=&quot;0&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Kakao" scheme="https://cheese10yun.github.io/tags/Kakao/"/>
+    
+      <category term="Bot" scheme="https://cheese10yun.github.io/tags/Bot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>npm sudo 권한으로 설치시 오류 해결</title>
+    <link href="https://cheese10yun.github.io/npm-sudo-err/"/>
+    <id>https://cheese10yun.github.io/npm-sudo-err/</id>
+    <published>2017-02-10T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:19.605Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div
+        
+      
+    
+    </summary>
+    
+    
+      <category term="NPM" scheme="https://cheese10yun.github.io/tags/NPM/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node AWS S3 업로드</title>
+    <link href="https://cheese10yun.github.io/Node-AWS-S3-Upload/"/>
+    <id>https://cheese10yun.github.io/Node-AWS-S3-Upload/</id>
+    <published>2017-02-07T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:19.595Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Node.Js에서 AWS S3업로드 예제입니다. 본 예제의 전체 소스는 &lt;a href=&quot;https://github.com/cheese10yun/node-yun&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;에서
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
+    
+      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
+    
+      <category term="Image Upload" scheme="https://cheese10yun.github.io/tags/Image-Upload/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node 다른 서버 API 호출</title>
+    <link href="https://cheese10yun.github.io/API-CALL/"/>
+    <id>https://cheese10yun.github.io/API-CALL/</id>
+    <published>2017-02-04T15:00:00.000Z</published>
+    <updated>2017-10-12T19:20:21.205Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;노드 서버에서 다른 API를 호출하는 방법을 소개해드리겠습니다. 물론 프론트에서 Ajax를 이용해서 다른 서버의 API를 간단하게 호출할 수 있지만 Ajax로 간단하게 호출할 수 있지만, 해당 API를 호출한 이후 자신의 서버에 해당 기록을
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="API" scheme="https://cheese10yun.github.io/tags/API/"/>
+    
+      <category term="Call" scheme="https://cheese10yun.github.io/tags/Call/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>블로그를 시작하려는 당신에게(2)</title>
+    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
+    <id>https://cheese10yun.github.io/blog-start-part2/</id>
+    <published>2017-01-30T15:00:00.000Z</published>
+    <updated>2017-10-12T20:21:17.747Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node Mysql Multiple Insert</title>
+    <link href="https://cheese10yun.github.io/mysql-multiple-insert/"/>
+    <id>https://cheese10yun.github.io/mysql-multiple-insert/</id>
+    <published>2017-01-30T15:00:00.000Z</published>
+    <updated>2017-10-12T20:22:35.234Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.&lt;br&gt;
+이러한 경우에 &lt;strong&gt;&lt;em&gt;반복문을
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
+    
+      <category term="Multiple Insert" scheme="https://cheese10yun.github.io/tags/Multiple-Insert/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>블로그를 시작하려는 당신에게</title>
+    <link href="https://cheese10yun.github.io/blog-start/"/>
+    <id>https://cheese10yun.github.io/blog-start/</id>
+    <published>2017-01-27T15:00:00.000Z</published>
+    <updated>2017-10-12T19:20:46.399Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;블로그 포스팅을 하면서 이것저것 불편 하점을 느끼다 보니 &lt;strong&gt;Brunch&lt;/strong&gt;에서 &lt;strong&gt;Tistory&lt;/strong&gt;로 또 &lt;strong&gt;Tistory&lt;/strong&gt;에서 &lt;strong&gt;GitHub
+        
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Passport를 이용한 네이버, 카카오, 페이스북 로그인</title>
+    <link href="https://cheese10yun.github.io/passport-thirdpart-loginl/"/>
+    <id>https://cheese10yun.github.io/passport-thirdpart-loginl/</id>
+    <published>2017-01-20T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:19.600Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;https://i.imgur.com/dJDKGrn.png&quot; alt=&quot;EC2 Innound&quot;&gt;&lt;/p&gt;
+&lt;p&gt;이전에 &lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Login" scheme="https://cheese10yun.github.io/tags/Login/"/>
+    
+      <category term="Passport" scheme="https://cheese10yun.github.io/tags/Passport/"/>
+    
+      <category term="Kakao" scheme="https://cheese10yun.github.io/tags/Kakao/"/>
+    
+      <category term="Naver" scheme="https://cheese10yun.github.io/tags/Naver/"/>
+    
+      <category term="Facebook" scheme="https://cheese10yun.github.io/tags/Facebook/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Crontab을 이용한 노드 API 호출</title>
+    <link href="https://cheese10yun.github.io/crontab-api/"/>
+    <id>https://cheese10yun.github.io/crontab-api/</id>
+    <published>2017-01-10T15:00:00.000Z</published>
+    <updated>2017-10-12T20:22:35.229Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 포스팅할 주제는 Crontab을 이용해서 특정 시점에Node API를 호출하는 내용입니다. &lt;a href=&quot;https://github.com/cheese10yun/node-yun&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Crontab" scheme="https://cheese10yun.github.io/tags/Crontab/"/>
+    
+      <category term="Scheduler" scheme="https://cheese10yun.github.io/tags/Scheduler/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Bootstrap Modal 입력값 초기화</title>
+    <link href="https://cheese10yun.github.io/bootstrap-modall/"/>
+    <id>https://cheese10yun.github.io/bootstrap-modall/</id>
+    <published>2017-01-09T15:00:00.000Z</published>
+    <updated>2017-10-12T20:22:35.236Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;https://i.imgur.com/SHu3JYX.png&quot; alt=&quot;EC2 Innound&quot;&gt;&lt;/p&gt;
+&lt;p&gt;부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Bootstrap" scheme="https://cheese10yun.github.io/tags/Bootstrap/"/>
+    
+      <category term="Modal" scheme="https://cheese10yun.github.io/tags/Modal/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node Passport를 이용한 Login + Mysql</title>
+    <link href="https://cheese10yun.github.io/passport-mysql/"/>
+    <id>https://cheese10yun.github.io/passport-mysql/</id>
+    <published>2017-01-06T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:19.597Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이전 포스팅에서는 데이터베이스 연결 없이 가단 한 문자열로 비교로 Passport를 이용해서 사용자 인증 절차를 진행했었습니다.&lt;/p&gt;
+&lt;p&gt;이전에 간략하게 데이터베이스 연동도
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Login" scheme="https://cheese10yun.github.io/tags/Login/"/>
+    
+      <category term="Passport" scheme="https://cheese10yun.github.io/tags/Passport/"/>
+    
+      <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node.JS + Mysql 연동</title>
+    <link href="https://cheese10yun.github.io/mysql-node/"/>
+    <id>https://cheese10yun.github.io/mysql-node/</id>
+    <published>2017-01-04T15:00:00.000Z</published>
+    <updated>2017-10-12T20:22:35.232Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 정리할 내용은 Node + Mysql 연동입니다. 이미 수많은 예제가 있으나 앞으로 포스팅할 내용들이 데이터베이스가 필수적으로 필요하니 간단 정리 및 간단하게 팁?을
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Passport를 이용한 Login</title>
+    <link href="https://cheese10yun.github.io/Passport-part1/"/>
+    <id>https://cheese10yun.github.io/Passport-part1/</id>
+    <published>2016-12-31T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:19.603Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;https://i.imgur.com/MlUddzo.png&quot; alt=&quot;EC2 Innound&quot;&gt;&lt;/p&gt;
+&lt;p&gt;안녕하세요 스타트업에서 근무 중인 신입 개발자입니다. 포스팅 주제는 Passport Login입니다. 사실
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Login" scheme="https://cheese10yun.github.io/tags/Login/"/>
+    
+      <category term="Passport" scheme="https://cheese10yun.github.io/tags/Passport/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>PM2 이용한 Node 프로세스 관리</title>
+    <link href="https://cheese10yun.github.io/PM2/"/>
+    <id>https://cheese10yun.github.io/PM2/</id>
+    <published>2016-12-19T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:38.663Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 저희는 Node 프로세스 관리를 PM2 모듈을 이용해서 관리하고 있습니다. PM2에 대한 기초지식이 있으신 분들은 3번 항목만 보셔도 좋습니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;PM2 소개 및
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="PM2" scheme="https://cheese10yun.github.io/tags/PM2/"/>
+    
+      <category term="Process Management" scheme="https://cheese10yun.github.io/tags/Process-Management/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WebStorm 어디까지 써봤니? part 1</title>
+    <link href="https://cheese10yun.github.io/webStrom-part1/"/>
+    <id>https://cheese10yun.github.io/webStrom-part1/</id>
+    <published>2016-12-17T15:00:00.000Z</published>
+    <updated>2017-10-12T20:24:38.660Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 회사 내의 기술 스펙이 거의 자바스크립트를 기반으로 두고 있어 기존에 사용해왔던 IntelliJ에서 WebStrom으로 변경하게 되었습니다. 그래서 이번 기회에 Webstrom에 좀 더
+        
+      
+    
+    </summary>
+    
+    
+      <category term="WebStorm" scheme="https://cheese10yun.github.io/tags/WebStorm/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>신입 개발자 취업도전기</title>
+    <link href="https://cheese10yun.github.io/new-Developer-work-challenge/"/>
+    <id>https://cheese10yun.github.io/new-Developer-work-challenge/</id>
+    <published>2016-12-12T15:00:00.000Z</published>
+    <updated>2017-10-12T19:21:42.808Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;iframe src=&quot;//www.slideshare.net/slideshow/embed_code/key/viQSK55PAfHjGE&quot; width=&quot;595&quot; height=&quot;485&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot;
+        
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>AWS EC2 Nginx Node.js 설정</title>
+    <link href="https://cheese10yun.github.io/Node-AWS-Nginx/"/>
+    <id>https://cheese10yun.github.io/Node-AWS-Nginx/</id>
+    <published>2016-12-12T15:00:00.000Z</published>
+    <updated>2017-10-12T20:22:54.889Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;안녕하세요. 스타트업에서 근무 중인 신입 개발자입니다. 근무하면서 얻은 정보를 정리하며 올려봅니다. 사내환경 같은 경우는 각자 로컬 환경에서 개발하고, 어느 정도 작업이 완료됐다 싶으면 테스트 서버(EC2)에 프로젝트를 올리는 작업을 아래와
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
+    
+      <category term="Nginx" scheme="https://cheese10yun.github.io/tags/Nginx/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
+    
+      <category term="EC2" scheme="https://cheese10yun.github.io/tags/EC2/"/>
+    
+  </entry>
+  
+</feed>

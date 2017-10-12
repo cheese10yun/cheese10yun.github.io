@@ -86,13 +86,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
-        <lastmod>2017-10-12T20:22:35.239Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Nginx/</loc>
         <lastmod>2017-10-12T20:22:54.889Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -142,13 +135,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Kakao/</loc>
-        <lastmod>2017-10-12T20:24:19.600Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Naver/</loc>
         <lastmod>2017-10-12T20:24:19.600Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -191,13 +177,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Node/</loc>
-        <lastmod>2017-10-12T20:24:38.663Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/PM2/</loc>
         <lastmod>2017-10-12T20:24:38.663Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -207,6 +186,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Process-Management/</loc>
         <lastmod>2017-10-12T20:24:38.663Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Node/</loc>
+        <lastmod>2017-10-12T21:31:52.969Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Kakao/</loc>
+        <lastmod>2017-10-12T21:31:52.969Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
+        <lastmod>2017-10-12T21:31:52.969Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
