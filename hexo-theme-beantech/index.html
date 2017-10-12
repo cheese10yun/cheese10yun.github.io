@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          신입 개발자 취업도전기 - Yun Blog | 기술 블로그
+          [Hexo] Theme BeanTech - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/new-Developer-work-challenge/">
+    <link rel="canonical" href="https://cheese10yun.github.io/hexo-theme-beantech/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -69,7 +69,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('undefined')
+            background-image: url('Demo.png')
             /*post*/
         
     }
@@ -90,12 +90,16 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                            
+                              <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                            
                         </div>
-                        <h1>신입 개발자 취업도전기</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>[Hexo] Theme BeanTech</h1>
+                        <h2 class="subheading">This is hexo theme Demo.</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-13
+                            2017-03-18
                         </span>
                     </div>
                 
@@ -212,7 +216,61 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <iframe src="//www.slideshare.net/slideshow/embed_code/key/viQSK55PAfHjGE" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/ssuser565d51/ss-61448739" title="신입 개발자 취업도전기" target="_blank">신입 개발자 취업도전기</a> </strong> from <strong><a target="_blank" href="//www.slideshare.net/ssuser565d51">남윤 김</a></strong> </div>
+                <blockquote>
+<p>Ported Theme of <a href="https://github.com/Huxpro/huxpro.github.io" target="_blank" rel="external">Hux Blog</a>, Thank <a href="https://github.com/Huxpro" target="_blank" rel="external">Huxpro</a> for designing such a flawless theme.</p>
+<p>This BeanTech theme created by <a href="http://beantech.org" target="_blank" rel="external">YuHsuan</a> modified from the original Porter <a href="http://kaijun.rocks/hexo-theme-huxblog/" target="_blank" rel="external">Kaijun</a></p>
+</blockquote>
+<h1><span id="live-demo"></span></h1>
+<hr>
+<p><img src="http://beantech.org/img/beantech-desktop.png" alt="BeanTech Desktop"></p>
+<h1><span id="usage">Usage</span></h1>
+<hr>
+<p>I publish the whole project for your convenience, so you can just follow the instruction down below, then you can easily customiz your own blog!</p>
+<p>Let’s begin!!!</p>
+<h2><span id="init">Init</span></h2>
+<hr>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/YenYuHsuan/hexo-theme-beantech.git ./hexo-beantech</div><div class="line"><span class="built_in">cd</span> hexo-beantech</div><div class="line">npm install</div></pre></td></tr></table></figure>
+<h2><span id="modify">Modify</span></h2>
+<hr>
+<p>Modify <code>_config.yml</code> file with your own info.<br>
+Especially the section:</p>
+<h3><span id="deployment">Deployment</span></h3>
+<p>Replace to your own repo!</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">deploy:</span></div><div class="line"><span class="attr">  type:</span> <span class="string">git</span></div><div class="line"><span class="attr">  repo:</span> <span class="attr">https://github.com/&lt;yourAccount&gt;/&lt;repo&gt;</span></div><div class="line"><span class="attr">  branch:</span> <span class="string">&lt;your-branch&gt;</span></div></pre></td></tr></table></figure>
+<h3><span id="sidebar-settings">Sidebar settings</span></h3>
+<p>Copy your avatar image to <code>&lt;root&gt;/img/</code> and modify the <code>_config.yml</code>:</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">sidebar:</span> <span class="literal">true</span>    <span class="comment"># whether or not using Sidebar.</span></div><div class="line"><span class="attr">sidebar-about-description:</span> <span class="string">"&lt;your description&gt;"</span></div><div class="line"><span class="attr">sidebar-avatar:</span> <span class="string">img/&lt;your</span> <span class="string">avatar</span> <span class="string">path&gt;</span></div></pre></td></tr></table></figure>
+<p>and activate your personal widget you like</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attr">widgets:</span>         <span class="comment"># here are widget you can use, you can comment out</span></div><div class="line"><span class="bullet">-</span> <span class="string">featured-tags</span></div><div class="line"><span class="bullet">-</span> <span class="string">short-about</span></div><div class="line"><span class="bullet">-</span> <span class="string">recent-posts</span></div><div class="line"><span class="bullet">-</span> <span class="string">friends-blog</span></div><div class="line"><span class="bullet">-</span> <span class="string">archive</span></div><div class="line"><span class="bullet">-</span> <span class="string">category</span></div></pre></td></tr></table></figure>
+<p>if you want to add sidebar widget, please add at <code>layout/_widget</code>.</p>
+<h3><span id="signature-setup">Signature Setup</span></h3>
+<p>Copy your signature image to <code>&lt;root&gt;/img/signature</code> and modify the <code>_config.yml</code>:</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">signature:</span> <span class="literal">true</span>   <span class="comment"># show signature</span></div><div class="line"><span class="attr">signature-img:</span> <span class="string">img/signature/&lt;your-signature-ID&gt;</span></div></pre></td></tr></table></figure>
+<h3><span id="go-to-top-icon-setup">Go to top icon Setup</span></h3>
+<p>My icon is using iron man, you can change to your own icon at <code>css/image</code>.</p>
+<h3><span id="post-tag">Post tag</span></h3>
+<p>You can decide to show post tags or not.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">home_posts_tag:</span> <span class="literal">true</span></div></pre></td></tr></table></figure>
+<p><img src="home_posts_tag-true.png" alt="home_posts_tag-true"></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">home_posts_tag:</span> <span class="literal">false</span></div></pre></td></tr></table></figure>
+<p><img src="home_posts_tag-false.png" alt="home_posts_tag-false"></p>
+<h3><span id="markdown-render">Markdown render</span></h3>
+<p>My markdown render engine plugin is <a href="https://github.com/celsomiranda/hexo-renderer-markdown-it" target="_blank" rel="external">hexo-renderer-markdown-it</a>.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Markdown-it config</span></div><div class="line"><span class="comment">## Docs: https://github.com/celsomiranda/hexo-renderer-markdown-it/wiki</span></div><div class="line"><span class="attr">markdown:</span></div><div class="line"><span class="attr">  render:</span></div><div class="line"><span class="attr">    html:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    xhtmlOut:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    breaks:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    linkify:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    typographer:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    quotes:</span> <span class="string">'“”‘’'</span></div></pre></td></tr></table></figure>
+<p>and if you want to change the header anchor ‘ℬ’, you can go to <code>layout/post.ejs</code> to change it.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">async</span>(<span class="string">"https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        anchors.options = &#123;</div><div class="line">          visible: <span class="string">'hover'</span>,</div><div class="line">          placement: <span class="string">'left'</span>,</div><div class="line">          icon: ℬ <span class="comment">// this is the header anchor "unicode" icon</span></div><div class="line">        &#125;;</div></pre></td></tr></table></figure>
+<h2><span id="hexo-basics">Hexo Basics</span></h2>
+<hr>
+<p>Some hexo command:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">hexo new post <span class="string">"&lt;post name&gt;"</span> <span class="comment"># you can change post to another layout if you want</span></div><div class="line">hexo clean &amp;&amp; hexo generate <span class="comment"># generate the static file</span></div><div class="line">hexo server <span class="comment"># run hexo in local environment</span></div><div class="line">hexo deploy <span class="comment"># hexo will push the static files automatically into the specific branch(gh-pages) of your repo!</span></div></pre></td></tr></table></figure>
+<h1><span id="have-fun-_">Have fun ^_^</span></h1>
+<hr>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Place this tag where you want the button to render. -->
+<p>Please <a class="github-button" href="https://github.com/YenYuHsuan/hexo-theme-beantech" data-icon="octicon-star" aria-label="Star YenYuHsuan/hexo-theme-beantech on GitHub" target="_blank" rel="external">Star</a> this Project if you like it! <a class="github-button" href="https://github.com/YenYuHsuan" aria-label="Follow @YenYuHsuan on GitHub" target="_blank" rel="external">Follow</a> would also be appreciated!<br>
+Peace!</p>
+
                 
 
                 <hr>
@@ -220,12 +278,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/Node-AWS-Nginx/" data-toggle="tooltip" data-placement="top" title="AWS EC2 Nginx Node.js 설정">&larr; Previous Post</a>
+                            <a href="/loopback-begin/" data-toggle="tooltip" data-placement="top" title="Loopback 시작하기">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/new-developer-portfolio/" data-toggle="tooltip" data-placement="top" title="신입 개발자 포트폴리오">Next Post &rarr;</a>
+                            <a href="/aws-s3-imgage-/" data-toggle="tooltip" data-placement="top" title="AWS S3 업로드시 이미지 최적화">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -255,7 +313,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="nav">none</ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Usage</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Init</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Modify</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">Deployment</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">Sidebar settings</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.3.</span> <span class="toc-nav-text">Signature Setup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.4.</span> <span class="toc-nav-text">Go to top icon Setup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.5.</span> <span class="toc-nav-text">Post tag</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.6.</span> <span class="toc-nav-text">Markdown render</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">Hexo Basics</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Have fun ^_^</span></a></li></ol>
         
         </div>
       </aside>
@@ -275,6 +333,10 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                        
+                          <a class="tag" href="/tags/#Hexo" title="Hexo">Hexo</a>
+                        
                     </div>
                 </section>
                 
@@ -293,8 +355,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "cheese10yun";
-    var disqus_identifier = "https://cheese10yun.github.io/new-Developer-work-challenge/";
-    var disqus_url = "https://cheese10yun.github.io/new-Developer-work-challenge/";
+    var disqus_identifier = "https://cheese10yun.github.io/hexo-theme-beantech/";
+    var disqus_url = "https://cheese10yun.github.io/hexo-theme-beantech/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
