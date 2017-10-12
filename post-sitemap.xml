@@ -7,7 +7,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/02/05/API-CALL/</loc>
+        <loc>http://yoursite-url/API-CALL/</loc>
         <lastmod>2017-10-12T18:49:35.176Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -15,7 +15,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/10/bootstrap-modall/</loc>
+        <loc>http://yoursite-url/bootstrap-modall/</loc>
         <lastmod>2017-10-12T18:32:54.386Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -23,7 +23,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/05/27/loopback-board/</loc>
+        <loc>http://yoursite-url/loopback-board/</loc>
         <lastmod>2017-10-12T18:15:57.285Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -31,7 +31,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2016/12/12/new-developer-portfolio/</loc>
+        <loc>http://yoursite-url/new-developer-portfolio/</loc>
         <lastmod>2017-10-12T17:07:56.773Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -39,7 +39,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2016/12/13/new-Developer-work-challenge/</loc>
+        <loc>http://yoursite-url/new-Developer-work-challenge/</loc>
         <lastmod>2017-10-12T17:07:44.154Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -47,7 +47,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2016/12/13/Node-AWS-Nginx/</loc>
+        <loc>http://yoursite-url/Node-AWS-Nginx/</loc>
         <lastmod>2017-10-12T17:07:34.737Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -55,7 +55,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2016/12/18/webStrom-part1/</loc>
+        <loc>http://yoursite-url/webStrom-part1/</loc>
         <lastmod>2017-10-12T17:07:27.167Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -63,7 +63,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2016/12/20/PM2/</loc>
+        <loc>http://yoursite-url/PM2/</loc>
         <lastmod>2017-10-12T17:07:19.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -71,7 +71,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/01/Passport-part1/</loc>
+        <loc>http://yoursite-url/Passport-part1/</loc>
         <lastmod>2017-10-12T17:07:02.592Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -79,7 +79,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/05/mysql-node/</loc>
+        <loc>http://yoursite-url/mysql-node/</loc>
         <lastmod>2017-10-12T17:06:55.625Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -87,7 +87,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/07/passport-mysql/</loc>
+        <loc>http://yoursite-url/passport-mysql/</loc>
         <lastmod>2017-10-12T17:06:46.627Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -95,7 +95,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/11/crontab-api/</loc>
+        <loc>http://yoursite-url/crontab-api/</loc>
         <lastmod>2017-10-12T17:06:29.922Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -103,7 +103,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/21/passport-thirdpart-loginl/</loc>
+        <loc>http://yoursite-url/passport-thirdpart-loginl/</loc>
         <lastmod>2017-10-12T17:05:53.047Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -111,7 +111,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/28/blog-start/</loc>
+        <loc>http://yoursite-url/blog-start/</loc>
         <lastmod>2017-10-12T17:05:35.729Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -119,7 +119,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/31/blog-start-part2/</loc>
+        <loc>http://yoursite-url/blog-start-part2/</loc>
         <lastmod>2017-10-12T17:05:25.164Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -127,7 +127,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/01/31/mysql-multiple-insert/</loc>
+        <loc>http://yoursite-url/mysql-multiple-insert/</loc>
         <lastmod>2017-10-12T17:05:12.240Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -135,7 +135,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/02/08/Node-AWS-S3-Upload/</loc>
+        <loc>http://yoursite-url/Node-AWS-S3-Upload/</loc>
         <lastmod>2017-10-12T17:04:48.499Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -143,7 +143,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/02/11/npm-sudo-err/</loc>
+        <loc>http://yoursite-url/npm-sudo-err/</loc>
         <lastmod>2017-10-12T17:04:34.189Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -151,7 +151,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/02/16/kakao-bot-node/</loc>
+        <loc>http://yoursite-url/kakao-bot-node/</loc>
         <lastmod>2017-10-12T17:04:25.505Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -159,7 +159,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/03/04/aws-s3-imgage-/</loc>
+        <loc>http://yoursite-url/aws-s3-imgage-/</loc>
         <lastmod>2017-10-12T17:04:15.475Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -167,7 +167,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/05/05/loopback-begin/</loc>
+        <loc>http://yoursite-url/loopback-begin/</loc>
         <lastmod>2017-10-12T17:04:01.931Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -175,7 +175,7 @@
     </url>
 
     <url>
-        <loc>http://yoursite-url/2017/03/18/hexo-theme-beantech/</loc>
+        <loc>http://yoursite-url/hexo-theme-beantech/</loc>
         <lastmod>2017-10-12T13:35:05.172Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

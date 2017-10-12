@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Passport를 이용한 네이버, 카카오, 페이스북 로그인 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="http://yoursite-url/passport-thirdpart-loginl/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('undefined')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                            
+                              <a class="tag" href="/tags/#Login" title="Login">Login</a>
+                            
+                              <a class="tag" href="/tags/#Passport" title="Passport">Passport</a>
+                            
+                              <a class="tag" href="/tags/#Kakao" title="Kakao">Kakao</a>
+                            
+                              <a class="tag" href="/tags/#Naver" title="Naver">Naver</a>
+                            
+                              <a class="tag" href="/tags/#Facebook" title="Facebook">Facebook</a>
+                            
+                        </div>
+                        <h1>Passport를 이용한 네이버, 카카오, 페이스북 로그인</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2017-01-21
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><img src="https://i.imgur.com/dJDKGrn.png" alt="EC2 Innound"></p>
+<p>이전에 <a href="https://cheese10yun.github.io/2017/01/01/Passport-part1/" target="_blank" rel="external">Passport 간단로그인</a> <a href="https://cheese10yun.github.io/2017/01/05/passport-mysql/" target="_blank" rel="external">Passport 데이터베이스 연동</a>을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 <strong>페이스북, 카카오, 네이버 로그인 및 회원 가입</strong> 기능을 포스팅해보겠습니다. Passport에 대해서 기초지식이 없으시며 앞서 포스티한 주제를 보시는 것을 권장드립니다. 또한 <a href="https://github.com/cheese10yun/node-yun" target="_blank" rel="external">GitHub develop-passport-social-login</a>에 올려져있는 전체 소스를 보는 것을 권장드립니다.</p>
+<h3><span id="developers-등록">Developers 등록</span></h3>
+<p><img src="https://i.imgur.com/2qLERpk.png" alt="EC2 Innound"></p>
+<p>본 포스팅에서는 개발자 등록은 다루지 않겠습니다. 아래의 작업을 하기위해서는 네이버, 카카오, 페이스북 개발자 센터에서 앱설정을 완료해주세요. 본 포스팅은 Passport 로직에 집중하겠습니다.</p>
+<h3><span id="필수-모듈설치-및-require">필수 모듈설치 및 require</span></h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install passport-facebook --save</div><div class="line">npm install passport-kakao --save</div><div class="line">npm install passport-naver --save</div></pre></td></tr></table></figure>
+<p><code>index.js(router)</code>설치한 모듈을 require 시켜줍니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> NaverStrategy = <span class="built_in">require</span>(<span class="string">'passport-naver'</span>).Strategy;</div><div class="line"><span class="keyword">var</span> FacebookStrategy = <span class="built_in">require</span>(<span class="string">'passport-facebook'</span>).Strategy;</div><div class="line"><span class="keyword">var</span> KakaoStrategy = <span class="built_in">require</span>(<span class="string">'passport-kakao'</span>).Strategy;</div></pre></td></tr></table></figure>
+<h3><span id="developers-정보-등록">Developers 정보 등록</span></h3>
+<p>더이상 데이터베이스 정보만 갖고 있지 않아 <code>db_info.js</code> 에서 <code>secret.js</code> 변경했습니다. <code>db_info</code> 로 데이터베이스 접근을 진행하겠습니다. 자세한 내용은 아래에서 다시 설명드리겠습니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="string">'secret'</span> :  <span class="string">''</span>,</div><div class="line">  <span class="string">'db_info'</span>: &#123;</div><div class="line">    local: &#123; <span class="comment">// localhost</span></div><div class="line">    ...</div><div class="line">    &#125;,</div><div class="line">    real: &#123; <span class="comment">// real</span></div><div class="line">    ...</div><div class="line">    &#125;,</div><div class="line">    dev: &#123; <span class="comment">// dev</span></div><div class="line">    ...</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  <span class="string">'federation'</span> : &#123;</div><div class="line">    <span class="string">'naver'</span> : &#123;</div><div class="line">      <span class="string">'client_id'</span> : <span class="string">''</span>,</div><div class="line">      <span class="string">'secret_id'</span> : <span class="string">''</span>,</div><div class="line">      <span class="string">'callback_url'</span> : <span class="string">'/auth/login/naver/callback'</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">'facebook'</span> : &#123;</div><div class="line">      <span class="string">'client_id'</span> : <span class="string">''</span>,</div><div class="line">      <span class="string">'secret_id'</span> : <span class="string">''</span>,</div><div class="line">      <span class="string">'callback_url'</span> : <span class="string">'/auth/login/facebook/callback'</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">'kakao'</span> : &#123;</div><div class="line">      <span class="string">'client_id'</span> : <span class="string">''</span>,</div><div class="line">      <span class="string">'callback_url'</span> : <span class="string">'/auth/login/kakao/callback'</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p><code>federation</code> 객체에 네이버, 카카오, 페이스북 Developers 정보를 입력합니다.  <code>secret.js</code>  민감한 정보를 갖고있는 파일들은 프로젝트 디렉토리에 포함시키지 않는 것이 바람직합니다. 깃허브에는 소스코드를 공개하기 위해서 업로드하긴 했습니다… <del>안티패턴도 좋은 경험 입니다.</del></p>
+<h3><span id="회원-가입-페이지">회원 가입 페이지</span></h3>
+<p><code>login.hbs &lt;a href&gt;</code> 태그에 로그인 처리를 담당할 URL을 입력합니다. 자세한 로직은 아래에서 설명하겠습니다.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"/login"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">name</span>=<span class="string">"frm_login"</span> <span class="attr">id</span>=<span class="string">"frm_login"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-dialog"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-content"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-header"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">h1</span> <span class="attr">class</span>=<span class="string">"text-center"</span>&gt;</span>Node JS Passport Login<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"modal-body"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"username"</span> <span class="attr">name</span>=<span class="string">"username"</span> <span class="attr">class</span>=<span class="string">"form-control input-lg"</span> <span class="attr">placeholder</span>=<span class="string">"ID"</span> <span class="attr">required</span>=<span class="string">"required"</span> <span class="attr">autocomplete</span>=<span class="string">"off"</span> /&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"errorTxt"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">id</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">class</span>=<span class="string">"form-control input-lg"</span> <span class="attr">placeholder</span>=<span class="string">"Password"</span> <span class="attr">required</span>=<span class="string">"required"</span> <span class="attr">autocomplete</span>=<span class="string">"off"</span> /&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"errorTxt"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">class</span>=<span class="string">"btn btn-block btn-lg btn-default btn_login"</span> <span class="attr">value</span>=<span class="string">"Login"</span> /&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/auth/login/facebook"</span> <span class="attr">class</span>=<span class="string">"btn btn-block btn-lg btn-primary btn_login"</span>&gt;</span>FaceBook<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/auth/login/kakao"</span> <span class="attr">class</span>=<span class="string">"btn btn-block btn-lg btn-warning btn_login"</span>&gt;</span>KaKao<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/auth/login/naver"</span> <span class="attr">class</span>=<span class="string">"btn btn-block btn-lg btn-success btn_login"</span>&gt;</span>Naver<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3><span id="passport-로직-구현">Passport 로직 구현</span></h3>
+<p><code>index.js(router)</code><strong>네이버 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> secret_config = <span class="built_in">require</span>(<span class="string">'../commons/secret'</span>);</div><div class="line"></div><div class="line">passport.use(<span class="keyword">new</span> NaverStrategy(&#123;</div><div class="line">    clientID: secret_config.federation.naver.client_id,</div><div class="line">    clientSecret: secret_config.federation.naver.secret_id,</div><div class="line">    callbackURL: secret_config.federation.naver.callback_url</div><div class="line">  &#125;,</div><div class="line">  <span class="function"><span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> _profile = profile._json;</div><div class="line"></div><div class="line">    loginByThirdparty(&#123;</div><div class="line">      <span class="string">'auth_type'</span>: <span class="string">'naver'</span>,</div><div class="line">      <span class="string">'auth_id'</span>: _profile.id,</div><div class="line">      <span class="string">'auth_name'</span>: _profile.nickname,</div><div class="line">      <span class="string">'auth_email'</span>: _profile.email</div><div class="line">    &#125;, done);</div><div class="line">  &#125;</div><div class="line">));</div></pre></td></tr></table></figure>
+<p><code>index.js(router)</code><strong>카카오 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">passport.use(<span class="keyword">new</span> KakaoStrategy(&#123;</div><div class="line">    clientID: secret_config.federation.kakao.client_id,</div><div class="line">    callbackURL: secret_config.federation.kakao.callback_url</div><div class="line">  &#125;,</div><div class="line">  <span class="function"><span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> _profile = profile._json;</div><div class="line"></div><div class="line">    loginByThirdparty(&#123;</div><div class="line">      <span class="string">'auth_type'</span>: <span class="string">'kakao'</span>,</div><div class="line">      <span class="string">'auth_id'</span>: _profile.id,</div><div class="line">      <span class="string">'auth_name'</span>: _profile.properties.nickname,</div><div class="line">      <span class="string">'auth_email'</span>: _profile.id</div><div class="line">    &#125;, done);</div><div class="line">  &#125;</div><div class="line">));</div></pre></td></tr></table></figure>
+<p><code>index.js(router)</code> <strong>페이스북 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">passport.use(<span class="keyword">new</span> FacebookStrategy(&#123;</div><div class="line">    clientID: secret_config.federation.facebook.client_id,</div><div class="line">    clientSecret: secret_config.federation.facebook.secret_id,</div><div class="line">    callbackURL: secret_config.federation.facebook.callback_url,</div><div class="line">    profileFields: [<span class="string">'id'</span>, <span class="string">'email'</span>, <span class="string">'gender'</span>, <span class="string">'link'</span>, <span class="string">'locale'</span>, <span class="string">'name'</span>, <span class="string">'timezone'</span>,</div><div class="line">      <span class="string">'updated_time'</span>, <span class="string">'verified'</span>, <span class="string">'displayName'</span>]</div><div class="line">  &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> _profile = profile._json;</div><div class="line"></div><div class="line">    loginByThirdparty(&#123;</div><div class="line">      <span class="string">'auth_type'</span>: <span class="string">'facebook'</span>,</div><div class="line">      <span class="string">'auth_id'</span>: _profile.id,</div><div class="line">      <span class="string">'auth_name'</span>: _profile.name,</div><div class="line">      <span class="string">'auth_email'</span>: _profile.id</div><div class="line">    &#125;, done);</div><div class="line">  &#125;</div><div class="line">));</div></pre></td></tr></table></figure>
+<ul>
+<li>accessToken : OAtuh tokken을 이용해서 네이버, 카카오, 페이스북 오픈 API를 호출합니다.</li>
+<li>refreshToken : tokken이 만료되었을 때 재발급을 용청합니다.</li>
+<li>profile : 네이버, 카카오, 페이스북의 사용자의 정보가 들어있습니다. (이걸 얻기위해서…이 많은 소스를…)</li>
+</ul>
+<p>로직은 크게 다르지 않아 한 번에 설명하겠습니다. <code>secret.js</code> <code>federation</code> 객체있는 <code>client_id, secret_id, callback_url</code>를  passport 에 바인딩 시킵니다.  profile 파라미터로 네이버, 카카오, 페이스북 프로필 정보가 각기 다르게 들어오기 때문에 공통이름으로 바인딩 시키고 <code>loginByThirdparty()</code> 메서드에 바인딩 시킨 유저 정보와 done을 넘겨 줍니다. <code>loginByThirdparty()</code> 메서드에서 로그인 처리 및 회원 가입 절차가 진행되게 됩니다. 아래에서 자세하게 설명하겠습니다.</p>
+<p><code>index.js(router)</code>라우처 처리</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// naver 로그인</span></div><div class="line">router.get(<span class="string">'/auth/login/naver'</span>,</div><div class="line">  passport.authenticate(<span class="string">'naver'</span>)</div><div class="line">);</div><div class="line"><span class="comment">// naver 로그인 연동 콜백</span></div><div class="line">router.get(<span class="string">'/auth/login/naver/callback'</span>,</div><div class="line">  passport.authenticate(<span class="string">'naver'</span>, &#123;</div><div class="line">    successRedirect: <span class="string">'/'</span>,</div><div class="line">    failureRedirect: <span class="string">'/login'</span></div><div class="line">  &#125;)</div><div class="line">);</div><div class="line"></div><div class="line"><span class="comment">// kakao 로그인</span></div><div class="line">router.get(<span class="string">'/auth/login/kakao'</span>,</div><div class="line">  passport.authenticate(<span class="string">'kakao'</span>)</div><div class="line">);</div><div class="line"><span class="comment">// kakao 로그인 연동 콜백</span></div><div class="line">router.get(<span class="string">'/auth/login/kakao/callback'</span>,</div><div class="line">  passport.authenticate(<span class="string">'kakao'</span>, &#123;</div><div class="line">    successRedirect: <span class="string">'/'</span>,</div><div class="line">    failureRedirect: <span class="string">'/login'</span></div><div class="line">  &#125;)</div><div class="line">);</div><div class="line"></div><div class="line"><span class="comment">// facebook 로그인</span></div><div class="line">router.get(<span class="string">'/auth/login/facebook'</span>,</div><div class="line">  passport.authenticate(<span class="string">'facebook'</span>)</div><div class="line">);</div><div class="line"><span class="comment">// facebook 로그인 연동 콜백</span></div><div class="line">router.get(<span class="string">'/auth/login/facebook/callback'</span>,</div><div class="line">  passport.authenticate(<span class="string">'facebook'</span>, &#123;</div><div class="line">    successRedirect: <span class="string">'/'</span>,</div><div class="line">    failureRedirect: <span class="string">'/login'</span></div><div class="line">  &#125;)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>반복적인 소스라 대표적으로 <strong>Naver</strong> 기준으로 통합해서 설명하겠습니다. <code>login.hbs</code> 에서 네이버 로그인을 클릭했을 경우 <code>router.get('/auth/login/naver'...)</code> 으로 요청이들어고 아래의 <code>NaverStrategy</code> 모듈로 다시 전달됩니다.</p>
+<p><code>passport.use(new NaverStrategy(...)</code> 여기에서는 OAuth 요청을 만들어서 네이버 로그인 처리를 진행하고 요청결과를 아래의 라우터로 리다이렉트를 시켜줍니다.</p>
+<p><code>router.get('/auth/login/naver/callback'...)</code> 해당 라우터는 로그인이 성공할 경우 인덱스 페이지로 리다이렉트 시켜주고 실패할 경우에는 다시 <code>'/login'</code> 다시 로그인 페이지로 리다이렉트 시켜줍니다.</p>
+<h3><span id="로그인-및-회원-가입-로직">로그인 및 회원 가입 로직</span></h3>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loginByThirdparty</span>(<span class="params">info, done</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'process : '</span> + info.auth_type);</div><div class="line">  <span class="keyword">var</span> stmt_duplicated = <span class="string">'select *from `user` where `user_id` = ?'</span>;</div><div class="line"></div><div class="line">  connection.query(stmt_duplicated, info.auth_id, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">      <span class="keyword">return</span> done(err);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">if</span> (result.length === <span class="number">0</span>) &#123;</div><div class="line">        <span class="comment">// 신규 유저는 회원 가입 이후 로그인 처리</span></div><div class="line">        <span class="keyword">var</span> stmt_thridparty_signup = <span class="string">'insert into `user` set `user_id`= ?, `nickname`= ?'</span>;</div><div class="line">        connection.query(stmt_thridparty_signup, [info.auth_id, info.auth_name], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">          <span class="keyword">if</span>(err)&#123;</div><div class="line">            <span class="keyword">return</span> done(err);</div><div class="line">          &#125;<span class="keyword">else</span>&#123;</div><div class="line">            done(<span class="literal">null</span>, &#123;</div><div class="line">              <span class="string">'user_id'</span>: info.auth_id,</div><div class="line">              <span class="string">'nickname'</span>: info.auth_name</div><div class="line">            &#125;);</div><div class="line">          &#125;</div><div class="line">        &#125;);</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//기존유저 로그인 처리</span></div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'Old User'</span>);</div><div class="line">        done(<span class="literal">null</span>, &#123;</div><div class="line">          <span class="string">'user_id'</span>: result[<span class="number">0</span>].user_id,</div><div class="line">          <span class="string">'nickname'</span>: result[<span class="number">0</span>].nickname</div><div class="line">        &#125;);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>auth.id</code> 기반으로 신규 회원인지 기존 회원인지 판단합니다. 신규 회원일 경우에는 <code>user</code> 테이블에 회원 정보를 저장 시키고 로그인 처리를 진행하고, 기존 유저일 경우에는 쿼리로 조회한 회원정보를 기반으로 로그인 처리를 진행합니다.<br>
+간단하게 말씀드리면 신규회원이든 기존 회원이든 원클릭으로 회원 가입 절차를 진행하게 할 수 있습니다.</p>
+<p>사실 위의 예제는 좀 과격?한 부분이 좀있습니다. <code>auth.id</code> 는 중복될 일이 거의 없을 거 같긴 하지만  <code>auth.nickname</code> 같은 경우는 중복의 여지가 상당합니다. 사실 위의 예제는 중복의 여지가 있으니 추후 로직은 각자 알아서…<del>안티패턴도 좋은 경험 입니다.</del></p>
+<p>저희 서비스에는 타 게임회사의 계정과 연동해야 하기 때문에 소셜 회원가입을 진행한 사용자에 대해서는 게임 로그인 진행 전에 아이디, 패스워드, 닉네임값을 한 번 더 입력 더 받고 있습니다.</p>
+<p>교보문고 사이트 경우에도 네이버 아이디로 회원가입을 진행하고 교보문고 계정에 대해서 아이디, 패스워드를 한 번 더 입력받는 시스템입니다. <del>우리만 그런게 아니야…</del></p>
+<h3><span id="마무리">마무리</span></h3>
+<p>위의 예제는 깃허브에 있는 전체 코드를 보시는 것을 권장해 드립니다. 생각보다 예제소스가 길어서 설명하는 게 매끄럽지 못한 거 같습니다. 로그인 및 회원 가입 로직은 각자 환경에 맞게 설계해야 할 거 같아 최대한 단순하게 로직 처리를 진행하게 됐습니다. 긴글 읽어주셔서 감사합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/blog-start/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/crontab-api/" data-toggle="tooltip" data-placement="top" title="Crontab을 이용한 노드 API 호출">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                        
+                          <a class="tag" href="/tags/#Login" title="Login">Login</a>
+                        
+                          <a class="tag" href="/tags/#Passport" title="Passport">Passport</a>
+                        
+                          <a class="tag" href="/tags/#Kakao" title="Kakao">Kakao</a>
+                        
+                          <a class="tag" href="/tags/#Naver" title="Naver">Naver</a>
+                        
+                          <a class="tag" href="/tags/#Facebook" title="Facebook">Facebook</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "engineeryun";
+    var disqus_identifier = "http://yoursite-url/passport-thirdpart-loginl/";
+    var disqus_url = "http://yoursite-url/passport-thirdpart-loginl/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/cheese10yun">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yoursite-url/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://yoursite-url/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
