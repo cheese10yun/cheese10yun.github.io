@@ -86,6 +86,13 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <lastmod>2017-10-12T19:21:48.729Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
         <lastmod>2017-10-12T19:21:48.729Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -94,13 +101,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
-        <lastmod>2017-10-12T19:21:48.729Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2017-10-12T19:21:48.729Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
