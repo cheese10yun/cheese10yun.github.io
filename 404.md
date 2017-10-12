@@ -1,5 +1,0 @@
----
-layout: 404
-description: "你来到了没有知识的荒原 :("
-header-img: "img/404-bg.jpg"
----
