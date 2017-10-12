@@ -92,11 +92,11 @@
                             
                               <a class="tag" href="/tags/#Node" title="Node">Node</a>
                             
-                              <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                            
                               <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
                             
                               <a class="tag" href="/tags/#imagemin" title="imagemin">imagemin</a>
+                            
+                              <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
                             
                               <a class="tag" href="/tags/#S3" title="S3">S3</a>
                             
@@ -268,7 +268,7 @@
 <li><code>params.Key</code> S3에 업로드 될 경로와 파일이름을 지정합니다.</li>
 <li><code>params.Body</code> 이미지 최적화 작업이 끝난 파일의 경로를 입력합니다.</li>
 <li><code>S3.upload(...)</code> 실질적인 S3 이미지 업로드가 진행됩니다. <code>cb(err, result)</code>으로 에러가 발생하면 즉시 정지하고, 에러가 발생하지 않으면 파일의 개수만큼 업로드를 반복합니다.</li>
-<li><a href="https://cheese10yun.github.io/Node-AWS-S3-Upload" target="_blank" rel="external">Yun Blog Node AWS S3 업로드</a> 자세한 설명은 참고</li>
+<li><a href="https://cheese10yun.github.io/Node-AWS-S3-Upload">Yun Blog Node AWS S3 업로드</a> 자세한 설명은 참고</li>
 </ul>
 <h2><span id="router-에서-사용법">router 에서 사용법</span></h2>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">router.post(<span class="string">'/upload'</span>, (req, res) =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> tasks = [</div><div class="line">    (callback) =&gt; &#123;</div><div class="line">      Upload.formidable(req, (err, files, fields) =&gt; &#123;</div><div class="line">        callback(err, files, fields);</div><div class="line">      &#125;);</div><div class="line">    &#125;,</div><div class="line">    (files, fields, callback) =&gt; &#123;</div><div class="line">      Upload.optimize(files, (err) =&gt; &#123;</div><div class="line">        callback(err, files, fields);</div><div class="line">      &#125;);</div><div class="line">    &#125;,</div><div class="line">    (files, fields, callback) =&gt; &#123;</div><div class="line">      Upload.s3(files, <span class="string">'channel/test/'</span>, (err, result) =&gt; &#123;</div><div class="line">        callback(err, result)</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line">  ];</div><div class="line">  <span class="keyword">async</span>.waterfall(tasks, (err, result) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (!err) &#123;</div><div class="line">      res.json(&#123;<span class="attr">success</span>: <span class="literal">true</span>, <span class="attr">msg</span>: <span class="string">'업로드 성공'</span>&#125;)</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      res.json(&#123;<span class="attr">success</span>: <span class="literal">false</span>, <span class="attr">msg</span>: <span class="string">'업로드 실패'</span>&#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
@@ -337,7 +337,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/hexo-theme-beantech/" data-toggle="tooltip" data-placement="top" title="[Hexo] Theme BeanTech">&larr; Previous Post</a>
+                            <a href="/loopback-begin/" data-toggle="tooltip" data-placement="top" title="Loopback 시작하기">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -394,11 +394,11 @@
                        
                           <a class="tag" href="/tags/#Node" title="Node">Node</a>
                         
-                          <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                        
                           <a class="tag" href="/tags/#JavaScript" title="JavaScript">JavaScript</a>
                         
                           <a class="tag" href="/tags/#imagemin" title="imagemin">imagemin</a>
+                        
+                          <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
                         
                           <a class="tag" href="/tags/#S3" title="S3">S3</a>
                         

@@ -111,14 +111,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/hexo-theme-beantech/</loc>
-        <lastmod>2017-10-12T19:21:01.525Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/crontab-api/</loc>
         <lastmod>2017-10-12T19:20:55.548Z</lastmod>
         <changefreq>weekly</changefreq>
