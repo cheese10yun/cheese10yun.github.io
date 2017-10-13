@@ -7,8 +7,16 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/packageFile-API/</loc>
+        <lastmod>2017-10-13T17:27:03.520Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/loopback-board/</loc>
-        <lastmod>2017-10-12T22:14:49.274Z</lastmod>
+        <lastmod>2017-10-13T17:23:37.957Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
