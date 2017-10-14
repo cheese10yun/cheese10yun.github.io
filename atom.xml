@@ -248,6 +248,29 @@
   </entry>
   
   <entry>
+    <title>블로그를 시작하려는 당신에게(2)</title>
+    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
+    <id>https://cheese10yun.github.io/blog-start-part2/</id>
+    <published>2017-01-30T15:00:00.000Z</published>
+    <updated>2017-10-12T20:21:17.747Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
+      
+    
+    </summary>
+    
+    
+      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Node Mysql Multiple Insert</title>
     <link href="https://cheese10yun.github.io/mysql-multiple-insert/"/>
     <id>https://cheese10yun.github.io/mysql-multiple-insert/</id>
@@ -272,29 +295,6 @@
       <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
     
       <category term="Multiple Insert" scheme="https://cheese10yun.github.io/tags/Multiple-Insert/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>블로그를 시작하려는 당신에게(2)</title>
-    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
-    <id>https://cheese10yun.github.io/blog-start-part2/</id>
-    <published>2017-01-30T15:00:00.000Z</published>
-    <updated>2017-10-12T20:21:17.747Z</updated>
-    
-    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
-      
-    
-    </summary>
-    
-    
-      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
     
   </entry>
   
