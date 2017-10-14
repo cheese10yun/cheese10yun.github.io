@@ -14,6 +14,14 @@
     <meta property="fb:app_id" content="175938796225834">
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Tags - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/tags/">
+    <meta property="og:description" content="Tags - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+
+
+
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -220,6 +228,10 @@
                 
                     <a href="#EC2" title="EC2" rel="1">EC2</a>
                 
+                    <a href="#Login" title="Login" rel="3">Login</a>
+                
+                    <a href="#Passport" title="Passport" rel="3">Passport</a>
+                
                     <a href="#API" title="API" rel="2">API</a>
                 
                     <a href="#Call" title="Call" rel="1">Call</a>
@@ -230,9 +242,9 @@
                 
                     <a href="#Image Upload" title="Image Upload" rel="1">Image Upload</a>
                 
-                    <a href="#Login" title="Login" rel="3">Login</a>
+                    <a href="#PM2" title="PM2" rel="1">PM2</a>
                 
-                    <a href="#Passport" title="Passport" rel="3">Passport</a>
+                    <a href="#Process Management" title="Process Management" rel="1">Process Management</a>
                 
                     <a href="#JavaScript" title="JavaScript" rel="3">JavaScript</a>
                 
@@ -240,17 +252,13 @@
                 
                     <a href="#Upload" title="Upload" rel="1">Upload</a>
                 
-                    <a href="#Crontab" title="Crontab" rel="1">Crontab</a>
-                
-                    <a href="#Scheduler" title="Scheduler" rel="1">Scheduler</a>
-                
-                    <a href="#PM2" title="PM2" rel="1">PM2</a>
-                
-                    <a href="#Process Management" title="Process Management" rel="1">Process Management</a>
-                
                     <a href="#Bootstrap" title="Bootstrap" rel="1">Bootstrap</a>
                 
                     <a href="#Modal" title="Modal" rel="1">Modal</a>
+                
+                    <a href="#Crontab" title="Crontab" rel="1">Crontab</a>
+                
+                    <a href="#Scheduler" title="Scheduler" rel="1">Scheduler</a>
                 
                     <a href="#Kakao" title="Kakao" rel="2">Kakao</a>
                 
@@ -262,15 +270,15 @@
                 
                     <a href="#Multiple Insert" title="Multiple Insert" rel="1">Multiple Insert</a>
                 
-                    <a href="#NPM" title="NPM" rel="1">NPM</a>
-                
                     <a href="#Package" title="Package" rel="1">Package</a>
                 
-                    <a href="#WebStorm" title="WebStorm" rel="1">WebStorm</a>
+                    <a href="#NPM" title="NPM" rel="1">NPM</a>
                 
                     <a href="#Naver" title="Naver" rel="1">Naver</a>
                 
                     <a href="#Facebook" title="Facebook" rel="1">Facebook</a>
+                
+                    <a href="#WebStorm" title="WebStorm" rel="1">WebStorm</a>
                 
             </div>
 
@@ -353,6 +361,21 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
+                     <a href="/Passport-part1/">
+                        <h2 class="post-title">
+                            Passport를 이용한 Login
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
                      <a href="/API-CALL/">
                         <h2 class="post-title">
                             Node 다른 서버 API 호출
@@ -383,9 +406,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Passport-part1/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            Passport를 이용한 Login
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -428,9 +451,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/PM2/">
+                     <a href="/kakao-bot-node/">
                         <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
+                            Node.JS로 카카오봇 만들기
                         </h2>
                         
                     </a>
@@ -443,10 +466,14 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/kakao-bot-node/">
+                     <a href="/loopback-board/">
                         <h2 class="post-title">
-                            Node.JS로 카카오봇 만들기
+                            Loopback 게시판 만들기 (1)
                         </h2>
+                        
+                            <h3 class="post-subtitle">
+                                초간단 게시판 만들기
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -503,14 +530,10 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/loopback-board/">
+                     <a href="/packageFile-API/">
                         <h2 class="post-title">
-                            Loopback 게시판 만들기 (1)
+                            Package.json 파일로 API 버전 설정
                         </h2>
-                        
-                            <h3 class="post-subtitle">
-                                초간단 게시판 만들기
-                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -525,21 +548,6 @@
                      <a href="/passport-mysql/">
                         <h2 class="post-title">
                             Node Passport를 이용한 Login + Mysql
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/packageFile-API/">
-                        <h2 class="post-title">
-                            Package.json 파일로 API 버전 설정
                         </h2>
                         
                     </a>
@@ -629,6 +637,110 @@
                      <a href="/Node-AWS-Nginx/">
                         <h2 class="post-title">
                             AWS EC2 Nginx Node.js 설정
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Login">
+                    <span class="tag-text">Login</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/Passport-part1/">
+                        <h2 class="post-title">
+                            Passport를 이용한 Login
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/passport-mysql/">
+                        <h2 class="post-title">
+                            Node Passport를 이용한 Login + Mysql
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/passport-thirdpart-loginl/">
+                        <h2 class="post-title">
+                            Passport를 이용한 네이버, 카카오, 페이스북 로그인
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Passport">
+                    <span class="tag-text">Passport</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/Passport-part1/">
+                        <h2 class="post-title">
+                            Passport를 이용한 Login
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/passport-mysql/">
+                        <h2 class="post-title">
+                            Node Passport를 이용한 Login + Mysql
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/passport-thirdpart-loginl/">
+                        <h2 class="post-title">
+                            Passport를 이용한 네이버, 카카오, 페이스북 로그인
                         </h2>
                         
                     </a>
@@ -794,8 +906,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Login">
-                    <span class="tag-text">Login</span>
+                <span class="fa fa-tag listing-seperator" id="PM2">
+                    <span class="tag-text">PM2</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -803,39 +915,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Passport-part1/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            Passport를 이용한 Login
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/passport-mysql/">
-                        <h2 class="post-title">
-                            Node Passport를 이용한 Login + Mysql
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/passport-thirdpart-loginl/">
-                        <h2 class="post-title">
-                            Passport를 이용한 네이버, 카카오, 페이스북 로그인
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -846,8 +928,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Passport">
-                    <span class="tag-text">Passport</span>
+                <span class="fa fa-tag listing-seperator" id="Process Management">
+                    <span class="tag-text">Process Management</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -855,39 +937,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Passport-part1/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            Passport를 이용한 Login
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/passport-mysql/">
-                        <h2 class="post-title">
-                            Node Passport를 이용한 Login + Mysql
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/passport-thirdpart-loginl/">
-                        <h2 class="post-title">
-                            Passport를 이용한 네이버, 카카오, 페이스북 로그인
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -922,10 +974,14 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/loopback-begin/">
+                     <a href="/loopback-board/">
                         <h2 class="post-title">
-                            Loopback 시작하기
+                            Loopback 게시판 만들기 (1)
                         </h2>
+                        
+                            <h3 class="post-subtitle">
+                                초간단 게시판 만들기
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -937,14 +993,10 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/loopback-board/">
+                     <a href="/loopback-begin/">
                         <h2 class="post-title">
-                            Loopback 게시판 만들기 (1)
+                            Loopback 시작하기
                         </h2>
-                        
-                            <h3 class="post-subtitle">
-                                초간단 게시판 만들기
-                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -998,94 +1050,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Crontab">
-                    <span class="tag-text">Crontab</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/crontab-api/">
-                        <h2 class="post-title">
-                            Crontab을 이용한 노드 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Scheduler">
-                    <span class="tag-text">Scheduler</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/crontab-api/">
-                        <h2 class="post-title">
-                            Crontab을 이용한 노드 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="PM2">
-                    <span class="tag-text">PM2</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/PM2/">
-                        <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Process Management">
-                    <span class="tag-text">Process Management</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/PM2/">
-                        <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Bootstrap">
                     <span class="tag-text">Bootstrap</span>
                 </span>
@@ -1120,6 +1084,50 @@
                      <a href="/bootstrap-modall/">
                         <h2 class="post-title">
                             Bootstrap Modal 입력값 초기화
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Crontab">
+                    <span class="tag-text">Crontab</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/crontab-api/">
+                        <h2 class="post-title">
+                            Crontab을 이용한 노드 API 호출
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Scheduler">
+                    <span class="tag-text">Scheduler</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/crontab-api/">
+                        <h2 class="post-title">
+                            Crontab을 이용한 노드 API 호출
                         </h2>
                         
                     </a>
@@ -1198,10 +1206,14 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/loopback-begin/">
+                     <a href="/loopback-board/">
                         <h2 class="post-title">
-                            Loopback 시작하기
+                            Loopback 게시판 만들기 (1)
                         </h2>
+                        
+                            <h3 class="post-subtitle">
+                                초간단 게시판 만들기
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -1213,14 +1225,10 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/loopback-board/">
+                     <a href="/loopback-begin/">
                         <h2 class="post-title">
-                            Loopback 게시판 만들기 (1)
+                            Loopback 시작하기
                         </h2>
-                        
-                            <h3 class="post-subtitle">
-                                초간단 게시판 만들기
-                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -1304,28 +1312,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="NPM">
-                    <span class="tag-text">NPM</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/npm-sudo-err/">
-                        <h2 class="post-title">
-                            npm sudo 권한으로 설치시 오류 해결
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Package">
                     <span class="tag-text">Package</span>
                 </span>
@@ -1348,8 +1334,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="WebStorm">
-                    <span class="tag-text">WebStorm</span>
+                <span class="fa fa-tag listing-seperator" id="NPM">
+                    <span class="tag-text">NPM</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -1357,9 +1343,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/webStrom-part1/">
+                     <a href="/npm-sudo-err/">
                         <h2 class="post-title">
-                            WebStorm 어디까지 써봤니? part 1
+                            npm sudo 권한으로 설치시 오류 해결
                         </h2>
                         
                     </a>
@@ -1404,6 +1390,28 @@
                      <a href="/passport-thirdpart-loginl/">
                         <h2 class="post-title">
                             Passport를 이용한 네이버, 카카오, 페이스북 로그인
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="WebStorm">
+                    <span class="tag-text">WebStorm</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/webStrom-part1/">
+                        <h2 class="post-title">
+                            WebStorm 어디까지 써봤니? part 1
                         </h2>
                         
                     </a>
