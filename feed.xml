@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2017-10-14T23:55:15.021Z</updated>
+  <updated>2018-01-18T15:37:20.218Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,60 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>인텔리제이로 Builder Pattern 쉽게 구현하기</title>
+    <link href="https://cheese10yun.github.io/intellij-builder-pattern/"/>
+    <id>https://cheese10yun.github.io/intellij-builder-pattern/</id>
+    <published>2018-01-17T16:25:21.000Z</published>
+    <updated>2018-01-18T15:37:20.218Z</updated>
+    
+    <content type="html"><![CDATA[<h1><span id="인텔리제이로-builder-pattern-쉽게-구현하기">인텔리제이로 Builder Pattern 쉽게 구현하기</span></h1><p>이미 많은 분들이 빌더 패턴 관련해서 포스팅을 잘 정리해주셔서 빌더 패턴에 대해서 설명 해주기 보다는 인텔리제이 플러그인을 활용해서 좀 쉽게 사용할 수 있는 팁을 포스팅을 해보겠습니다.<br>물론 Lombok을 활용해서 빌더를 손쉽게 사용할 수있지만 Lombok을 사용하지 않고도 쉽게 만들 수 있는 방법을 소개해드리겠습니다.</p><h2><span id="builder-generator-플러그인-설치">Builder Generator 플러그인 설치</span></h2><p><img src="https://i.imgur.com/qlSmnIG.png" alt=""></p><p><strong>Preferences -&gt; Plugins -&gt; Browse Repositories -&gt; Builder Generator 검색 및 설치</strong></p><h2><span id="빌더클래스-생성-방법">빌더클래스 생성 방법</span></h2><p><img src="https://i.imgur.com/vj6km1L.gif" alt=""></p><ul><li><code>command + n</code> 키를 눌러 Builder 를 선택합니다.</li><li>위 화면처럼 Builder 클래스를 생성합니다.</li></ul><h2><span id="빌더-패턴-간단-소개">빌더 패턴 간단 소개</span></h2><h3><span id="member-객체">Member 객체</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Member</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name; <span class="comment">//mandatory</span></div><div class="line">    <span class="keyword">private</span> String email; <span class="comment">//mandatory</span></div><div class="line">    <span class="keyword">private</span> String mobile; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String address; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String password; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String state; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age; <span class="comment">//optional</span></div><div class="line"></div><div class="line">    <span class="comment">//Getter, Setter, Constructor</span></div><div class="line">&#125;</div></pre></td></tr></table></figure><h3><span id="문제점">문제점</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Member member = <span class="keyword">new</span> Member(name, email, mobile ....)</div></pre></td></tr></table></figure><ul><li>객체를 생성할 때 어떤 값이 필수 값인지 옵션 값인지 인지 하기 어렵다.</li><li><code>Member member = new Member(name, email, mobile ....)</code> 생성자로 객체를 생성 할 경우 반드시 순서를 맞추야 한다.</li><li><code>Setter</code>로 생성할 경우 Setter 메소드를 많이 작성해야한다.</li></ul><h3><span id="해결">해결</span></h3><ul><li>빌더 패턴을 사용해서 필수 값은 생성자로 옵션 값은 빌더 클래스로 작성한다.</li></ul><h4><span id="memberbuilderclass">MemberBuilder.class</span></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberBuilder</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name; <span class="comment">//mandatory</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String email; <span class="comment">//mandatory</span></div><div class="line">    <span class="keyword">private</span> String mobile; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String address; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String password; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> String state; <span class="comment">//optional</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age; <span class="comment">//optional</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">MemberBuilder</span><span class="params">(String name, String email)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.email = email;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MemberBuilder <span class="title">aMember</span><span class="params">(String name, String email)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MemberBuilder(name, email);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberBuilder <span class="title">withMobile</span><span class="params">(String mobile)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.mobile = mobile;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberBuilder <span class="title">withAddress</span><span class="params">(String address)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.address = address;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberBuilder <span class="title">withPassword</span><span class="params">(String password)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.password = password;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberBuilder <span class="title">withState</span><span class="params">(String state)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.state = state;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberBuilder <span class="title">withAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Member <span class="title">build</span><span class="params">()</span> </span>&#123;</div><div class="line">        Member member = <span class="keyword">new</span> Member();</div><div class="line">        member.setName(name);</div><div class="line">        member.setEmail(email);</div><div class="line">        member.setMobile(mobile);</div><div class="line">        member.setAddress(address);</div><div class="line">        member.setPassword(password);</div><div class="line">        member.setState(state);</div><div class="line">        member.setAge(age);</div><div class="line">        <span class="keyword">return</span> member;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><ul><li>필수 맴버 필드인 <code>name, email</code>에 <code>final</code>을 추가합니다.</li><li>생성자 파라미터에 <code>name, email</code> 추가합니다.</li><li>자동으로 만들어준 <code>name, email</code>의 <code>with</code> 메소드를 제거 합니다.</li></ul><h3><span id="객체-생성">객체 생성</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Member member = MemberBuilder</div><div class="line">                .aMember(<span class="string">"Yun"</span>, <span class="string">"cheese10yun@gmail.com"</span>)</div><div class="line">                .withAddress(<span class="string">"address"</span>)</div><div class="line">                .withAge(<span class="number">20</span>)</div><div class="line">                .withMobile(<span class="string">"010-XXXX-XXXX"</span>)</div><div class="line">                .build();</div></pre></td></tr></table></figure><p><img src="https://i.imgur.com/lNLW4dh.png" alt=""></p><ul><li>필수 값은 생성자로 넘겨 필수 값을 넘겨 필수 값을 인지 하기 쉽습니다.</li><li>옵션 값들은 순서에 상관 없이 .<code>with...()</code> 메소드로 이어나갑니다.</li></ul><h2><span id="결론">결론</span></h2><p>객체를 안전하게 생성하고 쉽게 생성할 수 있다는 장점이 있습니다. 개념도 그렇게 어렵지 않아 가장 만만하게 도입해 볼만한 디자인 패턴인거 같습니다.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1&gt;&lt;span id=&quot;인텔리제이로-builder-pattern-쉽게-구현하기&quot;&gt;인텔리제이로 Builder Pattern 쉽게 구현하기&lt;/span&gt;&lt;/h1&gt;
+&lt;p&gt;이미 많은 분들이 빌더 패턴 관련해서 포스팅을 잘 정리해주셔서 빌더 패턴에 대해서 설명
+      
+    
+    </summary>
+    
+    
+      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
+    
+      <category term="Builder Pattern" scheme="https://cheese10yun.github.io/tags/Builder-Pattern/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JPA n+1 문제</title>
+    <link href="https://cheese10yun.github.io/n-1/"/>
+    <id>https://cheese10yun.github.io/n-1/</id>
+    <published>2017-12-02T18:13:04.000Z</published>
+    <updated>2018-01-17T16:26:20.333Z</updated>
+    
+    <content type="html"><![CDATA[<h1><span id="jpa-n-1-문제">JPA N + 1 문제</span></h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> o.* m.*</div><div class="line"><span class="keyword">from</span> <span class="keyword">Order</span> o</div><div class="line"><span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> <span class="keyword">Member</span> m <span class="keyword">on</span> o.MEMBER_ID=m.MEMBER_ID</div><div class="line"><span class="keyword">where</span> o.id =<span class="number">1</span></div></pre></td></tr></table></figure><ul><li>실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함꼐 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.</li><li>위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자</li></ul><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List&lt;Order&gt; orders = em.createQuery(<span class="string">"select o from Order o"</span>, Order.class)</div><div class="line">.getResultList(); <span class="comment">// 연과된 모든 엔티티를 조회한다.</span></div></pre></td></tr></table></figure><ul><li>실행된 SQL은 다음과 같다.</li></ul><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Order</span> // JPQL로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div></pre></td></tr></table></figure><p><strong>JPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다.</strong> 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.<br>코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.</p><ol><li><code>select o from Order o</code> JPQL을 분석해서 <code>select * from Order</code> SQL을 생성한다.</li><li>데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.</li><li>Order.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.</li><li>연관된 Member를 영속성 컨텍스트에서 찾는다.</li><li>만약 영속성 컨텍스트에 없으면 <code>select * from member where id?</code> SQL을 조회한 order 엔티티 수만큼 실행한다.</li></ol>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1&gt;&lt;span id=&quot;jpa-n-1-문제&quot;&gt;JPA N + 1 문제&lt;/span&gt;&lt;/h1&gt;
+&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div
+      
+    
+    </summary>
+    
+    
+      <category term="spring" scheme="https://cheese10yun.github.io/tags/spring/"/>
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="N+1" scheme="https://cheese10yun.github.io/tags/N-1/"/>
+    
+  </entry>
   
   <entry>
     <title>Package.json 파일로 API 버전 설정</title>
@@ -125,9 +179,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
       <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -210,9 +264,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
       <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -248,29 +302,6 @@
   </entry>
   
   <entry>
-    <title>블로그를 시작하려는 당신에게(2)</title>
-    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
-    <id>https://cheese10yun.github.io/blog-start-part2/</id>
-    <published>2017-01-30T15:00:00.000Z</published>
-    <updated>2017-10-12T20:21:17.747Z</updated>
-    
-    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
-      
-    
-    </summary>
-    
-    
-      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Node Mysql Multiple Insert</title>
     <link href="https://cheese10yun.github.io/mysql-multiple-insert/"/>
     <id>https://cheese10yun.github.io/mysql-multiple-insert/</id>
@@ -295,6 +326,29 @@
       <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
     
       <category term="Multiple Insert" scheme="https://cheese10yun.github.io/tags/Multiple-Insert/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>블로그를 시작하려는 당신에게(2)</title>
+    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
+    <id>https://cheese10yun.github.io/blog-start-part2/</id>
+    <published>2017-01-30T15:00:00.000Z</published>
+    <updated>2017-10-12T20:21:17.747Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
+      
+    
+    </summary>
+    
+    
+      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
     
   </entry>
   
@@ -515,58 +569,6 @@
       <category term="PM2" scheme="https://cheese10yun.github.io/tags/PM2/"/>
     
       <category term="Process Management" scheme="https://cheese10yun.github.io/tags/Process-Management/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>WebStorm 어디까지 써봤니? part 1</title>
-    <link href="https://cheese10yun.github.io/webStrom-part1/"/>
-    <id>https://cheese10yun.github.io/webStrom-part1/</id>
-    <published>2016-12-17T15:00:00.000Z</published>
-    <updated>2017-10-12T20:24:38.660Z</updated>
-    
-    <content type="html"><![CDATA[<p>안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 회사 내의 기술 스펙이 거의 자바스크립트를 기반으로 두고 있어 기존에 사용해왔던 IntelliJ에서 WebStrom으로 변경하게 되었습니다. 그래서 이번 기회에 Webstrom에 좀 더 친숙해지고 사용법을 읽힐 겸 간단하게 정리해봅니다.<br>물론 WebStrom 뿐만 아니라 JetBrains사의 IDE에서 공통적으로 사용이 가능합니다.</p><p>단축키는 Mac OS 기반으로 알려드리겠습니다.</p><h3><span id="동일-문자열-변경">동일 문자열 변경</span></h3><p><img src="https://i.imgur.com/fAMA6Or.gif" alt="⌘ + ⌃ + g" title="⌘ + ⌃ + g"><br><strong><em>⌘ + ⌃ + g</em></strong></p><p>코드를 작성하다가 동일한 문자열을 변경해야 하는 경우는 빈번하게 발생합니다. 위 그림과 같이 특정 변수를 모두 변경해야 하는 경우가 대표적인 예입니다. 변수가 2~3이면 귀찮지 않은데 위 와 같은 경우에는 크게 귀찮아집니다. 이럴 때 유용하게 사용하는 기능입니다.</p><p>변경하고 싶은 문자열을 드래그 이후 <strong><em>command + control + g</em></strong>  단축키를 입력하면 동일 문자열을 한 번에 변경이 가능합니다.</p><h3><span id="동일한-위치-문자열-변경">동일한 위치 문자열 변경</span></h3><p><img src="https://i.imgur.com/Z5IYg6w.gif" alt="⌥  + dra" title="⌥  + drag"><br><strong><em>⌥  + drag</em></strong></p><p>동일 문자열과 비슷한 기능입니다. 만약 변경 대상이 동일한 문자열이 아닐 경우도 위와 같이 발생할 수 있습니다. 이러한 경우에 <strong><em>Alt + 마우스 드래그</em></strong>를 통해서 한 번에 변경하실 수 있습니다. 이 기능 익숙해지면 다양하게 사용할 수 있습니다.</p><h3><span id="복사-리스트">복사 리스트</span></h3><p><img src="https://i.imgur.com/6ClfGhw.gif" alt="⌘  + ⇧ + v "></p><p>개발을 하면서 우리는 수없이 정말 수없이 복사 붙여 넣기를 합니다… 이럴 때 가장 불편한 점 중에 하나는 새로 복사할 때마다 이전 복사한 내용들이 없어진다는 점이죠.</p><p>이러한 경우에 <strong><em>command + shift + v</em></strong>를 사용하시면 간단하게 해결됩니다. 단축키를 입력하시면 복사한 리스트들 출력되고 해당 리스트에서 엔터키를 입력하면 됩니다</p><h3><span id="live-template">Live Template</span></h3><p><img src="https://i.imgur.com/ojSSHaC.gif" alt="console.log()"><br><img src="https://i.imgur.com/SPMRe1P.gif" alt="console.log()"></p><p>코드를 작성하다 보면 중간중간 결과 값을 확인하기 위해서 <code>console.log('')</code>를 사용해서 확인 작업을 수없이 진행하게 됩니다. 이러한 반복적인 코드와 예약 어를 정의하고 예약 어를 통해서 코드를 불러오는 기능이 Live Template입니다.</p><p>저 같은 경우에는 예약어 clog로 <code>console.log('')</code>를 간단하게 작성합니다. 물론 이러한 간단한 코드는 그때그때 작성해도 크게 불 펴하지는 않지만 코드량이 길어지면 점점 귀찮아지기 시작합니다.</p><p>api를 호출하는 ajax 같은 코드도 빈번하게 작성되는 코드다 보니 위 그림과 같이 ajg 예약어로  ajax get 코드를 간단하게 작성하실 수 있습니다.</p><p>하지만 저 같은 신입의 경우 해당 코드를 어느 정도 숙지가 완료되었을 때 Live Template에 추가하는 것을 권장드립니다. 코드를 숙지하지 않고 IDE기능을 통해서만 작성하는 것은 좋은 습관은 아니라고 생각합니다.</p><h3><span id="live-template-등록-방법">Live Template 등록 방법</span></h3><p><img src="https://i.imgur.com/SPMRe1P.gif" alt="Live Template"></p><p><strong>⌘ + ,단축키</strong>를 통해서 설정에 들어가시면 Live Template 항목에서 해당 언어의 Template을 설정할 수 있습니다. 자바스크립트뿐만 아니라 다양하 언어의 Template 지정할 수 있습니다. <strong><em>반드시 하단에 Define을 클릭하시고 해당 언어를 다시 한번 정의해주셔야 됩니다.</em></strong></p><p>이번에 소개해드린 기능들은 제가 가장 많이 사용하고, 유용하게 사용하는 기능들입니다. 앞으로는 좀 더 막강한 기능들을 공부해서 소개하여드리도록 하겠습니다.</p><p>조금이나마 도움이 되셨기를 바랍니다. 긴 글 읽어주셔서 감사드립니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 회사 내의 기술 스펙이 거의 자바스크립트를 기반으로 두고 있어 기존에 사용해왔던 IntelliJ에서 WebStrom으로 변경하게 되었습니다. 그래서 이번 기회에 Webstrom에 좀 더 친
-      
-    
-    </summary>
-    
-    
-      <category term="WebStorm" scheme="https://cheese10yun.github.io/tags/WebStorm/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>AWS EC2 Nginx Node.js 설정</title>
-    <link href="https://cheese10yun.github.io/Node-AWS-Nginx/"/>
-    <id>https://cheese10yun.github.io/Node-AWS-Nginx/</id>
-    <published>2016-12-12T15:00:00.000Z</published>
-    <updated>2017-10-12T20:22:54.889Z</updated>
-    
-    <content type="html"><![CDATA[<p>안녕하세요. 스타트업에서 근무 중인 신입 개발자입니다. 근무하면서 얻은 정보를 정리하며 올려봅니다. 사내환경 같은 경우는 각자 로컬 환경에서 개발하고, 어느 정도 작업이 완료됐다 싶으면 테스트 서버(EC2)에 프로젝트를 올리는 작업을 아래와 같이 진행하게 됩니다.</p><ol><li>EC2 기본 셋팅 (AMI)</li><li>EC2 Node.js 설치</li><li>GitHub Clone</li><li>Nginx 연동</li></ol><h3><span id="1-ec2-기본-셋팅-ami">1. EC2 기본 셋팅 (AMI)</span></h3><p>AWS EC2에 접속하셔서 필수 패키지 설치를 진행합니다.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo yum update -y</div><div class="line">sudo yum install gcc gcc-c++</div><div class="line">sudo yum  install -y git</div><div class="line">sudo yum install -y nginx</div></pre></td></tr></table></figure><h4><span id="port-설정">Port 설정</span></h4><p>EC2의 포트 80, 3000이 열려있어야 합니다. EC2포트 설정은 여기서 다룰 내용이 아니니 생략하겠습니다. 포트 설정은 원하시는 포트를 사용하셔도 됩니다만 기본 포트를 권장합니다.</p><p><img src="https://i.imgur.com/XnEOclk.png" alt="EC2 Innound"></p><h4><span id="github-설정">GitHub 설정</span></h4><p>GitHub에 프로젝트를 업로드해주세요. GitHub 설정은 여기서 다룰 내용이 아니니 생략하겠습니다.</p><h3><span id="2-ec2-nodejs-설치">2. EC2 Node.js 설치</span></h3><p>AWS EC2에 접속하셔서 아래 명령어를 순차적으로 입력합니다. 다른 버전 노드를 설치해도 무방합니다만 로컬에 있는 노드 버전과 동일하게 설치하는 것을 권장합니다. 다소 시간이 걸리는 작업입니다.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">wget https://nodejs.org/dist/v6.7.0/node-v6.7.0.tar.gz</div><div class="line">tar -xvf node-v6.7.0.tar.gz</div><div class="line"><span class="built_in">cd</span> 해당폴더이동</div><div class="line">./configure</div><div class="line">make</div><div class="line">sudo make install</div></pre></td></tr></table></figure><p>설치를 완료하셨다면 아래의 명령어로 Node, NPM 버전을 확인합니다</p><p><img src="https://i.imgur.com/joOtMGi.png" alt="Node, NPM Version"></p><h3><span id="3-github-clone">3. GitHub Clone</span></h3><p>이미 프로젝트가 GitHub에 업로드되었 다고 가정하고 진행하겠습니다.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">git init</div><div class="line">git remote add origin [단축 이름] [url]</div><div class="line">ex) git remote add origin https://github.com/cheese10yun/node-yun.git</div><div class="line">git <span class="built_in">clone</span> [url]</div><div class="line">ex) git <span class="built_in">clone</span> https://github.com/cheese10yun/node-yun.git</div></pre></td></tr></table></figure><p><strong>node_modules 디렉토리는 gitignore 시키는 것을 권장합니다.</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> gitclone 폴더이동/</div><div class="line">npm install</div><div class="line">npm start</div></pre></td></tr></table></figure><p>노드 모듈을 설치한 이후 해당 노드 프로젝트에 알맞게 노드 서버를 실행시켜주세요. 저 같은 경우는 <code>npm start</code>로 프로젝트를 실행시켰습니다.<br><img src="https://i.imgur.com/bLIrf9x.png" alt="Node Server"></p><p>EC2 IP:3000로 접속하시면 해당 노드 서버가 실행 있는 것을 확인하실 수 있습니다. 만약 접속이 안되시면 EC2 IP 및 inbound 설정을 확인해보세요.</p><h3><span id="4-nginx-연동">4. Nginx 연동</span></h3><p>nginx를 실행시킨 이후 EC2 IP로 접속하시면 아래 그림과 같은 화면이 출력되시면 nginx 설정으로 진행하시면 됩니다.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service nginx restart</div></pre></td></tr></table></figure><p><img src="https://i.imgur.com/ShyNzxi.png" alt="Nginx"><br><strong>Nginx 기본 포트는 80으로 설정되어있습니다.</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vi /etc/nginx/nginx.conf</div></pre></td></tr></table></figure><p><img src="https://i.imgur.com/rBNAhpq.png" alt="Nginx.conf"></p><p>위의 그림과 같이 server {<br>아래의 location을 붙여 넣습니다.<br>} Nginx를 재실행시킵니다.</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location / &#123;</div><div class="line">      proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">      proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</div><div class="line">      proxy_set_header Host <span class="variable">$http_host</span>;</div><div class="line">      proxy_set_header X-NginX-Proxy <span class="literal">true</span>;</div><div class="line"></div><div class="line">      proxy_pass http://127.0.0.1:3000/;</div><div class="line">      proxy_redirect off;</div><div class="line">&#125;</div></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service nginx restart</div></pre></td></tr></table></figure><p><img src="https://i.imgur.com/jEsxV1H.png" alt="Nginx Node"></p><p>Nginx를 재실행시키시고 EC2 IP에 접속하시면 Nginx 화면이 아니라 노드 서버 화면이 나오시는 것을 확인할 수 있습니다.</p><p>최대한 쉽게 설명하려 노력했으나 도움이 됐을지 의문입니다. 어려운 주제는 아니지만, 문서로 정리해보니 이틀이라는 시간이 걸리긴 했습니다만 뭔가 코딩하는 거랑 비슷한 느낌이라고 할까요? 결과물을 보니 뭔가 뿌듯하고 재미도 있네요. 다들 이런 재미로 블로그를 하시나 봅니다.</p><p>현재 회사에서 노드를 기반으로 서비스하고 있어 node 중심적으로 블로그 진행할 거 같습니다. 노드나 스타트업에 관심이 있는 분이시면 종종 찾아와 주시기 바랍니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;안녕하세요. 스타트업에서 근무 중인 신입 개발자입니다. 근무하면서 얻은 정보를 정리하며 올려봅니다. 사내환경 같은 경우는 각자 로컬 환경에서 개발하고, 어느 정도 작업이 완료됐다 싶으면 테스트 서버(EC2)에 프로젝트를 올리는 작업을 아래와 같이
-      
-    
-    </summary>
-    
-    
-      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
-    
-      <category term="Nginx" scheme="https://cheese10yun.github.io/tags/Nginx/"/>
-    
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
-      <category term="EC2" scheme="https://cheese10yun.github.io/tags/EC2/"/>
     
   </entry>
   
