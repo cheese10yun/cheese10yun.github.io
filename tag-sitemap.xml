@@ -79,14 +79,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2017-10-12T20:24:19.595Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2017-10-12T20:24:19.595Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -226,13 +226,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-01-17T16:26:20.333Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/N-1/</loc>
         <lastmod>2018-01-17T16:26:20.333Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -240,15 +233,29 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <loc>https://cheese10yun.github.io/tags/Builder-Pattern/</loc>
         <lastmod>2018-01-18T15:44:23.286Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Builder-Pattern/</loc>
-        <lastmod>2018-01-18T15:44:23.286Z</lastmod>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2018-01-22T16:30:46.763Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2018-01-22T16:30:46.763Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA-Console/</loc>
+        <lastmod>2018-01-22T16:30:46.763Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

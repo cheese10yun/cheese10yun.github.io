@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="JPA n+1 문제 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/n-1/">
-    <meta property="og:description" content="JPA n+1 문제 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="인텔리제이 JPA Console - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/intellij-jpa-console/">
+    <meta property="og:description" content="인텔리제이 JPA Console - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/n-1/">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-jpa-console/">
 
 
     <title>
         
-          JPA n+1 문제 - Yun Blog | 기술 블로그
+          인텔리제이 JPA Console - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/n-1/">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-jpa-console/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,18 +106,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                            
                               <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
                             
-                              <a class="tag" href="/tags/#spring" title="spring">spring</a>
-                            
-                              <a class="tag" href="/tags/#N+1" title="N+1">N+1</a>
+                              <a class="tag" href="/tags/#JPA Console" title="JPA Console">JPA Console</a>
                             
                         </div>
-                        <h1>JPA n+1 문제</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>인텔리제이 JPA Console</h1>
+                        <h2 class="subheading">JPA Console</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-12-03
+                            2018-01-23
                         </span>
                     </div>
                 
@@ -234,26 +234,46 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1><span id="jpa-n-1-문제">JPA N + 1 문제</span></h1>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> o.* m.*</div><div class="line"><span class="keyword">from</span> <span class="keyword">Order</span> o</div><div class="line"><span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> <span class="keyword">Member</span> m <span class="keyword">on</span> o.MEMBER_ID=m.MEMBER_ID</div><div class="line"><span class="keyword">where</span> o.id =<span class="number">1</span></div></pre></td></tr></table></figure>
+                <p><img src="https://i.imgur.com/oJqtQpV.gif" alt=""></p>
+<p><strong>JPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 <code>IntelliJ JPA Console</code> 기능으로 확인해볼 수 있습니다.</strong></p>
+<h2><span id="database-연동">DataBase 연동</span></h2>
+<h3><span id="data-source">Data Source</span></h3>
+<p><img src="https://i.imgur.com/7Uaibtf.png" alt=""></p>
 <ul>
-<li>실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함꼐 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.</li>
-<li>위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자</li>
+<li>사용 중인 데이터베이스를 선택합니다.</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List&lt;Order&gt; orders = em.createQuery(<span class="string">"select o from Order o"</span>, Order.class)</div><div class="line">	.getResultList(); <span class="comment">// 연과된 모든 엔티티를 조회한다.</span></div></pre></td></tr></table></figure>
+<h3><span id="database-정보-입력">Database 정보 입력</span></h3>
+<p><img src="https://i.imgur.com/Lt9fDab.png" alt=""></p>
 <ul>
-<li>실행된 SQL은 다음과 같다.</li>
+<li><code>Name</code>, <code>Host</code>, <code>Database</code>, <code>User</code>, <code>Password</code>를 입력합니다.</li>
 </ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Order</span> // JPQL로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">Member</span> <span class="keyword">where</span> <span class="keyword">id</span> = ? // EAGER 로 실행된 <span class="keyword">SQL</span></div></pre></td></tr></table></figure>
-<p><strong>JPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다.</strong> 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.<br>
-코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.</p>
+<h2><span id="jpa-연동">JPA 연동</span></h2>
+<h3><span id="jpa-module-추가">JPA Module 추가</span></h3>
+<p><img src="https://i.imgur.com/hnAQEtJ.png" alt=""></p>
 <ol>
-<li><code>select o from Order o</code> JPQL을 분석해서 <code>select * from Order</code> SQL을 생성한다.</li>
-<li>데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.</li>
-<li>Order.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.</li>
-<li>연관된 Member를 영속성 컨텍스트에서 찾는다.</li>
-<li>만약 영속성 컨텍스트에 없으면 <code>select * from member where id?</code> SQL을 조회한 order 엔티티 수만큼 실행한다.</li>
+<li><code>Project Structure</code> 설정</li>
+<li><code>Modules</code> 탭이동</li>
+<li>상단 <code>+</code> 클릭 이후 <code>JPA</code> 추가</li>
+<li>하단 <code>+</code> 클릭 이후 <code>Hibernate</code> 추가</li>
 </ol>
+<h3><span id="persistence-추가">Persistence 추가</span></h3>
+<p><img src="https://i.imgur.com/q8l4Pkr.png" alt=""></p>
+<ol>
+<li>위의 작업을 완료했으면 왼쪽 탭에 <code>Persistence</code> 추가됩니다.</li>
+<li><code>Assign Data Sources….</code>를 클릭합니다.</li>
+<li><code>Assign Data Sources</code> 에서 <code>Data Source</code> 항목에 위에 추가해 <code>Data Source</code> 항목을 추가합니다.</li>
+</ol>
+<h2><span id="jpa-console">JPA Console</span></h2>
+<h3><span id="jpa-console-연결">JPA Console 연결</span></h3>
+<p><img src="https://i.imgur.com/230LRUi.png" alt=""></p>
+<ol>
+<li><code>entityManagerFactory</code>를 클릭합니다.</li>
+<li><code>Console</code>를 클릭합니다.</li>
+<li><code>JPA Console</code>를 선택합니다.</li>
+</ol>
+<h3><span id="query">Query</span></h3>
+<p><img src="https://i.imgur.com/oJqtQpV.gif" alt=""><br>
+JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 구체적인 사용법을 진행해 보겠습니다</p>
 
                 
 
@@ -261,13 +281,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/intellij-builder-pattern/" data-toggle="tooltip" data-placement="top" title="인텔리제이로 Builder Pattern 쉽게 구현하기">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/packageFile-API/" data-toggle="tooltip" data-placement="top" title="Package.json 파일로 API 버전 설정">Next Post &rarr;</a>
+                            <a href="/intellij-builder-pattern/" data-toggle="tooltip" data-placement="top" title="인텔리제이로 Builder Pattern 쉽게 구현하기">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -297,7 +313,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">JPA N + 1 문제</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">DataBase 연동</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Data Source</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Database 정보 입력</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">JPA 연동</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">JPA Module 추가</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Persistence 추가</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">JPA Console</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">JPA Console 연결</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Query</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -317,11 +333,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                        
                           <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
                         
-                          <a class="tag" href="/tags/#spring" title="spring">spring</a>
-                        
-                          <a class="tag" href="/tags/#N+1" title="N+1">N+1</a>
+                          <a class="tag" href="/tags/#JPA Console" title="JPA Console">JPA Console</a>
                         
                     </div>
                 </section>
@@ -341,8 +357,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/n-1/";
-    var disqus_url = "https://cheese10yun.github.io/n-1/";
+    var disqus_identifier = "https://cheese10yun.github.io/intellij-jpa-console/";
+    var disqus_url = "https://cheese10yun.github.io/intellij-jpa-console/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
