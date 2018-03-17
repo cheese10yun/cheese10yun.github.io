@@ -107,13 +107,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
-        <lastmod>2018-03-17T05:47:31.200Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/LoopBack/</loc>
         <lastmod>2018-03-17T05:47:31.211Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -247,13 +240,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
-        <lastmod>2018-03-17T05:55:51.274Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Coveralls/</loc>
         <lastmod>2018-03-17T05:55:51.274Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -284,6 +270,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/JPA-Console/</loc>
         <lastmod>2018-03-17T15:28:58.162Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
+        <lastmod>2018-03-17T18:55:42.772Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
+        <lastmod>2018-03-17T18:55:42.772Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-03-17T18:55:42.772Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
