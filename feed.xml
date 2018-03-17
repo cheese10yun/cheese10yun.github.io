@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2018-03-12T17:42:51.152Z</updated>
+  <updated>2018-03-17T05:31:50.206Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Slack + Coveralls 연동</title>
+    <link href="https://cheese10yun.github.io/slack-coveralls/"/>
+    <id>https://cheese10yun.github.io/slack-coveralls/</id>
+    <published>2018-03-17T05:31:50.000Z</published>
+    <updated>2018-03-17T05:31:50.206Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://coveralls.io/github/dev-cheese/cheese" rel="external nofollow noopener noreferrer" target="_blank"><img src="https://coveralls.io/repos/github/dev-cheese/cheese/badge.svg" alt="Coverage Status"></a></p><p><strong>본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.</strong><br><img src="https://i.imgur.com/sHagJxo.png" alt=""></p><p>Coveralls 소스코드의 커러지를 측정 해주는 도구입니다. Coveralls에 대한 자세한 설명은 <a href="https://blog.outsider.ne.kr/954" rel="external nofollow noopener noreferrer" target="_blank">Coveralls</a> 를 참조해주세요.</p><h2><span id="slack-web-hook-설정">Slack Web Hook 설정</span></h2><p><strong>Slack Web Hook 이미 한번 설정을 완료해서 스크린샷 화면이 조금 다를 수 있습니다.</strong><br><img src="https://i.imgur.com/78QivsI.png" alt=""><br>Slack Apps 페이지에서 <strong>Incoming WebHooks</strong> 를 설치합니다.</p><p><img src="https://i.imgur.com/i99lWHM.png" alt=""><br>Slack 체널중 Web Hook를 받을 체널을 선택합니다.</p><p><img src="https://i.imgur.com/0dnlJWv.png" alt=""><br>Webhook URL 값을 확인할 수 있습니다. 이 Webhook URL 값으로 Coveralls 리포팅을 슬랙으로 받아 볼 수 있습니다.</p><h2><span id="coveralls-설정">Coveralls 설정</span></h2><p><img src="https://i.imgur.com/YqYWP7U.png" alt="1"></p><ul><li>Coveralls 연동되있는 Repository 왼쪽 상단의 setting 페이지로 이동합니다.</li></ul><p><img src="https://i.imgur.com/Q0vE2HK.png" alt="2"></p><ol><li>WEBHOOK URL:  위에서 발급한 <code>WEBHOOK URL</code> 값을 입력합니다.</li><li>CHANNEL : 위에서 생성한 체널를 입력합니다. 필수는 아닙니다.</li><li>테스트 버튼을 클릭하여 슬랙으로 위 이미지처럼 메세지가 잘 오는지 확인합니다.</li><li>SAVE NOTIFICATION 버튼을 누릅니다.</li></ol><p><img src="https://i.imgur.com/sHagJxo.png" alt=""></p><p><strong>설정을 완료하면 Travis CI 에서 배포 작업이 진행이 완료되면 Slack에서 Coveralls 에대한 리포팅 메세지가 자동으로 오게 됩니다.</strong></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;a href=&quot;https://coveralls.io/github/dev-cheese/cheese&quot; rel=&quot;external nofollow noopener noreferrer&quot; target=&quot;_blank&quot;&gt;&lt;img src=&quot;https://cov
+      
+    
+    </summary>
+    
+    
+      <category term="Slack" scheme="https://cheese10yun.github.io/tags/Slack/"/>
+    
+      <category term="Coveralls" scheme="https://cheese10yun.github.io/tags/Coveralls/"/>
+    
+      <category term="Test Coverage" scheme="https://cheese10yun.github.io/tags/Test-Coverage/"/>
+    
+  </entry>
   
   <entry>
     <title>인텔리제이 리팩토링</title>
@@ -234,9 +261,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
-    
       <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
+    
+      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -319,9 +346,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
-    
       <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
+    
+      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -357,6 +384,29 @@
   </entry>
   
   <entry>
+    <title>블로그를 시작하려는 당신에게(2)</title>
+    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
+    <id>https://cheese10yun.github.io/blog-start-part2/</id>
+    <published>2017-01-30T15:00:00.000Z</published>
+    <updated>2017-10-12T20:21:17.747Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
+      
+    
+    </summary>
+    
+    
+      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Node Mysql Multiple Insert</title>
     <link href="https://cheese10yun.github.io/mysql-multiple-insert/"/>
     <id>https://cheese10yun.github.io/mysql-multiple-insert/</id>
@@ -381,29 +431,6 @@
       <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
     
       <category term="Multiple Insert" scheme="https://cheese10yun.github.io/tags/Multiple-Insert/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>블로그를 시작하려는 당신에게(2)</title>
-    <link href="https://cheese10yun.github.io/blog-start-part2/"/>
-    <id>https://cheese10yun.github.io/blog-start-part2/</id>
-    <published>2017-01-30T15:00:00.000Z</published>
-    <updated>2017-10-12T20:21:17.747Z</updated>
-    
-    <content type="html"><![CDATA[<p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p><p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p><p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p><h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3><p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p><p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p><p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p><h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4><p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p><p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p><p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p><h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5><p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p><p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure><p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p><p><img src="/img/blog-start-2/2.png" alt=""></p><p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p><h5><span id="robotstxt-설정">robots.txt 설정</span></h5><p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p><p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p><p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p><h5><span id="rss-제출">RSS 제출</span></h5><p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p><p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p><h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4><p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p><h3><span id="마무리">마무리</span></h3><p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;a href=&quot;https://cheese10yun.github.io/blog-start&quot;&gt;블로그를 시작하려는 당신에게(1)&lt;/a&gt;에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해
-      
-    
-    </summary>
-    
-    
-      <category term="Blog" scheme="https://cheese10yun.github.io/tags/Blog/"/>
     
   </entry>
   
@@ -540,31 +567,6 @@
       <category term="Login" scheme="https://cheese10yun.github.io/tags/Login/"/>
     
       <category term="Passport" scheme="https://cheese10yun.github.io/tags/Passport/"/>
-    
-      <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Node.JS + Mysql 연동</title>
-    <link href="https://cheese10yun.github.io/mysql-node/"/>
-    <id>https://cheese10yun.github.io/mysql-node/</id>
-    <published>2017-01-04T15:00:00.000Z</published>
-    <updated>2017-10-12T20:22:35.232Z</updated>
-    
-    <content type="html"><![CDATA[<p>안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 정리할 내용은 Node + Mysql 연동입니다. 이미 수많은 예제가 있으나 앞으로 포스팅할 내용들이 데이터베이스가 필수적으로 필요하니 간단 정리 및 간단하게 팁?을 소개하여드리겠습니다.</p><p>저희 회사 개발 환경은 각자 로컬에서 개발을 진행하고, 어느 정도 개발이 완료되면 테스트 서버에서 QA를 진행하고 실제 서버에 반영시키는 방식으로 진행하고 있습니다.</p><p>그래서 데이터 베이스도 로컬, 데브 서버, 리얼서버 이렇게 3개의 정보를 갖고 있어야 합니다. 또 개발 중간중간에 실서버의 데이터 베이스의 접근이 필요할 경우도 더러 있습니다. 이러한 경우에 간단하게 프로퍼티를 이용해서 데이터베이스 정보를 변경할 수 있는  팁을 알려드리겠습니다. 아래에 링크도 있으니 이해가 안 되시면 참조하시길 바랍니다.</p><p><a href="https://github.com/cheese10yun/node-yun" rel="external nofollow noopener noreferrer" target="_blank">Branch develop-mysql</a></p><h3><span id="mysql-모듈설치">mysql 모듈설치</span></h3><p><em>우선 필요 모듈부터 설치를 진행합니다. 데이터베이스 설치 및 설정은 다른 블로그에서 많이 다루고 있으니 생략하겠습니다.</em></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install mysql --save</div></pre></td></tr></table></figure><p><code>db_info.js</code></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    local: &#123; <span class="comment">// localhost</span></div><div class="line">      host: <span class="string">'localhost'</span>,</div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      user: <span class="string">'root'</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;,</div><div class="line">    real: &#123; <span class="comment">// real server db info</span></div><div class="line">      host: <span class="string">''</span>,</div><div class="line">      port: <span class="string">''</span>,</div><div class="line">      user: <span class="string">''</span>,</div><div class="line">      password: <span class="string">'!'</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;,</div><div class="line">    dev: &#123; <span class="comment">// dev server db info</span></div><div class="line">      host: <span class="string">''</span>,</div><div class="line">      port: <span class="string">''</span>,</div><div class="line">      user: <span class="string">''</span>,</div><div class="line">      password: <span class="string">''</span>,</div><div class="line">      database: <span class="string">''</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure><p>데이터베이스의 정보가 저장돼있는 곳입니다. 로컬 환경, 실제 서버 환경, 테스트 서버 환경에 필요한 정보를 입력해주세요.</p><p><code>db_con.js</code></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mysql = <span class="built_in">require</span>(<span class="string">'mysql'</span>);</div><div class="line"><span class="keyword">var</span> config = <span class="built_in">require</span>(<span class="string">'../db/db_info'</span>).local;</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    init: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> mysql.createConnection(&#123;</div><div class="line">        host: config.host,</div><div class="line">        port: config.port,</div><div class="line">        user: config.user,</div><div class="line">        password: config.password,</div><div class="line">        database: config.database</div><div class="line">      &#125;)</div><div class="line">    &#125;,</div><div class="line"></div><div class="line">    test_open: <span class="function"><span class="keyword">function</span> (<span class="params">con</span>) </span>&#123;</div><div class="line">      con.connect(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (err) &#123;</div><div class="line">          <span class="built_in">console</span>.error(<span class="string">'mysql connection error :'</span> + err);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          <span class="built_in">console</span>.info(<span class="string">'mysql is connected successfully.'</span>);</div><div class="line">        &#125;</div><div class="line">      &#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure><p>데이터베이에 커넥트 하는 부분을 담당합니다. config 변수를 보시면 local 프로퍼티를 이용해서 db_info.js에 있는 local 객체를 config 변수에 바인딩시킵니다.</p><p>init 메서드를 보시면 방금 바인딩시킨 config 값의 기반으로  mysql connection을 생성이 가능합니다. 또 <code>var config = require('../db/db_info').(XXX)</code> 이런 형태로 <code>db_info.js</code>에 저장돼있는 데이터베이스의 정보를 손쉽게 변경이 가능합니다.</p><p><strong>router에서 사용하기 (1)</strong></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mysql_dbc = <span class="built_in">require</span>(<span class="string">'../db/db_con'</span>)();</div><div class="line"><span class="keyword">var</span> connection = mysql_dbc.init();</div><div class="line">mysql_dbc.test_open(connection);</div></pre></td></tr></table></figure><p>mysql_dbc 변수에  db_con의 값을 require을 시키고, 위에서 설명한 init 메서드를 통해서 생성된 Mysql Connnection을 변수 connection에 저장시킵니다</p><p><strong>router에서 사용하기 (2)</strong></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">router.get(<span class="string">'/mysql/test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> stmt = <span class="string">'select *from ....'</span>;</div><div class="line">  connection.query(stmt, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    .....</div><div class="line">  &#125;)</div><div class="line">&#125;);</div></pre></td></tr></table></figure><p>위에서 설명한 connection 객체를 이용해서 쿼리 작업을 진행하시면 됩니다.</p><p><img src="https://i.imgur.com/yloTaE9.png" alt="EC2 Innound"></p><p>서버를 실행시키면 입력된 데이터베이스와 연결이 되고 <code>test_open</code> 메서드를 통해서 데이터베이스의 컨넥션이 제대로 생성이 됐나 간단한 로그로 출력됩니다. 이처럼 서버를 실행시켰을 때 데이터베이스와 제대로 연결되었는지 정보를 출력하시는 것을 권장합니다.</p><h3><span id="마무리">마무리</span></h3><p>이번 포스팅 내용은 짧긴 짧았지만 생각을 정리하고, 코드를 작성하고 또 그것을 문서로 다시 작성하는 것은 상당히 시간이 거리는 작업인 거 같습니다.  그래도 점점 익숙해지고 있기도 하고, 블로그를 포스팅한 날은 조회수를 보는 재미도 있습니다. 그런 의미로 좋아요, 공유하기 좀 부탁드리겠습니다…</p><p>포스팅하다 보면 “아 이 내용이 먼저 나와야 이걸 설명하기가 편할 거 같아” 이런 생각이 계속 들어 제가 하고 싶은 포스팅하고 싶은 내용보다는 좀 더 앞부분을 계속 설명해드렸던 거 같습니다. 그래도 제가 전하고 싶은 기술 천천히, 꾸준하게 포스팅해 나아가겠습니다.</p><p>긴글 읽어주셔서 감사합니다. 조만간에 찾아 뵙겠습니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;안녕하세요 스타트업에서 근무하고 있는 신입 개발자입니다. 이번에 정리할 내용은 Node + Mysql 연동입니다. 이미 수많은 예제가 있으나 앞으로 포스팅할 내용들이 데이터베이스가 필수적으로 필요하니 간단 정리 및 간단하게 팁?을 소개하여드리겠습
-      
-    
-    </summary>
-    
-    
-      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
       <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
     
