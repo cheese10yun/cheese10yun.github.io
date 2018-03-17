@@ -254,27 +254,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
-        <lastmod>2018-03-17T05:48:21.148Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Coveralls/</loc>
-        <lastmod>2018-03-17T05:48:21.148Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test-Coverage/</loc>
-        <lastmod>2018-03-17T05:48:21.148Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
         <lastmod>2018-03-17T05:49:01.117Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -284,6 +263,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Refactoring/</loc>
         <lastmod>2018-03-17T05:49:01.117Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
+        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Coveralls/</loc>
+        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test-Coverage/</loc>
+        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
