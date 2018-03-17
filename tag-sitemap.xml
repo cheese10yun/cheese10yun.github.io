@@ -2,13 +2,6 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JPA-Console/</loc>
-        <lastmod>2018-01-22T16:30:46.763Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/WebStorm/</loc>
         <lastmod>2018-03-17T05:45:19.755Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -88,13 +81,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Image-Upload/</loc>
         <lastmod>2018-03-17T05:47:09.756Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-03-17T05:47:09.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -191,14 +177,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-03-17T05:48:00.745Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-03-17T05:48:00.745Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -254,13 +240,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2018-03-17T05:49:01.117Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Refactoring/</loc>
         <lastmod>2018-03-17T05:49:01.117Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -269,21 +248,42 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Slack/</loc>
-        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
+        <lastmod>2018-03-17T05:55:51.274Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Coveralls/</loc>
-        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
+        <lastmod>2018-03-17T05:55:51.274Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Test-Coverage/</loc>
-        <lastmod>2018-03-17T05:55:06.889Z</lastmod>
+        <lastmod>2018-03-17T05:55:51.274Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2018-03-17T15:28:58.162Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2018-03-17T15:28:58.162Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA-Console/</loc>
+        <lastmod>2018-03-17T15:28:58.162Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
