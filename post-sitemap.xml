@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/intellij-refactoring/</loc>
+        <lastmod>2018-03-17T05:49:01.117Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/slack-coveralls/</loc>
         <lastmod>2018-03-17T05:48:21.148Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -201,14 +209,6 @@
     <url>
         <loc>https://cheese10yun.github.io/webStrom-part1/</loc>
         <lastmod>2018-03-17T05:45:19.755Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/intellij-refactoring/</loc>
-        <lastmod>2018-03-17T05:40:28.596Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

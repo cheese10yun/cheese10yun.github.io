@@ -9,13 +9,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Refactoring/</loc>
-        <lastmod>2018-03-17T05:40:28.596Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/WebStorm/</loc>
         <lastmod>2018-03-17T05:45:19.755Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -156,13 +149,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2018-03-17T05:47:41.877Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Builder-Pattern/</loc>
         <lastmod>2018-03-17T05:47:41.877Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -284,6 +270,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Test-Coverage/</loc>
         <lastmod>2018-03-17T05:48:21.148Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2018-03-17T05:49:01.117Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Refactoring/</loc>
+        <lastmod>2018-03-17T05:49:01.117Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
