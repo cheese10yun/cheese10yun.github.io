@@ -45,11 +45,11 @@
   </entry>
   
   <entry>
-    <title>IntelliJ Live Template</title>
+    <title>인텔리제이 Live Template</title>
     <link href="https://cheese10yun.github.io/intellij-live-template/"/>
     <id>https://cheese10yun.github.io/intellij-live-template/</id>
     <published>2018-03-17T15:00:00.000Z</published>
-    <updated>2018-03-17T16:23:00.057Z</updated>
+    <updated>2018-03-18T04:23:12.436Z</updated>
     
     <content type="html"><![CDATA[<h2><span id="intellij-live-template">IntelliJ Live Template</span></h2><p>IntelliJ Live Template 이란 코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다. 등록 방법은 아래와 같습니다.</p><h2><span id="template-등록">Template 등록</span></h2><p><img src="https://i.imgur.com/H4qR4aa.png" alt=""></p><ol><li>IntelliJ Preferences</li><li>template 검색</li><li>등록할 스타일 작성 (Markdown template를 등록할 경우 Markdown 항목에 추가)</li><li>Abbreviation: Template key 등록, Description: 간단한 설명 작성</li><li>추가 하고 싶은 Template 등록</li><li><strong>하단의 Define에 사용할곳 반드시 정의</strong> (Markdown 파일에서 사용할 것임으로 Markdown 선책)</li></ol><h2><span id="template-사용법">Template 사용법</span></h2><p><img src="https://i.imgur.com/mZuDMdU.gif" alt=""></p><ul><li>위에서 작성한 <code>key</code>값을 입력하면 Template 불러옵니다.</li></ul><h2><span id="template">Template</span></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">layout: post</div><div class="line">title: $END$</div><div class="line">subtitle:</div><div class="line">catalog: true</div><div class="line">header-img: https://i.imgur.com/avC1Xor.jpg</div><div class="line">thumbnail:</div><div class="line">date: $date$</div><div class="line">tags:</div><div class="line">  -</div><div class="line">---</div></pre></td></tr></table></figure><ul><li><code>$END$</code> :  Template 을 보시면 코드가 완성되고 포커싱이 <code>title :</code> 쪽으로 가시는 것 볼 수 있씁니다. 키워드를 사용하면 Template 작성후 커서가 자동 이동 됩니다.</li><li><code>$date$</code> : 현재 시간을 자동으로 입력하게 합니다. (IntelliJ에서 작성하면 표시나 WebStorm 에서는 표시가 안되네요)</li></ul><h2><span id="자주사용하는-template">자주사용하는 Template</span></h2><p><img src="https://i.imgur.com/iQ40QYK.gif" alt=""></p><p>제가 가장 많이 사용하는 Template 입니다. <code>TODO</code> 입니다. 코드를 작성하면 추가적으로 필요한 작업, 기타등등 작업들은 모두 TODO로 적어 놓습니다. 해당 날짜와 작성인이 자동으로 작성되는 것을 확인할 수 있습니다.</p>]]></content>
     
