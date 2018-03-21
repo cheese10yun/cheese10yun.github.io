@@ -170,14 +170,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-03-17T05:48:00.745Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-03-17T05:48:00.745Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -254,13 +254,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2018-03-17T15:28:58.162Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2018-03-17T15:28:58.162Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -291,6 +284,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2018-03-20T17:08:45.450Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2018-03-21T12:53:58.051Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Todo/</loc>
+        <lastmod>2018-03-21T12:53:58.051Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
