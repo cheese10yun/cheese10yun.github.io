@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-notificaion-oop/</loc>
+        <lastmod>2018-03-23T19:02:26.363Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/intellij-todo/</loc>
         <lastmod>2018-03-21T12:53:58.051Z</lastmod>
         <changefreq>weekly</changefreq>
