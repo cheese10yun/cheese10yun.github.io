@@ -106,6 +106,12 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#OOP" title="OOP">OOP</a>
+                            
+                              <a class="tag" href="/tags/#SOLID" title="SOLID">SOLID</a>
+                            
                         </div>
                         <h1>Spring OOP 프로그래밍 예제</h1>
                         <h2 class="subheading">내가 해석한 SOLID</h2>
@@ -231,7 +237,7 @@
                 <p><img src="https://i.imgur.com/PI6g3ku.png" alt=""></p>
 <p><strong>해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다.</strong> 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.</p>
 <h2><span id="예제-코드">예제 코드</span></h2>
-<p><strong><a href="https://github.com/cheese10yun/blog-sample/tree/master/notification" rel="external nofollow noopener noreferrer" target="_blank">Blog-Sample </a>에 있습니다. <s>star 한번만…</s></strong></p>
+<p><img src="https://github.com/cheese10yun/blog-sample/tree/master/notification" alt="blog-sample "></p>
 <h2><span id="요구사항">요구사항</span></h2>
 <ul>
 <li>배송이 완료 됬을 경우 사용자가 등록한 알림을 받는다.</li>
@@ -251,19 +257,19 @@
 <li>dto 클래스로 유연하게 받을 수 있게 처리</li>
 </ul>
 <h2><span id="deliverykakaonotificationsender-구현-클래스">DeliveryKakaoNotificationSender 구현 클래스</span></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryKakaoNotificationSender</span> <span class="keyword">extends</span> <span class="title">KakaoNotificaionSender</span> <span class="keyword">implements</span> <span class="title">DeliveryNotificationSender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(DeliveryMessageDto.Message dto)</span> </span>&#123;</div><div class="line">        create(buildKaKaoNotificationDto(dto));</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryKakaoNotificationSender</span> <span class="keyword">implements</span> <span class="title">DeliveryNotificationSender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(DeliveryMessageDto.Message dto)</span> </span>&#123;</div><div class="line">        kakaoNotificaionSender.create(buildKaKaoNotificationDto(dto));</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
 <li>배송 관련 카카오 메시지를 담당하는 클래스</li>
 <li><code>DeliveryNotificationSender</code> 인터페이스를 <code>implements</code> 해서 자신이 <code>send</code> 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.</li>
-<li><code>KakaoNotificaionSender</code> 클래스를 상속 받고 있어 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.</li>
+<li><code>KakaoNotificaionSender</code> 클래스를 이용해서 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.</li>
 <li>테이블에 insert 되고 그 데이터 기반으로 카카오에서 메시지를 전송해 준다.</li>
 </ul>
 <h2><span id="deliverysmsnotificationsender-구현-클래스">DeliverySmsNotificationSender 구현 클래스</span></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliverySmsNotificationSender</span> <span class="keyword">extends</span> <span class="title">SmsNotificationSender</span> <span class="keyword">implements</span> <span class="title">DeliveryNotificationSender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(DeliveryMessageDto.Message dto)</span> </span>&#123;</div><div class="line">        sendSMS(buildSmsMessageDto(dto));</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliverySmsNotificationSender</span> <span class="keyword">implements</span> <span class="title">DeliveryNotificationSender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(DeliveryMessageDto.Message dto)</span> </span>&#123;</div><div class="line">        smsNotificationSender.sendSMS(buildSmsMessageDto(dto));</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
 <li>배송 관련 카카오 메시지를 담당하는 클래스이다.</li>
 <li><code>DeliveryNotificationSender</code> 인터페이스를 <code>implements</code> 해서 자신이 <code>send</code> 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.</li>
-<li><code>SmsNotificationSender</code> 클래스를 상속 받고 있어 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.</li>
+<li><code>SmsNotificationSender</code> 클래스를 이용해서 메시지를 보내고 있어 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.</li>
 <li>해당 업체 API 호출을 통해서 문자전송이 진행된다. 카카오 메시지 전송과는 다르다. 하지만 <code>DeliveryNotificationSender</code> 인터페이스를 통해서  <code>send</code>라는 동일한 책임을 갖게 된다.</li>
 </ul>
 <h2><span id="deliverynotificationsendermanager">DeliveryNotificationSenderManager</span></h2>
@@ -304,11 +310,11 @@
 <h3><span id="lsp-리스코프-치환-원칙">LSP : 리스코프 치환 원칙</span></h3>
 <ul>
 <li>서브 타입은 언제나 슈퍼타입을 교체 할 수 있어야 한다.</li>
-<li><code>DeliveryKakaoNotificationSender</code> 서브 클래스는 <code>KakaoNotificaionSender</code>  슈퍼 클래스를 대체 합니다. 카카오 알림 중에서 배송 관련 알림을 교체해서 보내줍니다. <strong>Is a 관계가 성립됩니다.</strong></li>
+<li>구현 클래스들은 모두 <code>DeliveryNotificationSender</code>인터페이스의 <code>send</code> 메서드를 구현 하고 있어 교체가 가능합니다.</li>
 </ul>
 <h3><span id="isp-인터페이스-분리-원칙">ISP : 인터페이스 분리 원칙</span></h3>
 <ul>
-<li>서브 타입에서 상위 타입의 메소드들의 사용하지 않는 경우가 없</li>
+<li>하위 클래스들에서 사용하지 않은 의존성을 가지고 있지 않고 있습니다.</li>
 </ul>
 <h3><span id="dip-의존성-역전-원칙">DIP : 의존성 역전 원칙</span></h3>
 <ul>
@@ -373,6 +379,12 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#OOP" title="OOP">OOP</a>
+                        
+                          <a class="tag" href="/tags/#SOLID" title="SOLID">SOLID</a>
+                        
                     </div>
                 </section>
                 
