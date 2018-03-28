@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/Node-AWS-Nginx/">
-    <meta property="og:description" content="AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="JPA-Embedded - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/jpa-embedded/">
+    <meta property="og:description" content="JPA-Embedded - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-Nginx/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jpa-embedded/">
 
 
     <title>
         
-          AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그
+          JPA-Embedded - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-Nginx/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jpa-embedded/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,20 +106,12 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
-                            
-                              <a class="tag" href="/tags/#Nginx" title="Nginx">Nginx</a>
-                            
-                              <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                            
-                              <a class="tag" href="/tags/#EC2" title="EC2">EC2</a>
-                            
                         </div>
-                        <h1>AWS EC2 Nginx Node.js 설정</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>JPA-Embedded</h1>
+                        <h2 class="subheading">JPA-Tip</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-13
+                            2018-03-29
                         </span>
                     </div>
                 
@@ -236,50 +228,37 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>안녕하세요. 스타트업에서 근무 중인 신입 개발자입니다. 근무하면서 얻은 정보를 정리하며 올려봅니다. 사내환경 같은 경우는 각자 로컬 환경에서 개발하고, 어느 정도 작업이 완료됐다 싶으면 테스트 서버(EC2)에 프로젝트를 올리는 작업을 아래와 같이 진행하게 됩니다.</p>
-<ol>
-<li>EC2 기본 셋팅 (AMI)</li>
-<li>EC2 Node.js 설치</li>
-<li>GitHub Clone</li>
-<li>Nginx 연동</li>
-</ol>
-<h3><span id="1-ec2-기본-셋팅-ami">1. EC2 기본 셋팅 (AMI)</span></h3>
-<p>AWS EC2에 접속하셔서 필수 패키지 설치를 진행합니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo yum update -y</div><div class="line">sudo yum install gcc gcc-c++</div><div class="line">sudo yum  install -y git</div><div class="line">sudo yum install -y nginx</div></pre></td></tr></table></figure>
-<h4><span id="port-설정">Port 설정</span></h4>
-<p>EC2의 포트 80, 3000이 열려있어야 합니다. EC2포트 설정은 여기서 다룰 내용이 아니니 생략하겠습니다. 포트 설정은 원하시는 포트를 사용하셔도 됩니다만 기본 포트를 권장합니다.</p>
-<p><img src="https://i.imgur.com/XnEOclk.png" alt="EC2 Innound"></p>
-<h4><span id="github-설정">GitHub 설정</span></h4>
-<p>GitHub에 프로젝트를 업로드해주세요. GitHub 설정은 여기서 다룰 내용이 아니니 생략하겠습니다.</p>
-<h3><span id="2-ec2-nodejs-설치">2. EC2 Node.js 설치</span></h3>
-<p>AWS EC2에 접속하셔서 아래 명령어를 순차적으로 입력합니다. 다른 버전 노드를 설치해도 무방합니다만 로컬에 있는 노드 버전과 동일하게 설치하는 것을 권장합니다. 다소 시간이 걸리는 작업입니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">wget https://nodejs.org/dist/v6.7.0/node-v6.7.0.tar.gz</div><div class="line">tar -xvf node-v6.7.0.tar.gz</div><div class="line"><span class="built_in">cd</span> 해당폴더이동</div><div class="line">./configure</div><div class="line">make</div><div class="line">sudo make install</div></pre></td></tr></table></figure>
-<p>설치를 완료하셨다면 아래의 명령어로 Node, NPM 버전을 확인합니다</p>
-<p><img src="https://i.imgur.com/joOtMGi.png" alt="Node, NPM Version"></p>
-<h3><span id="3-github-clone">3. GitHub Clone</span></h3>
-<p>이미 프로젝트가 GitHub에 업로드되었 다고 가정하고 진행하겠습니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">git init</div><div class="line">git remote add origin [단축 이름] [url]</div><div class="line">ex) git remote add origin https://github.com/cheese10yun/node-yun.git</div><div class="line">git <span class="built_in">clone</span> [url]</div><div class="line">ex) git <span class="built_in">clone</span> https://github.com/cheese10yun/node-yun.git</div></pre></td></tr></table></figure>
-<p><strong>node_modules 디렉토리는 gitignore 시키는 것을 권장합니다.</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> gitclone 폴더이동/</div><div class="line">npm install</div><div class="line">npm start</div></pre></td></tr></table></figure>
-<p>노드 모듈을 설치한 이후 해당 노드 프로젝트에 알맞게 노드 서버를 실행시켜주세요. 저 같은 경우는 <code>npm start</code>로 프로젝트를 실행시켰습니다.<br>
-<img src="https://i.imgur.com/bLIrf9x.png" alt="Node Server"></p>
-<p>EC2 IP:3000로 접속하시면 해당 노드 서버가 실행 있는 것을 확인하실 수 있습니다. 만약 접속이 안되시면 EC2 IP 및 inbound 설정을 확인해보세요.</p>
-<h3><span id="4-nginx-연동">4. Nginx 연동</span></h3>
-<p>nginx를 실행시킨 이후 EC2 IP로 접속하시면 아래 그림과 같은 화면이 출력되시면 nginx 설정으로 진행하시면 됩니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service nginx restart</div></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/ShyNzxi.png" alt="Nginx"><br>
-<strong>Nginx 기본 포트는 80으로 설정되어있습니다.</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vi /etc/nginx/nginx.conf</div></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/rBNAhpq.png" alt="Nginx.conf"></p>
-<p>위의 그림과 같이 server {<br>
-아래의 location을 붙여 넣습니다.<br>
-} Nginx를 재실행시킵니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location / &#123;</div><div class="line">      proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</div><div class="line">      proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</div><div class="line">      proxy_set_header Host <span class="variable">$http_host</span>;</div><div class="line">      proxy_set_header X-NginX-Proxy <span class="literal">true</span>;</div><div class="line"></div><div class="line">      proxy_pass http://127.0.0.1:3000/;</div><div class="line">      proxy_redirect off;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo service nginx restart</div></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/jEsxV1H.png" alt="Nginx Node"></p>
-<p>Nginx를 재실행시키시고 EC2 IP에 접속하시면 Nginx 화면이 아니라 노드 서버 화면이 나오시는 것을 확인할 수 있습니다.</p>
-<p>최대한 쉽게 설명하려 노력했으나 도움이 됐을지 의문입니다. 어려운 주제는 아니지만, 문서로 정리해보니 이틀이라는 시간이 걸리긴 했습니다만 뭔가 코딩하는 거랑 비슷한 느낌이라고 할까요? 결과물을 보니 뭔가 뿌듯하고 재미도 있네요. 다들 이런 재미로 블로그를 하시나 봅니다.</p>
-<p>현재 회사에서 노드를 기반으로 서비스하고 있어 node 중심적으로 블로그 진행할 거 같습니다. 노드나 스타트업에 관심이 있는 분이시면 종종 찾아와 주시기 바랍니다.</p>
+                <h2><span id="embedded-type">Embedded Type</span></h2>
+<p><strong>JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.</strong></p>
+<h2><span id="receiver-클래스">Receiver 클래스</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Id</span></div><div class="line">    <span class="meta">@GeneratedValue</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</div><div class="line"></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Name name;</div><div class="line"></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Address address;</div><div class="line"></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> PhoneNumber phoneNumber;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>Address</code>, <code>Name</code> 새로운 타입을 직접 정의 했습니다.</li>
+<li><code>@Embedded</code> 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.</li>
+</ul>
+<h2><span id="address-클래스">Address 클래스</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Embeddable</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"city"</span>)</div><div class="line">    <span class="keyword">private</span> String city;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"street"</span>)</div><div class="line">    <span class="keyword">private</span> String street;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"zip_code"</span>)</div><div class="line">    <span class="keyword">private</span> String zipCode;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>Embeddable</code> 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.</li>
+<li>엔티티 객체와 거의 비슷합니다.</li>
+</ul>
+<h2><span id="receiver-클래스">Receiver 클래스</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Name name;</div><div class="line"></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Address address;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>Receiver</code>클래스에서 직접 정의한 <code>Address</code>를 쉽게 사용할 수 있습니다.</li>
+</ul>
+<h2><span id="name-클래스">Name 클래스</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Embeddable</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Name</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"first_name"</span>)</div><div class="line">    <span class="keyword">private</span> String first;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"last_name"</span>)</div><div class="line">    <span class="keyword">private</span> String last;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getFullName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.first + <span class="keyword">this</span>.last;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>클래로로 정의하면 다양한 부수적인 효과를 적용 시킬 수 있습니다.</li>
+<li>정말 간단한 예로 <code>getFullName()</code> 메소드로 full name을 얻을 수 있습니다. 해당 모델에 맞는 다양한 함수를 정의 할 수 있습니다.</li>
+</ul>
+<h2><span id="attributeoverride-재정의">@AttributeOverride 재정의</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sender</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="meta">@AttributeOverrides</span>(&#123;</div><div class="line">            <span class="meta">@AttributeOverride</span>(name = <span class="string">"city"</span>, column = <span class="meta">@Column</span>(name = <span class="string">"sender_city"</span>)),</div><div class="line">            <span class="meta">@AttributeOverride</span>(name = <span class="string">"street"</span>, column = <span class="meta">@Column</span>(name = <span class="string">"sender_street"</span>)),</div><div class="line">            <span class="meta">@AttributeOverride</span>(name = <span class="string">"zip_code"</span>, column = <span class="meta">@Column</span>(name = <span class="string">"sender_zip_code"</span>))</div><div class="line">    &#125;)</div><div class="line">    <span class="keyword">private</span> Address address;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>임베디드 타입에 정의한 매핑정보를 재정의 하려면 <code>@AttributeOverride</code>를 사용하면 됩니다.</li>
+<li>해당 칼럼은 <code>sender_city</code>, <code>sender_street</code>, <code>sender_zip_code</code> 으로 생성됩니다.</li>
+</ul>
 
                 
 
@@ -287,13 +266,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/new-Developer-work-challenge/" data-toggle="tooltip" data-placement="top" title="신입 개발자 취업도전기">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/new-developer-portfolio/" data-toggle="tooltip" data-placement="top" title="신입 개발자 포트폴리오">Next Post &rarr;</a>
+                            <a href="/spring-notificaion-oop/" data-toggle="tooltip" data-placement="top" title="Spring OOP 프로그래밍 예제">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -323,7 +298,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. EC2 기본 셋팅 (AMI)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Port 설정</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">GitHub 설정</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. EC2 Node.js 설치</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. GitHub Clone</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. Nginx 연동</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Embedded Type</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Receiver 클래스</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Address 클래스</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Receiver 클래스</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Name 클래스</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">@AttributeOverride 재정의</span></a></li></ol>
         
         </div>
       </aside>
@@ -343,14 +318,6 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
-                        
-                          <a class="tag" href="/tags/#Nginx" title="Nginx">Nginx</a>
-                        
-                          <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                        
-                          <a class="tag" href="/tags/#EC2" title="EC2">EC2</a>
-                        
                     </div>
                 </section>
                 
@@ -369,8 +336,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/Node-AWS-Nginx/";
-    var disqus_url = "https://cheese10yun.github.io/Node-AWS-Nginx/";
+    var disqus_identifier = "https://cheese10yun.github.io/jpa-embedded/";
+    var disqus_url = "https://cheese10yun.github.io/jpa-embedded/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
