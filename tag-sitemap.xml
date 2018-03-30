@@ -289,27 +289,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-03-24T07:25:57.993Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
-        <lastmod>2018-03-24T07:25:57.993Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
-        <lastmod>2018-03-24T07:25:57.993Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2018-03-28T16:31:07.585Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -319,6 +298,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Embedded/</loc>
         <lastmod>2018-03-28T16:31:07.585Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
+        <lastmod>2018-03-30T14:46:51.809Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-03-30T17:40:29.375Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
+        <lastmod>2018-03-30T17:40:29.375Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

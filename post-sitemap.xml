@@ -7,8 +7,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/jpa-embedded/</loc>
-        <lastmod>2018-03-28T16:31:07.585Z</lastmod>
+        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
+        <lastmod>2018-03-30T17:40:29.375Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -16,7 +16,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-notificaion-oop/</loc>
-        <lastmod>2018-03-24T07:25:57.993Z</lastmod>
+        <lastmod>2018-03-30T14:46:51.809Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/jpa-embedded/</loc>
+        <lastmod>2018-03-28T16:31:07.585Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
