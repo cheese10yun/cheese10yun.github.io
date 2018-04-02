@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2018-04-02T13:41:19.001Z</updated>
+  <updated>2018-04-02T16:36:29.050Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>인텔리제이 Git 활용법</title>
+    <link href="https://cheese10yun.github.io/intellij-git/"/>
+    <id>https://cheese10yun.github.io/intellij-git/</id>
+    <published>2018-04-02T15:00:00.000Z</published>
+    <updated>2018-04-02T16:36:29.050Z</updated>
+    
+    <content type="html"><![CDATA[<p>벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느낌이 있어서 저는 거의 모든 작업을 인텔리제이에서 하는 것을 지향합니다. <strong>이번 포스팅은 Source Tree 즉 Git 관련 툴을 대체하는 방법을 소개하겠습니다.</strong> <strong><em>해당 기능의 단축키는 스크린샷 하단에 표시되있습니다.</em></strong></p><h2><span id="commit">Commit</span></h2><p><img src="https://i.imgur.com/6xFlHcv.png" alt=""></p><ul><li>Diff : 변경 이력이 있는 모든 파일에 대해서 Diff 기능을 제공합니다. Commit을 하기 전에 자신이 변경한 모든 파일에 대해서 한 번 꼼꼼하게 읽어 보는 습관을 갖는 것이 실수를 줄이는 가장 효율적인 방법이라고 생각합니다.</li><li>Before Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.<ul><li>Check TODO:  //TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.</li><li>Optimize imports : 사용하지 않은 imports를 제거해 줍니다.</li><li>Reformat Code : 인텔리제이에서 설정한 코드스타일로 변경 해줍니다.</li></ul></li></ul><h2><span id="push">Push</span></h2><p><img src="https://i.imgur.com/TzF1dNk.png" alt=""></p><ul><li>커밋한 내용을 레파지토리에 푸쉬 하는 기능입니다.</li></ul><h2><span id="pull">Pull</span></h2><p><img src="https://i.imgur.com/pMhiJPi.png" alt=""></p><ul><li>Remote Repository에 변경 내역을 Pull 받는 기능입니다.</li></ul><h2><span id="stash">Stash</span></h2><p><img src="https://i.imgur.com/ZIn63MI.png" alt=""></p><ul><li>Stash 기능은 아주 간단하게 소개하면 변경 내역을 임시저장 해놓는 기능입니다. 가령 다른 branch로 변경을 원할 때 변경 내역이 남아 있어 부득이하게 commit을 하는 경우가 있습니다. 그럴 때 stash 임시 저장소에 저장하면 편리하게 branch 간의 이동을 할 수 있습니다.</li><li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 stash 기능을 사용합니다.</li></ul><h2><span id="unstash">UnStash</span></h2><p><img src="https://i.imgur.com/kDCYgib.png" alt=""></p><ul><li>Stash 저장한 내역을 POP 하는 기능입니다.</li><li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 unStash 기능을 사용합니다.</li><li>저장한 메시지를 기반으로 선택하고 <code>Apply Stash</code>을 클릭하면 변경 내역을 불러옵니다.</li></ul><h2><span id="share-project-on-github">Share Project on Github</span></h2><p><img src="https://i.imgur.com/bOJ0X8n.png" alt=""></p><ul><li>해당 프로젝트를 Github에 올리는 기능입니다.</li></ul><h2><span id="branch">Branch</span></h2><p><img src="https://i.imgur.com/HJjPhjW.png" alt=""></p><ul><li>New branch, Checkout, Compare, Merge, Rebase 등등 다양한 기능들을 제공합니다.</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느
+      
+    
+    </summary>
+    
+    
+      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
+    
+      <category term="Tip" scheme="https://cheese10yun.github.io/tags/Tip/"/>
+    
+      <category term="Git" scheme="https://cheese10yun.github.io/tags/Git/"/>
+    
+  </entry>
   
   <entry>
     <title>Spring OOP 프로그래밍 예제(2)</title>
@@ -417,9 +444,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
       <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -502,9 +529,9 @@
     
       <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
     
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
       <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
+    
+      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
     
       <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
     
@@ -536,34 +563,6 @@
       <category term="API" scheme="https://cheese10yun.github.io/tags/API/"/>
     
       <category term="Call" scheme="https://cheese10yun.github.io/tags/Call/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Node Mysql Multiple Insert</title>
-    <link href="https://cheese10yun.github.io/mysql-multiple-insert/"/>
-    <id>https://cheese10yun.github.io/mysql-multiple-insert/</id>
-    <published>2017-01-30T15:00:00.000Z</published>
-    <updated>2018-03-17T05:47:31.215Z</updated>
-    
-    <content type="html"><![CDATA[<p>데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.<br>이러한 경우에 <strong><em>반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.</em></strong></p><p><img src="https://i.imgur.com/0v9jD2z.png" alt=""><br>위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> stmt_multiple_insert = <span class="string">'insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values ?;'</span>; <span class="comment">// 쿼리문</span></div><div class="line"><span class="keyword">var</span> values = [</div><div class="line">    [<span class="string">'user_001'</span>, <span class="string">'pw_01'</span>, <span class="string">'name_01'</span>, <span class="string">'email_01@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_002'</span>, <span class="string">'pw_02'</span>, <span class="string">'name_02'</span>, <span class="string">'email_02@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_003'</span>, <span class="string">'pw_03'</span>, <span class="string">'name_03'</span>, <span class="string">'email_03@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_004'</span>, <span class="string">'pw_04'</span>, <span class="string">'name_04'</span>, <span class="string">'email_04@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_005'</span>, <span class="string">'pw_05'</span>, <span class="string">'name_05'</span>, <span class="string">'email_05@a.com'</span>, <span class="string">'2016-10-10'</span>]</div><div class="line">];</div><div class="line"></div><div class="line"><span class="keyword">var</span> str_query = connection.query(stmt_multiple_insert, [values], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">        <span class="built_in">console</span>.log(err);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(str_query.sql);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure><p>구조는 간단합니다. <strong><em>쿼리문은 입력값과 1:1로 대응시키고, 입력값은</em></strong> <code><b>var values</b></code> <strong><em>처럼 배열형태로 선언합니다.</em></strong></p><p><code><b>var str_query = connection.query(…)</b></code> 이렇게 connection 객체를 변수로 할당시키고 <code><b>console.log(str_query.sql)</b></code><br>으로 해당 쿼리를 확인할 수 있습니다.</p><p>쿼리문을 확인하기 위한 작업이라서 실제 배포하는 소스코드에서는 사용하지 않는 것을 권장합니다.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//해당 쿼리문</div><div class="line">insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values</div><div class="line">(&apos;user_001&apos;, &apos;pw_01&apos;, &apos;name_01&apos;, &apos;email_01@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_002&apos;, &apos;pw_02&apos;, &apos;name_02&apos;, &apos;email_02@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_003&apos;, &apos;pw_03&apos;, &apos;name_03&apos;, &apos;email_03@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_004&apos;, &apos;pw_04&apos;, &apos;name_04&apos;, &apos;email_04@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_005&apos;, &apos;pw_05&apos;, &apos;name_05&apos;, &apos;email_05@a.com&apos;, &apos;2016-10-10&apos;);</div></pre></td></tr></table></figure><h3><span id="마무리">마무리</span></h3><p>뭐 별 내용이 없네요…</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.&lt;br&gt;
-이러한 경우에 &lt;strong&gt;&lt;em&gt;반복문을 사용하지
-      
-    
-    </summary>
-    
-    
-      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
-    
-      <category term="Mysql" scheme="https://cheese10yun.github.io/tags/Mysql/"/>
-    
-      <category term="Multiple Insert" scheme="https://cheese10yun.github.io/tags/Multiple-Insert/"/>
     
   </entry>
   
