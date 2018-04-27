@@ -216,29 +216,35 @@
             <!-- 标签云 -->
             <div id="tag_cloud" class="tags">
                 
+                    <a href="#Mac" title="Mac" rel="0">Mac</a>
+                
+                    <a href="#단축키" title="단축키" rel="0">단축키</a>
+                
+                    <a href="#Hexo" title="Hexo" rel="0">Hexo</a>
+                
+                    <a href="#Blog" title="Blog" rel="1">Blog</a>
+                
                     <a href="#Node" title="Node" rel="15">Node</a>
                 
                     <a href="#API" title="API" rel="2">API</a>
                 
                     <a href="#Call" title="Call" rel="1">Call</a>
                 
-                    <a href="#PM2" title="PM2" rel="1">PM2</a>
-                
-                    <a href="#Process Management" title="Process Management" rel="1">Process Management</a>
-                
-                    <a href="#imagemin" title="imagemin" rel="2">imagemin</a>
+                    <a href="#Nginx" title="Nginx" rel="1">Nginx</a>
                 
                     <a href="#AWS" title="AWS" rel="3">AWS</a>
+                
+                    <a href="#EC2" title="EC2" rel="1">EC2</a>
+                
+                    <a href="#imagemin" title="imagemin" rel="2">imagemin</a>
                 
                     <a href="#S3" title="S3" rel="2">S3</a>
                 
                     <a href="#Image Upload" title="Image Upload" rel="1">Image Upload</a>
                 
-                    <a href="#Nginx" title="Nginx" rel="1">Nginx</a>
+                    <a href="#PM2" title="PM2" rel="1">PM2</a>
                 
-                    <a href="#EC2" title="EC2" rel="1">EC2</a>
-                
-                    <a href="#Blog" title="Blog" rel="1">Blog</a>
+                    <a href="#Process Management" title="Process Management" rel="1">Process Management</a>
                 
                     <a href="#Login" title="Login" rel="3">Login</a>
                 
@@ -250,13 +256,13 @@
                 
                     <a href="#Upload" title="Upload" rel="1">Upload</a>
                 
-                    <a href="#Crontab" title="Crontab" rel="1">Crontab</a>
-                
-                    <a href="#Scheduler" title="Scheduler" rel="1">Scheduler</a>
-                
                     <a href="#Bootstrap" title="Bootstrap" rel="1">Bootstrap</a>
                 
                     <a href="#Modal" title="Modal" rel="1">Modal</a>
+                
+                    <a href="#Crontab" title="Crontab" rel="1">Crontab</a>
+                
+                    <a href="#Scheduler" title="Scheduler" rel="1">Scheduler</a>
                 
                     <a href="#IntelliJ" title="IntelliJ" rel="5">IntelliJ</a>
                 
@@ -266,7 +272,7 @@
                 
                     <a href="#Git" title="Git" rel="1">Git</a>
                 
-                    <a href="#JPA" title="JPA" rel="3">JPA</a>
+                    <a href="#JPA" title="JPA" rel="4">JPA</a>
                 
                     <a href="#JPA Console" title="JPA Console" rel="1">JPA Console</a>
                 
@@ -300,7 +306,9 @@
                 
                     <a href="#Slack" title="Slack" rel="2">Slack</a>
                 
-                    <a href="#Spring" title="Spring" rel="3">Spring</a>
+                    <a href="#Spring" title="Spring" rel="4">Spring</a>
+                
+                    <a href="#Best Practices" title="Best Practices" rel="1">Best Practices</a>
                 
                     <a href="#Coveralls" title="Coveralls" rel="1">Coveralls</a>
                 
@@ -308,20 +316,57 @@
                 
                     <a href="#OOP" title="OOP" rel="2">OOP</a>
                 
-                    <a href="#SOLID" title="SOLID" rel="1">SOLID</a>
-                
                     <a href="#WebStorm" title="WebStorm" rel="1">WebStorm</a>
                 
-                    <a href="#Mac" title="Mac" rel="0">Mac</a>
-                
-                    <a href="#단축키" title="단축키" rel="0">단축키</a>
-                
-                    <a href="#Hexo" title="Hexo" rel="0">Hexo</a>
+                    <a href="#SOLID" title="SOLID" rel="1">SOLID</a>
                 
             </div>
 
             <!-- 标签列表 -->
 
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Mac">
+                    <span class="tag-text">Mac</span>
+                </span>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="단축키">
+                    <span class="tag-text">단축키</span>
+                </span>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Hexo">
+                    <span class="tag-text">Hexo</span>
+                </span>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Blog">
+                    <span class="tag-text">Blog</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/blog-start-part2/">
+                        <h2 class="post-title">
+                            블로그를 시작하려는 당신에게(2)
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
             
             <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Node">
@@ -348,9 +393,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/PM2/">
+                     <a href="/Node-AWS-Nginx/">
                         <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
+                            AWS EC2 Nginx Node.js 설정
                         </h2>
                         
                     </a>
@@ -378,9 +423,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Node-AWS-Nginx/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            AWS EC2 Nginx Node.js 설정
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -619,8 +664,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="PM2">
-                    <span class="tag-text">PM2</span>
+                <span class="fa fa-tag listing-seperator" id="Nginx">
+                    <span class="tag-text">Nginx</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -628,9 +673,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/PM2/">
+                     <a href="/Node-AWS-Nginx/">
                         <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
+                            AWS EC2 Nginx Node.js 설정
                         </h2>
                         
                     </a>
@@ -641,8 +686,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Process Management">
-                    <span class="tag-text">Process Management</span>
+                <span class="fa fa-tag listing-seperator" id="AWS">
+                    <span class="tag-text">AWS</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -650,22 +695,15 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/PM2/">
+                     <a href="/Node-AWS-Nginx/">
                         <h2 class="post-title">
-                            PM2 이용한 Node 프로세스 관리
+                            AWS EC2 Nginx Node.js 설정
                         </h2>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
                 </div>
                 <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="imagemin">
-                    <span class="tag-text">imagemin</span>
-                </span>
                 
                   <!-- <li class="listing-item">
                   <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
@@ -700,8 +738,30 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="AWS">
-                    <span class="tag-text">AWS</span>
+                <span class="fa fa-tag listing-seperator" id="EC2">
+                    <span class="tag-text">EC2</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/Node-AWS-Nginx/">
+                        <h2 class="post-title">
+                            AWS EC2 Nginx Node.js 설정
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="imagemin">
+                    <span class="tag-text">imagemin</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -712,21 +772,6 @@
                      <a href="/Node-AWS-S3-Upload/">
                         <h2 class="post-title">
                             Node AWS S3 업로드
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/Node-AWS-Nginx/">
-                        <h2 class="post-title">
-                            AWS EC2 Nginx Node.js 설정
                         </h2>
                         
                     </a>
@@ -811,8 +856,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Nginx">
-                    <span class="tag-text">Nginx</span>
+                <span class="fa fa-tag listing-seperator" id="PM2">
+                    <span class="tag-text">PM2</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -820,9 +865,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Node-AWS-Nginx/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            AWS EC2 Nginx Node.js 설정
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -833,8 +878,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="EC2">
-                    <span class="tag-text">EC2</span>
+                <span class="fa fa-tag listing-seperator" id="Process Management">
+                    <span class="tag-text">Process Management</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -842,31 +887,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Node-AWS-Nginx/">
+                     <a href="/PM2/">
                         <h2 class="post-title">
-                            AWS EC2 Nginx Node.js 설정
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Blog">
-                    <span class="tag-text">Blog</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/blog-start-part2/">
-                        <h2 class="post-title">
-                            블로그를 시작하려는 당신에게(2)
+                            PM2 이용한 Node 프로세스 관리
                         </h2>
                         
                     </a>
@@ -1081,50 +1104,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Crontab">
-                    <span class="tag-text">Crontab</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/crontab-api/">
-                        <h2 class="post-title">
-                            Crontab을 이용한 노드 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Scheduler">
-                    <span class="tag-text">Scheduler</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/crontab-api/">
-                        <h2 class="post-title">
-                            Crontab을 이용한 노드 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Bootstrap">
                     <span class="tag-text">Bootstrap</span>
                 </span>
@@ -1159,6 +1138,50 @@
                      <a href="/bootstrap-modall/">
                         <h2 class="post-title">
                             Bootstrap Modal 입력값 초기화
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Crontab">
+                    <span class="tag-text">Crontab</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/crontab-api/">
+                        <h2 class="post-title">
+                            Crontab을 이용한 노드 API 호출
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Scheduler">
+                    <span class="tag-text">Scheduler</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/crontab-api/">
+                        <h2 class="post-title">
+                            Crontab을 이용한 노드 API 호출
                         </h2>
                         
                     </a>
@@ -1392,6 +1415,25 @@
                         <h2 class="post-title">
                             JPA n+1 문제
                         </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-jpa-best/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Step-01
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -1903,6 +1945,25 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
+                     <a href="/spring-jpa-best/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Step-01
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
                      <a href="/spring-oop-bank-api/">
                         <h2 class="post-title">
                             Spring OOP 프로그래밍 예제(2)
@@ -1929,6 +1990,32 @@
                         
                             <h3 class="post-subtitle">
                                 배송 완료 알림 - 내가 해석한 SOLID
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Best Practices">
+                    <span class="tag-text">Best Practices</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-jpa-best/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Step-01
                             </h3>
                         
                     </a>
@@ -2036,32 +2123,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="SOLID">
-                    <span class="tag-text">SOLID</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/spring-notificaion-oop/">
-                        <h2 class="post-title">
-                            Spring OOP 프로그래밍 예제(1)
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                배송 완료 알림 - 내가 해석한 SOLID
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="WebStorm">
                     <span class="tag-text">WebStorm</span>
                 </span>
@@ -2084,23 +2145,28 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Mac">
-                    <span class="tag-text">Mac</span>
+                <span class="fa fa-tag listing-seperator" id="SOLID">
+                    <span class="tag-text">SOLID</span>
                 </span>
                 
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="단축키">
-                    <span class="tag-text">단축키</span>
-                </span>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Hexo">
-                    <span class="tag-text">Hexo</span>
-                </span>
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-notificaion-oop/">
+                        <h2 class="post-title">
+                            Spring OOP 프로그래밍 예제(1)
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                배송 완료 알림 - 내가 해석한 SOLID
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
                 
             </div>
             

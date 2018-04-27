@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring-Jpa Best Practices - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best/">
+    <meta property="og:description" content="Spring-Jpa Best Practices - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best/">
+
+
+    <title>
+        
+          Spring-Jpa Best Practices - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                            
+                        </div>
+                        <h1>Spring-Jpa Best Practices</h1>
+                        <h2 class="subheading">Step-01</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2018-04-28
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2><span id="step-01">Step-01</span></h2>
+<p>Spring Boot + JPA를 활용한 Account 생성, 조회, 수정 API를 간단하게 만드는 예제입니다. 해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa" rel="external nofollow noopener noreferrer" target="_blank">spring-jpa</a>를 확인해주세요.</p>
+<h2><span id="중요-포인트">중요 포인트</span></h2>
+<ul>
+<li>도메인 클래스 작성</li>
+<li>DTO 클래스를 이용한 Request, Response</li>
+<li>Setter 사용안하기</li>
+</ul>
+<h2><span id="도메인-클래스-작성-account-domain">도메인 클래스 작성 : Account Domain</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name = <span class="string">"account"</span>)</div><div class="line"><span class="meta">@Getter</span></div><div class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Id</span></div><div class="line">    <span class="meta">@GeneratedValue</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"email"</span>, nullable = <span class="keyword">false</span>, unique = <span class="keyword">true</span>)</div><div class="line">    <span class="keyword">private</span> String email;</div><div class="line"></div><div class="line">    ...</div><div class="line">    ...</div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"zip"</span>, nullable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> String zip;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"created_at"</span>)</div><div class="line">    <span class="meta">@Temporal</span>(TemporalType.TIMESTAMP)</div><div class="line">    <span class="keyword">private</span> Date createdAt;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"updated_at"</span>)</div><div class="line">    <span class="meta">@Temporal</span>(TemporalType.TIMESTAMP)</div><div class="line">    <span class="keyword">private</span> Date updatedAt;</div><div class="line"></div><div class="line">    <span class="meta">@Builder</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Account</span><span class="params">(String email, String fistName, String lastName, String password, String address1, String address2, String zip)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.email = email;</div><div class="line">        <span class="keyword">this</span>.fistName = fistName;</div><div class="line">        <span class="keyword">this</span>.lastName = lastName;</div><div class="line">        <span class="keyword">this</span>.password = password;</div><div class="line">        <span class="keyword">this</span>.address1 = address1;</div><div class="line">        <span class="keyword">this</span>.address2 = address2;</div><div class="line">        <span class="keyword">this</span>.zip = zip;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateMyAccount</span><span class="params">(AccountDto.MyAccountReq dto)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.address1 = dto.getAddress1();</div><div class="line">        <span class="keyword">this</span>.address2 = dto.getAddress2();</div><div class="line">        <span class="keyword">this</span>.zip = dto.getZip();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="제약조건-맞추기">제약조건 맞추기</span></h3>
+<p>칼럼에 대한 제약조건을 생각하며 작성하는 하는 것이 바람직합니다. 대표적으로 <code>nullable</code>, <code>unique</code> 조건등 해당 디비의 스키마와 동일하게 설정하는 것이 좋습니다.</p>
+<h3><span id="생성날짜-수정날짜-값-설정-못하게-하기">생성날짜, 수정날짜 값 설정 못하게 하기</span></h3>
+<p>기본적으로 <code>setter</code> 메서드가 모든 멤버 필드에 대해서 없고 생성자를 이용한 Builder Pattern 메서드에도 생성, 수정 날짜를 제외해 <code>@CreationTimestamp</code>, <code>@UpdateTimestamp</code> 어노테이션을 이용해서 VM시간 기준으로 날짜가 자동으로 입력하게 하거나 데이터베이스에서 자동으로 입력하게 설정하는 편이 좋습니다. 매번 생성할 때 create 시간을 넣어 주고, update 할 때 넣어 주고 반복적인 작업과 실수를 줄일 수 있는 효과적인 방법이라고 생각합니다.</p>
+<h3><span id="객체-생성-제약">객체 생성 제약</span></h3>
+<p><code>@NoArgsConstructor(access = AccessLevel.PROTECTED)</code> lombok 어노테이션을 통해서 객체의 직접생성을 외부에서 못하게 설정하였습니다. 그래서  <code>@Builder</code> 에노티이션이 설정돼 있는 <code>Account</code> 생성자 메소드를 통해서 해당 객체를 생성할 수 있습니다. 이렇게 빌더 패턴을 이용해서 객체 생성을 강요하면 다음과 같은 장점이 있습니다. ( Account 생성자의 모든 인자값을 넣어주면 생성은 가능합니다.)</p>
+<h4><span id="객체를-유연하게-생성할-수-있습니다">객체를 유연하게 생성할 수 있습니다.</span></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Account.builder()</div><div class="line">  .address1(<span class="string">"서울"</span>)</div><div class="line">  .address2(<span class="string">"성동구"</span>)</div><div class="line">  .zip(<span class="string">"052-2344"</span>)</div><div class="line">  .email(<span class="string">"email"</span>)</div><div class="line">  .fistName(<span class="string">"yun"</span>)</div><div class="line">  .lastName(<span class="string">"kim"</span>)</div><div class="line">  .password(<span class="string">"password111"</span>)</div><div class="line">  .build();</div></pre></td></tr></table></figure>
+<ul>
+<li>객체를 생성할 때 인자 값의 순서가 상관없습니다.</li>
+<li>입력되는 값이 정확히 어떤 값인지 알 수 있습니다.
+<ul>
+<li>address1() 자연스럽게 address1에 입력되는 것을 알 수 있습니다.</li>
+</ul>
+</li>
+<li>하나의 생성자로 대체가 능합니다.
+<ul>
+<li>여러 생성자를 두지 않고 하나의 생성자를 통해서 객체 생성이 가능합니다.</li>
+</ul>
+</li>
+</ul>
+<h2><span id="dto-클래스를-이용한-request-response">DTO 클래스를 이용한 Request, Response</span></h2>
+<h3><span id="dto-클래스">DTO 클래스</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AccountDto</span> </span>&#123;</div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SignUpReq</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> String email;</div><div class="line">        ...</div><div class="line">        <span class="keyword">private</span> String address2;</div><div class="line">        <span class="keyword">private</span> String zip;</div><div class="line"></div><div class="line">        <span class="meta">@Builder</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SignUpReq</span><span class="params">(String email, String fistName, String lastName, String password, String address1, String address2, String zip)</span> </span>&#123;</div><div class="line">            <span class="keyword">this</span>.email = email;</div><div class="line">            ...</div><div class="line">            <span class="keyword">this</span>.address2 = address2;</div><div class="line">            <span class="keyword">this</span>.zip = zip;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Account <span class="title">toEntity</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> Account.builder()</div><div class="line">                    .email(<span class="keyword">this</span>.email)</div><div class="line">                    ...</div><div class="line">                    .address2(<span class="keyword">this</span>.address2)</div><div class="line">                    .zip(<span class="keyword">this</span>.zip)</div><div class="line">                    .build();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAccountReq</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> String address1;</div><div class="line">        <span class="keyword">private</span> String address2;</div><div class="line">        <span class="keyword">private</span> String zip;</div><div class="line"></div><div class="line">        <span class="meta">@Builder</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyAccountReq</span><span class="params">(String address1, String address2, String zip)</span> </span>&#123;</div><div class="line">            <span class="keyword">this</span>.address1 = address1;</div><div class="line">            <span class="keyword">this</span>.address2 = address2;</div><div class="line">            <span class="keyword">this</span>.zip = zip;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Res</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> String email;</div><div class="line">        ...</div><div class="line">        <span class="keyword">private</span> String address2;</div><div class="line">        <span class="keyword">private</span> String zip;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Res</span><span class="params">(Account account)</span> </span>&#123;</div><div class="line">            <span class="keyword">this</span>.email = account.getEmail();</div><div class="line">            ...</div><div class="line">            <span class="keyword">this</span>.address2 = account.getAddress2();</div><div class="line">            <span class="keyword">this</span>.zip = account.getZip();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="dto-클래스의-필요-이유">DTO 클래스의 필요 이유</span></h3>
+<p>Account에 정보를 변경하는 API가 있다고 가정 했을 경우 RequestBody를 Account 클래스로 받게 된다면 다음과 같은 문제가 발생합니다.</p>
+<ul>
+<li>데이터 안전성
+<ul>
+<li>정보 변경 API에서는 firstName, lastName 두 속성만 변경할 수 있다고 했으면 Account 클래스로 RequestBody를 받게 된다면 email, password, Account 클래의의 모든 속성값들을 컨트롤러를 통해서 넘겨받을 수 있게 되고 원치 않은 데이터 변경이 발생할 수 있습니다.</li>
+<li>firstName, lastName 속성 이외의 값들이 넘어온다면 그것은 잘못된 입력값이고 그런 값들을 넘겼을 경우 Bad Request 처리하는 것이 안전합니다.</li>
+<li>Response 타입이 Account 클래스일 경우 계정의 모든 정보가 노출 되게 됩니다. JsonIgnore 속성들을 두어 임시로 막는 것은 바람직하지 않습니다.속성들을 두어 임시로 막는 것은 바람직하지 않습니다.</li>
+</ul>
+</li>
+<li>명확해지는 요구사항
+<ul>
+<li>MyAccountReq 클래스는 마이 어카운트 페이지에서 변경할 수 있는 값들로 address1, address2, zip 속성이 있습니다. 요구사항이 이 세 가지 속성에 대한 변경이어서 해당 API가 어떤 값들을 변경할 수가 있는지 명확해집니다.</li>
+</ul>
+</li>
+</ul>
+<h3><span id="컨트롤러에서의-dto">컨트롤러에서의 DTO</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(method = RequestMethod.POST)</div><div class="line"><span class="meta">@ResponseStatus</span>(value = HttpStatus.CREATED)</div><div class="line"><span class="keyword">public</span> AccountDto.<span class="function">Res <span class="title">signUp</span><span class="params">(@RequestBody <span class="keyword">final</span> AccountDto.SignUpReq dto)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AccountDto.Res(accountService.create(dto));</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/&#123;id&#125;"</span>, method = RequestMethod.GET)</div><div class="line"><span class="meta">@ResponseStatus</span>(value = HttpStatus.OK)</div><div class="line"><span class="keyword">public</span> AccountDto.<span class="function">Res <span class="title">getUser</span><span class="params">(@PathVariable <span class="keyword">final</span> <span class="keyword">long</span> id)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AccountDto.Res(accountService.findById(id));</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/&#123;id&#125;"</span>, method = RequestMethod.PUT)</div><div class="line"><span class="meta">@ResponseStatus</span>(value = HttpStatus.OK)</div><div class="line"><span class="keyword">public</span> AccountDto.<span class="function">Res <span class="title">updateMyAccount</span><span class="params">(@PathVariable <span class="keyword">final</span> <span class="keyword">long</span> id, @RequestBody <span class="keyword">final</span> AccountDto.MyAccountReq dto)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> AccountDto.Res(accountService.updateMyAccount(id, dto));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/pbhdpcV.png" alt=""><br>
+위에서 언급했듯이 Request 값과 Response 값이 명확하게 되어 API 또 한 명확해집니다. 위 그림처럼 swagger API Document를 사용한다면 Request 값과 Response 자동으로 명세 되는 장점 또한 있습니다.</p>
+<h2><span id="setter-사용안하기">Setter 사용안하기</span></h2>
+<p>JPA에서는 영속성이 있는 객체에서 Setter 메서드를 통해서 데이터베이스 DML이 가능하게 됩니다. 만약 무분별하게 모든 필드에 대한 Setter 메서드를 작성했을 경우 email 변경 기능이 없는 기획 의도가 있더라도 영속성이 있는 상태에서 Setter 메서드를 사용해서 얼마든지 변경이 가능해지는 구조를 갖게 됩니다. 또 굳이 변경 기능이 없는 속성뿐만이 아니라 영속성만 있으면 언제든지 DML이 가능한 구조는 안전하지 않다고 생각합니다. 또 데이터 변경이 발생했을 시 추적할 포인트들도 많아집니다. DTO 클래스를 기준으로 데이터 변경이 이루어진다면 명확한 요구사항에 의해서 변경이 된다고 생각합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// setter 이용 방법</span></div><div class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">updateMyAccount</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> Account account = findById(id);</div><div class="line">    account.setAddress1(<span class="string">"변경..."</span>);</div><div class="line">    account.setAddress2(<span class="string">"변경..."</span>);</div><div class="line">    account.setZip(<span class="string">"변경..."</span>);</div><div class="line">    <span class="keyword">return</span> account;</div><div class="line">&#125;</div><div class="line"><span class="comment">// Dto 이용 방법</span></div><div class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">updateMyAccount</span><span class="params">(<span class="keyword">long</span> id, AccountDto.MyAccountReq dto)</span> </span>&#123;</div><div class="line">  <span class="keyword">final</span> Account account = findById(id);</div><div class="line">  account.updateMyAccount(dto);</div><div class="line">  <span class="keyword">return</span> account;</div><div class="line">&#125;</div><div class="line"><span class="comment">// Account 클래스의 일부</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateMyAccount</span><span class="params">(AccountDto.MyAccountReq dto)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.address1 = dto.getAddress1();</div><div class="line">  <span class="keyword">this</span>.address2 = dto.getAddress2();</div><div class="line">  <span class="keyword">this</span>.zip = dto.getZip();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>DTO 클래스를 이용해서 데이터 변경을 하는 것이 훨씬더 직관적이고 유지보수 하기 쉽다고 생각합니다.  MyAccountReq 클래스에는 3개의 필드가 있으니 오직 3개의 필드만 변경이 가능하다는 것이 아주 명확해집니다.</p>
+<p>여기서 제가 중요하다고 생각하는 것은 <code>updateMyAccount(AccountDto.MyAccountReq dto)</code> 메소드입니다. <strong>객체 자신을 변경하는 것은 언제나 자기 자신이어야 한다는 OOP 관점에서 도메인 클래스에 updateMyAccount 기능이 있는 것이 맞는다고 생각합니다.</strong></p>
+<h2><span id="마무리">마무리</span></h2>
+<p>최근 스프링을 6개월 가까이 하면서 제가 느낀 점들에 대해서 간단하게 정리했습니다. <strong>아직 부족한 게 많아 Best Practices라도 당당하게 말하긴 어렵지만, 저와 같은 고민을 하시는 분들에게 조금이라도 도움이 되고 싶어 이렇게 정리했습니다.</strong> 또 Step-02에서는 예외 처리와 유효성 검사에 대한 것을 정리할 예정입니다. 지속해서 해당 프로젝트를 이어 나아갈 예정이라 깃허브 start, watch 버튼을 누르시면 구독 신청받으실 수 있습니다. 저의 경험이 여러분에게 조금이라도 도움이 되기를 기원합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/intellij-git/" data-toggle="tooltip" data-placement="top" title="인텔리제이 Git 활용법">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Step-01</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">중요 포인트</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">도메인 클래스 작성 : Account Domain</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">제약조건 맞추기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">생성날짜, 수정날짜 값 설정 못하게 하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">객체 생성 제약</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">객체를 유연하게 생성할 수 있습니다.</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">DTO 클래스를 이용한 Request, Response</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">DTO 클래스</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">DTO 클래스의 필요 이유</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">컨트롤러에서의 DTO</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Setter 사용안하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "yun-blog";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-jpa-best/";
+    var disqus_url = "https://cheese10yun.github.io/spring-jpa-best/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
