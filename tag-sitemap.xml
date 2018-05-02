@@ -261,20 +261,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
-        <lastmod>2018-03-20T17:08:45.450Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
-        <lastmod>2018-03-20T17:08:45.450Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Todo/</loc>
         <lastmod>2018-03-21T12:53:58.051Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -331,15 +317,29 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
         <lastmod>2018-05-02T15:20:58.348Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-05-02T15:20:58.348Z</lastmod>
+        <loc>https://cheese10yun.github.io/tags/Bot/</loc>
+        <lastmod>2018-05-02T15:33:59.828Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Slack/</loc>
+        <lastmod>2018-05-02T15:33:59.828Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-05-02T15:33:59.828Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

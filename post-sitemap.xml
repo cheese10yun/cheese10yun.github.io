@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/slack-bot-spring/</loc>
+        <lastmod>2018-05-02T15:33:59.828Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
         <lastmod>2018-05-02T15:20:58.348Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -57,14 +65,6 @@
     <url>
         <loc>https://cheese10yun.github.io/intellij-todo/</loc>
         <lastmod>2018-03-21T12:53:58.051Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/slack-bot-spring/</loc>
-        <lastmod>2018-03-20T17:08:45.450Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
