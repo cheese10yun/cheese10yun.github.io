@@ -310,20 +310,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-05-02T15:20:58.348Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-05-02T15:20:58.348Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Bot/</loc>
         <lastmod>2018-05-02T15:33:59.828Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -338,8 +324,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-05-02T15:33:59.828Z</lastmod>
+        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
