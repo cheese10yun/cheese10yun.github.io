@@ -7,8 +7,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/aws-s3-imgage/</loc>
-        <lastmod>2018-05-02T15:44:12.833Z</lastmod>
+        <loc>https://cheese10yun.github.io/swagger-tip-01/</loc>
+        <lastmod>2018-05-03T14:24:30.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -16,7 +16,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
-        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
+        <lastmod>2018-05-03T14:23:06.198Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/aws-s3-imgage/</loc>
+        <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

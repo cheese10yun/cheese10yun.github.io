@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="npm sudo 권한으로 설치시 오류 해결 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/npm-sudo-err/">
-    <meta property="og:description" content="npm sudo 권한으로 설치시 오류 해결 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Swagger 날짜 포멧팅 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/swagger-tip-01/">
+    <meta property="og:description" content="Swagger 날짜 포멧팅 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/npm-sudo-err/">
+    <link rel="canonical" href="https://cheese10yun.github.io/swagger-tip-01/">
 
 
     <title>
         
-          npm sudo 권한으로 설치시 오류 해결 - Yun Blog | 기술 블로그
+          Swagger 날짜 포멧팅 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/npm-sudo-err/">
+    <link rel="canonical" href="https://cheese10yun.github.io/swagger-tip-01/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#NPM" title="NPM">NPM</a>
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Swagger" title="Swagger">Swagger</a>
+                            
+                              <a class="tag" href="/tags/#Document" title="Document">Document</a>
                             
                         </div>
-                        <h1>npm sudo 권한으로 설치시 오류 해결</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>Swagger 날짜 포멧팅</h1>
+                        <h2 class="subheading">Swagger Tip</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-02-11
+                            2018-05-03
                         </span>
                     </div>
                 
@@ -230,10 +234,12 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-bash: sodu: <span class="built_in">command</span> not found</div></pre></td></tr></table></figure>
-<p>NPM으로 모듈을 설치할 때 <code><b>sudo</b></code> 권한으로 설치할 경우 위와 같은 오류가 발생할 경우가 있다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/node /usr/bin/node</div><div class="line">sudo ln -s /usr/<span class="built_in">local</span>/lib/node /usr/lib/node</div><div class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/npm /usr/bin/npm</div><div class="line">sudo ln -s /usr/<span class="built_in">local</span>/bin/node-waf /usr/bin/node-waf</div></pre></td></tr></table></figure>
-<p>위의 명령어를 입력하면 sudo npm으로 설치를 진행할 수 있다.</p>
+                <p><img src="https://i.imgur.com/YGnD90T.png" alt=""></p>
+<p>Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@EnableSwagger</span>2</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SwaggerConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Docket <span class="title">api</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Docket(DocumentationType.SWAGGER_2)</div><div class="line">                .select()</div><div class="line">                .apis(RequestHandlerSelectors.any())</div><div class="line">                .paths(PathSelectors.any())</div><div class="line">                .build()</div><div class="line">                .directModelSubstitute(Timestamp.class, Date.class);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>directModelSubstitute 메소드에서 추가시킬 Date 관련 클래스를 입력해주기만 하면 완료 됩니다.</p>
+<p><img src="https://i.imgur.com/THkaEN6.png" alt=""></p>
+<p>작업을 완료하시면 위 그림처럼 표시 됩니다.</p>
 
                 
 
@@ -241,13 +247,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/kakao-bot-node/" data-toggle="tooltip" data-placement="top" title="Node.JS로 카카오봇 만들기">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/Node-AWS-S3-Upload/" data-toggle="tooltip" data-placement="top" title="Node AWS S3 업로드">Next Post &rarr;</a>
+                            <a href="/spring-jpa-best-02/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices Step-02">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -297,7 +299,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#NPM" title="NPM">NPM</a>
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Swagger" title="Swagger">Swagger</a>
+                        
+                          <a class="tag" href="/tags/#Document" title="Document">Document</a>
                         
                     </div>
                 </section>
@@ -317,8 +323,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/npm-sudo-err/";
-    var disqus_url = "https://cheese10yun.github.io/npm-sudo-err/";
+    var disqus_identifier = "https://cheese10yun.github.io/swagger-tip-01/";
+    var disqus_url = "https://cheese10yun.github.io/swagger-tip-01/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

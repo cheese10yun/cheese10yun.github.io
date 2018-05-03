@@ -275,27 +275,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-05-02T15:40:30.648Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Node/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -340,6 +319,41 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Upload/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2018-05-03T14:23:06.198Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2018-05-03T14:23:06.198Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-05-03T14:24:30.515Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Swagger/</loc>
+        <lastmod>2018-05-03T14:24:30.515Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Document/</loc>
+        <lastmod>2018-05-03T14:24:30.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
