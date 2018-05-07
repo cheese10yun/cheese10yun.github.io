@@ -164,14 +164,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -236,8 +236,9 @@
 
                 <p><img src="https://i.imgur.com/YGnD90T.png" alt=""></p>
 <p>Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@EnableSwagger</span>2</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SwaggerConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Docket <span class="title">api</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Docket(DocumentationType.SWAGGER_2)</div><div class="line">                .select()</div><div class="line">                .apis(RequestHandlerSelectors.any())</div><div class="line">                .paths(PathSelectors.any())</div><div class="line">                .build()</div><div class="line">                .directModelSubstitute(Timestamp.class, Date.class);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>directModelSubstitute 메소드에서 추가시킬 Date 관련 클래스를 입력해주기만 하면 완료 됩니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@EnableSwagger</span>2</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SwaggerConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Docket <span class="title">api</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Docket(DocumentationType.SWAGGER_2)</div><div class="line">                .select()</div><div class="line">                .apis(RequestHandlerSelectors.any())</div><div class="line">                .paths(PathSelectors.any())</div><div class="line">                .build()</div><div class="line">                .directModelSubstitute(Timestamp.class, Long.class);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>directModelSubstitute 메소드는 다음과 같이 작용합니다. 변경하고 싶은 클래스, 변경되고자 하는 포멧팅 입니다.<br>
+저같은 경우는 long 타입의 클래스로 날짜를 출력하니 <code>directModelSubstitute(Timestamp.class, Long.class);</code>를 적용했습니다.</p>
 <p><img src="https://i.imgur.com/THkaEN6.png" alt=""></p>
 <p>작업을 완료하시면 위 그림처럼 표시 됩니다.</p>
 
@@ -246,6 +247,10 @@
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/spring-jpa-best-03/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices Step-03">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
