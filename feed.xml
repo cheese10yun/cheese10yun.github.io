@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2018-05-09T18:01:14.249Z</updated>
+  <updated>2018-05-12T08:14:23.331Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring-Jpa Best Practices Step-04</title>
+    <link href="https://cheese10yun.github.io/spring-jpa-best-04/"/>
+    <id>https://cheese10yun.github.io/spring-jpa-best-04/</id>
+    <published>2018-05-11T15:00:00.000Z</published>
+    <updated>2018-05-12T08:14:23.331Z</updated>
+    
+    <content type="html"><![CDATA[<p>이번 포스팅에서는 Embedded를 이용해서 Password 클래스를 통해서 Password 관련 응집력을 높이는 것 방법과  JPA에서 LocalDateTime을 활용하는 방법에 대해서 중점으로 포스팅을 진행해 보겠습니다.</p><h2><span id="중요포인트">중요포인트</span></h2><ul><li>Embeddable 타입의 Password 클래스 정의</li></ul><h2><span id="embeddable-타입의-password-클래스-정의">Embeddable 타입의 Password 클래스 정의</span></h2><h3><span id="비밀번호-요구사항">비밀번호 요구사항</span></h3><ul><li>비밀번호 만료 기본 14일 기간이 있다.</li><li>비밀번호 만료 기간이 지나는 것을 알 수 있어야 한다.</li><li>비밀번호 5회 이상 실패했을 경우 더 이상 시도를 못하게 해야 한다.</li><li>비밀번호가 일치하는 경우 실패 카운트를 초기화 해야한다</li><li>비밀번호 변경시 만료일이 현재시간 기준 14로 연장되어야한다.</li></ul><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Embeddable</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Password</span> </span>&#123;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password"</span>, nullable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> String value;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_expiration_date"</span>)</div><div class="line">    <span class="keyword">private</span> LocalDateTime expirationDate;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_failed_count"</span>, nullable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> failedCount;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_ttl"</span>)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> ttl;</div><div class="line"></div><div class="line">    <span class="meta">@Builder</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Password</span><span class="params">(<span class="keyword">final</span> String value)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.ttl = <span class="number">1209_604</span>; <span class="comment">// 1209_604 is 14 days</span></div><div class="line">        <span class="keyword">this</span>.value = encodePassword(value);</div><div class="line">        <span class="keyword">this</span>.expirationDate = extendExpirationDate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isMatched</span><span class="params">(<span class="keyword">final</span> String rawPassword)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (failedCount &gt;= <span class="number">5</span>)</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> PasswordFailedExceededException();</div><div class="line"></div><div class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> matches = isMatches(rawPassword);</div><div class="line">        updateFailedCount(matches);</div><div class="line">        <span class="keyword">return</span> matches;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changePassword</span><span class="params">(<span class="keyword">final</span> String newPassword, <span class="keyword">final</span> String oldPassword)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (isMatched(oldPassword)) &#123;</div><div class="line">            value = encodePassword(newPassword);</div><div class="line">            extendExpirationDate();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure><p><strong>객체의 변경이나 질의는 반드시 해당 객체에 의해서 이루어져야 하는데 위의 요구 사항을 만족하는 로직들은 Password 객체 안에 있고 Password 객체를 통해서 모든 작업들이 이루어집니다.</strong> 그래서 결과적으로 Password 관련 테스트 코드도 작성하기 쉬워지고 이렇게 작은 단위로 테스트 코드를 작성하면 실패했을 때 원인도 찾기 쉬워집니다.</p><p>결과적으로 Password의 책임이 명확해집니다. 만약 Embeddable 타입으로 분리하지 않았을 경우에는 해당 로직들은 모두 Account 클래스에 들어가 Account 책임이 증가하는 것을 방지할 수 있습니다.</p><h2><span id="소소한-팁">소소한 팁</span></h2><ul><li>날짜 관련 클래스는 LocalDateTime 사용하였습니다. 설정 방법은 <a href="https://github.com/cheese10yun/spring-jpa-best-practices/blob/master/doc/appendix-01.md" rel="external nofollow noopener noreferrer" target="_blank">링크</a>에서 확인해주세요</li><li>LocalDateTime.now().plusSeconds(ttl); 현재 시간에서 시간 초만큼 더하는 함수입니다. 정말 직관적이며 다른 좋은 함수들이 있어 꼭 프로젝트에 도입해보시는 것을 추천드립니다.</li></ul><h2><span id="결론">결론</span></h2><p>굳이 Password 에민 해당하는 경우가 아니라 핵심 도메인들을 Embeddable을 분리해서 책임을 분리하고 응집력, 재사용성을 높이는 것이 핵심 주제였습니다. 꼭 개인 프로젝트에서라도 핵 심도 메인을 성격에 맞게끔 분리해 보시는 것을 경험해보시길 바랍니다.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;이번 포스팅에서는 Embedded를 이용해서 Password 클래스를 통해서 Password 관련 응집력을 높이는 것 방법과  JPA에서 LocalDateTime을 활용하는 방법에 대해서 중점으로 포스팅을 진행해 보겠습니다.&lt;/p&gt;
+&lt;h2&gt;&lt;sp
+      
+    
+    </summary>
+    
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="Embedded" scheme="https://cheese10yun.github.io/tags/Embedded/"/>
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
+      <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
+    
+  </entry>
   
   <entry>
     <title>Spring-Jpa Best Practices Step-03</title>
@@ -36,13 +66,13 @@
     </summary>
     
     
-      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
-    
       <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
     
-      <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
-    
       <category term="Embedded" scheme="https://cheese10yun.github.io/tags/Embedded/"/>
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
+      <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
     
   </entry>
   
@@ -94,9 +124,9 @@
     </summary>
     
     
-      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
-    
       <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
     
@@ -122,9 +152,9 @@
     </summary>
     
     
-      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
-    
       <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
     
@@ -283,11 +313,11 @@
     </summary>
     
     
-      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
-    
       <category term="Bot" scheme="https://cheese10yun.github.io/tags/Bot/"/>
     
       <category term="Slack" scheme="https://cheese10yun.github.io/tags/Slack/"/>
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
   </entry>
   
@@ -387,9 +417,9 @@
     </summary>
     
     
-      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
-    
       <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
     
       <category term="JPA Console" scheme="https://cheese10yun.github.io/tags/JPA-Console/"/>
     
@@ -534,41 +564,6 @@
       <category term="JavaScript" scheme="https://cheese10yun.github.io/tags/JavaScript/"/>
     
       <category term="LoopBack" scheme="https://cheese10yun.github.io/tags/LoopBack/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>AWS S3 업로드시 이미지 최적화</title>
-    <link href="https://cheese10yun.github.io/aws-s3-imgage/"/>
-    <id>https://cheese10yun.github.io/aws-s3-imgage/</id>
-    <published>2017-03-03T15:00:00.000Z</published>
-    <updated>2018-05-02T15:44:12.833Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong><em>AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다.</em></strong> <code>formidable</code> 업로드 , <code>AWS-S3</code> 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.<br><strong><em><a href="https://github.com/cheese10yun/node-aws-s3-Image-optimization" rel="external nofollow noopener noreferrer" target="_blank">Github</a>클릭해서 전체 소스를 보시는 것을 권장합니다.</em></strong></p><h2><span id="작업순서">작업순서</span></h2><ol><li><code>formidable</code> 모듈로 이미지 업로드 진행</li><li><code>imagemin</code> 모듈로 업로드된 이미지 최적화 진행</li><li><code>aws-sdk</code> 모듈을로 최적화 작업이 완료된 이미지 S3에 업로드</li></ol><h2><span id="필수-패키지-설치">필수 패키지 설치</span></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">npm install --save async</div><div class="line">npm install --save aws-sdk</div><div class="line">npm install --save imagemin</div><div class="line">npm install --save imagemin-pngquant</div><div class="line">npm install --save formidable</div></pre></td></tr></table></figure><h2><span id="uploadservicejs-설명">UploadService.js 설명</span></h2><h3><span id="formidable-모듈을-이용한-이미지-업로드">formidable 모듈을 이용한 이미지 업로드</span></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">Upload.formidable = <span class="function">(<span class="params">req, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">let</span> _fields;</div><div class="line"></div><div class="line">  form.parse(req, <span class="function"><span class="keyword">function</span> (<span class="params">err, fields</span>) </span>&#123;</div><div class="line">    _fields = fields;</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  form.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</div><div class="line">    callback(err, <span class="literal">null</span>, <span class="literal">null</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  form.on(<span class="string">'end'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    callback(<span class="literal">null</span>, <span class="keyword">this</span>.openedFiles, _fields);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure><ul><li><code>form.on('error')</code> formidable 업로드 중 오류 발생시 <code>callback</code>으로 <code>err</code> 전달</li><li><code>form.on('end')</code> formidable 업로드가 오류 없이 완료되면 <code>callback</code>으로 파일정보와, 필드값 전달</li></ul><h3><span id="imagemin-모듈을-이용한-이미지-최적화">imagemin 모듈을 이용한 이미지 최적화</span></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Upload.optimize = <span class="function">(<span class="params">files, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">async</span>.each(files, (file, cb) =&gt; &#123;</div><div class="line">    imagemin([file.path], <span class="string">`<span class="subst">$&#123;ROOT_PATH&#125;</span>/temp/`</span>, &#123;</div><div class="line">      plugins: [</div><div class="line">        imageminPngquant(&#123;<span class="attr">quality</span>: <span class="string">'0-80'</span>, <span class="attr">verbose</span>: <span class="literal">false</span>, <span class="attr">floyd</span>: <span class="number">1</span>&#125;)</div><div class="line">      ]</div><div class="line">    &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">      cb();</div><div class="line">    &#125;)</div><div class="line">  &#125;, (err) =&gt; &#123;</div><div class="line">    callback(err)</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure><ul><li><code>async.each</code>으로 업로드할 파일의 개수만큼 이미지 최적화 적업 진행</li><li><code>imagemin([최적화할 이미지 경로(배열 타입이여야함)], 최적화 이후 저장될 이미지 경로, 이미지 최적화 작업)</code></li><li>위의 예제는 업로된 경로와 최적화가 이루어지는 경로가 동일하여 덮어쓰여 집니다.</li><li>이미지 최적화 플러그인 <code>imageminPngquant</code> 사용</li></ul><h3><span id="imageminpngquant-플러그인">imageminPngquant 플러그인</span></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">plugins: [</div><div class="line">imageminPngquant(&#123;<span class="attr">quality</span>: <span class="string">'0-80'</span>, <span class="attr">verbose</span>: <span class="literal">false</span>, <span class="attr">floyd</span>: <span class="number">1</span>&#125;)</div><div class="line">]</div></pre></td></tr></table></figure><ul><li><code>floyd</code> 이미지 디더링 작업 사용 <code>Type: boolean, Default: false</code></li><li><code>quality</code> 이미지 퀄리 지정 사용 <code>Type: string</code> 0~100 사용 가능</li><li><code>verbose</code> 불필효한 메타정보 제거 사용 <code>Type: boolean, Default: false</code></li><li><code>imageminPngquant</code> 의 다양한 속성은 <a href="https://www.npmjs.com/package/imagemin-pngquant" rel="external nofollow noopener noreferrer" target="_blank">imageminPngquant</a> 에서 확인 할 수 있습니다.</li><li><code>imageminPngquant</code> 플러그인 이외에도 다양한 플러그인을 사용해서 이미지에 대한 다양한 작업들을 진행할 수 있습니다.</li></ul><h3><span id="최적화-완료된-이미지-s3-업로드">최적화 완료된 이미지 S3 업로드</span></h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Upload.s3 = <span class="function">(<span class="params">files, key, callback</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">async</span>.each(files, (file, cb) =&gt; &#123;</div><div class="line">    params.Key = key + file.name;</div><div class="line">    params.Body = <span class="built_in">require</span>(<span class="string">'fs'</span>).createReadStream(file.path);</div><div class="line"></div><div class="line">    S3.upload(params, (err, result) =&gt; &#123;</div><div class="line">      cb(err, result);</div><div class="line">    &#125;);</div><div class="line">  &#125;, (err, result) =&gt; &#123;</div><div class="line">    callback(err, result);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure><ul><li><code>async.each</code>으로 업로드할 파잇의 개수만큼 S3에 업로드 작업 진행</li><li><code>files</code> 업로드할 파일들의 정보</li><li><code>params.Key</code> S3에 업로드 될 경로와 파일이름을 지정합니다.</li><li><code>params.Body</code> 이미지 최적화 작업이 끝난 파일의 경로를 입력합니다.</li><li><code>S3.upload(...)</code> 실질적인 S3 이미지 업로드가 진행됩니다. <code>cb(err, result)</code>으로 에러가 발생하면 즉시 정지하고, 에러가 발생하지 않으면 파일의 개수만큼 업로드를 반복합니다.</li><li><a href="https://cheese10yun.github.io/Node-AWS-S3-Upload">Yun Blog Node AWS S3 업로드</a> 자세한 설명은 참고</li></ul><h2><span id="router-에서-사용법">router 에서 사용법</span></h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">router.post(<span class="string">'/upload'</span>, (req, res) =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> tasks = [</div><div class="line">    (callback) =&gt; &#123;</div><div class="line">      Upload.formidable(req, (err, files, fields) =&gt; &#123;</div><div class="line">        callback(err, files, fields);</div><div class="line">      &#125;);</div><div class="line">    &#125;,</div><div class="line">    (files, fields, callback) =&gt; &#123;</div><div class="line">      Upload.optimize(files, (err) =&gt; &#123;</div><div class="line">        callback(err, files, fields);</div><div class="line">      &#125;);</div><div class="line">    &#125;,</div><div class="line">    (files, fields, callback) =&gt; &#123;</div><div class="line">      Upload.s3(files, <span class="string">'channel/test/'</span>, (err, result) =&gt; &#123;</div><div class="line">        callback(err, result)</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line">  ];</div><div class="line">  <span class="keyword">async</span>.waterfall(tasks, (err, result) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (!err) &#123;</div><div class="line">      res.json(&#123;<span class="attr">success</span>: <span class="literal">true</span>, <span class="attr">msg</span>: <span class="string">'업로드 성공'</span>&#125;)</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      res.json(&#123;<span class="attr">success</span>: <span class="literal">false</span>, <span class="attr">msg</span>: <span class="string">'업로드 실패'</span>&#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure><h3><span id="tasks-작업은-uploadservice-모듈로-진행">tasks 작업은 UploadService 모듈로 진행</span></h3><ul><li>위에서 작성한 <code>UploadService.js</code> 모듈로 아래의 작업들이 진행됩니다.</li><li><code>formidable</code> 메소드로 이미지 업로드 진행</li><li><code>optimize</code> 메소드로 이미지 최적화 진행</li><li><code>s3</code> 메서드로 s3 업로드 진행</li><li><code>async.waterfall</code> 으로 위 작업 순차 진행</li></ul><h2><span id="사이즈-비교">사이즈 비교</span></h2><table><thead><tr><th style="text-align:left">원본</th><th style="text-align:left">imageOptim App</th><th style="text-align:left">imagemin</th></tr></thead><tbody><tr><td style="text-align:left">10,645,070 byte</td><td style="text-align:left">8,499,904 byte</td><td style="text-align:left">2,858,674 byte</td></tr><tr><td style="text-align:left">473,459 byte</td><td style="text-align:left">282,029 byte</td><td style="text-align:left">177,423 byte</td></tr><tr><td style="text-align:left">421,698 byte</td><td style="text-align:left">258,743 byte</td><td style="text-align:left">189,266 byte</td></tr><tr><td style="text-align:left">382,774 byte</td><td style="text-align:left">232,684 byte</td><td style="text-align:left">182,071 byte</td></tr><tr><td style="text-align:left">467,184 byte</td><td style="text-align:left">282,368 byte</td><td style="text-align:left">164,739 byte</td></tr></tbody></table><p><strong>imageOptim App은 맥에서 사용하는 이미지 최적화 툴입니다.</strong></p><ul><li>이미지 사이즈(가로세로 크기)는 변경되지 않습니다.</li><li>bit color 값은 8bit로 수정됩니다.</li><li>이미지에 대한 지식이 없어 비포 에프터 사진을 첨부했습니다.</li></ul><h3><span id="원본-이미지">원본 이미지</span></h3><p><img src="http://i.imgur.com/mx9UTs2.png" alt=""></p><h3><span id="최적화-이미지">최적화 이미지</span></h3><p><img src="http://i.imgur.com/4pEMLxw.png" alt=""></p><h3><span id="마무리">마무리</span></h3><p>최근에 이미지 S3 업로드시 이미지 최적화 해야 할 작업이 있어서 코드를 만들고 간단하게 정리해보았습니다. 아직 프로덕션에 사용하는 코드는 아니라서 그렇게 안전한 코드는 아닌점… 미리 말씀드립니다. 이 플러그인 외에도 이미지 크롭, 이미지 해상도 조정 등 다양한 플러그인들이 많아 좀 더 검색해보시고 적용하시면 보다 좋을 거 같습니다. 부디 도움이 조금이라도 되셨기를 바랍니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;strong&gt;&lt;em&gt;AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다.&lt;/em&gt;&lt;/strong&gt; &lt;code&gt;formidable&lt;/code&gt; 업로드 , &lt;code&gt;AWS-S3&lt;/code
-      
-    
-    </summary>
-    
-    
-      <category term="Node" scheme="https://cheese10yun.github.io/tags/Node/"/>
-    
-      <category term="AWS" scheme="https://cheese10yun.github.io/tags/AWS/"/>
-    
-      <category term="imagemin" scheme="https://cheese10yun.github.io/tags/imagemin/"/>
-    
-      <category term="S3" scheme="https://cheese10yun.github.io/tags/S3/"/>
-    
-      <category term="JavaScript" scheme="https://cheese10yun.github.io/tags/JavaScript/"/>
-    
-      <category term="Image" scheme="https://cheese10yun.github.io/tags/Image/"/>
-    
-      <category term="Upload" scheme="https://cheese10yun.github.io/tags/Upload/"/>
     
   </entry>
   

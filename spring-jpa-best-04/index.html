@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="신입 개발자 취업도전기 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/new-Developer-work-challenge/">
-    <meta property="og:description" content="신입 개발자 취업도전기 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Spring-Jpa Best Practices Step-04 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-04/">
+    <meta property="og:description" content="Spring-Jpa Best Practices Step-04 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/new-Developer-work-challenge/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-04/">
 
 
     <title>
         
-          신입 개발자 취업도전기 - Yun Blog | 기술 블로그
+          Spring-Jpa Best Practices Step-04 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/new-Developer-work-challenge/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-04/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,12 +106,20 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#Embedded" title="Embedded">Embedded</a>
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                            
                         </div>
-                        <h1>신입 개발자 취업도전기</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>Spring-Jpa Best Practices Step-04</h1>
+                        <h2 class="subheading">Embedded를 이용한 Password 처리</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-13
+                            2018-05-12
                         </span>
                     </div>
                 
@@ -228,20 +236,40 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <iframe src="//www.slideshare.net/slideshow/embed_code/key/viQSK55PAfHjGE" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/ssuser565d51/ss-61448739" title="신입 개발자 취업도전기" target="_blank">신입 개발자 취업도전기</a> </strong> from <strong><a target="_blank" href="//www.slideshare.net/ssuser565d51">남윤 김</a></strong> </div>
+                <p>이번 포스팅에서는 Embedded를 이용해서 Password 클래스를 통해서 Password 관련 응집력을 높이는 것 방법과  JPA에서 LocalDateTime을 활용하는 방법에 대해서 중점으로 포스팅을 진행해 보겠습니다.</p>
+<h2><span id="중요포인트">중요포인트</span></h2>
+<ul>
+<li>Embeddable 타입의 Password 클래스 정의</li>
+</ul>
+<h2><span id="embeddable-타입의-password-클래스-정의">Embeddable 타입의 Password 클래스 정의</span></h2>
+<h3><span id="비밀번호-요구사항">비밀번호 요구사항</span></h3>
+<ul>
+<li>비밀번호 만료 기본 14일 기간이 있다.</li>
+<li>비밀번호 만료 기간이 지나는 것을 알 수 있어야 한다.</li>
+<li>비밀번호 5회 이상 실패했을 경우 더 이상 시도를 못하게 해야 한다.</li>
+<li>비밀번호가 일치하는 경우 실패 카운트를 초기화 해야한다</li>
+<li>비밀번호 변경시 만료일이 현재시간 기준 14로 연장되어야한다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Embeddable</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Password</span> </span>&#123;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password"</span>, nullable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> String value;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_expiration_date"</span>)</div><div class="line">    <span class="keyword">private</span> LocalDateTime expirationDate;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_failed_count"</span>, nullable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> failedCount;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"password_ttl"</span>)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> ttl;</div><div class="line"></div><div class="line">    <span class="meta">@Builder</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Password</span><span class="params">(<span class="keyword">final</span> String value)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.ttl = <span class="number">1209_604</span>; <span class="comment">// 1209_604 is 14 days</span></div><div class="line">        <span class="keyword">this</span>.value = encodePassword(value);</div><div class="line">        <span class="keyword">this</span>.expirationDate = extendExpirationDate();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isMatched</span><span class="params">(<span class="keyword">final</span> String rawPassword)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (failedCount &gt;= <span class="number">5</span>)</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> PasswordFailedExceededException();</div><div class="line"></div><div class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> matches = isMatches(rawPassword);</div><div class="line">        updateFailedCount(matches);</div><div class="line">        <span class="keyword">return</span> matches;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changePassword</span><span class="params">(<span class="keyword">final</span> String newPassword, <span class="keyword">final</span> String oldPassword)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (isMatched(oldPassword)) &#123;</div><div class="line">            value = encodePassword(newPassword);</div><div class="line">            extendExpirationDate();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>객체의 변경이나 질의는 반드시 해당 객체에 의해서 이루어져야 하는데 위의 요구 사항을 만족하는 로직들은 Password 객체 안에 있고 Password 객체를 통해서 모든 작업들이 이루어집니다.</strong> 그래서 결과적으로 Password 관련 테스트 코드도 작성하기 쉬워지고 이렇게 작은 단위로 테스트 코드를 작성하면 실패했을 때 원인도 찾기 쉬워집니다.</p>
+<p>결과적으로 Password의 책임이 명확해집니다. 만약 Embeddable 타입으로 분리하지 않았을 경우에는 해당 로직들은 모두 Account 클래스에 들어가 Account 책임이 증가하는 것을 방지할 수 있습니다.</p>
+<h2><span id="소소한-팁">소소한 팁</span></h2>
+<ul>
+<li>날짜 관련 클래스는 LocalDateTime 사용하였습니다. 설정 방법은 <a href="https://github.com/cheese10yun/spring-jpa-best-practices/blob/master/doc/appendix-01.md" rel="external nofollow noopener noreferrer" target="_blank">링크</a>에서 확인해주세요</li>
+<li>LocalDateTime.now().plusSeconds(ttl); 현재 시간에서 시간 초만큼 더하는 함수입니다. 정말 직관적이며 다른 좋은 함수들이 있어 꼭 프로젝트에 도입해보시는 것을 추천드립니다.</li>
+</ul>
+<h2><span id="결론">결론</span></h2>
+<p>굳이 Password 에민 해당하는 경우가 아니라 핵심 도메인들을 Embeddable을 분리해서 책임을 분리하고 응집력, 재사용성을 높이는 것이 핵심 주제였습니다. 꼭 개인 프로젝트에서라도 핵 심도 메인을 성격에 맞게끔 분리해 보시는 것을 경험해보시길 바랍니다.</p>
+
                 
 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/webStrom-part1/" data-toggle="tooltip" data-placement="top" title="WebStorm 어디까지 써봤니? part 1">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/Node-AWS-Nginx/" data-toggle="tooltip" data-placement="top" title="AWS EC2 Nginx Node.js 설정">Next Post &rarr;</a>
+                            <a href="/spring-jpa-best-03/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices Step-03">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -271,7 +299,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="nav">none</ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">중요포인트</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Embeddable 타입의 Password 클래스 정의</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">비밀번호 요구사항</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">소소한 팁</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">결론</span></a></li></ol>
         
         </div>
       </aside>
@@ -291,6 +319,14 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#Embedded" title="Embedded">Embedded</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                        
                     </div>
                 </section>
                 
@@ -309,8 +345,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/new-Developer-work-challenge/";
-    var disqus_url = "https://cheese10yun.github.io/new-Developer-work-challenge/";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-jpa-best-04/";
+    var disqus_url = "https://cheese10yun.github.io/spring-jpa-best-04/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
