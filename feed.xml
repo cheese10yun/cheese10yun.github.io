@@ -36,13 +36,13 @@
     </summary>
     
     
-      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
-    
-      <category term="Embedded" scheme="https://cheese10yun.github.io/tags/Embedded/"/>
-    
       <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
+    
+      <category term="Embedded" scheme="https://cheese10yun.github.io/tags/Embedded/"/>
     
   </entry>
   
@@ -94,9 +94,9 @@
     </summary>
     
     
-      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
-    
       <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
     
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
     
@@ -122,9 +122,9 @@
     </summary>
     
     
-      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
-    
       <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
     
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
     
@@ -283,11 +283,11 @@
     </summary>
     
     
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
       <category term="Bot" scheme="https://cheese10yun.github.io/tags/Bot/"/>
     
       <category term="Slack" scheme="https://cheese10yun.github.io/tags/Slack/"/>
-    
-      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
   </entry>
   
@@ -387,9 +387,9 @@
     </summary>
     
     
-      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
-    
       <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
     
       <category term="JPA Console" scheme="https://cheese10yun.github.io/tags/JPA-Console/"/>
     
