@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/blog-start-part2/">
-    <meta property="og:description" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Jackson 어노테이션 사용법(2) - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/jackson-annotation-02/">
+    <meta property="og:description" content="Jackson 어노테이션 사용법(2) - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-02/">
 
 
     <title>
         
-          블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그
+          Jackson 어노테이션 사용법(2) - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-02/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                              <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
                             
                         </div>
-                        <h1>블로그를 시작하려는 당신에게(2)</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>Jackson 어노테이션 사용법(2)</h1>
+                        <h2 class="subheading">Jackson Deserialization Annotations</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-31
+                            2018-06-01
                         </span>
                     </div>
                 
@@ -230,50 +230,45 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p>
-<p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p>
-<p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p>
-<h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3>
-<p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p>
-<p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p>
-<p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p>
-<h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4>
-<p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p>
-<p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p>
-<p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p>
-<h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5>
-<p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p>
-<p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure>
-<p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p>
-<p><img src="/img/blog-start-2/2.png" alt=""></p>
-<p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p>
-<h5><span id="robotstxt-설정">robots.txt 설정</span></h5>
-<p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p>
-<p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>
-네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p>
-<p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p>
-<h5><span id="rss-제출">RSS 제출</span></h5>
-<p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p>
-<p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p>
-<h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4>
-<p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p>
-<h3><span id="마무리">마무리</span></h3>
-<p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>
-
+                <h2><span id="jackson-deserialization-annotations">Jackson Deserialization Annotations</span></h2>
+<ul>
+<li><a href="http://www.baeldung.com/jackson-annotations" rel="external nofollow noopener noreferrer" target="_blank">Jackson Annotation Examples</a> 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.</li>
+<li>테스트코드도 참고하시면 좋습니다.</li>
+<li>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/jackson" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 참고해주세요</li>
+</ul>
+<h3><span id="jsoncreator">@JsonCreator</span></h3>
+<ul>
+<li>JSON key 와 멤버 필드의 이름이 일치하지 않을 경우 사용합니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>:<span class="number">1</span>,</div><div class="line">  <span class="attr">"theName"</span>:<span class="string">"My bean"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithCreator</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line"></div><div class="line">    <span class="meta">@JsonCreator</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BeanWithCreator</span><span class="params">(</span></span></div><div class="line"><span class="function"><span class="params">            @JsonProperty(<span class="string">"id"</span>)</span> <span class="keyword">int</span> id,</span></div><div class="line"><span class="function">            @<span class="title">JsonProperty</span><span class="params">(<span class="string">"theName"</span>)</span> String name</span></div><div class="line"><span class="function">    ) </span>&#123;</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jacksoninject">@JacksonInject</span></h3>
+<ul>
+<li>JSON 데이터가 아닌 값을 주입하는데 사용됩니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"My bean"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithInject</span> </span>&#123;</div><div class="line">    <span class="meta">@JacksonInject</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsonanysetter">@JsonAnySetter</span></h3>
+<ul>
+<li>Map을 이용해서 유연성있게 Deserialization 합니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"My bean"</span>,</div><div class="line">  <span class="attr">"attr2"</span>: <span class="string">"val2"</span>,</div><div class="line">  <span class="attr">"attr1"</span>: <span class="string">"val1"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ExtendableBean</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">    <span class="keyword">private</span> Map&lt;String, String&gt; properties = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@JsonAnySetter</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProperties</span><span class="params">(String key, String value)</span> </span>&#123;</div><div class="line">        properties.put(key, value);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, String&gt; <span class="title">getProperties</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> properties;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsonsetter">@JsonSetter</span></h3>
+<ul>
+<li>객체와 맴버필드와 일치하지 않을 경우 유용하게 사용할 수 있습니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"My bean"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="meta">@JsonSetter</span>(<span class="string">"name"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTheName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTheName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
                 
 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/API-CALL/" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/mysql-multiple-insert/" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">Next Post &rarr;</a>
+                            <a href="/spring-oop-03/" data-toggle="tooltip" data-placement="top" title="Spring OOP 프로그래밍 예제(3)">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -303,7 +298,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">네이버 웹마스터 도구</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">검증에서 웹 페이지 최적화 검사를 진행한다.</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">오픈 그래프 정보 & 소셜 미디어</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">robots.txt 설정</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">RSS 제출</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">웹 페이지 최적화 검사</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Jackson Deserialization Annotations</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">@JsonCreator</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">@JacksonInject</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">@JsonAnySetter</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">@JsonSetter</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -323,7 +318,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                          <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
                         
                     </div>
                 </section>
@@ -343,8 +338,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/blog-start-part2/";
-    var disqus_url = "https://cheese10yun.github.io/blog-start-part2/";
+    var disqus_identifier = "https://cheese10yun.github.io/jackson-annotation-02/";
+    var disqus_url = "https://cheese10yun.github.io/jackson-annotation-02/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
