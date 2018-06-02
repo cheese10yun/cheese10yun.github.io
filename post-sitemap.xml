@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
+        <lastmod>2018-06-02T16:32:37.113Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jackson-annotation-02/</loc>
         <lastmod>2018-06-01T16:48:19.775Z</lastmod>
         <changefreq>weekly</changefreq>
