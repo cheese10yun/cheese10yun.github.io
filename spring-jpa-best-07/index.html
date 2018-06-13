@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/jackson-annotation-03/">
-    <meta property="og:description" content="Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Spring-Jpa Best Practices Step-07 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-07/">
+    <meta property="og:description" content="Spring-Jpa Best Practices Step-07 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-03/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-07/">
 
 
     <title>
         
-          Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그
+          Spring-Jpa Best Practices Step-07 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-03/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-07/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
                             
                         </div>
-                        <h1>Jackson 어노테이션 사용법(3)</h1>
-                        <h2 class="subheading">Jackson Property Inclusion Annotations</h2>
+                        <h1>Spring-Jpa Best Practices Step-07</h1>
+                        <h2 class="subheading">Embedded를 적극 활용</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2018-06-13
+                            2018-06-14
                         </span>
                     </div>
                 
@@ -230,39 +234,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2><span id="jackson-property-inclusion-annotations">Jackson Property Inclusion Annotations</span></h2>
-<ul>
-<li><a href="http://www.baeldung.com/jackson-annotations" rel="external nofollow noopener noreferrer" target="_blank">Jackson Annotation Examples</a> 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.</li>
-<li>테스트코드도 참고하시면 좋습니다.</li>
-<li>해당 코드 및 전체 Jackson 정리는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/jackson" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 참고해주세요</li>
-</ul>
-<h3><span id="jsonignoreproperties">@JsonIgnoreProperties</span></h3>
-<ul>
-<li>무시할 속성이나 속성 목록을 표시하는 데 사용됩니다</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonIgnoreProperties</span>(&#123;<span class="string">"id"</span>&#125;)</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithIgnore</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3><span id="jsonignore">@JsonIgnore</span></h3>
-<ul>
-<li>필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithIgnore</span> </span>&#123;</div><div class="line">    <span class="meta">@JsonIgnore</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3><span id="jsonignoretype">@JsonIgnoreType</span></h3>
-<ul>
-<li>주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line"><span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line"><span class="keyword">public</span> Name name;</div><div class="line"></div><div class="line">    <span class="meta">@JsonIgnoreType</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Name</span> </span>&#123;</div><div class="line">        <span class="keyword">public</span> String firstName;</div><div class="line">        <span class="keyword">public</span> String lastName;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3><span id="jsoninclude">@JsonInclude</span></h3>
-<ul>
-<li>어노테이션 속성을 제외 하는 데 사용 됩니다</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonInclude</span>(JsonInclude.Include.NON_NULL)</div><div class="line"><span class="meta">@AllArgsConstructor</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.</div><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3><span id="jsonautodetect">@JsonAutoDetect</span></h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonAutoDetect</span>(fieldVisibility = JsonAutoDetect.Visibility.ANY)</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">PrivateBean</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// Visibility.ANY 경우 표시</div><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+                <p>해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa-best-practices" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+<p>Embedded을 사용하면 칼럼들을 자료형으로 규합해서 응집력 및 재사용성을 높여 훨씬 더 객체지향 프로그래밍을 할 수 있게 도울 수 있습니다. Embedded은 다음과 같은 장점들이 있습니다.</p>
+<h2><span id="자료형의-통일">자료형의 통일</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</div><div class="line">    <span class="comment">// 단순 String</span></div><div class="line">    <span class="meta">@email</span></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"email"</span>, nullable = <span class="keyword">false</span>, unique = <span class="keyword">true</span>)</div><div class="line">    <span class="keyword">private</span> String email;</div><div class="line"></div><div class="line">    <span class="comment">// Email 자료형 </span></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Email email;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Email</span> </span>&#123;</div><div class="line">    <span class="meta">@Email</span></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"email"</span>, nullable = <span class="keyword">false</span>, unique = <span class="keyword">true</span>)</div><div class="line">    <span class="keyword">private</span> String value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>위처럼 단순 String 자료형에서 Email 자로 형으로 통일이 됩니다. <strong>자료형이 통일되면 많은 더욱 안전성이 높아지는 효과가 있습니다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findByEmail</span><span class="params">(<span class="keyword">final</span> Email email)</span> </span>&#123; <span class="comment">//단순 문자열일 경우 (final String email)</span></div><div class="line">    <span class="keyword">final</span> Account account = accountRepository.findByEmail(email);</div><div class="line">    <span class="keyword">if</span> (account == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> AccountNotFoundException(email);</div><div class="line">    <span class="keyword">return</span> account;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>이메일로 회원을 조회 할 때 단순 문자열일 경우에는 굳이 이메일 형식을 맞추지 않고도 단순 문자열을 통해서 조회할 수 있습니다. 이것은 편하게 느껴질지는 모르나 안전성에는 좋다고 생각하지 않습니다. 위처럼 정확한 이메일 자료형으로 조회가 가능하게 안전성을 높일 수 있습니다. <strong>위처럼 단순 조회용뿐만이 아니라 Email에 관련된 모든 자료형을 단순 String에서 Email로 변경함으로써 얻을 수 있는 이점은 많습니다.</strong></p>
+<h2><span id="풍부한-객체-rich-obejct">풍부한 객체 (Rich Obejct)</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Email</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getHost</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> index = value.indexOf(<span class="string">"@"</span>);</div><div class="line">        <span class="keyword">return</span> value.substring(index);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> index = value.indexOf(<span class="string">"@"</span>);</div><div class="line">        <span class="keyword">return</span> value.substring(<span class="number">0</span>, index);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>이메일 아이디와 호스트값을 추출해야 하는 기능이 필요해질 경우 기존 String 자로 형일 경우에는 해당 로직을 Account 도메인 객체에 추가하든, 유틸성 클래스에 추가하든 해야 합니다.</p>
+<p>도메인 객체에 추가할 때는 Account 도메인 클래스가 갖는 책임들이 많아집니다. 또 이메일은 어디서든지 사용할 수 있는데 Account 객체에서 이 기능을 정의하는 것은 올바르지 않습니다.</p>
+<p>유틸성 클래스에 추가하는 것 또한 좋지 않아 보입니다. 일단 유틸성 클래스에 해당 기능이 있는지 알아봐야 하고 기능이 있음에도 불구하고 그것을 모르고 추가하여 중복 코가 발생하는 일이 너무나도 흔하게 발생합니다.</p>
+<p>이것을 Email 형으로 빼놓았다면 아래처럼 Email 객체를 사용하는 곳 어디든지 사용할 수 있습니다. 해당 기능은 Email 객체가 해야 하는 일이고 또 그 일을 가장 잘할 수 있는 객체입니다. 또 한 코드가 아주 이해하기 쉽게 됩니다. 객체의 기능이 풍부해집니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">email.getHost();</div><div class="line">email.getId());</div></pre></td></tr></table></figure>
+<h2><span id="재사용성">재사용성</span></h2>
+<p>가령 해외 송금을 하는 기능이 있다고 가정할 경우 Remittance 클래스는 보내는 금액, 나라, 통화, 받는 금액, 나라, 통화가 필요하다. 이처럼 도메인이 복잡해질수록 더 재사용성은 중요합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Remittance</span></span>&#123;</div><div class="line">    <span class="comment">//자료형이 없는 경우</span></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"send_amount"</span>) <span class="keyword">private</span> <span class="keyword">double</span> sendAamount;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"send_country"</span>) <span class="keyword">private</span> String sendCountry;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"send_currency"</span>) <span class="keyword">private</span> String sendCurrency;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"receive_amount"</span>) <span class="keyword">private</span> <span class="keyword">double</span> receiveAamount;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"receive_country"</span>) <span class="keyword">private</span> String receiveCountry;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"receive_currency"</span>) <span class="keyword">private</span> String receiveCurrency;</div><div class="line"></div><div class="line">    <span class="comment">//Money 자료형</span></div><div class="line">    <span class="keyword">private</span> Money snedMoney;</div><div class="line">    <span class="keyword">private</span> Money receiveMoney;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Money</span> </span>&#123;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"amount"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>) <span class="keyword">private</span> <span class="keyword">double</span> amount;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"country"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>) <span class="keyword">private</span> Country country;</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"currency"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>) <span class="keyword">private</span> Currency currency;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>위처럼 Money라는 자료형을 두고 금액, 나라, 통화를 두면 도메인을 이해하는데 한결 수월할 뿐만 아니라 수많은 곳에서 재사용 할 수 있습니다. 사용자에게 해당 통화로 금액을 보여줄 때 소숫자리 몇 자리로 보여줄 것인지 등등 핵심 도메인일수록 재사용성을 높여 중복 코드를 제거하고 응집력을 높일 수 있습니다.</p>
+<h2><span id="결론">결론</span></h2>
+<p>Embedded의 장점을 계속 이야기했습니다. 자료형을 통일해서 안전성 및 재사용성을 높이고 풍부한 객체를 갖게 함으로써 많은 장점을 얻을 수 있습니다. 이러한 장점들은 객체지향 프로그래밍에 충분히 나와 있는 내용입니다. 제가 하고 싶은 이야기는 <strong>JPA는 결국 객체지향 프로그래밍을 돕는 도구</strong> 라는 이야기입니다. 실제 데이터는 관계형 데이터베이스에 저장됨으로써 객체지향과 패러다임이 일치하지 않는 부분을 JPA는 너무나도 좋게 해결해줍니다. 그러니 JPA가 주는 다양한 어노테이션, 기능들도 좋지만 결국 이것이 궁극적으로 무엇을 위한 것인지 생각해보는 것도 좋다고 생각합니다.</p>
 
                 
 
@@ -270,13 +261,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/spring-jpa-best-07/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices Step-07">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/intellij-message-properties/" data-toggle="tooltip" data-placement="top" title="인텔리제이 다국어 message properties">Next Post &rarr;</a>
+                            <a href="/jackson-annotation-03/" data-toggle="tooltip" data-placement="top" title="Jackson 어노테이션 사용법(3)">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -306,7 +293,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Jackson Property Inclusion Annotations</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">@JsonIgnoreProperties</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">@JsonIgnore</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">@JsonIgnoreType</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">@JsonInclude</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">@JsonAutoDetect</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">자료형의 통일</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">풍부한 객체 (Rich Obejct)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">재사용성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">결론</span></a></li></ol>
         
         </div>
       </aside>
@@ -326,7 +313,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
                         
                     </div>
                 </section>
@@ -346,8 +337,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/jackson-annotation-03/";
-    var disqus_url = "https://cheese10yun.github.io/jackson-annotation-03/";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-jpa-best-07/";
+    var disqus_url = "https://cheese10yun.github.io/spring-jpa-best-07/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
