@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Node Mysql Multiple Insert - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/mysql-multiple-insert/">
-    <meta property="og:description" content="Node Mysql Multiple Insert - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/jackson-annotation-03/">
+    <meta property="og:description" content="Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/mysql-multiple-insert/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-03/">
 
 
     <title>
         
-          Node Mysql Multiple Insert - Yun Blog | 기술 블로그
+          Jackson 어노테이션 사용법(3) - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/mysql-multiple-insert/">
+    <link rel="canonical" href="https://cheese10yun.github.io/jackson-annotation-03/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,18 +106,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
-                            
-                              <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
-                            
-                              <a class="tag" href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
+                              <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
                             
                         </div>
-                        <h1>Node Mysql Multiple Insert</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>Jackson 어노테이션 사용법(3)</h1>
+                        <h2 class="subheading">Jackson Property Inclusion Annotations</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-31
+                            2018-06-13
                         </span>
                     </div>
                 
@@ -234,18 +230,39 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.<br>
-이러한 경우에 <strong><em>반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.</em></strong></p>
-<p><img src="https://i.imgur.com/0v9jD2z.png" alt=""><br>
-위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> stmt_multiple_insert = <span class="string">'insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values ?;'</span>; <span class="comment">// 쿼리문</span></div><div class="line"><span class="keyword">var</span> values = [</div><div class="line">    [<span class="string">'user_001'</span>, <span class="string">'pw_01'</span>, <span class="string">'name_01'</span>, <span class="string">'email_01@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_002'</span>, <span class="string">'pw_02'</span>, <span class="string">'name_02'</span>, <span class="string">'email_02@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_003'</span>, <span class="string">'pw_03'</span>, <span class="string">'name_03'</span>, <span class="string">'email_03@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_004'</span>, <span class="string">'pw_04'</span>, <span class="string">'name_04'</span>, <span class="string">'email_04@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_005'</span>, <span class="string">'pw_05'</span>, <span class="string">'name_05'</span>, <span class="string">'email_05@a.com'</span>, <span class="string">'2016-10-10'</span>]</div><div class="line">];</div><div class="line"></div><div class="line"><span class="keyword">var</span> str_query = connection.query(stmt_multiple_insert, [values], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">        <span class="built_in">console</span>.log(err);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(str_query.sql);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>구조는 간단합니다. <strong><em>쿼리문은 입력값과 1:1로 대응시키고, 입력값은</em></strong> <code><b>var values</b></code> <strong><em>처럼 배열형태로 선언합니다.</em></strong></p>
-<p><code><b>var str_query = connection.query(…)</b></code> 이렇게 connection 객체를 변수로 할당시키고 <code><b>console.log(str_query.sql)</b></code><br>
-으로 해당 쿼리를 확인할 수 있습니다.</p>
-<p>쿼리문을 확인하기 위한 작업이라서 실제 배포하는 소스코드에서는 사용하지 않는 것을 권장합니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//해당 쿼리문</div><div class="line">insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values</div><div class="line">(&apos;user_001&apos;, &apos;pw_01&apos;, &apos;name_01&apos;, &apos;email_01@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_002&apos;, &apos;pw_02&apos;, &apos;name_02&apos;, &apos;email_02@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_003&apos;, &apos;pw_03&apos;, &apos;name_03&apos;, &apos;email_03@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_004&apos;, &apos;pw_04&apos;, &apos;name_04&apos;, &apos;email_04@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_005&apos;, &apos;pw_05&apos;, &apos;name_05&apos;, &apos;email_05@a.com&apos;, &apos;2016-10-10&apos;);</div></pre></td></tr></table></figure>
-<h3><span id="마무리">마무리</span></h3>
-<p>뭐 별 내용이 없네요…</p>
+                <h2><span id="jackson-property-inclusion-annotations">Jackson Property Inclusion Annotations</span></h2>
+<ul>
+<li><a href="http://www.baeldung.com/jackson-annotations" rel="external nofollow noopener noreferrer" target="_blank">Jackson Annotation Examples</a> 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.</li>
+<li>테스트코드도 참고하시면 좋습니다.</li>
+<li>해당 코드 및 전체 Jackson 정리는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/jackson" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 참고해주세요</li>
+</ul>
+<h3><span id="jsonignoreproperties">@JsonIgnoreProperties</span></h3>
+<ul>
+<li>무시할 속성이나 속성 목록을 표시하는 데 사용됩니다</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonIgnoreProperties</span>(&#123;<span class="string">"id"</span>&#125;)</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithIgnore</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsonignore">@JsonIgnore</span></h3>
+<ul>
+<li>필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanWithIgnore</span> </span>&#123;</div><div class="line">    <span class="meta">@JsonIgnore</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsonignoretype">@JsonIgnoreType</span></h3>
+<ul>
+<li>주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line"><span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line"><span class="keyword">public</span> Name name;</div><div class="line"></div><div class="line">    <span class="meta">@JsonIgnoreType</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Name</span> </span>&#123;</div><div class="line">        <span class="keyword">public</span> String firstName;</div><div class="line">        <span class="keyword">public</span> String lastName;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsoninclude">@JsonInclude</span></h3>
+<ul>
+<li>어노테이션 속성을 제외 하는 데 사용 됩니다</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonInclude</span>(JsonInclude.Include.NON_NULL)</div><div class="line"><span class="meta">@AllArgsConstructor</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.</div><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3><span id="jsonautodetect">@JsonAutoDetect</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonAutoDetect</span>(fieldVisibility = JsonAutoDetect.Visibility.ANY)</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">PrivateBean</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// Visibility.ANY 경우 표시</div><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"yun"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
                 
 
@@ -253,13 +270,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/API-CALL/" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/blog-start-part2/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">Next Post &rarr;</a>
+                            <a href="/intellij-message-properties/" data-toggle="tooltip" data-placement="top" title="인텔리제이 다국어 message properties">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -284,6 +297,17 @@
             <!-- Tabe of Content -->
             <!-- Table of Contents -->
 
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Jackson Property Inclusion Annotations</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">@JsonIgnoreProperties</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">@JsonIgnore</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">@JsonIgnoreType</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">@JsonInclude</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">@JsonAutoDetect</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
                 
             <!-- Sidebar Container -->
             <div class="
@@ -298,11 +322,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
-                        
-                          <a class="tag" href="/tags/#Mysql" title="Mysql">Mysql</a>
-                        
-                          <a class="tag" href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
+                          <a class="tag" href="/tags/#Jackson" title="Jackson">Jackson</a>
                         
                     </div>
                 </section>
@@ -322,8 +342,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/mysql-multiple-insert/";
-    var disqus_url = "https://cheese10yun.github.io/mysql-multiple-insert/";
+    var disqus_identifier = "https://cheese10yun.github.io/jackson-annotation-03/";
+    var disqus_url = "https://cheese10yun.github.io/jackson-annotation-03/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

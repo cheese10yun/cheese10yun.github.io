@@ -331,13 +331,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Jackson/</loc>
-        <lastmod>2018-06-01T16:48:19.775Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/OOP/</loc>
         <lastmod>2018-06-02T16:32:37.113Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -375,6 +368,13 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/message-properties/</loc>
         <lastmod>2018-06-06T07:32:35.641Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Jackson/</loc>
+        <lastmod>2018-06-13T09:20:35.315Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
