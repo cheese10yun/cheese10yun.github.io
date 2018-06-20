@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jackson-annotation-03/</loc>
+        <lastmod>2018-06-20T13:52:02.398Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jackson-annotation-04/</loc>
         <lastmod>2018-06-20T13:50:28.134Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -25,14 +33,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-07/</loc>
         <lastmod>2018-06-13T19:35:38.072Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jackson-annotation-03/</loc>
-        <lastmod>2018-06-13T09:20:35.315Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
