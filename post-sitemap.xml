@@ -7,6 +7,78 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
+        <lastmod>2018-06-22T15:26:07.492Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
+        <lastmod>2018-06-22T15:26:04.128Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-04/</loc>
+        <lastmod>2018-06-22T15:26:00.823Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-05/</loc>
+        <lastmod>2018-06-22T15:25:57.546Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-06/</loc>
+        <lastmod>2018-06-22T15:25:54.176Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-07/</loc>
+        <lastmod>2018-06-22T15:25:51.374Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-notificaion-oop/</loc>
+        <lastmod>2018-06-22T15:25:46.715Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-oop-03/</loc>
+        <lastmod>2018-06-22T15:25:36.804Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
+        <lastmod>2018-06-22T15:25:29.869Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best/</loc>
         <lastmod>2018-06-22T15:22:12.812Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -39,22 +111,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-06/</loc>
-        <lastmod>2018-06-13T19:42:47.322Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-07/</loc>
-        <lastmod>2018-06-13T19:35:38.072Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/jackson-annotation-02/</loc>
         <lastmod>2018-06-11T17:35:31.108Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -79,14 +135,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-03/</loc>
-        <lastmod>2018-05-30T15:40:44.665Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/jackson-annotation/</loc>
         <lastmod>2018-05-27T15:40:21.249Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -95,40 +143,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
-        <lastmod>2018-05-21T15:21:02.909Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-05/</loc>
-        <lastmod>2018-05-17T17:11:00.775Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-04/</loc>
-        <lastmod>2018-05-12T08:16:58.724Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/swagger-tip-01/</loc>
         <lastmod>2018-05-07T15:40:38.569Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
-        <lastmod>2018-05-03T14:23:06.198Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -151,24 +167,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
-        <lastmod>2018-04-19T16:30:59.900Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/intellij-git/</loc>
         <lastmod>2018-04-02T16:36:29.050Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-notificaion-oop/</loc>
-        <lastmod>2018-03-30T14:46:51.809Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

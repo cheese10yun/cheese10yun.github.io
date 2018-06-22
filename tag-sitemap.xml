@@ -219,13 +219,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
-        <lastmod>2018-03-30T14:46:51.809Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
         <lastmod>2018-04-02T16:36:29.050Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -324,20 +317,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Embedded/</loc>
-        <lastmod>2018-05-21T15:21:02.909Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
-        <lastmod>2018-06-02T16:32:37.113Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Intellij/</loc>
         <lastmod>2018-06-06T07:32:35.641Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -359,22 +338,43 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
+        <lastmod>2018-06-22T15:25:46.715Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
+        <lastmod>2018-06-22T15:25:46.715Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Embedded/</loc>
+        <lastmod>2018-06-22T15:26:04.128Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-06-22T15:22:12.812Z</lastmod>
+        <lastmod>2018-06-22T15:26:07.492Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-06-22T15:22:12.812Z</lastmod>
+        <lastmod>2018-06-22T15:26:07.492Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-06-22T15:22:12.812Z</lastmod>
+        <lastmod>2018-06-22T15:26:07.492Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
