@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2018-07-08T08:24:15.716Z</updated>
+  <updated>2018-07-08T10:03:55.914Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Jackson 어노테이션 총 정리</title>
+    <link href="https://cheese10yun.github.io/jackson-annotation-final/"/>
+    <id>https://cheese10yun.github.io/jackson-annotation-final/</id>
+    <published>2018-07-08T10:00:00.000Z</published>
+    <updated>2018-07-08T10:03:55.914Z</updated>
+    
+    <content type="html"><![CDATA[<iframe src="//www.slideshare.net/slideshow/embed_code/key/3bcVswknGqlE8u" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/ssuser565d51/jackson-104816215" title="Jackson 사용법" target="_blank">Jackson 사용법</a> </strong> from <strong><a href="https://www.slideshare.net/ssuser565d51" target="_blank" rel="external nofollow noopener noreferrer">남윤 김</a></strong> </div>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;iframe src=&quot;//www.slideshare.net/slideshow/embed_code/key/3bcVswknGqlE8u&quot; width=&quot;595&quot; height=&quot;485&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot; marginhe
+      
+    
+    </summary>
+    
+    
+      <category term="Jackson" scheme="https://cheese10yun.github.io/tags/Jackson/"/>
+    
+      <category term="Slideshare" scheme="https://cheese10yun.github.io/tags/Slideshare/"/>
+    
+  </entry>
   
   <entry>
     <title>Github로 프로젝트 관리하기</title>
@@ -519,33 +544,6 @@
       <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
     
       <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>인텔리제이 Git 활용법</title>
-    <link href="https://cheese10yun.github.io/intellij-git/"/>
-    <id>https://cheese10yun.github.io/intellij-git/</id>
-    <published>2018-04-02T15:00:00.000Z</published>
-    <updated>2018-04-02T16:36:29.050Z</updated>
-    
-    <content type="html"><![CDATA[<p>벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느낌이 있어서 저는 거의 모든 작업을 인텔리제이에서 하는 것을 지향합니다. <strong>이번 포스팅은 Source Tree 즉 Git 관련 툴을 대체하는 방법을 소개하겠습니다.</strong> <strong><em>해당 기능의 단축키는 스크린샷 하단에 표시되있습니다.</em></strong></p><h2><span id="commit">Commit</span></h2><p><img src="https://i.imgur.com/6xFlHcv.png" alt=""></p><ul><li>Diff : 변경 이력이 있는 모든 파일에 대해서 Diff 기능을 제공합니다. Commit을 하기 전에 자신이 변경한 모든 파일에 대해서 한 번 꼼꼼하게 읽어 보는 습관을 갖는 것이 실수를 줄이는 가장 효율적인 방법이라고 생각합니다.</li><li>Before Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.<ul><li>Check TODO:  //TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.</li><li>Optimize imports : 사용하지 않은 imports를 제거해 줍니다.</li><li>Reformat Code : 인텔리제이에서 설정한 코드스타일로 변경 해줍니다.</li></ul></li></ul><h2><span id="push">Push</span></h2><p><img src="https://i.imgur.com/TzF1dNk.png" alt=""></p><ul><li>커밋한 내용을 레파지토리에 푸쉬 하는 기능입니다.</li></ul><h2><span id="pull">Pull</span></h2><p><img src="https://i.imgur.com/pMhiJPi.png" alt=""></p><ul><li>Remote Repository에 변경 내역을 Pull 받는 기능입니다.</li></ul><h2><span id="stash">Stash</span></h2><p><img src="https://i.imgur.com/ZIn63MI.png" alt=""></p><ul><li>Stash 기능은 아주 간단하게 소개하면 변경 내역을 임시저장 해놓는 기능입니다. 가령 다른 branch로 변경을 원할 때 변경 내역이 남아 있어 부득이하게 commit을 하는 경우가 있습니다. 그럴 때 stash 임시 저장소에 저장하면 편리하게 branch 간의 이동을 할 수 있습니다.</li><li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 stash 기능을 사용합니다.</li></ul><h2><span id="unstash">UnStash</span></h2><p><img src="https://i.imgur.com/kDCYgib.png" alt=""></p><ul><li>Stash 저장한 내역을 POP 하는 기능입니다.</li><li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 unStash 기능을 사용합니다.</li><li>저장한 메시지를 기반으로 선택하고 <code>Apply Stash</code>을 클릭하면 변경 내역을 불러옵니다.</li></ul><h2><span id="share-project-on-github">Share Project on Github</span></h2><p><img src="https://i.imgur.com/bOJ0X8n.png" alt=""></p><ul><li>해당 프로젝트를 Github에 올리는 기능입니다.</li></ul><h2><span id="branch">Branch</span></h2><p><img src="https://i.imgur.com/HJjPhjW.png" alt=""></p><ul><li>New branch, Checkout, Compare, Merge, Rebase 등등 다양한 기능들을 제공합니다.</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느
-      
-    
-    </summary>
-    
-    
-      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
-    
-      <category term="Tip" scheme="https://cheese10yun.github.io/tags/Tip/"/>
-    
-      <category term="Git" scheme="https://cheese10yun.github.io/tags/Git/"/>
     
   </entry>
   

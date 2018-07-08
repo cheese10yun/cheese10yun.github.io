@@ -331,13 +331,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Jackson/</loc>
-        <lastmod>2018-06-22T15:13:59.757Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
         <lastmod>2018-06-22T15:25:46.715Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -396,6 +389,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Proejct-Management/</loc>
         <lastmod>2018-07-08T08:24:15.716Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Jackson/</loc>
+        <lastmod>2018-07-08T10:03:55.914Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Slideshare/</loc>
+        <lastmod>2018-07-08T10:03:55.914Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
