@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2) - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-09/">
+    <meta property="og:description" content="Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2) - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-09/">
+
+
+    <title>
+        
+          Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2) - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-09/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                            
+                        </div>
+                        <h1>Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)</h1>
+                        <h2 class="subheading">OneToMany 관계 설정 팁(2)</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2018-07-17
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa-best-practices" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+<p>이전에 OneToMany 관계 설정 포스팅이 관계설정의 초점보다는 풍부한 객체 관점 중심으로 다루었습니다. 그러다 보니 OneToMany에 대한 관계에 대한 설명 부분이 부족해서 추가 포스팅을 하게 되었습니다.</p>
+<h2><span id="요구사항">요구사항</span></h2>
+<ul>
+<li>배송이 이 있고 배송의 상태를 갖는 배송 로그가 있습니다.</li>
+<li>배송과 배송 상태는 1:N 관계를 갖는다.</li>
+<li>배송은 배송 상태를 1개 이상 반드시 갖는다.</li>
+</ul>
+<h2><span id="entity">Entity</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Delivery</span> </span>&#123;</div><div class="line">    <span class="meta">@Id</span> <span class="meta">@GeneratedValue</span>(strategy = GenerationType.AUTO)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</div><div class="line"></div><div class="line">    <span class="meta">@Embedded</span></div><div class="line">    <span class="keyword">private</span> Address address;</div><div class="line"></div><div class="line">    <span class="meta">@OneToMany</span>(mappedBy = <span class="string">"delivery"</span>, cascade = CascadeType.PERSIST, orphanRemoval = <span class="keyword">true</span>, fetch = FetchType.EAGER)</div><div class="line">    <span class="keyword">private</span> List&lt;DeliveryLog&gt; logs = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryLog</span> </span>&#123;</div><div class="line">    <span class="meta">@Id</span> <span class="meta">@GeneratedValue</span>(strategy = GenerationType.AUTO)</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</div><div class="line"></div><div class="line">    <span class="meta">@Enumerated</span>(EnumType.STRING)</div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"status"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> DeliveryStatus status;</div><div class="line"></div><div class="line">    <span class="meta">@ManyToOne</span></div><div class="line">    <span class="meta">@JoinColumn</span>(name = <span class="string">"delivery_id"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> Delivery delivery;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2><span id="delivery-저장">Delivery 저장</span></h2>
+<p>일대다 관계에서는 다 쪽이 외래 키를 관리하게 됩니다. JPA 상에서는 왜래 키가 갖는 쪽이 연관 관계의 주인이 되고 연관 관계의 주인만이 데이터베이스 연관 관계와 매핑되고 왜래 키를 관리(등록, 수정, 삭제)할 수 있으므로 DeliveryLog에서 Delivery를 관리하게 됩니다. <strong>하지만 DeliveryLog는 Delivery 상태를 저장하는 로그 성격 이기 때문에 핵심 비즈니스 로직을 Delivery에서 작성하는 것이 바람직합니다.</strong></p>
+<p>이럴 때 편의 메소드와 Cascade 타입 PERSIST 이용하면 보다 이러한 문제를 해결 할 수 있습니다.</p>
+<h3><span id="편의-메소드">편의 메소드</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Delivery</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLog</span><span class="params">(DeliveryStatus status)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.logs.add(DeliveryLog.builder()</div><div class="line">                .status(status)</div><div class="line">                .delivery(<span class="keyword">this</span>) <span class="comment">// this를 통해서 Delivery를 넘겨준다.</span></div><div class="line">                .build());</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DeliveryLog</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DeliveryLog</span><span class="params">(<span class="keyword">final</span> DeliveryStatus status, <span class="keyword">final</span> Delivery delivery)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.delivery = delivery;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DeliveryService</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> Delivery <span class="title">create</span><span class="params">(DeliveryDto.CreationReq dto)</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Delivery delivery = dto.toEntity();</div><div class="line">        delivery.addLog(DeliveryStatus.PENDING);</div><div class="line">        <span class="keyword">return</span> deliveryRepository.save(delivery);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Delivery가 시작되면 DeliveryLog는 반드시 PENDDING이어야 한다고 가정했을 경우 편의 메소드를 이용해서 두 객체에 모두 필요한 값을 바인딩시켜줍니다.</p>
+<h3><span id="casecade-persist-설정">CaseCade PERSIST 설정</span></h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// cascade 없는 경우</div><div class="line">Hibernate: <span class="keyword">insert</span> <span class="keyword">into</span> delivery (<span class="keyword">id</span>, address1, address2, zip, created_at, update_at) <span class="keyword">values</span> (<span class="literal">null</span>, ?, ?, ?, ?, ?)</div><div class="line"></div><div class="line">// <span class="keyword">cascade</span> PERSIST 설정 했을 경우</div><div class="line">Hibernate: <span class="keyword">insert</span> <span class="keyword">into</span> delivery (<span class="keyword">id</span>, address1, address2, zip, created_at, update_at) <span class="keyword">values</span> (<span class="literal">null</span>, ?, ?, ?, ?, ?)</div><div class="line">Hibernate: <span class="keyword">insert</span> <span class="keyword">into</span> delivery_log (<span class="keyword">id</span>, created_at, update_at, delivery_id, <span class="keyword">status</span>) <span class="keyword">values</span> (<span class="literal">null</span>, ?, ?, ?, ?)</div></pre></td></tr></table></figure>
+<p>CaseCade PERSIST을 통해서 Delivery 엔티티에서 DeliveryLog를 생성할수 있게 설정합니다. CaseCade PERSIST가 없을 때 실제 객체에는 저장되지만, 영속성 있는 데이터베이스에 저장에 필요한 insert query가 동작하지 않습니다.</p>
+<p><strong>JPA를 잘활용하면 도메인의 의도가 분명하게 들어나도록 개발할 수 있다는 것을 강조드리고 싶습니다.</strong></p>
+<h2><span id="고아-객체-orphanremoval">고아 객체 (orphanRemoval)</span></h2>
+<p>JPA는 부모 엔티티와 연관 관계가 끊어진 자식 엔티티를 자동으로 삭제하는 기능을 제공하는데 이것을 고아 객체 제거라 합니다. 이 기능을 사용해서 부모 엔티티의 컬렉션에서 자식 엔티티의 참조만 제거하면 자식 엔티티가 자동으로 삭제 돼서 개발의 편리함이 있습니다.</p>
+<h3><span id="deliverylog-삭제">DeliveryLog 삭제</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Delivery <span class="title">removeLogs</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> Delivery delivery = findById(id);</div><div class="line">    delivery.getLogs().clear(); <span class="comment">// DeloveryLog 전체 삭제</span></div><div class="line">    <span class="keyword">return</span> delivery; <span class="comment">// 실제 DeloveryLog 삭제 여부를 확인하기 위해 리턴</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// <span class="keyword">delete</span> <span class="keyword">SQL</span></div><div class="line">Hibernate: <span class="keyword">delete</span> <span class="keyword">from</span> delivery_log <span class="keyword">where</span> <span class="keyword">id</span>=?</div></pre></td></tr></table></figure>
+<p>Delivery 객체를 통해서 DeliveryLog를 위처럼 직관적으로 삭제 할 수 있습니다. 이 처럼 직관적으로 그 의도가 드러나는 장점이 있다고 생각합니다.</p>
+<h3><span id="delivery-삭제">Delivery 삭제</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">long</span> id)</span></span>&#123;</div><div class="line">    deliveryRepository.delete(id);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// <span class="keyword">delete</span> <span class="keyword">SQL</span></div><div class="line">Hibernate: <span class="keyword">delete</span> <span class="keyword">from</span> delivery_log <span class="keyword">where</span> <span class="keyword">id</span>=?</div><div class="line">Hibernate: <span class="keyword">delete</span> <span class="keyword">from</span> delivery <span class="keyword">where</span> <span class="keyword">id</span>=?</div></pre></td></tr></table></figure>
+<p>delivery, deliverylog 참조 관계를 맺고 있어 Delivery만 삭제할 수 없습니다. delete SQL을 보시다시피 delivery_log 부터 제거 이후 delivery를 제거하는 것을 알 수 있습니다. 이처럼 orphanRemoval 속성으로 더욱 쉽게 삭제 할 수 있습니다.</p>
+<h3><span id="orphanremoval-설정이-없는-경우">orphanRemoval 설정이 없는 경우</span></h3>
+<p>DeliveryLog 삭제 같은 경우에는 실제 객체에서는 clear() 메서드로 DeliveryLog가 삭제된 것처럼 보이지만 영속성 있는 데이터를 삭제하는 것은 아니기에 해당 Delivery를 조회하면 DeliveryLog가 그대로 조회됩니다. 실수하기 좋은 부분이기에 반드시 삭제하고 조회까지 해서 데이터베이스까지 확인하시는 것을 권장해 드립니다.</p>
+<p><img src="https://i.imgur.com/bPhMX9e.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// erorr log</div><div class="line">o.h.engine.jdbc.spi.SqlExceptionHelper   : Referential integrity constraint violation: &quot;FKFS49KM0EA809MTH3OQ4S6810H: PUBLIC.DELIVERY_LOG FOREIGN KEY(DELIVERY_ID) REFERENCES PUBLIC.DELIVERY(ID) (1)&quot;; SQL statement:</div></pre></td></tr></table></figure>
+<p>위에서 언급했듯이 delivery를 삭제하려면 참조 하는 deliverylog 먼저 삭제를 진행 해야 합니다. orphanRemoval 설정이 없는 경우 그 작업을 선행하지 않으니 위 같은 에러가 발생하게 됩니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/github-proejct-part2/" data-toggle="tooltip" data-placement="top" title="Github로 프로젝트 관리하기 Part2">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">요구사항</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Entity</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Delivery 저장</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">편의 메소드</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">CaseCade PERSIST 설정</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">고아 객체 (orphanRemoval)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">DeliveryLog 삭제</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Delivery 삭제</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">orphanRemoval 설정이 없는 경우</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "yun-blog";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-jpa-best-09/";
+    var disqus_url = "https://cheese10yun.github.io/spring-jpa-best-09/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
