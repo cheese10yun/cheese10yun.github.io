@@ -261,14 +261,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -366,27 +366,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Github/</loc>
-        <lastmod>2018-07-14T18:36:40.846Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Issue/</loc>
-        <lastmod>2018-07-14T18:36:40.846Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Proejct-Management/</loc>
-        <lastmod>2018-07-14T18:36:40.846Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2018-07-16T17:42:59.867Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -403,6 +382,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
         <lastmod>2018-07-16T17:42:59.867Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Github/</loc>
+        <lastmod>2018-07-17T13:48:26.576Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Issue/</loc>
+        <lastmod>2018-07-17T13:48:26.576Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Proejct-Management/</loc>
+        <lastmod>2018-07-17T13:48:26.576Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
