@@ -219,27 +219,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2018-04-02T16:36:29.050Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Tip/</loc>
-        <lastmod>2018-04-02T16:36:29.050Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Git/</loc>
-        <lastmod>2018-04-02T16:36:29.050Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Bot/</loc>
         <lastmod>2018-05-02T15:33:59.828Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -261,14 +240,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -410,6 +389,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/ZenHub/</loc>
         <lastmod>2018-07-17T13:53:55.186Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2018-07-18T14:05:30.601Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Tip/</loc>
+        <lastmod>2018-07-18T14:05:30.601Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Git/</loc>
+        <lastmod>2018-07-18T14:05:30.601Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
