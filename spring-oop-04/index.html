@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조에 대한 고찰 - Yun Blog | 기술 블로그">
     <meta property="og:url" content="https://cheese10yun.github.io/spring-oop-04/">
-    <meta property="og:description" content="Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조 - Yun Blog | 기술 블로그">
+    <meta property="og:description" content="Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조에 대한 고찰 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -30,7 +30,7 @@
 
     <title>
         
-          Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조 - Yun Blog | 기술 블로그
+          Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조에 대한 고찰 - Yun Blog | 기술 블로그
         
     </title>
 
@@ -111,8 +111,8 @@
                               <a class="tag" href="/tags/#OOP" title="OOP">OOP</a>
                             
                         </div>
-                        <h1>Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조</h1>
-                        <h2 class="subheading">Service, ServiceImpl 구조</h2>
+                        <h1>Spring OOP 프로그래밍 예제(4) - Service, ServiceImpl 구조에 대한 고찰</h1>
+                        <h2 class="subheading">Service, ServiceImpl 구조에 대한 고찰</h2>
                         <span class="meta">
                             Posted by Yun on
                             2018-06-03
@@ -232,7 +232,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>예제 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/partner-api" rel="external nofollow noopener noreferrer" target="_blank">Github : blog-sample</a>에 공개 되어 있습니다.</p>
+                <h1><span id="service-serviceimpl-구조에-대한-고찰">Service, ServiceImpl 구조에 대한 고찰</span></h1>
+<p>예제 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/service" rel="external nofollow noopener noreferrer" target="_blank">GitHub</a>에 공개 되어 있습니다.</p>
 <p>스프링을 처음 공부 할 때 많이 사용되는 Service, ServiceImpl 구조에 관해서 이야기 하려고 합니다. 저도 처음 Spring을 학습할 때 Service, ServiceImpl 구조를 그대로 타이핑하면서 학습을 하였지만, 굳이 이것을 통해서 장점을 얻지 못했기 때문에 실무에서나 개인적으로나 사용하지는 않았습니다.</p>
 <p>Service, ServiceImpl 구조의 장점을 찾으려고 해도 명확한 답변보다는 교과서적인 답변밖에 찾지를 못했습니다. 최근에 객체지향 프로그래밍을 학습하면서 Service, ServiceImpl 구조를 한번 설명하고자 합니다. <strong>어디까지나 저의 부족한 개념을 통한 정리이기에 때문에 비판적인 시각으로 읽어주시면 감사하겠습니다. 또 여러분들도 자신만의 정의를 내려보는 것도 좋을 거 같습니다.</strong></p>
 <p>결론부터 말씀드리면 Service, ServiceImpl는 좋은 구조라고 생각하지 않습니다. 특히 도메인 객체에는 더욱더 좋지 않다고 생각합니다.</p>
@@ -274,9 +275,8 @@
 <p>클래스를 잘게 나누고 해당 클래스에 맞는 책임을 부여하는 것은 객체지향 프로그래밍에서 중요하다고 생각합니다. 하나의 클래스에서 너무 많은 책임을 갖게 되면 다른 클래스와의 의존관계 또한 자연스럽게 늘어나 결합 도가 증가 됩니다. 그러니 클래스를 잘게 나누는 것이 좋습니다. 아래는 제가 좋아하는 인용 구입니다.</p>
 <p><img src="http://woowabros.github.io/img/2016-08-03/tray.png" alt=""></p>
 <blockquote>
-<p>출처 « 로버트 C.마틴 - Clean Code 177page »<br>
-작은 클래스가 많은 시스템이든 큰 클래스가 몇 개뿐인 시스템이든 돌아가는 부품은 그 수가 비슷하다.<br>
-(중략)<br>
+<p>출처 « 로버트 C.마틴 - Clean Code 177page »</p>
+<p>작은 클래스가 많은 시스템이든 큰 클래스가 몇 개뿐인 시스템이든 돌아가는 부품은 그 수가 비슷하다. (중략)<br>
 “도구 상자를 어떻게 관리하고 싶은가? 작은 서랍을 많이 두고 기능과 이름을 명확한 컴포넌트를 나눠 넣고 싶은가? 아니면 큰 서랍 몇 개를 두고 모두를 던져 넣고 싶은가?”</p>
 </blockquote>
 <p><a href="http://woowabros.github.io/experience/2016/08/02/first_java_project.html" rel="external nofollow noopener noreferrer" target="_blank">인용 문구, 사진 - 우아한 형제들 기술 블로그 :첫 Java 프로젝트의 생생한 후기</a></p>
@@ -324,7 +324,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">MemberService</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">하나의 인터페이스의 하나의 구현체</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">요구사항</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">인터페이스는 어떻게 두어야 하는가?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">결론</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Service, ServiceImpl 구조에 대한 고찰</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">MemberService</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">하나의 인터페이스의 하나의 구현체</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">요구사항</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">인터페이스는 어떻게 두어야 하는가?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">결론</span></a></li></ol></li></ol>
         
         </div>
       </aside>
