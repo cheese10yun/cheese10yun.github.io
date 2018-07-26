@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-solid-dip/</loc>
+        <lastmod>2018-07-26T15:22:02.887Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
         <lastmod>2018-07-25T13:35:48.620Z</lastmod>
         <changefreq>weekly</changefreq>
