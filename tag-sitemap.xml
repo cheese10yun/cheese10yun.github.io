@@ -429,15 +429,36 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
         <lastmod>2018-08-05T10:33:52.098Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-08-05T10:33:52.098Z</lastmod>
+        <loc>https://cheese10yun.github.io/tags/Https/</loc>
+        <lastmod>2018-09-15T15:06:07.109Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-09-15T15:06:18.632Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/OAuth2/</loc>
+        <lastmod>2018-09-15T15:06:18.632Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Social/</loc>
+        <lastmod>2018-09-15T15:06:18.632Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

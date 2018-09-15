@@ -229,6 +229,73 @@
 
 <div class="post-preview">
 
+    <a href="/intellij-builder-pattern/">
+        <h2 class="post-title">
+            인텔리제이로 Builder Pattern 쉽게 구현하기
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            이미 많은 분들이 빌더 패턴 관련해서 포스팅을 잘 정리해주셔서 빌더 패턴에 대해서 설명 해주기 보다는 인텔리제이 플러그인을 활용해서 좀 쉽게 사용할 수 있는 팁을 포스팅을 해보겠습니다.
+물론 Lombok을 활용해서 빌더를 손쉽게 사용할 수있지만 Lombok을 사용하지 않고도 쉽게 만들 수 있는 방법을 소개해드리겠습니다.
+Builder Generator......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2018-01-18
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+            
+              <a href="/tags/#Builder Pattern" title="Builder Pattern">Builder Pattern</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/n-1/">
+        <h2 class="post-title">
+            JPA n+1 문제
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            JPA N + 1 문제
+1234select o.* m.*from Order oleft outer join Member m on o.MEMBER_ID=m.MEMBER_IDwhere o.id =1
+
+실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함꼐 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2017-12-03
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#JPA" title="JPA">JPA</a>
+            
+              <a href="/tags/#spring" title="spring">spring</a>
+            
+              <a href="/tags/#N+1" title="N+1">N+1</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/packageFile-API/">
         <h2 class="post-title">
             Package.json 파일로 API 버전 설정
@@ -519,72 +586,6 @@ formi......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/blog-start-part2/">
-        <h2 class="post-title">
-            블로그를 시작하려는 당신에게(2)
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            블로그를 시작하려는 당신에게(1)에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.
-이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?누구나 관종의 피는 가지고 있으니 말이다.
-네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Yun on
-            2017-01-31
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Blog" title="Blog">Blog</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/mysql-multiple-insert/">
-        <h2 class="post-title">
-            Node Mysql Multiple Insert
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            데이터베이스에 여러 개의 Insert를 할 일은 정말 많습니다. 저희는 대체로 타 게임회사의 데이터를 벌크로 내려받아야 하는 경우가 있어 여러 번의 Insert 작업을 진행하게 됩니다.
-이러한 경우에 반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.
-
-위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.
-123......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Yun on
-            2017-01-31
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Node" title="Node">Node</a>
-            
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
-            
-              <a href="/tags/#Multiple Insert" title="Multiple Insert">Multiple Insert</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -635,7 +636,11 @@ formi......
     <ul>
       
         <li>
-          <a href="/spring-jpa-best-10/">Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기</a>
+          <a href="/spring-social/">Spring Social Part 1 Google, Facebook 간단한 소셜 인증</a>
+        </li>
+      
+        <li>
+          <a href="/spring-https/">Spring Boot HTTPS 적용 하기</a>
         </li>
       
         <li>
@@ -643,15 +648,11 @@ formi......
         </li>
       
         <li>
+          <a href="/spring-jpa-best-10/">Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기</a>
+        </li>
+      
+        <li>
           <a href="/spring-solid-dip/">Spring 예제로 보는 SOLID DIP</a>
-        </li>
-      
-        <li>
-          <a href="/spring-solid-ocp/">Spring 예제로 보는 SOLID OCP</a>
-        </li>
-      
-        <li>
-          <a href="/intellij-github/">인텔리제이 GitHub 활용법</a>
         </li>
       
     </ul>
@@ -662,7 +663,7 @@ formi......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">5</span></li></ul>
     </div>
 
         <hr>
