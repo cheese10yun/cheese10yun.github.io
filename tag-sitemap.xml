@@ -289,13 +289,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Document/</loc>
-        <lastmod>2018-05-07T15:40:38.569Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Intellij/</loc>
         <lastmod>2018-06-06T07:32:35.641Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -443,13 +436,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-09-23T11:39:01.461Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Social/</loc>
         <lastmod>2018-09-23T11:39:01.461Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -458,7 +444,28 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/OAuth2/</loc>
-        <lastmod>2018-10-21T15:41:16.905Z</lastmod>
+        <lastmod>2018-10-21T15:43:30.047Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-10-26T16:45:12.496Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/REST-Docs/</loc>
+        <lastmod>2018-10-26T16:45:12.496Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Document/</loc>
+        <lastmod>2018-10-26T16:45:12.496Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
