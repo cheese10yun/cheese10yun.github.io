@@ -216,15 +216,11 @@
             <!-- 标签云 -->
             <div id="tag_cloud" class="tags">
                 
-                    <a href="#Spring" title="Spring" rel="23">Spring</a>
-                
-                    <a href="#REST Docs" title="REST Docs" rel="1">REST Docs</a>
-                
-                    <a href="#Document" title="Document" rel="2">Document</a>
-                
                     <a href="#Mac" title="Mac" rel="0">Mac</a>
                 
                     <a href="#단축키" title="단축키" rel="0">단축키</a>
+                
+                    <a href="#Spring" title="Spring" rel="24">Spring</a>
                 
                     <a href="#OAuth2" title="OAuth2" rel="3">OAuth2</a>
                 
@@ -234,9 +230,17 @@
                 
                     <a href="#Blog" title="Blog" rel="1">Blog</a>
                 
-                    <a href="#Nginx" title="Nginx" rel="1">Nginx</a>
+                    <a href="#REST Docs" title="REST Docs" rel="1">REST Docs</a>
+                
+                    <a href="#Document" title="Document" rel="2">Document</a>
                 
                     <a href="#Node" title="Node" rel="15">Node</a>
+                
+                    <a href="#API" title="API" rel="2">API</a>
+                
+                    <a href="#Call" title="Call" rel="1">Call</a>
+                
+                    <a href="#Nginx" title="Nginx" rel="1">Nginx</a>
                 
                     <a href="#AWS" title="AWS" rel="3">AWS</a>
                 
@@ -262,10 +266,6 @@
                 
                     <a href="#Upload" title="Upload" rel="1">Upload</a>
                 
-                    <a href="#API" title="API" rel="2">API</a>
-                
-                    <a href="#Call" title="Call" rel="1">Call</a>
-                
                     <a href="#Bootstrap" title="Bootstrap" rel="1">Bootstrap</a>
                 
                     <a href="#Modal" title="Modal" rel="1">Modal</a>
@@ -290,13 +290,13 @@
                 
                     <a href="#Builder Pattern" title="Builder Pattern" rel="1">Builder Pattern</a>
                 
-                    <a href="#JPA" title="JPA" rel="13">JPA</a>
-                
-                    <a href="#JPA Console" title="JPA Console" rel="1">JPA Console</a>
-                
                     <a href="#Tip" title="Tip" rel="2">Tip</a>
                 
                     <a href="#Git" title="Git" rel="2">Git</a>
+                
+                    <a href="#JPA" title="JPA" rel="13">JPA</a>
+                
+                    <a href="#JPA Console" title="JPA Console" rel="1">JPA Console</a>
                 
                     <a href="#Intellij" title="Intellij" rel="1">Intellij</a>
                 
@@ -336,6 +336,10 @@
                 
                     <a href="#Slack" title="Slack" rel="2">Slack</a>
                 
+                    <a href="#Security" title="Security" rel="1">Security</a>
+                
+                    <a href="#CSRF" title="CSRF" rel="1">CSRF</a>
+                
                     <a href="#Coveralls" title="Coveralls" rel="1">Coveralls</a>
                 
                     <a href="#Test Coverage" title="Test Coverage" rel="1">Test Coverage</a>
@@ -362,6 +366,20 @@
 
             
             <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Mac">
+                    <span class="tag-text">Mac</span>
+                </span>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="단축키">
+                    <span class="tag-text">단축키</span>
+                </span>
+                
+            </div>
+            
+            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Spring">
                     <span class="tag-text">Spring</span>
                 </span>
@@ -379,6 +397,21 @@
                             <h3 class="post-subtitle">
                                 Slack Message
                             </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-csrf/">
+                        <h2 class="post-title">
+                            Spring Security CSRF 설정
+                        </h2>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -424,25 +457,6 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-03/">
-                        <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                효과적인 validate, 예외 처리 (2)
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
                      <a href="/spring-jpa-best-04/">
                         <h2 class="post-title">
                             Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
@@ -462,13 +476,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-05/">
+                     <a href="/spring-jpa-best-03/">
                         <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                OneToMany 관계 설정 팁
+                                효과적인 validate, 예외 처리 (2)
                             </h3>
                         
                     </a>
@@ -488,6 +502,25 @@
                         
                             <h3 class="post-subtitle">
                                 Setter 사용하지 않기
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-jpa-best-05/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                OneToMany 관계 설정 팁
                             </h3>
                         
                     </a>
@@ -671,13 +704,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-rest-docs/">
+                     <a href="/spring-oop-bank-api/">
                         <h2 class="post-title">
-                            Spring REST Docs
+                            Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                문서 자동회
+                                은행 API를 통한 환율 계산기
                             </h3>
                         
                     </a>
@@ -690,13 +723,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-oop-bank-api/">
+                     <a href="/spring-rest-docs/">
                         <h2 class="post-title">
-                            Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기
+                            Spring REST Docs
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                은행 API를 통한 환율 계산기
+                                문서 자동회
                             </h3>
                         
                     </a>
@@ -790,91 +823,6 @@
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
                 </div>
                 <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="REST Docs">
-                    <span class="tag-text">REST Docs</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/spring-rest-docs/">
-                        <h2 class="post-title">
-                            Spring REST Docs
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                문서 자동회
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Document">
-                    <span class="tag-text">Document</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/spring-rest-docs/">
-                        <h2 class="post-title">
-                            Spring REST Docs
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                문서 자동회
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/swagger-tip-01/">
-                        <h2 class="post-title">
-                            Swagger 날짜 포멧팅
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Swagger Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Mac">
-                    <span class="tag-text">Mac</span>
-                </span>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="단축키">
-                    <span class="tag-text">단축키</span>
-                </span>
                 
             </div>
             
@@ -1001,8 +949,8 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Nginx">
-                    <span class="tag-text">Nginx</span>
+                <span class="fa fa-tag listing-seperator" id="REST Docs">
+                    <span class="tag-text">REST Docs</span>
                 </span>
                 
                   <!-- <li class="listing-item">
@@ -1010,10 +958,59 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/Node-AWS-Nginx/">
+                     <a href="/spring-rest-docs/">
                         <h2 class="post-title">
-                            AWS EC2 Nginx Node.js 설정
+                            Spring REST Docs
                         </h2>
+                        
+                            <h3 class="post-subtitle">
+                                문서 자동회
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Document">
+                    <span class="tag-text">Document</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-rest-docs/">
+                        <h2 class="post-title">
+                            Spring REST Docs
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                문서 자동회
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/swagger-tip-01/">
+                        <h2 class="post-title">
+                            Swagger 날짜 포멧팅
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Swagger Tip
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -1026,6 +1023,21 @@
                 <span class="fa fa-tag listing-seperator" id="Node">
                     <span class="tag-text">Node</span>
                 </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/API-CALL/">
+                        <h2 class="post-title">
+                            Node 다른 서버 API 호출
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
                 
                   <!-- <li class="listing-item">
                   <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
@@ -1095,21 +1107,6 @@
                      <a href="/aws-s3-imgage/">
                         <h2 class="post-title">
                             AWS S3 업로드시 이미지 최적화
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/API-CALL/">
-                        <h2 class="post-title">
-                            Node 다른 서버 API 호출
                         </h2>
                         
                     </a>
@@ -1249,6 +1246,87 @@
                      <a href="/passport-thirdpart-loginl/">
                         <h2 class="post-title">
                             Passport를 이용한 네이버, 카카오, 페이스북 로그인
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="API">
+                    <span class="tag-text">API</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/API-CALL/">
+                        <h2 class="post-title">
+                            Node 다른 서버 API 호출
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/packageFile-API/">
+                        <h2 class="post-title">
+                            Package.json 파일로 API 버전 설정
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Call">
+                    <span class="tag-text">Call</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/API-CALL/">
+                        <h2 class="post-title">
+                            Node 다른 서버 API 호출
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Nginx">
+                    <span class="tag-text">Nginx</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/Node-AWS-Nginx/">
+                        <h2 class="post-title">
+                            AWS EC2 Nginx Node.js 설정
                         </h2>
                         
                     </a>
@@ -1677,65 +1755,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="API">
-                    <span class="tag-text">API</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/API-CALL/">
-                        <h2 class="post-title">
-                            Node 다른 서버 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/packageFile-API/">
-                        <h2 class="post-title">
-                            Package.json 파일로 API 버전 설정
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Call">
-                    <span class="tag-text">Call</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/API-CALL/">
-                        <h2 class="post-title">
-                            Node 다른 서버 API 호출
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Bootstrap">
                     <span class="tag-text">Bootstrap</span>
                 </span>
@@ -2085,13 +2104,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/intellij-jpa-console/">
+                     <a href="/intellij-git/">
                         <h2 class="post-title">
-                            인텔리제이 JPA Console
+                            인텔리제이 Git 활용법
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                JPA Console
+                                IntelliJ Tip
                             </h3>
                         
                     </a>
@@ -2111,6 +2130,25 @@
                         
                             <h3 class="post-subtitle">
                                 IntelliJ Tip
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/intellij-jpa-console/">
+                        <h2 class="post-title">
+                            인텔리제이 JPA Console
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                JPA Console
                             </h3>
                         
                     </a>
@@ -2149,25 +2187,6 @@
                         
                             <h3 class="post-subtitle">
                                 Intellij Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/intellij-git/">
-                        <h2 class="post-title">
-                            인텔리제이 Git 활용법
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                IntelliJ Tip
                             </h3>
                         
                     </a>
@@ -2243,6 +2262,96 @@
                         <h2 class="post-title">
                             인텔리제이로 Builder Pattern 쉽게 구현하기
                         </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Tip">
+                    <span class="tag-text">Tip</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/intellij-git/">
+                        <h2 class="post-title">
+                            인텔리제이 Git 활용법
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                IntelliJ Tip
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/intellij-github/">
+                        <h2 class="post-title">
+                            인텔리제이 GitHub 활용법
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                IntelliJ Tip
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Git">
+                    <span class="tag-text">Git</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/intellij-git/">
+                        <h2 class="post-title">
+                            인텔리제이 Git 활용법
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                IntelliJ Tip
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/intellij-github/">
+                        <h2 class="post-title">
+                            인텔리제이 GitHub 활용법
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                IntelliJ Tip
+                            </h3>
                         
                     </a>
                     <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
@@ -2333,25 +2442,6 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-03/">
-                        <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                효과적인 validate, 예외 처리 (2)
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
                      <a href="/spring-jpa-best-04/">
                         <h2 class="post-title">
                             Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
@@ -2371,13 +2461,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-05/">
+                     <a href="/spring-jpa-best-03/">
                         <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                OneToMany 관계 설정 팁
+                                효과적인 validate, 예외 처리 (2)
                             </h3>
                         
                     </a>
@@ -2397,6 +2487,25 @@
                         
                             <h3 class="post-subtitle">
                                 Setter 사용하지 않기
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-jpa-best-05/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                OneToMany 관계 설정 팁
                             </h3>
                         
                     </a>
@@ -2528,96 +2637,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Tip">
-                    <span class="tag-text">Tip</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/intellij-github/">
-                        <h2 class="post-title">
-                            인텔리제이 GitHub 활용법
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                IntelliJ Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/intellij-git/">
-                        <h2 class="post-title">
-                            인텔리제이 Git 활용법
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                IntelliJ Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="Git">
-                    <span class="tag-text">Git</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/intellij-github/">
-                        <h2 class="post-title">
-                            인텔리제이 GitHub 활용법
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                IntelliJ Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/intellij-git/">
-                        <h2 class="post-title">
-                            인텔리제이 Git 활용법
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                IntelliJ Tip
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Intellij">
                     <span class="tag-text">Intellij</span>
                 </span>
@@ -2731,25 +2750,6 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/jackson-annotation-02/">
-                        <h2 class="post-title">
-                            Jackson 어노테이션 사용법(2)
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                Jackson Deserialization Annotations
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
                      <a href="/jackson-annotation-03/">
                         <h2 class="post-title">
                             Jackson 어노테이션 사용법(3)
@@ -2776,6 +2776,25 @@
                         
                             <h3 class="post-subtitle">
                                 Polymorphic Type Handling Annotations,  General Annotations
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/jackson-annotation-02/">
+                        <h2 class="post-title">
+                            Jackson 어노테이션 사용법(2)
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                Jackson Deserialization Annotations
                             </h3>
                         
                     </a>
@@ -2897,13 +2916,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-03/">
+                     <a href="/spring-jpa-best-04/">
                         <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
+                            Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                효과적인 validate, 예외 처리 (2)
+                                Embedded를 이용한 Password 처리
                             </h3>
                         
                     </a>
@@ -2916,13 +2935,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-04/">
+                     <a href="/spring-jpa-best-03/">
                         <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
+                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                Embedded를 이용한 Password 처리
+                                효과적인 validate, 예외 처리 (2)
                             </h3>
                         
                     </a>
@@ -3322,6 +3341,50 @@
             </div>
             
             <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Security">
+                    <span class="tag-text">Security</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-csrf/">
+                        <h2 class="post-title">
+                            Spring Security CSRF 설정
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="CSRF">
+                    <span class="tag-text">CSRF</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-csrf/">
+                        <h2 class="post-title">
+                            Spring Security CSRF 설정
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
+            
+            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Coveralls">
                     <span class="tag-text">Coveralls</span>
                 </span>
@@ -3424,25 +3487,6 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-03/">
-                        <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
-                        </h2>
-                        
-                            <h3 class="post-subtitle">
-                                효과적인 validate, 예외 처리 (2)
-                            </h3>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
                      <a href="/spring-jpa-best-04/">
                         <h2 class="post-title">
                             Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
@@ -3462,13 +3506,13 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/spring-jpa-best-05/">
+                     <a href="/spring-jpa-best-03/">
                         <h2 class="post-title">
-                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                            Spring-Jpa Best Practices Step-03 - 효과적인 validate, 예외 처리 (2)
                         </h2>
                         
                             <h3 class="post-subtitle">
-                                OneToMany 관계 설정 팁
+                                효과적인 validate, 예외 처리 (2)
                             </h3>
                         
                     </a>
@@ -3488,6 +3532,25 @@
                         
                             <h3 class="post-subtitle">
                                 Setter 사용하지 않기
+                            </h3>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/spring-jpa-best-05/">
+                        <h2 class="post-title">
+                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                        </h2>
+                        
+                            <h3 class="post-subtitle">
+                                OneToMany 관계 설정 팁
                             </h3>
                         
                     </a>
