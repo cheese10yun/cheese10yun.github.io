@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/blog-start-part2/">
-    <meta property="og:description" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Spring 예제로 보는 SOLID SRP - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-solid-srp-1/">
+    <meta property="og:description" content="Spring 예제로 보는 SOLID SRP - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-solid-srp-1/">
 
 
     <title>
         
-          블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그
+          Spring 예제로 보는 SOLID SRP - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-solid-srp-1/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#SOLID" title="SOLID">SOLID</a>
+                            
+                              <a class="tag" href="/tags/#SRP" title="SRP">SRP</a>
                             
                         </div>
-                        <h1>블로그를 시작하려는 당신에게(2)</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>Spring 예제로 보는 SOLID SRP</h1>
+                        <h2 class="subheading">단일 책임의 원칙 - Single Responsibility Principle</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-31
+                            2018-11-19
                         </span>
                     </div>
                 
@@ -230,36 +234,60 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p>
-<p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p>
-<p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p>
-<h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3>
-<p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p>
-<p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p>
-<p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p>
-<h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4>
-<p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p>
-<p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p>
-<p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p>
-<h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5>
-<p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p>
-<p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></div><div class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></div></pre></td></tr></table></figure>
-<p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p>
-<p><img src="/img/blog-start-2/2.png" alt=""></p>
-<p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p>
-<h5><span id="robotstxt-설정">robots.txt 설정</span></h5>
-<p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p>
-<p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>
-네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p>
-<p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p>
-<h5><span id="rss-제출">RSS 제출</span></h5>
-<p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p>
-<p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p>
-<h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4>
-<p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p>
-<h3><span id="마무리">마무리</span></h3>
-<p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>
+                <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/spring-SOLID" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</strong></p>
+<h1><span id="단일-책임의-원칙-single-responsibility-principle">단일 책임의 원칙: Single Responsibility Principle</span></h1>
+<p>단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.</p>
+<ul>
+<li>클래스는 단 한 개의 책임을 가져야 한다.</li>
+<li>클래스의 변경하는 이유는 단 한 개여야 한다.</li>
+<li>누가 해당 메소드의 변경을 유발하는 사용자(Actor) 인가?</li>
+</ul>
+<p>사실 단임 책임의 원칙이라는 것은 정말 이해하기 어렵습니다. 우선 명확한 책임을 도출하기까지 시간이 걸리기 때문에 처음부터 단일 책임을 지켜서 설계하는 것은 매우 힘들다고 생각합니다. 또 요구사항이 변경 시에 책임 또한 변경되게 됩니다. 그러니 지속해서 한 클래스가 한 책임만을 갖게 하기는 매우 어렵다고 생각합니다.</p>
+<p><strong>다른 SOLID 원칙 정리 한글 보다 제 개인적인 생각이 많이 들어간 설명이라서 최대한 비판적인 시각으로 봐주시면 감사하겠습니다.</strong></p>
+<h2><span id="요구사항">요구사항</span></h2>
+<ul>
+<li>카드 결제 시스템이 있다.</li>
+<li>현재 국내 결제를 지원하는 카드는 신한, 우리 카드가 있다.</li>
+<li>국내 결제 카드사들은 지속해서 추가된다.</li>
+<li>앞으로 해외 결제 기능이 추가된다.
+<ul>
+<li><strong>신한 카드는 해외 결제가 가능하다.</strong></li>
+<li><strong>우리 카드는 해외 결제가 불가능하다.</strong></li>
+<li>지속해서 카드사가 추가된다.</li>
+</ul>
+</li>
+</ul>
+<h2><span id="기존-국내-카드-결제의-srp">기존 국내 카드 결제의 SRP</span></h2>
+<p align="center">
+    <img src="https://i.imgur.com/TdGYl8n.png">
+</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShinhanCardPaymentService</span> <span class="keyword">implements</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> </span>&#123;</div><div class="line">        <span class="comment">// .. 신한 카드 국내 결제 로직..</span></div><div class="line">        shinhanCardApi.pay(paymentRequest);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WooriCardPaymentService</span> <span class="keyword">implements</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> </span>&#123;</div><div class="line">        <span class="comment">// .. 우리 카드 국내 결제 로직..</span></div><div class="line">        wooriCardApi.pay(paymentRequest);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>위의 UML, 인터페이스가 이해가 어렵다면 이전 포스팅 <a href="https://github.com/cheese10yun/spring-SOLID/blob/master/docs/OCP.md" rel="external nofollow noopener noreferrer" target="_blank">OCP</a>, <a href="https://github.com/cheese10yun/spring-SOLID/blob/master/docs/DIP.md" rel="external nofollow noopener noreferrer" target="_blank">DIP</a>를 먼저 보시는 것을 권장합니다.</strong></p>
+<ul>
+<li>클래스의 책임 : <strong>해당 카드사의 결제 API를 호출하기 위한 적절한 값을 생성해서 호출하는 것</strong></li>
+<li>변경의 근원 : 카드 결제를 하는 Actor</li>
+<li>Actor : 카드결제를 행하는 <strong>행위자</strong></li>
+</ul>
+<p>지금 부터는 제 지극적인 주관적인 생각입니다.</p>
+<p>클래스의 변경은 단 한 개여야 한다. <strong>라는 말은 그 클래스의 책임을 수행시키는 Actor의 변경 시에만 클래스의 변경이 가해져야 한다고 저는 해석 했습니다.</strong></p>
+<p>만약 Actor가 결제 완료 시간 등 결제 정보를 받기를 원하게 된다면 <code>pay</code> 메서드의 리턴 타입이 변경이 발생합니다. 즉 카드 결제의 변경은 Actor의 변경에서부터 발생하게 됩니다.</p>
+<p><strong>여기서 Actor를 단순히 사용자로 바라보면 안 되고 Actor는 그 행위(국내 결제)를 하는 행위자로 봐야 한다고 생각합니다. 그리고 단일 책임이라는 것은 단일 Actor를 뜻한다고 생각합니다.</strong> 이 부분은 아래에서 추가로 설명하겠습니다.</p>
+<h2><span id="추가될-해외-카드-결제의-srp미준수">추가될 해외 카드 결제의 SRP(미준수)</span></h2>
+<p><img src="https://i.imgur.com/DyLl9Fh.png" alt=""></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShinhanCardPaymentService</span> <span class="keyword">implements</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> </span>&#123;</div><div class="line">        <span class="comment">// .. 신한 카드 해외 결제 로직..</span></div><div class="line">        shinhanCardApi.pay(paymentRequest);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WooriCardPaymentService</span> <span class="keyword">implements</span> <span class="title">CardPaymentService</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> </span>&#123;</div><div class="line">        <span class="comment">// 우리 카드 결제는 해외 결제 기능이 없음...</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>신한 카드는 해외 결제를 할 수 있지만 우리 카드는 해외 결제 기능을 제공하고 있지 않습니다.</strong> 각 구현 클래스들은 CardPaymentService 인터페이스를 구현하고 있으므로 payOverseas 기능이 추가되면 우리 카드 결제는 반드시 해당 메서드를 구현 해야 합니다.</p>
+<p><strong>해외 결제만 되고 국내 결제가 안 되는 카드 파트너가 추가되면 어떻게 될까요?</strong> 그렇게 되면 위와 반대로 payOverseas 구현 메소드는 구현하고 pay는 구현하지 못하게 됩니다.</p>
+<p>다시 SRP로 넘어가서</p>
+<h3><span id="책임이란-변화에-대한-것">책임이란 변화에 대한 것</span></h3>
+<p>국내 결제에서 해외 결제라는 책임이 하나 더 생긴 것입니다. 그렇게 두 개의 책임이 생겼고 그 결과 두 개의 Actor가 생긴 것이라고 생각합니다. (위에서 언급한 단일 책임 = 단일 Actor) 이로써 클래스의 책임을 나누는 작업이 필요해집니다.</p>
+<p><strong>하지만 여기서 정말 중요한 것은 만약 우리카드가 해외 결제를 제공하고, 추가 파트너들도 해외 결제를 제공한다면 ?</strong></p>
+<p>그렇다면 국내, 해외 결제를 할 수 있는 Actor는 한 개가 됩니다. Actor가 하나라는 것은 책임이 하나라는 뜻도 됩니다. 이런 경우 단일 책임의 원칙을 지켰다고 저는 개인적으로 생각합니다.</p>
+<p>하지만 우리는 파트너사들이 어떤 기능을 제공할지, 또 어떤 파트너사들이 추가될지, 어떻게 변경될지 이런 부분들을 예측하기가 어려우므로 SRP를 지속적으로 준수하는 것은 정말 어렵다고 생각합니다.</p>
+<h2><span id="추가될-해외-카드-결제의-srp준수">추가될 해외 카드 결제의 SRP(준수)</span></h2>
+<p><img src="https://i.imgur.com/1vc5En5.png" alt=""></p>
+<p>카드 파트너사의 해외 결제 여부로 더이상 PaymentService에서 국내 결제와, 해외 결제를 처리를 못하게 되었습니다. 그렇다면 책임을 분리시키고 그것을 인터페이스로 바라보게 하여 앞으로 해외 결제 카드추가시 확장에 열려있게 할 수 있습니다.</p>
+<h2><span id="결론">결론</span></h2>
+<p>SOLID에서 가장 이해하기 어려운 개념이 SRP라고 생각합니다. 관련자료도 읽어봐도 명확한 이해가 어려워서 저 나름의 결론을 정리한 글입니다. 때문에 다른 원칙에 비해서 제 주관적인 해석들이 많아 잘못된 부분도 있을 수 있습니다.</p>
 
                 
 
@@ -267,13 +295,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/mysql-multiple-insert/" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/blog-start/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">Next Post &rarr;</a>
+                            <a href="/spring-solid-srp/" data-toggle="tooltip" data-placement="top" title="Spring 예제로 보는 SOLID SRP">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -303,7 +327,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">네이버 웹마스터 도구</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">검증에서 웹 페이지 최적화 검사를 진행한다.</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">오픈 그래프 정보 & 소셜 미디어</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">robots.txt 설정</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">RSS 제출</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">웹 페이지 최적화 검사</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">단일 책임의 원칙: Single Responsibility Principle</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">요구사항</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">기존 국내 카드 결제의 SRP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">추가될 해외 카드 결제의 SRP(미준수)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">책임이란 변화에 대한 것</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">추가될 해외 카드 결제의 SRP(준수)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">결론</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -323,7 +347,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#SOLID" title="SOLID">SOLID</a>
+                        
+                          <a class="tag" href="/tags/#SRP" title="SRP">SRP</a>
                         
                     </div>
                 </section>
@@ -343,8 +371,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/blog-start-part2/";
-    var disqus_url = "https://cheese10yun.github.io/blog-start-part2/";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-solid-srp-1/";
+    var disqus_url = "https://cheese10yun.github.io/spring-solid-srp-1/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
