@@ -380,13 +380,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
-        <lastmod>2018-07-26T15:24:55.270Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/DIP/</loc>
         <lastmod>2018-07-26T15:24:55.270Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -410,20 +403,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Assistant/</loc>
         <lastmod>2018-08-05T05:30:45.148Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2018-08-05T10:33:52.098Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2018-08-05T10:33:52.098Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -464,13 +443,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2018-10-27T06:03:39.887Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Security/</loc>
         <lastmod>2018-10-27T06:03:39.887Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -480,6 +452,41 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/CSRF/</loc>
         <lastmod>2018-10-27T06:03:39.887Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2018-11-17T06:15:52.451Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2018-11-17T06:15:52.451Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2018-11-19T12:29:09.724Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/SOLID/</loc>
+        <lastmod>2018-11-19T12:29:09.724Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/SRP/</loc>
+        <lastmod>2018-11-19T12:29:09.724Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

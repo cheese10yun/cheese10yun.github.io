@@ -7,6 +7,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-solid-srp/</loc>
+        <lastmod>2018-11-19T12:29:09.724Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-10/</loc>
+        <lastmod>2018-11-17T06:15:52.451Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-csrf/</loc>
         <lastmod>2018-10-27T06:03:39.887Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -49,14 +65,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-https/</loc>
         <lastmod>2018-09-15T15:06:07.109Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-10/</loc>
-        <lastmod>2018-08-05T10:33:52.098Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
