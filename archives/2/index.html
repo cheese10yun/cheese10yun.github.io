@@ -229,6 +229,41 @@
 
 <div class="post-preview">
 
+    <a href="/spring-jpa-best-10/">
+        <h2 class="post-title">
+            Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기
+        </h2>
+        <h3 class="post-subtitle">
+            Properties 설정값 가져오기
+        </h3>
+        <div class="post-content-preview">
+            해당 코드는 Github를 확인해주세요.
+Properties 설정값을 가져오는 다양한 방법들이 있습니다. 방법이 많다 보니 좋지 않은 패턴으로 사용하는 예도 흔하게 발생합니다. 안티 패턴을 소개하고 이것이 왜 안 좋은지 간단하게 소개하고 제가 생각하는 좋은 패턴도 소개해드리겠습니다.
+properties
+123456user:  email: "yun@te......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2018-08-05
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Spring" title="Spring">Spring</a>
+            
+              <a href="/tags/#JPA" title="JPA">JPA</a>
+            
+              <a href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/spring-solid-dip/">
         <h2 class="post-title">
             Spring 예제로 보는 SOLID DIP
@@ -344,6 +379,43 @@ Github 아이디 연동
 
 <div class="post-preview">
 
+    <a href="/spring-jpa-best-09/">
+        <h2 class="post-title">
+            Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)
+        </h2>
+        <h3 class="post-subtitle">
+            OneToMany 관계 설정 팁(2)
+        </h3>
+        <div class="post-content-preview">
+            해당 코드는 Github를 확인해주세요.
+이전에 OneToMany 관계 설정 포스팅이 관계설정의 초점보다는 풍부한 객체 관점 중심으로 다루었습니다. 그러다 보니 OneToMany에 대한 관계에 대한 설명 부분이 부족해서 추가 포스팅을 하게 되었습니다.
+요구사항
+
+배송이 이 있고 배송의 상태를 갖는 배송 로그가 있습니다.
+배송과 배송 상태는 1:N 관계......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Yun on
+            2018-07-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Spring" title="Spring">Spring</a>
+            
+              <a href="/tags/#JPA" title="JPA">JPA</a>
+            
+              <a href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/github-project-part3/">
         <h2 class="post-title">
             Github로 프로젝트 관리하기 Part3
@@ -370,43 +442,6 @@ Github를 이용해서 Project Management 하는 방법 및 전체적인 프로�
               <a href="/tags/#Proejct Management" title="Proejct Management">Proejct Management</a>
             
               <a href="/tags/#ZenHub" title="ZenHub">ZenHub</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/spring-jpa-best-09/">
-        <h2 class="post-title">
-            Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)
-        </h2>
-        <h3 class="post-subtitle">
-            OneToMany 관계 설정 팁(2)
-        </h3>
-        <div class="post-content-preview">
-            해당 코드는 Github를 확인해주세요.
-이전에 OneToMany 관계 설정 포스팅이 관계설정의 초점보다는 풍부한 객체 관점 중심으로 다루었습니다. 그러다 보니 OneToMany에 대한 관계에 대한 설명 부분이 부족해서 추가 포스팅을 하게 되었습니다.
-요구사항
-
-배송이 이 있고 배송의 상태를 갖는 배송 로그가 있습니다.
-배송과 배송 상태는 1:N 관계......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Yun on
-            2018-07-17
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#JPA" title="JPA">JPA</a>
-            
-              <a href="/tags/#Spring" title="Spring">Spring</a>
-            
-              <a href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
             
         </div>
     
@@ -544,47 +579,6 @@ PagerDuty Request
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/spring-jpa-best-08/">
-        <h2 class="post-title">
-            Spring-Jpa Best Practices Step-08 - OneToOne 관계 설정 팁
-        </h2>
-        <h3 class="post-subtitle">
-            OneToOne 관계 설정 팁
-        </h3>
-        <div class="post-content-preview">
-            해당 코드는 Github를 확인해주세요.
-OneToOne 관계 설정 시에 간단한 팁을 정리하겠습니다. 해당 객체들의 성격은 다음과 같습니다.
-
-주문과 쿠폰 엔티티가 있다.
-주문 시 쿠폰을 적용해서 할인받을 수 있다.
-주문과 쿠폰 관계는 1:1 관계 즉 OneToOne 관계이다.
-
-주의 깊게 살펴볼 내용은 다음과 같습니다.
-
-외래 키는 어디 테이블에 두......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Yun on
-            2018-06-29
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#JPA" title="JPA">JPA</a>
-            
-              <a href="/tags/#Spring" title="Spring">Spring</a>
-            
-              <a href="/tags/#Best Practices" title="Best Practices">Best Practices</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -635,6 +629,10 @@ OneToOne 관계 설정 시에 간단한 팁을 정리하겠습니다. 해당 객
     <ul>
       
         <li>
+          <a href="/spring-oauth2-provider/">Spring OAuth2 Provider 정리</a>
+        </li>
+      
+        <li>
           <a href="/spring-batch-basic/">Spring Batch 간단 정리</a>
         </li>
       
@@ -650,10 +648,6 @@ OneToOne 관계 설정 시에 간단한 팁을 정리하겠습니다. 해당 객
           <a href="/spring-rest-docs/">Spring REST Docs</a>
         </li>
       
-        <li>
-          <a href="/oauth2/">OAuth2 인증 방식 정리</a>
-        </li>
-      
     </ul>
   </div>
 </h5>
@@ -662,7 +656,7 @@ OneToOne 관계 설정 시에 간단한 팁을 정리하겠습니다. 해당 객
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">5</span></li></ul>
     </div>
 
         <hr>
