@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-oauth2-jdbc/</loc>
+        <lastmod>2018-11-24T15:15:52.837Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-oauth2-provider/</loc>
         <lastmod>2018-11-23T18:43:08.398Z</lastmod>
         <changefreq>weekly</changefreq>
