@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Bootstrap Modal 입력값 초기화 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/bootstrap-modall/">
-    <meta property="og:description" content="Bootstrap Modal 입력값 초기화 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="실무에서 Lombok 사용법 - lombok.config - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/lombok-config/">
+    <meta property="og:description" content="실무에서 Lombok 사용법 - lombok.config - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/bootstrap-modall/">
+    <link rel="canonical" href="https://cheese10yun.github.io/lombok-config/">
 
 
     <title>
         
-          Bootstrap Modal 입력값 초기화 - Yun Blog | 기술 블로그
+          실무에서 Lombok 사용법 - lombok.config - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/bootstrap-modall/">
+    <link rel="canonical" href="https://cheese10yun.github.io/lombok-config/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,16 +106,16 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Bootstrap" title="Bootstrap">Bootstrap</a>
+                              <a class="tag" href="/tags/#Lombok" title="Lombok">Lombok</a>
                             
-                              <a class="tag" href="/tags/#Modal" title="Modal">Modal</a>
+                              <a class="tag" href="/tags/#config" title="config">config</a>
                             
                         </div>
-                        <h1>Bootstrap Modal 입력값 초기화</h1>
-                        <h2 class="subheading"></h2>
+                        <h1>실무에서 Lombok 사용법 - lombok.config</h1>
+                        <h2 class="subheading">안전하게 Lombok을 사용해보자</h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-10
+                            2018-12-22
                         </span>
                     </div>
                 
@@ -232,12 +232,14 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><img src="https://i.imgur.com/SHu3JYX.png" alt="EC2 Innound"></p>
-<p>부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">'.modal'</span>).on(<span class="string">'hidden.bs.modal'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'modal close'</span>);</div><div class="line">  $(<span class="keyword">this</span>).find(<span class="string">'form'</span>)[<span class="number">0</span>].reset()</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h3><span id="활용방법">활용방법</span></h3>
-<p>해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.</p>
-<p>생각 보다 내용이 없네요…</p>
+                <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/lombok" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에 공개되어 있습니다.</strong></p>
+<h2><span id="lombokconfig-설정">lombok.config 설정</span></h2>
+<p>lombok.config 설정 파일을 통해서 lombok 어노테이션을 제한 할 수 있습니다. <a href="https://cheese10yun.github.io/lombok/">이전 포스팅에</a>서 언급한 <code>@Data</code> 등 사용을 했을 경우 위험 부담이 있는 어노테이션들은 해당 설정에서 제한 할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">lombok.Setter.flagUsage = error</div><div class="line">lombok.AllArgsConstructor.flagUsage = error</div><div class="line">lombok.ToString.flagUsage = warning</div><div class="line">lombok.data.flagUsage= error</div></pre></td></tr></table></figure>
+<p><code>lombok.{해당어노테이션}.flagUsage = [warning or error]</code> 이러한 규칙으로 lombok 어노테이션들을 설정 할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/blob/master/lombok/assets/lombok-config.png?raw=true" alt=""></p>
+<p>실제 컴파일을 진행하면 위에서 설정한 <code>lombok.config</code>에서 제한한 어노테이션은 warning, error로 표시됩니다.<br>
+이 처럼 명확한 가이드 라인이 있으면 설정 파일을 통해서 제한하는 것이 바람직하다고 생각합니다.</p>
 
                 
 
@@ -245,13 +247,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/crontab-api/" data-toggle="tooltip" data-placement="top" title="Crontab을 이용한 노드 API 호출">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/passport-mysql/" data-toggle="tooltip" data-placement="top" title="Node Passport를 이용한 Login + Mysql">Next Post &rarr;</a>
+                            <a href="/encapsulation-part-1/" data-toggle="tooltip" data-placement="top" title="캡슐화 내가 생각하는 캡슐화란 (1)">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -281,7 +279,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">활용방법</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">lombok.config 설정</span></a></li></ol>
         
         </div>
       </aside>
@@ -301,9 +299,9 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Bootstrap" title="Bootstrap">Bootstrap</a>
+                          <a class="tag" href="/tags/#Lombok" title="Lombok">Lombok</a>
                         
-                          <a class="tag" href="/tags/#Modal" title="Modal">Modal</a>
+                          <a class="tag" href="/tags/#config" title="config">config</a>
                         
                     </div>
                 </section>
@@ -323,8 +321,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "yun-blog";
-    var disqus_identifier = "https://cheese10yun.github.io/bootstrap-modall/";
-    var disqus_url = "https://cheese10yun.github.io/bootstrap-modall/";
+    var disqus_identifier = "https://cheese10yun.github.io/lombok-config/";
+    var disqus_url = "https://cheese10yun.github.io/lombok-config/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

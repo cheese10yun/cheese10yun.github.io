@@ -247,13 +247,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
-        <lastmod>2018-05-02T15:44:12.833Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -262,6 +255,13 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/S3/</loc>
+        <lastmod>2018-05-02T15:44:12.833Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
         <lastmod>2018-05-02T15:44:12.833Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -520,13 +520,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Lombok/</loc>
-        <lastmod>2018-11-26T15:32:22.488Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/%EC%BA%A1%EC%8A%90%ED%99%94/</loc>
         <lastmod>2018-12-19T14:52:45.358Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -536,6 +529,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5/</loc>
         <lastmod>2018-12-19T14:52:45.358Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Lombok/</loc>
+        <lastmod>2018-12-22T07:01:23.084Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/config/</loc>
+        <lastmod>2018-12-22T07:01:23.084Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
