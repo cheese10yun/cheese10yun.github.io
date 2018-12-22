@@ -237,6 +237,7 @@
 <p>lombok.config 설정 파일을 통해서 lombok 어노테이션을 제한 할 수 있습니다. <a href="https://cheese10yun.github.io/lombok/">이전 포스팅에</a>서 언급한 <code>@Data</code> 등 사용을 했을 경우 위험 부담이 있는 어노테이션들은 해당 설정에서 제한 할 수 있습니다.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">lombok.Setter.flagUsage = error</div><div class="line">lombok.AllArgsConstructor.flagUsage = error</div><div class="line">lombok.ToString.flagUsage = warning</div><div class="line">lombok.data.flagUsage= error</div></pre></td></tr></table></figure>
 <p><code>lombok.{해당어노테이션}.flagUsage = [warning or error]</code> 이러한 규칙으로 lombok 어노테이션들을 설정 할 수 있습니다.</p>
+<p><code>lombok.{해당어노테이션}.flagUsage = [warning or error]</code> 이러한 규칙으로 lombok 어노테이션들을 설정 할 수 있습니다.</p>
 <p><img src="https://github.com/cheese10yun/blog-sample/blob/master/lombok/assets/lombok-config.png?raw=true" alt=""></p>
 <p>실제 컴파일을 진행하면 위에서 설정한 <code>lombok.config</code>에서 제한한 어노테이션은 warning, error로 표시됩니다.<br>
 이 처럼 명확한 가이드 라인이 있으면 설정 파일을 통해서 제한하는 것이 바람직하다고 생각합니다.</p>
