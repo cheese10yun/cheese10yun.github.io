@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Yun Blog</title>
   <icon>https://www.gravatar.com/avatar/d313a2c442931458ed624a3999d75011</icon>
-  <subtitle>기술 블로</subtitle>
+  <subtitle>기술 블로그</subtitle>
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
