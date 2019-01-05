@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/encapsulation-part-2/</loc>
+        <lastmod>2019-01-05T07:24:10.320Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/lombok-config/</loc>
         <lastmod>2018-12-22T08:21:45.444Z</lastmod>
         <changefreq>weekly</changefreq>
