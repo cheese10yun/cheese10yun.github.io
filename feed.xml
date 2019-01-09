@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2019-01-05T07:24:10.320Z</updated>
+  <updated>2019-01-09T15:49:36.219Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring-Jpa Best Practices step-11 - Properties environment 설정하기</title>
+    <link href="https://cheese10yun.github.io/spring-jpa-best-11/"/>
+    <id>https://cheese10yun.github.io/spring-jpa-best-11/</id>
+    <published>2019-01-09T15:50:00.000Z</published>
+    <updated>2019-01-09T15:49:36.219Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa-best-practices" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p></blockquote><p>properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.</p><table><thead><tr><th>environment</th><th>설명</th><th>파일명</th></tr></thead><tbody><tr><td>local</td><td>로컬 개발환경</td><td>application-local.yml</td></tr><tr><td>dev</td><td>개발환경</td><td>application-dev.yml</td></tr><tr><td>prod</td><td>운영</td><td>application-prod.yml</td></tr></tbody></table><p>위 처럼 환경이 분리되었을 경우를 기준으로 설명드리겠습니다.</p><h2><span id="applicationyml">application.yml</span></h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure><ul><li>모든 환경에서 공통으로 사용할 정보들을 작성합니다.</li><li>모든 환경에서 사용할 것을 공통으로 사용하기 때문에 코드의 중복과 변경에 이점이 있습니다.</li><li>본 예제에서는 port만 공통으로 설정했습니다.</li></ul><h2><span id="application-envyml">application-{env}.yml</span></h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="attr">user:</span></div><div class="line"><span class="attr">  email:</span> <span class="string">"yun@test"</span></div><div class="line"><span class="attr">  nickname:</span> <span class="string">"nickname"</span></div><div class="line"><span class="attr">  age:</span> <span class="number">28</span></div><div class="line"><span class="attr">  auth:</span> <span class="literal">false</span></div><div class="line"><span class="attr">  amount:</span> <span class="number">101</span></div><div class="line"></div><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  jpa:</span></div><div class="line"><span class="attr">    database:</span> <span class="string">h2</span></div><div class="line"><span class="attr">    hibernate:</span></div><div class="line"><span class="attr">      ddl-auto:</span> <span class="string">create-drop</span></div><div class="line"><span class="attr">    show-sql:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  datasource:</span></div><div class="line"><span class="attr">    data:</span> <span class="attr">classpath:init.sql</span> <span class="comment"># 시작할때 실행시킬 script</span></div><div class="line"></div><div class="line"><span class="attr">  jackson:</span></div><div class="line"><span class="attr">    serialization:</span></div><div class="line"><span class="attr">      WRITE_DATES_AS_TIMESTAMPS:</span> <span class="literal">false</span></div><div class="line"></div><div class="line"><span class="attr">logging:</span></div><div class="line"><span class="attr">  level:</span></div><div class="line"><span class="attr">    ROOT:</span> <span class="string">info</span></div></pre></td></tr></table></figure><ul><li>각 개발환경에 맞는 properties 설정을 정의합니다.</li><li>대표적으로 데이터베이스 정보, 외부 설정 정보 등이 있습니다.</li><li><code>application.yml</code> 에서 정의한 <code>server.port</code> 8080 값이 자동으로 설정됩니다.</li></ul><h2><span id="env-설정-방법">env 설정 방법</span></h2><h3><span id="applicationyml에서-설정하는-방법">application.yml에서 설정하는 방법</span></h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  profiles:</span></div><div class="line"><span class="attr">    active:</span> <span class="string">local</span></div><div class="line"></div><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure><ul><li><code>profiles.active</code> 속성에 원하는 정보 env를 작성합니다.</li></ul><h3><span id="intellij에서-설정-하는-방법">IntelliJ에서 설정 하는 방법</span></h3><p><img src="../images/intellij-properties.png" alt=""></p><p>IntelliJ에서는 외부에서 넘겨 받는 인자로 다양한 환경 설정을 제공해줍니다. 가장 대표적인 방법으로 VM options, Active profiles 설정이 있습니다. 아래의 방법중 하나를 선택하면 됩니다.</p><ul><li>VM options에 <code>-Dspring.profiles.active={env}</code> 추가합니다.</li><li>Active profiles: <code>{env}</code></li></ul><h2><span id="우선순위">우선순위</span></h2><p>외부 환경 설정에 대한 우선순위는 <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config" rel="external nofollow noopener noreferrer" target="_blank">Spring-Boot Document</a>에 표시되어 있습니다. 실제 배포시에는 우선순위를 반드시 고려해야합니다.</p><h2><span id="env-구동">env 구동</span></h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  profiles:</span></div><div class="line"><span class="attr">    active:</span> <span class="string">local</span></div><div class="line"></div><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure><p><code>application.yml</code>으로 설정해서 스프링을 구동시켜보겠습니다.</p><p><img src="../images/spring-profile.png" alt=""></p><p><code>application.yml</code>에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;해당 코드는 &lt;a href=&quot;https://github.com/cheese10yun/spring-jpa-best-practices&quot; rel=&quot;external nofollow noopener noreferrer&quot; target
+      
+    
+    </summary>
+    
+    
+      <category term="Spring" scheme="https://cheese10yun.github.io/tags/Spring/"/>
+    
+      <category term="JPA" scheme="https://cheese10yun.github.io/tags/JPA/"/>
+    
+      <category term="Best Practices" scheme="https://cheese10yun.github.io/tags/Best-Practices/"/>
+    
+  </entry>
   
   <entry>
     <title>캡슐화 내가 생각하는 캡슐화란 (2)</title>
@@ -517,34 +545,6 @@
       <category term="SOLID" scheme="https://cheese10yun.github.io/tags/SOLID/"/>
     
       <category term="OCP" scheme="https://cheese10yun.github.io/tags/OCP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>인텔리제이 GitHub 활용법</title>
-    <link href="https://cheese10yun.github.io/intellij-github/"/>
-    <id>https://cheese10yun.github.io/intellij-github/</id>
-    <published>2018-07-17T15:00:00.000Z</published>
-    <updated>2018-07-18T14:05:30.601Z</updated>
-    
-    <content type="html"><![CDATA[<p>IntelliJ에서 다양한 Github 기능들을 제공해줍니다. 그 대표적인 기능들에 대한 정리입니다. 단축키는 하단 녹색박스에 표시되어 있습니다.</p><h2><span id="github-아이디-연동">Github 아이디 연동</span></h2><p>인텔리제이에서 지원하는 다양한 기능들을 사용하기 위해서는 Github 연동이 반드시 필요 합니다.</p><p><img src="https://i.imgur.com/wdn4bEW.png" alt=""></p><ol><li>설정에서 github 텝 인동</li><li>해당 Auth Type 선택 후 Test 버튼 클릭</li><li>Success 출력 확인후 OK 버튼 클릭</li></ol><h2><span id="share-proejct">Share Proejct</span></h2><p align="center">    <img src="https://github.com/cheese10yun/IntelliJ/blob/master/image/github-share.gif?raw=true"></p><p>해당 프로젝트를 GitHub Repository에 쉽게 업로드 할 수 있습니다.</p><h2><span id="gist-올리기">Gist 올리기</span></h2><p align="center">  <img src="https://github.com/cheese10yun/IntelliJ/blob/master/image/gist.gif?raw=true"></p>![](https://i.imgur.com/8XoRPgf.png)<p>원하는 코드를 드래그하고 위 그림처럼 Gist를 편하게 업로드 할 수 있습니다.</p><h2><span id="task-연동">Task 연동</span></h2><p><img src="https://i.imgur.com/qiDODzI.png" alt=""></p><p>Github Repository에 등록된 이슈들 기반으로 Branch를 생성 할 수있습니다. 세부 적인 워크 플로우는 <a href="https://github.com/cheese10yun/github-project-management" rel="external nofollow noopener noreferrer" target="_blank">Github로 프로젝트 관리하기</a>에서 확인 할 수 있습니다.</p><h3><span id="taskissue-기반-branch-생성">Task(Issue) 기반 Branch 생성</span></h3><p align="center">  <img src="https://github.com/cheese10yun/IntelliJ/blob/master/image/task.gif?raw=true"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;IntelliJ에서 다양한 Github 기능들을 제공해줍니다. 그 대표적인 기능들에 대한 정리입니다. 단축키는 하단 녹색박스에 표시되어 있습니다.&lt;/p&gt;
-&lt;h2&gt;&lt;span id=&quot;github-아이디-연동&quot;&gt;Github 아이디 연동&lt;/span&gt;&lt;/
-      
-    
-    </summary>
-    
-    
-      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
-    
-      <category term="Tip" scheme="https://cheese10yun.github.io/tags/Tip/"/>
-    
-      <category term="Git" scheme="https://cheese10yun.github.io/tags/Git/"/>
     
   </entry>
   
