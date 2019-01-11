@@ -286,7 +286,7 @@
 <li><code>profiles.active</code> 속성에 원하는 정보 env를 작성합니다.</li>
 </ul>
 <h3><span id="intellij에서-설정-하는-방법">IntelliJ에서 설정 하는 방법</span></h3>
-<p><img src="../images/intellij-properties.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/intellij-properties.png" alt=""></p>
 <p>IntelliJ에서는 외부에서 넘겨 받는 인자로 다양한 환경 설정을 제공해줍니다. 가장 대표적인 방법으로 VM options, Active profiles 설정이 있습니다. 아래의 방법중 하나를 선택하면 됩니다.</p>
 <ul>
 <li>VM options에 <code>-Dspring.profiles.active={env}</code> 추가합니다.</li>
@@ -297,7 +297,7 @@
 <h2><span id="env-구동">env 구동</span></h2>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  profiles:</span></div><div class="line"><span class="attr">    active:</span> <span class="string">local</span></div><div class="line"></div><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure>
 <p><code>application.yml</code>으로 설정해서 스프링을 구동시켜보겠습니다.</p>
-<p><img src="../images/spring-profile.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/spring-profile.png" alt=""></p>
 <p><code>application.yml</code>에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.</p>
 
                 
