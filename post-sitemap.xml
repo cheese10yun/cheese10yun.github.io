@@ -7,8 +7,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-boot-test/</loc>
-        <lastmod>2019-01-19T20:38:44.881Z</lastmod>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-12/</loc>
+        <lastmod>2019-01-20T16:26:56.796Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -16,7 +16,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-11/</loc>
-        <lastmod>2019-01-11T15:09:26.962Z</lastmod>
+        <lastmod>2019-01-20T16:21:23.280Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-boot-test/</loc>
+        <lastmod>2019-01-19T20:38:44.881Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
