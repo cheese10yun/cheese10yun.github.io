@@ -279,13 +279,17 @@
 <p>page를 기본 사이즈를 50을 넘는 500을 설정했습니다. <code>PageRequest</code>이 정상 동작한다면 기본 사이즈 10으로 설정해서 페이징 처리가 진행됩니다. 아래는 응답 값입니다.</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"last"</span>: <span class="literal">false</span>,</div><div class="line">  <span class="attr">"totalPages"</span>: <span class="number">2</span>,</div><div class="line">  <span class="attr">"totalElements"</span>: <span class="number">13</span>,</div><div class="line">  "size": 10, // size 값이 10으로 정상 작동</div><div class="line">  "number": 0,</div><div class="line">  "numberOfElements": 10,</div><div class="line">  "first": true,</div><div class="line">  "sort": &#123;</div><div class="line">    "sorted": true,</div><div class="line">    "unsorted": false,</div><div class="line">    "empty": false</div><div class="line">  &#125;,</div><div class="line">  "empty": false</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2><span id="결론">결론</span></h2>
-<p>Spring Data JPA는 페이징 처리는 데이터베이스마다 페이징 쿼리가 다른 부분들은 신경 쓰지 않고 더 쉽게 구현할 수 있는 장점이 있습니다. 또 <code>Pageable</code>을 통해서 페이징 구현이 가능하지만, 별도의 <code>Request</code> 객체를 두어서 관리하는 것이 쉽다고 생각합니다.</p>
+<p>Spring Data JPA는 페이징 처리는 데이터베이스마다 페이징 쿼리가 다른 부분들은 신경 쓰지 않고 더 쉽게 구현할 수 있는 장점이 있습니다. 또 <code>Pageable</code>을 통해서 페이징 구현이 가능하지만, 별도의 <code>Request</code> 객체를 두어서 관리하는 것이 안전하고 효과적입니다.</p>
 
                 
 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/spring-jpa-best-13/" data-toggle="tooltip" data-placement="top" title="Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
