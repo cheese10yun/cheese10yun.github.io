@@ -548,20 +548,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-01-21T16:39:23.005Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2019-01-21T16:39:23.005Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Paging/</loc>
         <lastmod>2019-01-21T16:39:23.005Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -571,6 +557,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
         <lastmod>2019-01-21T16:39:23.005Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-02-06T12:22:48.187Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2019-02-06T12:22:48.187Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JUnit5/</loc>
+        <lastmod>2019-02-06T12:22:48.187Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
