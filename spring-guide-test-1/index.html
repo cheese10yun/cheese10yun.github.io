@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Guide - 테스트 전략 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-guide-test-1/">
+    <meta property="og:description" content="Spring Guide - 테스트 전략 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-test-1/">
+
+
+    <title>
+        
+          Spring Guide - 테스트 전략 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-test-1/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Test" title="Test">Test</a>
+                            
+                        </div>
+                        <h1>Spring Guide - 테스트 전략</h1>
+                        <h2 class="subheading">테스트 전략</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2019-02-17
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/spring-guide" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+</blockquote>
+<h1><span id="소개">소개</span></h1>
+<p>스프링은 다양한 테스트 전략을 제공하고 있습니다. 대표적으로 Slice Test 라는 것으로 특정 레이어에 대해서 Bean을 최소한으로 등록시켜 테스트 하고자 하는 부분에 최대한 단위 테스트를 지원합니다. 다양하게 지원해주는 만큼 테스트 코드를 통일성 있게 관리하는 것이 중요합니다. 더 안전하고 통일성 있게 테스트를 진행하는 방법에 대해서 제 나름의 노하우를 정리해보았습니다.</p>
+<h1><span id="테스트-전략">테스트 전략</span></h1>
+<table>
+<thead>
+<tr>
+<th>어노테이션</th>
+<th>설명</th>
+<th>부모 클래스</th>
+<th>Bean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@SpringBootTest</td>
+<td>통합 테스트, 전체</td>
+<td>IntegrationTest</td>
+<td>Bean 전체</td>
+</tr>
+<tr>
+<td>@WebMvcTest</td>
+<td>단위 테스트, Mvc 테스트</td>
+<td>MockApiTest</td>
+<td>MVC 관련된 Bean</td>
+</tr>
+<tr>
+<td>@DataJpaTest</td>
+<td>단위 테스트, Jpa 테스트</td>
+<td>RepositoryTest</td>
+<td>JPA 관련 Bean</td>
+</tr>
+<tr>
+<td>None</td>
+<td>단위 테스트, Service 테스트</td>
+<td>MockTest</td>
+<td>None</td>
+</tr>
+<tr>
+<td>None</td>
+<td>POJO, 도메인 테스트</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<h1><span id="통합테스트">통합테스트</span></h1>
+<h2><span id="장점">장점</span></h2>
+<ul>
+<li>모든 Bean을 올리고 테스트를 진행하기 때문에 쉽게 테스트 진행 가능</li>
+<li>모든 Bean을 올리고 테스트를 진행하기 때문에 운영환경과 가장 유사하게 테스트 가능</li>
+<li>API를 테스트할 경우 요청부터 응답까지 전체적인 테스트 진행 가능</li>
+</ul>
+<h2><span id="단점">단점</span></h2>
+<ul>
+<li>모든 Bean을 올리고 테스트를 진행하기 때문에 테스트 시간이 오래 걸림</li>
+<li>테스트의 단위가 크기 때문에 테스트 실패시 디버깅이 어려움</li>
+<li>외부 API 콜같은 Rollback 처리가 안되는 테스트 진행을 하기 어려움</li>
+</ul>
+<h2><span id="code">Code</span></h2>
+<h3><span id="integrationtest">IntegrationTest</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</div><div class="line"><span class="meta">@SpringBootTest</span>(classes = ApiApp.class)</div><div class="line"><span class="meta">@AutoConfigureMockMvc</span></div><div class="line"><span class="meta">@ActiveProfiles</span>(TestProfile.TEST)</div><div class="line"><span class="meta">@Transactional</span></div><div class="line"><span class="meta">@Ignore</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegrationTest</span> </span>&#123;</div><div class="line">    <span class="meta">@Autowired</span> <span class="keyword">protected</span> MockMvc mvc;</div><div class="line">    <span class="meta">@Autowired</span> <span class="keyword">protected</span> ObjectMapper objectMapper;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>통합 테스트의 Base 클래스입니다. Base 클래스를 통해서 테스트 전략을 통일성 있게 가져갈 수 있습니다.</li>
+<li>통합 테스트는 주로 컨트롤러 테스트를 주로 하며 요청부터 응답까지의 전체 플로우를 테스트합니다.</li>
+<li><code>@ActiveProfiles(TestProfile.TEST)</code> 설정으로 테스트에 profile을 지정합니다. 환경별로 properties 파일을 관리하듯이 test도 반드시 별도의 properties 파일로 관리하는 것이 바람직합니다.</li>
+<li>인터페이스나 enum 클래스를 통해서 profile을 관리합니다. 오타 실수를 줄일 수 있으며 전체적인 프로필이 몇 개 있는지 한 번에 확인할 수 있습니다.</li>
+<li><code>@Transactional</code> 트랜잭션 어노테이션을 추가하면 테스트코드의 데이터베이스 정보가 자동으로 Rollback 됩니다. 베이스 클래스에 이 속성을 추가 해야지 실수 없이 진행할 수 있습니다.</li>
+<li><code>@Transactional</code>을 추가하면 자연스럽게 데이터베이스 상태의존 적인 테스트를 자연스럽게 하지 않을 수 있게 됩니다.</li>
+<li>통합 테스트 시 필요한 기능들을 <code>protected</code>로 제공해줄 수 있습니다. API 테스트를 주로 하게 되니 ObjectMapper 등을 제공해줄 수 있습니다. 유틸성 메서드들도 <code>protected</code>로 제공해주면 중복 코드 및 테스트 코드의 편의성이 높아집니다.</li>
+<li>실제로 동작할 필요가 없으니 <code>@Ignore</code> 어노테이션을 추가합니다.</li>
+</ul>
+<h3><span id="test-code">Test Code</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberApiTest</span> <span class="keyword">extends</span> <span class="title">IntegrationTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> MemberSetup memberSetup;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 회원가입_성공() <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="comment">//given</span></div><div class="line">        <span class="keyword">final</span> Member member = MemberBuilder.build();</div><div class="line">        <span class="keyword">final</span> Email email = member.getEmail();</div><div class="line">        <span class="keyword">final</span> Name name = member.getName();</div><div class="line">        <span class="keyword">final</span> SignUpRequest dto = SignUpRequestBuilder.build(email, name);</div><div class="line"></div><div class="line">        <span class="comment">//when</span></div><div class="line">        <span class="keyword">final</span> ResultActions resultActions = requestSignUp(dto);</div><div class="line"></div><div class="line">        <span class="comment">//then</span></div><div class="line">        resultActions</div><div class="line">                .andExpect(status().isOk())</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.value"</span>).value(email.getValue()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.host"</span>).value(email.getHost()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.id"</span>).value(email.getId()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.first"</span>).value(name.getFirst()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.middle"</span>).value(name.getMiddle()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.last"</span>).value(name.getLast()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.fullName"</span>).value(name.getFullName()))</div><div class="line">        ;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 회원조회() <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="comment">//given</span></div><div class="line">        <span class="keyword">final</span> Member member = memberSetup.save();</div><div class="line"></div><div class="line">        <span class="comment">//when</span></div><div class="line">        <span class="keyword">final</span> ResultActions resultActions = requestGetMember(member.getId());</div><div class="line"></div><div class="line">        <span class="comment">//then</span></div><div class="line">        resultActions</div><div class="line">                .andExpect(status().isOk())</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.value"</span>).value(member.getEmail().getValue()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.host"</span>).value(member.getEmail().getHost()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"email.id"</span>).value(member.getEmail().getId()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.first"</span>).value(member.getName().getFirst()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.middle"</span>).value(member.getName().getMiddle()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.last"</span>).value(member.getName().getLast()))</div><div class="line">                .andExpect(jsonPath(<span class="string">"name.fullName"</span>).value(member.getName().getFullName()))</div><div class="line">        ;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> ResultActions <span class="title">requestSignUp</span><span class="params">(SignUpRequest dto)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">return</span> mvc.perform(post(<span class="string">"/members"</span>)</div><div class="line">                .contentType(MediaType.APPLICATION_JSON_UTF8)</div><div class="line">                .content(objectMapper.writeValueAsString(dto)))</div><div class="line">                .andDo(print());</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>IntegrationTest</code> 클래스를 상속받습니다. 이 상속을 통해서 MemberApiTest에서 테스트를 위한 어 로테이션이 생략되며 어떤 통합 테스트라도 항상 통일성을 가질 수 있습니다.</li>
+<li><code>given</code>, <code>when</code>, <code>then</code> 키워드로 테스트 흐름을 알려줍니다. 다른 사람의 테스트 코드의 가독성이 높아지기 때문에 해당 키워드로 적절하게 표시하는 것을 권장합니다.</li>
+<li>요청에 대한 메서드를 <code>requestSignUp(...)</code>으로 분리해서 재사용성을 높입니다. 해당 메서드로 valdate 실패하는 케이스도 작성합니다 <code>andDo(print())</code> 메서드를 추가해서 해당 요청에 대한 출력을 확인합니다. 디버깅에 매우 유용합니다.</li>
+<li>모든 response에 대한 <code>andExpect</code>를 작성합니다. 간혹 <code>.andExpect(content().string(containsString(&quot;&quot;)))</code> 이런 테스트를 진행하는데 특정 문자열이 들어 있는지 없는지 확인하는 것은 것보다 모
+<ul>
+<li><strong>response에 하나라도 빠지거나 변경되면 API 변경이 이루어진 것이고 그 변경에 맞게 테스트 코드도 변경되어야 합니다.</strong></li>
+</ul>
+</li>
+<li><code>회원 조회</code> 테스트 강은 경우 <code>memberSetup.save();</code> 메서드로 테스트전에 데이터베이스에 insert 합니다.
+<ul>
+<li>데이터베이스에 미리 있는 값을 검증하는 것은 데이터베이스 상태에 의존한 코드가 되며 누군가가 회원 정보를 변경하게 되면 테스트 코드가 실패하게 됩니다.</li>
+<li>테스트 전에 데이터를 insert하지 않는다면 테스트 코드 구동 전에 <code>.sql</code> 으로 미리 데이터베이스를 준비시킵니다 ApplicationRunner를 이용해서 데이터베이스를 준비시키 방법도 있습니다.</li>
+<li><strong>중요한 것은 데이터베이스 상태에 너무 의존적인 테스트는 향후 로직의 문제가 없더라도 테스트가 실패하는 상황이 자주 만나게 됩니다.</strong></li>
+</ul>
+</li>
+</ul>
+<h1><span id="서비스-테스트">서비스 테스트</span></h1>
+<h2><span id="장점">장점</span></h2>
+<ul>
+<li>진행하고자 하는 테스트에만 집중할 수 있습니다.</li>
+<li>테스트 진행시 중요 관점이 아닌 것들은 Mocking 처리해서 외부 의존성들을 줄일 수 있습니다.
+<ul>
+<li>예를 들어 주문 할인 로직이 제대로 동작하는지에 대한 테스트만 진행하지 이게 실제로 데이터베이스에 insert되는지는 해당 테스트의 관심사가 아닙니다.</li>
+</ul>
+</li>
+<li>테스트 속도가 빠릅니다.</li>
+</ul>
+<h2><span id="단점">단점</span></h2>
+<ul>
+<li>의존성 있는 객체를 Mocking 하기 때문에 문제가 완결된 테스트는 아닙니다.</li>
+<li>Mocking 하기가 귀찮습니다.</li>
+<li>Mocking 라이브러리에 대한 학습 비용이 발생합니다.</li>
+</ul>
+<h2><span id="code">Code</span></h2>
+<h3><span id="mocktest">MockTest</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(MockitoJUnitRunner.class)</div><div class="line"><span class="meta">@ActiveProfiles</span>(TestProfile.TEST)</div><div class="line"><span class="meta">@Ignore</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MockTest</span> </span>&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>주로 Service 영역을 테스트 합니다.</li>
+<li><code>MockitoJUnitRunner</code>을 통해서 Mock 테스트를 진행합니다.</li>
+</ul>
+<h3><span id="test-code">Test Code</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberSignUpServiceTest</span> <span class="keyword">extends</span> <span class="title">MockTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@InjectMocks</span></div><div class="line">    <span class="keyword">private</span> MemberSignUpService memberSignUpService;</div><div class="line"></div><div class="line">    <span class="meta">@Mock</span></div><div class="line">    <span class="keyword">private</span> MemberRepository memberRepository;</div><div class="line">    <span class="keyword">private</span> Member member;</div><div class="line"></div><div class="line">    <span class="meta">@Before</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        member = MemberBuilder.build();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 회원가입_성공() &#123;</div><div class="line">        <span class="comment">//given</span></div><div class="line">        <span class="keyword">final</span> Email email = member.getEmail();</div><div class="line">        <span class="keyword">final</span> Name name = member.getName();</div><div class="line">        <span class="keyword">final</span> SignUpRequest dto = SignUpRequestBuilder.build(email, name);</div><div class="line"></div><div class="line">        given(memberRepository.existsByEmail(any())).willReturn(<span class="keyword">false</span>);</div><div class="line">        given(memberRepository.save(any())).willReturn(member);</div><div class="line"></div><div class="line">        <span class="comment">//when</span></div><div class="line">        <span class="keyword">final</span> Member signUpMember = memberSignUpService.doSignUp(dto);</div><div class="line"></div><div class="line">        <span class="comment">//then</span></div><div class="line">        assertThat(signUpMember).isNotNull();</div><div class="line">        assertThat(signUpMember.getEmail().getValue()).isEqualTo(member.getEmail().getValue());</div><div class="line">        assertThat(signUpMember.getName().getFullName()).isEqualTo(member.getName().getFullName());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span>(expected = EmailDuplicateException.class)</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 회원가입_이메일중복_경우() &#123;</div><div class="line">        <span class="comment">//given</span></div><div class="line">        <span class="keyword">final</span> Email email = member.getEmail();</div><div class="line">        <span class="keyword">final</span> Name name = member.getName();</div><div class="line">        <span class="keyword">final</span> SignUpRequest dto = SignUpRequestBuilder.build(email, name);</div><div class="line"></div><div class="line">        given(memberRepository.existsByEmail(any())).willReturn(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">        <span class="comment">//when</span></div><div class="line">        memberSignUpService.doSignUp(dto);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>MockTest</code> 객체를 상속받아 테스트의 일관성을 갖습니다.</li>
+<li><code>회원가입_성공</code> 테스트는 오직 회원 가입에대한 단위 테스트만 진행합니다.
+<ul>
+<li><code>existsByEmail</code>을 모킹해서 해당 이메일이 중복되지 않았다는 가정을 합니다.</li>
+<li><code>then</code> 에서는 회원 객체가 해당 비지니스 요구사항에 맞게 생성됬는지를 검사합니다.</li>
+<li>실제 데이터베이스에 Insert 됬는지 여부는 해당 테스트의 관심사가 아닙니다.</li>
+</ul>
+</li>
+<li><code>회원가입_이메일중복_경우</code> 테스트는 회원가입시 이메일이 중복됬는지 여부를 확인합니다.
+<ul>
+<li><code>existsByEmail</code>을 모킹해서 이메일이 중복됬다는 가정을 합니다.</li>
+<li><code>expected</code>으로 이메일이 중복되었을 경우 <code>EmailDuplicateException</code> 예외가 발생하는지 확인합니다.</li>
+<li>해당 이메일이 데이터베이스에 실제로 있어서 예외가 발생하는지는 관심사가 아닙니다. 작성한 코드가 제대로 동작 여부만이 해당 테스트의 관심사 입니다.</li>
+</ul>
+</li>
+<li>오직 테스트의 관심사만 테스트를 진행하기 때문에 예외 발생시 디버깅 작업도 명확해집니다.</li>
+<li>외부 의존도가 낮기 때문에 테스트 하고자하는 부분만 명확하게 테스트가 가능합니다.
+<ul>
+<li>이것은 단점이기도 합니다. 해당 테스트만 진행하지 외부 의존을 갖는 코드까지 테스트하지 않으니 실제 환경에서 제대로 동작하지 않을 가능성이 있습니다. 외부 의존에대한 테스트는 통합 테스트에서 진행합니다.</li>
+</ul>
+</li>
+</ul>
+<h1><span id="mock-api-테스트">Mock API 테스트</span></h1>
+<h2><span id="장점">장점</span></h2>
+<ul>
+<li>Mock 테스트와 장점은 거의 같습니다.</li>
+<li><code>WebApplication</code> 관련된 Bean들만 등록하기 때문에 통합 테스트보다 빠르게 테스트할 수 있습니다.</li>
+<li>통합 테스트를 진행하기 어려운 테스트를 진행합니다.
+<ul>
+<li>외부 API 같은 Rollback 처리가 힘들거나 불가능한 테스트를 주로 사용합니다.</li>
+<li>예를 들어 외부 결제 모듈 API를 콜하면 안 되는 케이스에서 주로 사용 할 수 있습니다.</li>
+<li>이런 문제는 통합 테스트에서 해당 객체를 Mock 객체로 변경해서 테스트를 변경해서 테스트할 수도 있습니다.</li>
+</ul>
+</li>
+</ul>
+<h2><span id="단점">단점</span></h2>
+<ul>
+<li>Mcok 테스트와 다점은 거의 같습니다.</li>
+<li>요청부터 응답까지 모든 테스트를 Mock 기반으로 테스트하기 때문에 실제 환경에서는 제대로 동작하지 않을 가능성이 매우 큽니다.</li>
+</ul>
+<h2><span id="code">Code</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@WebMvcTest</span>(MemberApi.class)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberMockApiTest</span> <span class="keyword">extends</span> <span class="title">MockApiTest</span> </span>&#123;</div><div class="line">    <span class="meta">@MockBean</span> <span class="keyword">private</span> MemberSignUpService memberSignUpService;</div><div class="line">    <span class="meta">@MockBean</span> <span class="keyword">private</span> MemberHelperService memberHelperService;</div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 회원가입_유효하지않은_입력값() <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="comment">//given</span></div><div class="line">        <span class="keyword">final</span> Email email = Email.of(<span class="string">"asdasd@d"</span>); <span class="comment">// 이메일 형식이 유효하지 않음</span></div><div class="line">        <span class="keyword">final</span> Name name = Name.builder().build();</div><div class="line">        <span class="keyword">final</span> SignUpRequest dto = SignUpRequestBuilder.build(email, name);</div><div class="line">        <span class="keyword">final</span> Member member = MemberBuilder.build();</div><div class="line"></div><div class="line">        given(memberSignUpService.doSignUp(any())).willReturn(member);</div><div class="line"></div><div class="line">        <span class="comment">//when</span></div><div class="line">        <span class="keyword">final</span> ResultActions resultActions = requestSignUp(dto);</div><div class="line"></div><div class="line">        <span class="comment">//then</span></div><div class="line">        resultActions</div><div class="line">                .andExpect(status().isBadRequest())</div><div class="line">        ;</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>@WebMvcTest(MemberApi.class)</code> 어노테이션을 통해서 하고자하는 <code>MemberApi</code>의 테스트를 진행합니다.</li>
+<li><code>@MockBean</code> 으로 객체를 주입받아 Mocking 작업을 진행합니다.</li>
+<li>테스트의 관심사는 오직 Request와 그에 따른 Response 입니다.</li>
+</ul>
+<h1><span id="repository-test">Repository Test</span></h1>
+<h2><span id="장점">장점</span></h2>
+<ul>
+<li><code>Repository</code> 관련된 Bean들만 등록하기 때문에 통합 테스트에 비해서 빠릅니다.</li>
+<li><code>Repository</code>에 대한 관심사만 갖기 때문에 테스트 범위가 작습니다.</li>
+</ul>
+<h2><span id="단점">단점</span></h2>
+<ul>
+<li>테스트 범위가 작기 때문에 실제 환경과 차이가 발생합니다.</li>
+</ul>
+<h2><span id="code">Code</span></h2>
+<h3><span id="repositorytest">RepositoryTest</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</div><div class="line"><span class="meta">@DataJpaTest</span></div><div class="line"><span class="meta">@ActiveProfiles</span>(TestProfile.TEST)</div><div class="line"><span class="meta">@AutoConfigureTestDatabase</span>(replace = AutoConfigureTestDatabase.Replace.NONE)</div><div class="line"><span class="meta">@Ignore</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RepositoryTest</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>@DataJpaTest</code> 어노테이션을 통해서 <code>Repository</code>에 대한 Bean만 등록합니다.</li>
+<li><code>@DataJpaTest</code>는 기본적으로 메모리 데이터베이스에 대한 테스트를 진행합니다. <code>@AutoConfigureTestDatabase</code> 어노테이션을 통해서 profile에 등록된 데이터베이스 정보로 대체할 수 있습니다.</li>
+<li><code>JpaRepository</code>에서 기본적으로 기본적으로 재공해주는 <code>findById</code>, <code>findByAll</code>, <code>deleteById</code>등은 테스트를 하지 않습니다.
+<ul>
+<li>기본적으로 <code>save()</code> null 제약 조건등의 테스트는 진행해도 좋다고 생각합니다.</li>
+<li>주로 커스텀하게 작성한 쿼리 메서드, <code>@Query</code>으로 작성된 JPQL등의 커스텀하게 추가된 메서드를 테스트합니다.</li>
+</ul>
+</li>
+</ul>
+<h3><span id="test-code">Test Code</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberRepositoryTest</span> <span class="keyword">extends</span> <span class="title">RepositoryTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> MemberRepository memberRepository;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Member saveMember;</div><div class="line">    <span class="keyword">private</span> Email email;</div><div class="line"></div><div class="line">    <span class="meta">@Before</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">final</span> String value = <span class="string">"cheese10yun@gmail.com"</span>;</div><div class="line">        email = EmailBuilder.build(value);</div><div class="line">        <span class="keyword">final</span> Name name = NameBuilder.build();</div><div class="line">        saveMember = memberRepository.save(MemberBuilder.build(email, name));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> existsByEmail_존재하는경우_true() &#123;</div><div class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> existsByEmail = memberRepository.existsByEmail(email);</div><div class="line">        assertThat(existsByEmail).isTrue();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> existsByEmail_존재하지않은_경우_false() &#123;</div><div class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> existsByEmail = memberRepository.existsByEmail(Email.of(<span class="string">"ehdgoanfrhkqortntksdls@asd.com"</span>));</div><div class="line">        assertThat(existsByEmail).isFalse();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>setUp()</code> 메서드를 통해서 Member를 데이터베이스에 insert 합니다.
+<ul>
+<li><code>setUp()</code> 메서드는 메번 테스트 코드가 실행되기전에 실행됩니다. 즉 테스트 코드 실핼 할 때마다 insert -&gt; rollback이 자동으로 이루어집니다.</li>
+</ul>
+</li>
+<li>추가 작성한 쿼리메서드 <code>existsByEmail</code>을 테스트 진행합니다.
+<ul>
+<li>실제로 작성된 쿼리가 어떻게 출력되는지 <code>show-sql</code> 옵션을 통해서 확인 합니다. ORM은 SQL을 직접 장성하지 않으니 실제 쿼리가 어떻게 출력되는지 확인하는 습관을 반드시 가져야합니다.</li>
+</ul>
+</li>
+</ul>
+<h1><span id="pojo-테스트">POJO 테스트</span></h1>
+<h2><span id="설명">설명</span></h2>
+<p>각 엔티티(Embeddable, Entity, 일반 POJO, 모든 객체) 객체들의 기능이 풍부해야 합니다. 객체 본인의 책임을 충분히 다하지 않고 있으면 다른 영역으로 그 객체의 책임이 넘어 가게됩니다. 예를 들어 <code>Name</code> 객체가 <code>getFullName()</code> 메서드를 제공해주지 않는다면 <code>getFullName()</code> 메서드를 만족시키는 메서드들이 다른 계층에서 구현하게 되고 어느 계층에서 어떻게 사용되고 있는지 모르기 때문에 누군가는 중복코드를 만들게 됩니다.</p>
+<p>객체지향에서 본인의 책임(기능)은 본인 스스로가 제공해야 합니다. 특히 엔티티 객체들은 가장 핵심 객체이고 이 객체를 사용하는 계층들이 다양하게 분포되기 때문에 반드시 테스트 코드를 작성해야합니다.</p>
+<h2><span id="장점">장점</span></h2>
+<ul>
+<li>POJO 객체이므로 테스트하기 편합니다. 외부에서 주입 받을 의존성도 없고 Mocking할 대상도 없습니다.</li>
+<li>엔티티 객체는 사용하는 계층이 많으므로 테스트의 효율성이 높습니다.</li>
+</ul>
+<h2><span id="단점">단점</span></h2>
+<ul>
+<li>단점은 없다고 생각합니다. POJO를 테스트 하므로 테스트 속도 및 난도가 낮지만 높은 안전성을 갖게 됩니다.</li>
+</ul>
+<h2><span id="code">Code</span></h2>
+<h3><span id="embeddable">Embeddable</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Embeddable</span></div><div class="line"><span class="meta">@Getter</span></div><div class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line"><span class="meta">@ToString</span>(of = &#123;<span class="string">"first"</span>, <span class="string">"middle"</span>, <span class="string">"last"</span>&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Name</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@NotEmpty</span></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"first_name"</span>, length = <span class="number">50</span>)</div><div class="line">    <span class="keyword">private</span> String first;</div><div class="line"></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"middle_name"</span>, length = <span class="number">50</span>)</div><div class="line">    <span class="keyword">private</span> String middle;</div><div class="line"></div><div class="line">    <span class="meta">@NotEmpty</span></div><div class="line">    <span class="meta">@Column</span>(name = <span class="string">"last_name"</span>, length = <span class="number">50</span>)</div><div class="line">    <span class="keyword">private</span> String last;</div><div class="line"></div><div class="line">    <span class="meta">@Builder</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Name</span><span class="params">(<span class="keyword">final</span> String first, <span class="keyword">final</span> String middle, <span class="keyword">final</span> String last)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.first = first;</div><div class="line">        <span class="keyword">this</span>.middle = StringUtils.isEmpty(middle) ? <span class="keyword">null</span> : middle;</div><div class="line">        <span class="keyword">this</span>.last = last;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getFullName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.middle == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">return</span> String.format(<span class="string">"%s %s"</span>, <span class="keyword">this</span>.first, <span class="keyword">this</span>.last);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> String.format(<span class="string">"%s %s %s"</span>, <span class="keyword">this</span>.first, <span class="keyword">this</span>.middle, <span class="keyword">this</span>.last);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>Name</code> 객체는 <code>Member</code> 객체에서 사용하고 있습니다. 이처럼 Name 이라는 객체를 <code>Embeddable</code>으로 별도로 가지고 있으면 데이터의 응집력 재사용성이 높아집니다.
+<ul>
+<li>예를 들어 주문시 주문자 정보를 받아야 된다면 <code>Order</code> 라는 객체에도 동일하게 <code>Name</code> 객체를 사용하면 재사용성이 높아집니다.</li>
+</ul>
+</li>
+<li><code>Embeddable</code> 객체에서도 다른 객체와 마찬가지로 <code>Name</code> 관련된 기능을 충분히 제공해야 합니다. <code>getFullName()</code> 메서드 처럼 <code>first</code>, <code>last</code>, <code>middle</code>의 이름을 적절하게 조합해서 제공해줍니다.</li>
+</ul>
+<h3><span id="test-code">Test Code</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NameTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getFullName_isFullName_ReturnFullName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Name name = Name.builder()</div><div class="line">                .first(<span class="string">"first"</span>)</div><div class="line">                .middle(<span class="string">"middle"</span>)</div><div class="line">                .last(<span class="string">"last"</span>)</div><div class="line">                .build();</div><div class="line">        <span class="keyword">final</span> String fullName = name.getFullName();</div><div class="line">        assertThat(fullName, is(<span class="string">"first middle last"</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getFullName_WithoutMiddle_ReturnMiddleNameIsNull</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Name name = Name.builder()</div><div class="line">                .first(<span class="string">"first"</span>)</div><div class="line">                .middle(<span class="string">""</span>)</div><div class="line">                .last(<span class="string">"last"</span>)</div><div class="line">                .build();</div><div class="line">        <span class="keyword">final</span> String fullName = name.getFullName();</div><div class="line">        assertThat(fullName, is(<span class="string">"first last"</span>));</div><div class="line">        assertThat(name.getMiddle(), is(nullValue()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getFullName_MiddleNameIsNull_ReturnMiddleNameIsNull</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Name name = Name.builder()</div><div class="line">                .first(<span class="string">"first"</span>)</div><div class="line">                .middle(<span class="string">""</span>)</div><div class="line">                .last(<span class="string">"last"</span>)</div><div class="line">                .build();</div><div class="line">        <span class="keyword">final</span> String fullName = name.getFullName();</div><div class="line">        assertThat(fullName, is(<span class="string">"first last"</span>));</div><div class="line">        assertThat(name.getMiddle(), is(nullValue()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>entity</code>, <code>Embeddable</code> 객체 등의 객체들도 반드시 테스트 코드를 작성해야합니다.</li>
+<li>middle 값이 비어있을 경우 null로 잘들어가는지, <code>getFullName()</code> 메서드가 잘 동작하는지 테스트합니다.</li>
+</ul>
+<h1><span id="마무리">마무리</span></h1>
+<p>각자의 프로젝트 환경이 다르기 때문에 어느 한방 법이 Best Practice라고 말하는 게 어렵습니다. 그래도 테스트 코드의 중요성은 이미 많은 개발자가 공감하고 있는 만큼 보다 효율적인 테스트 코드 환경을 구축하려는 노력이 많이 선행되어야 한다고 생각합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-jpa-best-15/" data-toggle="tooltip" data-placement="top" title="Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">소개</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">테스트 전략</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">통합테스트</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">단점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Code</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">IntegrationTest</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.2.</span> <span class="toc-nav-text">Test Code</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">서비스 테스트</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">단점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Code</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.1.</span> <span class="toc-nav-text">MockTest</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.2.</span> <span class="toc-nav-text">Test Code</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Mock API 테스트</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">단점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">Code</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Repository Test</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">단점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">Code</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.3.1.</span> <span class="toc-nav-text">RepositoryTest</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.3.2.</span> <span class="toc-nav-text">Test Code</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">POJO 테스트</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">설명</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.3.</span> <span class="toc-nav-text">단점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.4.</span> <span class="toc-nav-text">Code</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.4.1.</span> <span class="toc-nav-text">Embeddable</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.4.2.</span> <span class="toc-nav-text">Test Code</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Test" title="Test">Test</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "yun-blog";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-guide-test-1/";
+    var disqus_url = "https://cheese10yun.github.io/spring-guide-test-1/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
