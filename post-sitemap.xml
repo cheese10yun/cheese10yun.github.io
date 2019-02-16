@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-test/</loc>
+        <lastmod>2019-02-16T15:31:30.407Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-15/</loc>
         <lastmod>2019-02-13T17:54:43.306Z</lastmod>
         <changefreq>weekly</changefreq>
