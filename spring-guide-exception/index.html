@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Guide - Exception 전략 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-guide-exception/">
+    <meta property="og:description" content="Spring Guide - Exception 전략 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-exception/">
+
+
+    <title>
+        
+          Spring Guide - Exception 전략 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-exception/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                            
+                              <a class="tag" href="/tags/#Exception" title="Exception">Exception</a>
+                            
+                        </div>
+                        <h1>Spring Guide - Exception 전략</h1>
+                        <h2 class="subheading">Exception 전략</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2019-02-21
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/spring-guide" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+</blockquote>
+<h1><span id="exception-guide">Exception Guide</span></h1>
+<p>스프링은 예외처리를 위한 다양한 어노테이션을 막강한 어노테이션을 제공해주고 있습니다. 일관성 있는 코드 스타일을 유지하면서 Exception을 처리하는 방법에 대해서 소개하겠습니다.</p>
+<h1><span id="통일된-error-response-객체">통일된 Error Response 객체</span></h1>
+<p>Error Reponse 객체는 항상 동일한 Error Response를 가져야 합니다. 그렇지 않으면 클라이언트에서 예외 처리를 항상 동일한 로직으로 처라하기 어렵습니다. Error Response 객체를 유연하게 처리하기 위해서 간혹 <code>Map&amp;ampltKey, Value&amp;ampgt</code> 형식으로 처리하는데 이는 좋지 않다고 생각합니다. 우선 Map 이라는 친구는 런타입시에 정확한 형태를 갖추기 때문에 객체를 처리하는 개발자들도 정확히 무슨 키에 무슨 데이터가 있는지 확인하기 어렵습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ExceptionHandler</span>(MethodArgumentNotValidException.class)</div><div class="line"><span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleMethodArgumentNotValidException</span><span class="params">(MethodArgumentNotValidException e)</span> </span>&#123;</div><div class="line">    log.error(<span class="string">"handleMethodArgumentNotValidException"</span>, e);</div><div class="line">    <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>위 예제 코드처럼 리턴 타입이 <code>ResponseEntity&amp;ampltErrorResponse&amp;ampgt</code> 으로 무슨 데이터가 어떻게 있는지 명확하게 추론하기 쉽도록 구성하는 게 바람직합니다.</p>
+<h2><span id="error-reponse-json">Error Reponse JSON</span></h2>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"message"</span>: <span class="string">" Invalid Input Value"</span>,</div><div class="line">  <span class="attr">"status"</span>: <span class="number">400</span>,</div><div class="line">  // "errors":[], 비어있을 경우 null 이 아닌 빈 배열을 응답한다.</div><div class="line">  "errors": [</div><div class="line">    &#123;</div><div class="line">      <span class="attr">"field"</span>: <span class="string">"name.last"</span>,</div><div class="line">      <span class="attr">"value"</span>: <span class="string">""</span>,</div><div class="line">      <span class="attr">"reason"</span>: <span class="string">"must not be empty"</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="attr">"field"</span>: <span class="string">"name.first"</span>,</div><div class="line">      <span class="attr">"value"</span>: <span class="string">""</span>,</div><div class="line">      <span class="attr">"reason"</span>: <span class="string">"must not be empty"</span></div><div class="line">    &#125;</div><div class="line">  ],</div><div class="line">  "code": "C001"</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>ErrorResponse 객체의 JSON 입니다.</p>
+<ul>
+<li>message : 에러에 대한 message를 작성합니다.</li>
+<li>status : http status code를 작성합니다. header 정보에도 포함된 정보이니 굳이 추가하지 않아도 됩니다.</li>
+<li>errors : 요청 값에 대한 <code>field</code>, <code>value</code>, <code>reason</code> 작성합니다. 일반적으로 <code>@Valid</code> 어노테이션으로 <code>JSR 303: Bean Validation</code>에 대한 검증을 진행 합니다.
+<ul>
+<li>만약 errors에 바인인된 결과가 없을 경우 null이 아니라 빈 배열 <code>[]</code>을 응답해줍니다. null 객체는 절대 리턴하지 않습니다. null이 의미하는 것이 애매합니다.</li>
+</ul>
+</li>
+<li>code : 에러에 할당되는 유니크한 코드값입니다.</li>
+</ul>
+<h2><span id="error-reponse-객체">Error Reponse 객체</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Getter</span></div><div class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorResponse</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String message;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> status;</div><div class="line">    <span class="keyword">private</span> List&lt;FieldError&gt; errors;</div><div class="line">    <span class="keyword">private</span> String code;</div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="meta">@Getter</span></div><div class="line">    <span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FieldError</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> String field;</div><div class="line">        <span class="keyword">private</span> String value;</div><div class="line">        <span class="keyword">private</span> String reason;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>ErrorResponse 객체에 입니다. POJO 객체로 관리하면 <code>errorReponse.getXXX();</code> 이렇게 명확하게 객체에 있는 값을 가져올 수 있습니다. 그 밖에 특정 Exception에 대해서 ErrorReponse 객체를 어떻게 만들 것인가에 대한 책임을 명확하게 갖는 구조로 설계할 수 있습니다. 세부적인 것은 코드를 확인해주세요</p>
+<h1><span id="controlleradvice-모든-예외를-헨들링">@ControllerAdvice 모든 예외를 헨들링</span></h1>
+<p><code>@ControllerAdvice</code> 어노테이션으로 모든 예외를 한 곳에서 처리할 수 있습니다. 해당 코드의 세부적인 것은 중요하지 않으며 가장 기본적이며 필수적으로 처리하는 코드입니다. 코드에 대한 이해보다 아래의 설명을 참고하는 게 좋습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ControllerAdvice</span></div><div class="line"><span class="meta">@Slf</span>4j</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalExceptionHandler</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     *  javax.validation.Valid or <span class="doctag">@Validated</span> 으로 binding error 발생시 발생한다.</span></div><div class="line"><span class="comment">     *  HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생</span></div><div class="line"><span class="comment">     *  주로 <span class="doctag">@RequestBody</span>, <span class="doctag">@RequestPart</span> 어노테이션에서 발생</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="meta">@ExceptionHandler</span>(MethodArgumentNotValidException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleMethodArgumentNotValidException</span><span class="params">(MethodArgumentNotValidException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleMethodArgumentNotValidException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@ModelAttribut</span> 으로 binding error 발생시 BindException 발생한다.</span></div><div class="line"><span class="comment">     * ref https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="meta">@ExceptionHandler</span>(BindException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleBindException</span><span class="params">(BindException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleBindException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * enum type 일치하지 않아 binding 못할 경우 발생</span></div><div class="line"><span class="comment">     * 주로 <span class="doctag">@RequestParam</span> enum으로 binding 못했을 경우 발생</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="meta">@ExceptionHandler</span>(MethodArgumentTypeMismatchException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleMethodArgumentTypeMismatchException</span><span class="params">(MethodArgumentTypeMismatchException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleMethodArgumentTypeMismatchException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(e);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 지원하지 않은 HTTP method 호출 할 경우 발생</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="meta">@ExceptionHandler</span>(HttpRequestMethodNotSupportedException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleHttpRequestMethodNotSupportedException</span><span class="params">(HttpRequestMethodNotSupportedException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleHttpRequestMethodNotSupportedException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.METHOD_NOT_ALLOWED);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * Authentication 객체가 필요한 권한을 보유하지 않은 경우 발생합</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="meta">@ExceptionHandler</span>(AccessDeniedException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleAccessDeniedException</span><span class="params">(AccessDeniedException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleAccessDeniedException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.HANDLE_ACCESS_DENIED);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.valueOf(ErrorCode.HANDLE_ACCESS_DENIED.getStatus()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@ExceptionHandler</span>(BusinessException.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleBusinessException</span><span class="params">(<span class="keyword">final</span> BusinessException e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleEntityNotFoundException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorCode errorCode = e.getErrorCode();</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(errorCode);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.valueOf(errorCode.getStatus()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@ExceptionHandler</span>(Exception.class)</div><div class="line">    <span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleException</span><span class="params">(Exception e)</span> </span>&#123;</div><div class="line">        log.error(<span class="string">"handleEntityNotFoundException"</span>, e);</div><div class="line">        <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>handleMethodArgumentNotValidException
+<ul>
+<li>avax.validation.Valid or @Validated 으로 binding error 발생시 발생한다. )</li>
+<li>HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생 주로 @RequestBody, @RequestPart 어노테이션에서 발생</li>
+</ul>
+</li>
+<li>handleBindException
+<ul>
+<li>@ModelAttribut 으로 binding error 발생시 BindException 발생한다.</li>
+</ul>
+</li>
+<li>MethodArgumentTypeMismatchException
+<ul>
+<li>enum type 일치하지 않아 binding 못할 경우 발생</li>
+<li>주로 @RequestParam enum으로 binding 못했을 경우 발생</li>
+</ul>
+</li>
+<li>handleHttpRequestMethodNotSupportedException :
+<ul>
+<li>지원하지 않은 HTTP method 호출 할 경우 발생</li>
+</ul>
+</li>
+<li>handleAccessDeniedException
+<ul>
+<li>Authentication 객체가 필요한 권한을 보유하지 않은 경우 발생합</li>
+<li>Security에서 던지는 예외</li>
+</ul>
+</li>
+<li>handleException
+<ul>
+<li>그 밖에 발생하는 모든 예외 처리, Null Point Exception, 등등</li>
+<li>개발자가 직접 핸들링해서 다른 예외로 던지지 않으면 모두 이곳으로 모인다.</li>
+</ul>
+</li>
+<li>handleBusinessException
+<ul>
+<li>비지니스 요규사항에 따른 Exception</li>
+<li>아래에서 자세한 설명 진행</li>
+</ul>
+</li>
+</ul>
+<p>추가로 스프링 및 라이브러리 등 자체적으로 발생하는 예외는 <code>@ExceptionHandler</code> 으로 추가해서 적절한 Error Reponse를 만들고 <strong>비지니스 요구사항에 예외일 경우 <code>BusinessException</code> 으로 통일성 있게 처리하는 것을 목표로 한다. 추가로 늘어날 수는 있겠지만 그 개수를 최소한으로 하는 노력이 필요합니다.</strong></p>
+<h1><span id="error-code-정의">Error Code 정의</span></h1>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> ErrorCode &#123;</div><div class="line"></div><div class="line">    <span class="comment">// Common</span></div><div class="line">    INVALID_INPUT_VALUE(<span class="number">400</span>, <span class="string">"C001"</span>, <span class="string">" Invalid Input Value"</span>),</div><div class="line">    METHOD_NOT_ALLOWED(<span class="number">405</span>, <span class="string">"C002"</span>, <span class="string">" Invalid Input Value"</span>),</div><div class="line">    ....</div><div class="line">    HANDLE_ACCESS_DENIED(<span class="number">403</span>, <span class="string">"C006"</span>, <span class="string">"Access is Denied"</span>),</div><div class="line"></div><div class="line">    <span class="comment">// Member</span></div><div class="line">    EMAIL_DUPLICATION(<span class="number">400</span>, <span class="string">"M001"</span>, <span class="string">"Email is Duplication"</span>),</div><div class="line">    LOGIN_INPUT_INVALID(<span class="number">400</span>, <span class="string">"M002"</span>, <span class="string">"Login input is invalid"</span>),</div><div class="line"></div><div class="line">    ;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String code;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String message;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> status;</div><div class="line"></div><div class="line">    ErrorCode(<span class="keyword">final</span> <span class="keyword">int</span> status, <span class="keyword">final</span> String code, <span class="keyword">final</span> String message) &#123;</div><div class="line">        <span class="keyword">this</span>.status = status;</div><div class="line">        <span class="keyword">this</span>.message = message;</div><div class="line">        <span class="keyword">this</span>.code = code;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>에러 코드는 enum 타입으로 한 곳에서 관리합니다.</p>
+<p>에러 코드가 전체적으로 흩어져있을 경우 코드, 메시지의 중복을 방지하기 어렵고 전체적으로 관리하는 것이 매우 어렵습니다. <code>C001</code> 같은 코드도 동일하게 enum으로 관리 하는 것도 좋습니다. 에러 메시지는 Common과 각 도메인별로 관리하는 것이 효율적일 거 같습니다.</p>
+<h1><span id="business-exception-처리">Business Exception 처리</span></h1>
+<p>여기서 말하는 Business Exception은 요구사항에 맞지 않을 경우 발생시키는 Exception을 말합니다. 만약 쿠폰을 사용 하려고 하는데 이미 사용한 쿠폰인 경우에는 더 이상 정상적인 흐름을 이어갈수가 없게 됩니다. 이런 경우에는 적절한 Exception을 발생시키고 로직을 종료 시켜야합니다.</p>
+<p>더 쉽게 정리하면 요구사항에 맞게 개발자가 직접 Exception을 발생시키는 것들이 Business Exception 이라고 할수 있습니다.</p>
+<p>유지 보수하기 좋은 코드를 만들기 위해서는 Exception을 발생시켜야 합니다. 쿠폰을 입력해서 상품을 주문했을 경우 상품 계산 로직에서 이미 사용해 버린 쿠폰이면 로직을 이어나가기는 어렵습니다.</p>
+<p>단순히 어려운 것이 아니라 해당 계산 로직의 책임이 증가하게 됩니다. 계산 로직은 특정 공식에 의해서 제품의 가격을 계산하는 것이 책임이지 쿠폰이 이미 사용 해 경우, 쿠폰이 만료되었을 경우, 제품이 매진 됐을 경우 등등의 책임을 갖게 되는 순간 유지 보수하기 어려운 코드가 됩니다. 객체의 적절한 책임을 주기 위해서라도 본인이 처리 못 하는 상황일 경우 적절한 Exception을 발생시켜야 합니다.</p>
+<blockquote>
+<p>클린 코드 : 오류 코드 보다 예외를 사용하라 리팩토링</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeviceController</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendShutDown</span><span class="params">()</span> </span>&#123;</div><div class="line">        DeviceHandle handle = getHandle(DEV1);</div><div class="line">        <span class="comment">// 디바이스 상태를 점검한댜.</span></div><div class="line">        <span class="keyword">if</span> (handle != DeviceHandle.INVALID) &#123;</div><div class="line">            <span class="comment">// 레코드 필드에 디바이스 상태를 저장한다.</span></div><div class="line">            retrieveDeviceRecord(handle);</div><div class="line">            <span class="comment">// 디바이스가 일시정지 상태가 아니라면 종료한다.</span></div><div class="line">            <span class="keyword">if</span> (record.getStatus() != DEVICE_SUSPENDED) &#123;</div><div class="line">                pauseDevice(handle);</div><div class="line">                clearDeviceWorkQueue(handle);</div><div class="line">                closeDevice(handle);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                logger.log(<span class="string">"Device suspended. Unable to shut down"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            logger.log(<span class="string">"Invalid handle for: "</span> + DEV1.toString());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>if ... else</code>의 반복으로 인해서 sendShutDown 핵심 비지니스 코드의 이해하기가 어렵습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeviceController</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendShutDown</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            tryToShutDown();</div><div class="line">        &#125; <span class="keyword">catch</span> (DeviceShutDownError e) &#123;</div><div class="line">            logger.log(e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tryToShutDown</span><span class="params">()</span> <span class="keyword">throws</span> DeviceShutDownError </span>&#123;</div><div class="line">        DeviceHandle handle = getHandle(DEV1);</div><div class="line">        DeviceRecord record = retrieveDeviceRecord(handle);</div><div class="line">        pauseDevice(handle);</div><div class="line">        clearDeviceWorkQueue(handle);</div><div class="line">        closeDevice(handle);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> DeviceHandle <span class="title">getHandle</span><span class="params">(DeviceID id)</span> </span>&#123;</div><div class="line">        ...</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> DeviceShutDownError(<span class="string">"Invalid handle for: "</span> + id.toString());</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>객체 본인의 책임 외적인 것들은 DeviceShutDownError 예외를 발생시키고 있습니다. 코드의 가독성과 책임이 분명하게 드러나고 있습니다.</p>
+<h2><span id="비지니스-예외를-위한-최상위-businessexception-클래스">비지니스 예외를 위한 최상위 BusinessException 클래스</span></h2>
+<p><img src="https://github.com/cheese10yun/spring-guide/raw/master/docs/imgs/BusinessException-final.png" alt=""></p>
+<p>최상위 BusinessException을 상속 받는 InvalidValueException, EntityNotFoundExceptuon 등이 있습니다.</p>
+<ul>
+<li>InvalidValueException : 유효하지 않은 값일 경우 예외를 던지는 Excetion
+<ul>
+<li>쿠폰 만료, 이미 사용한 쿠폰 등의 이유로 더이상 진행이 못할경우</li>
+</ul>
+</li>
+<li>EntityNotFoundException : 각 엔티티들을 못찾았을 경우
+<ul>
+<li><code>findById</code>, <code>findByCode</code> 메서드에서 조회가 안되었을 경우</li>
+</ul>
+</li>
+</ul>
+<p>최상위 BusinessException을 기준으로 예외를 발생시키면 통일감 있는 예외 처리를 가질 수 있습니다. 비니지스 로직을 수행하는 코드 흐름에서 로직의 흐름을 진행할 수 없는 상태인 경우에는 적절한 BusinessException 중에 하나를 예외를 발생 시키거나 직접 정의하게 됩니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ExceptionHandler</span>(BusinessException.class)</div><div class="line"><span class="function"><span class="keyword">protected</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title">handleBusinessException</span><span class="params">(<span class="keyword">final</span> BusinessException e)</span> </span>&#123;</div><div class="line">    log.error(<span class="string">"handleEntityNotFoundException"</span>, e);</div><div class="line">    <span class="keyword">final</span> ErrorCode errorCode = e.getErrorCode();</div><div class="line">    <span class="keyword">final</span> ErrorResponse response = ErrorResponse.of(errorCode);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(response, HttpStatus.valueOf(errorCode.getStatus()));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>이렇게 발생하는 모든 예외는 <code>handleBusinessException</code> 에서 동일하게 핸들링 됩니다. 예외 발생시 알람을 받는 등의 추가적인 행위도 손쉽게 가능합니다. 또 BusinessException 클래스의 하위 클래스 중에서 특정 예외에 대해서 다른 알람을 받는 등의 더 디테일한 헨들링도 가능해집니다.</p>
+<h2><span id="coupon-code">Coupon Code</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Coupon</span> </span>&#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">use</span><span class="params">()</span> </span>&#123;</div><div class="line">        verifyExpiration();</div><div class="line">        verifyUsed();</div><div class="line">        <span class="keyword">this</span>.used = <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">verifyUsed</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (used) <span class="keyword">throw</span> <span class="keyword">new</span> CouponAlreadyUseException();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">verifyExpiration</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (LocalDate.now().isAfter(getExpirationDate())) <span class="keyword">throw</span> <span class="keyword">new</span> CouponExpireException();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>쿠폰의 <code>use</code> 메서드입니다. 만료일과 사용 여부를 확인하고 예외가 발생하면 적절한 Exception을 발생시킵니다.</p>
+<h1><span id="컨트롤러-예외-처리">컨트롤러 예외 처리</span></h1>
+<p>컨틀로러에서 모든 요청에 대한 값 검증을 진행하고 이상이 없을 시에 서비스 레이어를 호출해야 합니다. 위에서도 언급했듯이 잘못된 값이 있으면 서비스 레이어에서 정상적인 작업이 진행하기 어렵습니다. <strong>무엇보다 컨틀롤러의 책임을 다하고 있지 않으면 그 책임은 자연스럽게 다른 레이어로 전해지게 되며 이렇게 넘겨받은 책임을 처리하는데 큰 비용과 유지보수 하기 어려워질 수밖에 없습니다.</strong></p>
+<p>컨트롤러의 중요한 책임 중의 하나는 요청에 대한 값 검증이 있습니다. 스프링은 JSR 303 기반 어노테이션으로 값 검증을 쉽고 일관성 있게 처리할 수 있도록 도와줍니다. 모든 예외는 <code>@ControllerAdvice</code> 선언된 객체에서 핸들링 됩니다. 컨트롤러로 본인이 직접 예외까지 처리하지 않고 예외가 발생하면 그냥 던져버리는 패턴으로 일관성 있게 개발할 수 있습니다.</p>
+<h2><span id="controller">Controller</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/members"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberApi</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MemberSignUpService memberSignUpService;</div><div class="line"></div><div class="line">    <span class="meta">@PostMapping</span></div><div class="line">    <span class="function"><span class="keyword">public</span> MemberResponse <span class="title">create</span><span class="params">(@RequestBody @Valid <span class="keyword">final</span> SignUpRequest dto)</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> Member member = memberSignUpService.doSignUp(dto);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MemberResponse(member);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SignUpRequest</span> </span>&#123;</div><div class="line">    <span class="meta">@Valid</span> <span class="keyword">private</span> Email email;</div><div class="line">    <span class="meta">@Valid</span> <span class="keyword">private</span> Name name;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Name</span> </span>&#123;</div><div class="line">    <span class="meta">@NotEmpty</span> <span class="keyword">private</span> String first;</div><div class="line">    <span class="keyword">private</span> String middle;</div><div class="line">    <span class="meta">@NotEmpty</span> <span class="keyword">private</span> String last;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Email</span> </span>&#123;</div><div class="line">    <span class="meta">@javax</span>.validation.constraints.Email</div><div class="line">    <span class="keyword">private</span> String value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>회원 가입 Reuqest Body 중에서 유효하지 않은 값이 있을 때 <code>@Valide</code> 어노테이션으로 예외를 발생하게 됩니다. 이 발생한 예외는 <code>@ControllerAdvice</code>에서 적절하게 핸들링 됩니다. <code>@NotEmpty</code>, <code>@Email</code> 외에도 다양한 어노테이션들이 제공됩니다.</p>
+<h1><span id="tray-catch-전략">Tray Catch 전략</span></h1>
+<p>기본적으로 예외가 발생하면 로직의 흐름을 끊고 종료 시켜야 합니다물론 예외도 있지만, 최대한 예외를 발생시켜 종료하는 것을 지향해야 한다고 생각합니다.)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">    <span class="comment">// 비지니스 로직 수행...</span></div><div class="line">&#125;<span class="keyword">catch</span> (Exception e)&#123;</div><div class="line">    e.printStackTrace();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>위 같은 코드는 지양하야 하는 패턴입니다. 최소한의 양심으로 <code>e.printStackTrace();</code> 로그라도 출력했지만 이미 예외가 발생했음에도 불가하고 다음 로직을 실행하게 됩니다. 이런 식의 <code>try catch</code>를 최대한 지양해야 합니다.</p>
+<p>하지만 Checked Exception 같은 경우에는 예외를 반드시 감싸야 하므로 이러한 경우에는 <code>try catch</code>를 사용해야 합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">    <span class="comment">// 비지니스 로직 수행...</span></div><div class="line">&#125;<span class="keyword">catch</span> (Exception e)&#123;</div><div class="line">    e.printStackTrace();</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> XXX비지니스로직예외(e);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>try catch</code>를 사용해야 하는 경우라면 더 구체적인 예외로 Exception을 발생시키는 것이 좋습니다. 간단하게 정리하면</p>
+<ol>
+<li><code>try catch</code>를 최대한 지양해라</li>
+<li><code>try catch</code>로 에러를 먹고 주는 코드는 지양해라(이런 코드가 있다면 로그라도 추가해주세요…)</li>
+<li><code>try catch</code>를 사용하게 된다면 더 구체적인 Exception을 발생시키는 것이 좋다.</li>
+</ol>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-guide-test-1/" data-toggle="tooltip" data-placement="top" title="Spring Guide - 테스트 전략">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Exception Guide</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">통일된 Error Response 객체</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Error Reponse JSON</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Error Reponse 객체</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">@ControllerAdvice 모든 예외를 헨들링</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Error Code 정의</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Business Exception 처리</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">비지니스 예외를 위한 최상위 BusinessException 클래스</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Coupon Code</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">컨트롤러 예외 처리</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Controller</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Tray Catch 전략</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                        
+                          <a class="tag" href="/tags/#Exception" title="Exception">Exception</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "yun-blog";
+    var disqus_identifier = "https://cheese10yun.github.io/spring-guide-exception/";
+    var disqus_url = "https://cheese10yun.github.io/spring-guide-exception/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
