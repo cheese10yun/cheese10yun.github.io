@@ -464,13 +464,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
-        <lastmod>2018-11-19T15:22:57.601Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Provider/</loc>
         <lastmod>2018-11-23T18:43:08.398Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -576,13 +569,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-02-20T17:13:59.767Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2019-02-20T17:13:59.767Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -592,6 +578,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Exception/</loc>
         <lastmod>2019-02-20T17:13:59.767Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-02-21T13:50:31.757Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
+        <lastmod>2019-02-21T13:50:31.757Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
