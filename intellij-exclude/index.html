@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/404.html">
-    <meta property="og:description" content="Yun Blog | 기술 블로그">
+    <meta property="og:title" content="인텔리제이 특정 Import 제외 하기 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/intellij-exclude/">
+    <meta property="og:description" content="인텔리제이 특정 Import 제외 하기 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/404.html">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-exclude/">
 
 
     <title>
         
-          Yun Blog | 기술 블로그
+          인텔리제이 특정 Import 제외 하기 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/404.html">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-exclude/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -85,8 +85,8 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('/img/404-bg.jpg')
-            /*page*/
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
         
     }
     
@@ -103,10 +103,22 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-                    <div class="site-heading">
-                        <h1>Yun Blog</h1>
-                        <!--<hr class="small">-->
-                        <span class="subheading">你来到了没有知识的荒原 :(</span>
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                            
+                              <a class="tag" href="/tags/#Tip" title="Tip">Tip</a>
+                            
+                              <a class="tag" href="/tags/#Git" title="Git">Git</a>
+                            
+                        </div>
+                        <h1>인텔리제이 특정 Import 제외 하기</h1>
+                        <h2 class="subheading">IntelliJ Tip</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2019-02-23
+                        </span>
                     </div>
                 
 
@@ -209,25 +221,164 @@
 
 
     <!-- Main Content -->
-    
-<!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/404-bg.jpg')">
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>404</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">你来到了没有知识的荒原 :(</span>
-                </div>
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1><span id="특정-import-제외하기">특정 Import 제외하기</span></h1>
+<p>인텔리 제이에서는 자동 <code>Import</code>설정을 지원해주고 있습니다. <code>Import</code> 대상이 여러 개 일 경우에는 개발자가 직접 선택하아합니다.</p>
+<p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-setting.png" alt=""></p>
+<p>위 그림처럼 있을 경우 <code>javax.transaction</code>를 <code>Import</code>할 수도 있습니다. 한번 전체 검색으로 <code>javax.transaction</code>을 찾아보는 것도 좋을 거 같습니다.</p>
+<p>이런 경우에 특정 <code>Import</code>를 제외할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-exclude.png" alt=""></p>
+<ol>
+<li>Auto Import 탭으로 이동</li>
+<li><code>+</code> 버튼 클릭해서 사용하지 않을 Import 추가</li>
+<li>제외 대상 추가</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">import javax.transaction.Transactional; // 제거 대상 이라면 import, ;를 제거하고 추가한다</div><div class="line"></div><div class="line">javax.transaction.Transactional</div></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-result.png" alt=""></p>
+<p>자동완성 시 <code>javax.transaction.Transactional</code> 제외가 된 것을 확인할 수 있습니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-guide-exception/" data-toggle="tooltip" data-placement="top" title="Spring Guide - Exception 전략">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">특정 Import 제외하기</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                        
+                          <a class="tag" href="/tags/#Tip" title="Tip">Tip</a>
+                        
+                          <a class="tag" href="/tags/#Git" title="Git">Git</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
             </div>
         </div>
     </div>
-</header>
+</article>
 
-<script>
-    document.body.classList.add('page-fullscreen');
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "yun-blog";
+    var disqus_identifier = "https://cheese10yun.github.io/intellij-exclude/";
+    var disqus_url = "https://cheese10yun.github.io/intellij-exclude/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
 </script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->

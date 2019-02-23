@@ -6,7 +6,7 @@
   <link href="/feed.xml" rel="self"/>
   
   <link href="https://cheese10yun.github.io/"/>
-  <updated>2019-02-21T16:27:09.868Z</updated>
+  <updated>2019-02-23T10:00:00.900Z</updated>
   <id>https://cheese10yun.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>인텔리제이 특정 Import 제외 하기</title>
+    <link href="https://cheese10yun.github.io/intellij-exclude/"/>
+    <id>https://cheese10yun.github.io/intellij-exclude/</id>
+    <published>2019-02-23T10:10:00.000Z</published>
+    <updated>2019-02-23T10:00:00.900Z</updated>
+    
+    <content type="html"><![CDATA[<h1><span id="특정-import-제외하기">특정 Import 제외하기</span></h1><p>인텔리 제이에서는 자동 <code>Import</code>설정을 지원해주고 있습니다. <code>Import</code> 대상이 여러 개 일 경우에는 개발자가 직접 선택하아합니다.</p><p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-setting.png" alt=""></p><p>위 그림처럼 있을 경우 <code>javax.transaction</code>를 <code>Import</code>할 수도 있습니다. 한번 전체 검색으로 <code>javax.transaction</code>을 찾아보는 것도 좋을 거 같습니다.</p><p>이런 경우에 특정 <code>Import</code>를 제외할 수 있습니다.</p><p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-exclude.png" alt=""></p><ol><li>Auto Import 탭으로 이동</li><li><code>+</code> 버튼 클릭해서 사용하지 않을 Import 추가</li><li>제외 대상 추가</li></ol><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">import javax.transaction.Transactional; // 제거 대상 이라면 import, ;를 제거하고 추가한다</div><div class="line"></div><div class="line">javax.transaction.Transactional</div></pre></td></tr></table></figure><p><img src="https://github.com/cheese10yun/IntelliJ/raw/master/assets/import-result.png" alt=""></p><p>자동완성 시 <code>javax.transaction.Transactional</code> 제외가 된 것을 확인할 수 있습니다.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1&gt;&lt;span id=&quot;특정-import-제외하기&quot;&gt;특정 Import 제외하기&lt;/span&gt;&lt;/h1&gt;
+&lt;p&gt;인텔리 제이에서는 자동 &lt;code&gt;Import&lt;/code&gt;설정을 지원해주고 있습니다. &lt;code&gt;Import&lt;/code&gt; 대상이 여러 개 일 경
+      
+    
+    </summary>
+    
+    
+      <category term="IntelliJ" scheme="https://cheese10yun.github.io/tags/IntelliJ/"/>
+    
+      <category term="Tip" scheme="https://cheese10yun.github.io/tags/Tip/"/>
+    
+      <category term="Git" scheme="https://cheese10yun.github.io/tags/Git/"/>
+    
+  </entry>
   
   <entry>
     <title>Spring Guide - Exception 전략</title>
@@ -529,32 +557,6 @@
       <category term="REST Docs" scheme="https://cheese10yun.github.io/tags/REST-Docs/"/>
     
       <category term="Document" scheme="https://cheese10yun.github.io/tags/Document/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>OAuth2 인증 방식 정리</title>
-    <link href="https://cheese10yun.github.io/oauth2/"/>
-    <id>https://cheese10yun.github.io/oauth2/</id>
-    <published>2018-10-21T15:00:00.000Z</published>
-    <updated>2018-10-21T15:43:30.047Z</updated>
-    
-    <content type="html"><![CDATA[<h2><span id="oauth2-승인-방식의-종류">OAuth2 승인 방식의 종류</span></h2><ul><li>Authorization Code Grant Type  : 권한 부여 코드 승인 타입<br>클라이언트가 다른 사용자 대신 특정 리소스에 접근을 요청할 떄 사용됩니다. 리스소 접근을 위한 사용자 명과 비밀번호, 권한 서버에 요청해서 받은 권한 코드를 함ㄲ 활용하여 리소스에 대한 엑세스 토큰을 받는 방식입니다.</li><li>Implicit Grant Type : 암시적 승인<br>권한 부여 코드 승인 타입과 다르게 권한 코드 교환 단계 없이 엑세스 토큰을 즉시 반환받아 이를 인증에 이용하는 방식입니다.</li><li>Resource Owner Password Credentials Grant Type : 리소스 소유자 암호 자격 증명 타입<br>클라이언트가 암호를 사용하여 엑세스 토큰에 대한 사용자의 자격 증명을 교환하는 방식식입니다.</li><li>Client Credentials Grant Type : 클라이언트 자격 증명 타입<br>클라이언트가 컨텍스트 외부에서 액세스 토큰을 얻어 특정 리소스에 접근을 요청할 때 사용하는 방식입니다.</li></ul><h2><span id="authorization-code-grant-type-방식">Authorization Code Grant Type 방식</span></h2><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/oauth2-doe-grant-type_gnojt19me.png" alt="oauth2-doe-grant-type"></p><ul><li>(1) 클라이언트가 파리미터러 클라이언트 ID, 리다이렉트 URI, 응답 타입을 code로 지정하여 권한 서버에 전달합니다. 정상적으로 인증이 되면 권한 코드 부여 코드를 클라이언트에게 보냅니다.<ul><li>응답 타입은 code, token 이 사용 가능합니다.</li><li><strong>응답 타입이 token 일 경우 암시적 승인 타입에 해당합니다.</strong></li></ul></li><li>(2) 성공적으로 권한 부여 코드를 받은 클라이언트는 권한 부여 코드를 사용하여 엑세스 토큰을 권한 서버에 추가로 요청합니다. 이때 필요한 파라미터는 클라이언트 ID, 클라이언트 비밀번호, 리다이렉트 URI, 인증 타입 입니다.</li><li>(3) 마지막으로 받은 엑세스 토큰을 사용하여 리소스 서버에 사용자의 데이터를 보냅니다.</li></ul><h2><span id="implicit-grant-방식">Implicit Grant 방식</span></h2><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/Implicit%20Grant.png" alt="Implicit Grant"></p><ul><li>(1) 클라이언트가 파리미터러 클라이언트 ID, 리다이렉트 URI, 응답 타입을 code로 지정하여 권한 서버에 전달합니다. 정상적으로 인증이 되면 권한 코드 부여 코드를 클라이언트에게 보냅니다.<ul><li>응답 타입은 code, token 이 사용 가능합니다.</li><li><strong>응답 타입이 token 일 경우 암시적 승인 타입에 해당합니다.</strong></li></ul></li><li>(2) 응답 해준 Access Token 이 유효한지 검증 요청을 합니다.</li><li>(3) 요청 받은 Access Token 정보에 대한 검증에 대한 응답값을 돌려줍니다.</li><li>(4) 유효한 Access Token 기반으로 Resource Server와 통신합니다.</li></ul><h2><span id="resource-owner-password-credentials-grant-방식">Resource Owner Password Credentials Grant 방식</span></h2><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/Resource%20Owner%20Password%20Credentials%20Grant.png" alt="Resource Owner Password Credentials Grant"></p><ul><li>(1) 인증을 진행합니다. 대부분 ID, Password를 통해서 자격 증명이 진행됩니다.</li><li>(2) 넘겨 받은 정보기반으로 권한 서버에 Access Token 정보를 요청합니다.</li><li>(3) Access Token 정보를 응답 받습니다. 이때 Refresh Token 정보도 넘겨 줄 수도 있습니다.</li><li>(4) Access Token 기반으로 Resource Server와 통신합니다.</li></ul><h2><span id="client-credentials-grant-type-방식">Client Credentials Grant Type 방식</span></h2><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/Client%20Credentials%20Grant%20Type.png" alt="Client Credentials Grant Type"></p><ul><li>(1) Access Token 정보를 요청합니다.</li><li>(3) Access Token 정보를 응답합니다. 이때 Refresh Token 정보는 응답하지 않는 것을 권장합니다. 별다른 인증 절차가 없기 떄문에 Refresh Token 까지 넘기지 않는 것이라고 생각합니다.</li><li>(4) Access Token 기반으로 Resource Server와 통신합니다.</li></ul><h2><span id="참고">참고</span></h2><ul><li><a href="http://www.bubblecode.net/en/2016/01/22/understanding-oauth2/" rel="external nofollow noopener noreferrer" target="_blank">OAuth2 이해하기</a></li><li><a href="http://www.hanbit.co.kr/store/books/look.php?p_code=B4458049183" rel="external nofollow noopener noreferrer" target="_blank">처음으로 배우는 스프링 부트2</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2&gt;&lt;span id=&quot;oauth2-승인-방식의-종류&quot;&gt;OAuth2 승인 방식의 종류&lt;/span&gt;&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Authorization Code Grant Type  : 권한 부여 코드 승인 타입&lt;br&gt;
-클라이언트가 다른 사용자 대신 특
-      
-    
-    </summary>
-    
-    
-      <category term="OAuth2" scheme="https://cheese10yun.github.io/tags/OAuth2/"/>
     
   </entry>
   

@@ -352,20 +352,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Tip/</loc>
-        <lastmod>2018-07-18T14:05:30.601Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Git/</loc>
-        <lastmod>2018-07-18T14:05:30.601Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/OCP/</loc>
         <lastmod>2018-07-24T16:30:15.685Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -382,13 +368,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/DIP/</loc>
         <lastmod>2018-07-26T15:24:55.270Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2018-08-05T05:30:45.148Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -592,6 +571,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Exception/</loc>
         <lastmod>2019-02-21T16:27:09.868Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2019-02-23T10:00:00.900Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Tip/</loc>
+        <lastmod>2019-02-23T10:00:00.900Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Git/</loc>
+        <lastmod>2019-02-23T10:00:00.900Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
