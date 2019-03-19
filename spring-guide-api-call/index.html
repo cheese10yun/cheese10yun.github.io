@@ -106,9 +106,9 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#API" title="API">API</a>
-                            
                               <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#API" title="API">API</a>
                             
                               <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
                             
@@ -164,14 +164,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -234,7 +234,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>이번 주제는 외부 API 호출 가이드를 진행하겠습니다. 본 포스팅에서는 RestTemplate 기반으로 설명하고 있지만 RestTemplate에 대한 사용법이 초점은 아닙니다. Request, Response에 대한 로킹, Interceptors를 통한 추가 작업, errorHandler을 통한 각 Vendor마다 예외 처리 전략을 살펴보겠습니다.</p>
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/spring-guide" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+</blockquote>
+<p>이번 주제는 외부 API 호출 가이드를 진행하겠습니다. 본 포스팅에서는 RestTemplate 기반으로 설명하고 있지만 RestTemplate에 대한 사용법이 초점은 아닙니다. Request, Response에 대한 로킹, Interceptors를 통한 추가 작업, errorHandler을 통한 각 Vendor마다 예외 처리 전략을 살펴보겠습니다.</p>
 <h2><span id="vendor-마다-다르게-bean-등록">Vendor 마다 다르게 Bean 등록</span></h2>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span></div><div class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">localTestTemplate</span><span class="params">()</span> </span>&#123;</div><div class="line"><span class="keyword">return</span> restTemplateBuilder.rootUri(<span class="string">"http://localhost:8899"</span>)</div><div class="line">    .additionalInterceptors(<span class="keyword">new</span> RestTemplateClientHttpRequestInterceptor())</div><div class="line">    .errorHandler(<span class="keyword">new</span> RestTemplateErrorHandler())</div><div class="line">    .setConnectTimeout(Duration.ofMinutes(<span class="number">3</span>))</div><div class="line">    .build();</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">@Bean</span></div><div class="line"><span class="function"><span class="keyword">public</span> RestTemplate <span class="title">xxxPaymentTemplate</span><span class="params">()</span> </span>&#123;</div><div class="line"><span class="keyword">return</span> restTemplateBuilder.rootUri(<span class="string">"http://xxxx"</span>)</div><div class="line">    .additionalInterceptors(<span class="keyword">new</span> RestTemplateClientHttpRequestInterceptor())</div><div class="line">    .errorHandler(<span class="keyword">new</span> RestTemplateErrorHandler())</div><div class="line">    .setConnectTimeout(Duration.ofMinutes(<span class="number">3</span>))</div><div class="line">    .build();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>우선 RestTemplate를 외부 API 특성에 맞는 Bean을 생성합니다. 여기서 중요한 점은 각 API Vendor사 별로 각각 Bean으로 관리하는 것입니다.</p>
@@ -330,9 +333,9 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#API" title="API">API</a>
-                        
                           <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#API" title="API">API</a>
                         
                           <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
                         
