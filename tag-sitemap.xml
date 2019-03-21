@@ -583,13 +583,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-03-19T17:45:22.300Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/API/</loc>
         <lastmod>2019-03-19T17:45:22.300Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -599,6 +592,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2019-03-19T17:45:22.300Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-03-21T15:30:07.923Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Validate/</loc>
+        <lastmod>2019-03-21T15:30:07.923Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
