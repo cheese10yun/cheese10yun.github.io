@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-service/</loc>
+        <lastmod>2019-04-08T16:03:11.823Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-custom-valdate-annotation/</loc>
         <lastmod>2019-03-21T15:30:07.923Z</lastmod>
         <changefreq>weekly</changefreq>
