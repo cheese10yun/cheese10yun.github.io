@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
+        <lastmod>2019-05-05T02:42:40.440Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-builder-pattern/</loc>
         <lastmod>2019-05-04T18:53:01.219Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -41,14 +49,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-exception/</loc>
         <lastmod>2019-02-25T13:43:13.706Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
-        <lastmod>2019-02-25T13:42:19.922Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
