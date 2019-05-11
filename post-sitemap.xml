@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/transaction-lcok/</loc>
+        <lastmod>2019-05-11T17:53:01.367Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
         <lastmod>2019-05-05T02:42:40.440Z</lastmod>
         <changefreq>weekly</changefreq>
