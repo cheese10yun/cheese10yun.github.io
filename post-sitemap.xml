@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-service/</loc>
+        <lastmod>2019-05-18T04:09:04.194Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-rabbitmq/</loc>
         <lastmod>2019-05-17T13:51:26.312Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -97,14 +105,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-builder-pattern/</loc>
         <lastmod>2019-05-04T18:53:01.219Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-service/</loc>
-        <lastmod>2019-04-08T16:03:11.823Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
