@@ -284,6 +284,16 @@ actuator 의존성이 있으면 IntellJ Endpoints -&gt; Mappings에서 현재 �
 <p>이것도 인텔리제이를 이용해서 호출하면 간편합니다.</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"message"</span>: <span class="string">"Message From Default Dev Git Repository"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p><code>Dev</code> 메시지가 출력되는 것을 확인 할 수 있습니다. <code>profiles</code>을 <code>default</code> 으로 지정하면 메시지에는 local 이라는 문자가 출력됩니다.</p>
+<h2><span id="refresh">Refresh</span></h2>
+<p>마이크로서비스 A의 properties의 변경이 생겼을 경우 Refresh API를 호출해서 설정을 변경할 수 있다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-1.png" alt=""></p>
+<p>message API를 호출하면 기존 메시지가 그대로 출력된다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># microservice-a-default.yml</span></div><div class="line"><span class="attr">application:</span></div><div class="line"><span class="attr">  message:</span> <span class="string">"Message From Default Local Git Repository (Properties update...)"</span></div></pre></td></tr></table></figure>
+<p><code>microservice-a-default.yml</code> 메시지를 위와 같이 변경한 이후에</p>
+<p>POST <a href="http://127.0.0.1:8080/actuator/refresh%EC%9D%84" rel="external nofollow noopener noreferrer" target="_blank">http://127.0.0.1:8080/actuator/refresh을</a> 호출하면</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[</div><div class="line">  &quot;config.client.version&quot;,</div><div class="line">  &quot;application.message&quot;</div><div class="line">]</div></pre></td></tr></table></figure>
+<p>Response으로 application.message의 변경을 알려준다. 이후 message api를 호출하면 아래 그림처럼 변경된 Response를 확인 할 수 있다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-2.png" alt=""></p>
 <h2><span id="결론">결론</span></h2>
 <p>Github Repository와 같은 버전 관리 리포지토리로 백업된 중앙 집중 구성으로 properties를 제공해줍니다. 또 Properties 설정 및 단순한 설정으로 클라이언트 애플리케이션이 스프링 클라우드 컨피그 서버에 쉽게 연결되도록 지원해줍니다.</p>
 
@@ -325,7 +335,7 @@ actuator 의존성이 있으면 IntellJ Endpoints -&gt; Mappings에서 현재 �
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">GitHub Repository 연결</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Config Server</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Client</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">결론</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">GitHub Repository 연결</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Config Server</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Client</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Refresh</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">결론</span></a></li></ol>
         
         </div>
       </aside>
