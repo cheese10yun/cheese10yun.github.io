@@ -7,6 +7,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
+        <lastmod>2019-05-26T10:23:45.755Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/intellij-exclude/</loc>
+        <lastmod>2019-05-26T10:20:50.166Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/checked-exception/</loc>
         <lastmod>2019-05-26T08:47:42.594Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -161,14 +177,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-exception/</loc>
         <lastmod>2019-02-25T13:43:13.706Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/intellij-exclude/</loc>
-        <lastmod>2019-02-23T10:00:00.900Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
