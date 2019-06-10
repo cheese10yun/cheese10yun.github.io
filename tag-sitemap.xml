@@ -366,14 +366,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/REST-Docs/</loc>
+        <loc>https://cheese10yun.github.io/tags/Document/</loc>
         <lastmod>2018-10-26T16:45:12.496Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Document/</loc>
+        <loc>https://cheese10yun.github.io/tags/REST-Docs/</loc>
         <lastmod>2018-10-26T16:45:12.496Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -604,13 +604,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-05-25T14:46:27.322Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
         <lastmod>2019-05-25T14:46:27.322Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -662,6 +655,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Tip/</loc>
         <lastmod>2019-05-26T10:23:45.755Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-06-10T15:33:17.454Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
+        <lastmod>2019-06-10T15:33:17.454Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Module/</loc>
+        <lastmod>2019-06-10T15:33:17.454Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
