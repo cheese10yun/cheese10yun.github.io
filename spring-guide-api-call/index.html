@@ -260,7 +260,7 @@
 <img src="https://github.com/cheese10yun/spring-guide/raw/master/docs/imgs/api-req-res.png" alt=""></p>
 <p>Interceptor를 통해서 요청했던 Request 정보와 응답받은 Response 정보가 모두 정상적으로 로그 되는 것을 확인할 수 있습니다.</p>
 <h2><span id="예외-처리">예외 처리</span></h2>
-<p>외부 API는 Vendor마다 각기 다르기 때문에 통일성 있게 예외 처리를 진행하기 어렵습니다. 아래는 터기 하기 애마 한 Rsponse입니다.</p>
+<p>외부 API는 Vendor마다 각기 다르기 때문에 통일성 있게 예외 처리를 진행하기 어렵습니다. 아래는 처리하기 애매한 한 Response입니다.</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"success"</span>: <span class="literal">false</span>,</div><div class="line">  <span class="attr">"result"</span>: &#123;</div><div class="line">      ....</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>Resttemplate는 우선 Http Status Code로 1차적으로 API 이상 유무를 검사하게 됩니다. 2xxx 이 외의 코드가 넘어오게 되면 Resttemplate 예외를 발생시킵니다.</p>
 <p>그런데 문제는 2xx http status code를 응답받고 위 JSON 같이 success에 false를 주는 API들입니다. 그렇다면 API 호출마다 아래와 같은 코드로 확인해야 합니다.</p>
