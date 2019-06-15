@@ -212,13 +212,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
-        <lastmod>2018-05-02T15:44:12.834Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -227,6 +220,13 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/S3/</loc>
+        <lastmod>2018-05-02T15:44:12.834Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -646,20 +646,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Guide/</loc>
-        <lastmod>2019-06-12T14:15:08.568Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-06-13T13:16:52.963Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2019-06-13T13:16:52.963Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -676,6 +662,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
         <lastmod>2019-06-13T13:16:52.963Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-06-15T15:42:58.335Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Guide/</loc>
+        <lastmod>2019-06-15T15:42:58.335Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Directory/</loc>
+        <lastmod>2019-06-15T15:42:58.335Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
