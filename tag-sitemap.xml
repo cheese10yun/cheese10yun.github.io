@@ -555,20 +555,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/%EC%BA%A1%EC%8A%90%ED%99%94/</loc>
-        <lastmod>2019-05-19T05:38:13.671Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5/</loc>
-        <lastmod>2019-05-19T05:38:13.671Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
         <lastmod>2019-05-25T14:46:27.322Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -683,6 +669,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Directory/</loc>
         <lastmod>2019-06-15T15:42:58.335Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/%EC%BA%A1%EC%8A%90%ED%99%94/</loc>
+        <lastmod>2019-06-16T15:02:27.766Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5/</loc>
+        <lastmod>2019-06-16T15:02:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

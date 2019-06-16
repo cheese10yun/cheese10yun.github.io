@@ -7,6 +7,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/encapsulation-part-2/</loc>
+        <lastmod>2019-06-16T15:02:27.766Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/encapsulation-part-1/</loc>
+        <lastmod>2019-06-16T15:02:10.158Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-guide-directory/</loc>
         <lastmod>2019-06-15T15:42:58.335Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -81,14 +97,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-cloud-config/</loc>
         <lastmod>2019-05-25T14:46:27.322Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/encapsulation-part-1/</loc>
-        <lastmod>2019-05-19T05:38:13.671Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -249,14 +257,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-11/</loc>
         <lastmod>2019-01-20T16:21:23.281Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/encapsulation-part-2/</loc>
-        <lastmod>2019-01-05T07:24:10.320Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
