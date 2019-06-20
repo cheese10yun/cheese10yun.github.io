@@ -236,7 +236,7 @@
 <p>해당 자료는 DDD <a href="http://www.yes24.com/Product/Goods/27750871?scode=029" rel="external nofollow noopener noreferrer" target="_blank">Start</a>를 보고 정리한 자료입니다. 정말 추천드리는 책입니다.</p>
 </blockquote>
 <p>한 주문 애그리거트에 대해 운영자는 배송 준비 상태로 변경할 때 사용자는 배송지 주소를 변경하면 어떻게 될까? 아래 그림은 운영자와 고객이 동시에 한 주문 애그리거트를 수정하는 과정을 보여준다. (배송 상태로 변경되면 더 이상 배송지 변경은 할 수 없다.)</p>
-<p><img src="https://github.com/cheese10yun/TIL/raw/master/draw/transaction-thread.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/transaction-thread.png" alt=""></p>
 <p>운영자 스레드와 고객 스레드는 같은 주문 애그리거트를 나타내는 다른 객체를 구하게 된다 (트랜잭션 마다 리포지토리라는 새로운 애그리거트를 생성한다.) 운영자 스레드와 고객 스레드는 개념적으로 동일한 애그리거트이지만 물리적으로 서로 다른 애그리거트 객체를 사용한다.</p>
 <p>때문에 운영자 스레드가 주문 애그리거트 객체 배송 상태로 변경하더라도 고객 스레드가 사용하는 주문 애그리거트 객체에는 영향을 주지 않는다. 고객 스레드 입장에서 주문 애그리거트 객체는 아직 배송 상태 전이므로 배송지 정보를 변경할 수 있다.</p>
 <p>이 상황에서 두 스레드는 각각 트랜잭션을 커밋할 때 수정한 내용을 DBMS에 반영한다. 즉 배송 상태로 바뀌고 배송지 정보로 바뀌게 된다. 이 순서의 문제점은 운영자는 기존 배송지 정보를 이용해서 배송 상태로 변경했는데 그 사이 고객은 배송지 정보를 변경했다는 점이다. 즉 애그리거트의 일관성이 깨지는 것이다.</p>
@@ -248,7 +248,7 @@
 <p>이 두 가지는 애그리거트 자체의 트랜잭션과 관련이 있다. DBMS가 지원하는 트랜잭션과 함께 애그리거트를 위한 추가적인 트랜잭션 처리 기법이 필요하다. <strong>애그리거트에 대해 사용할 수 있는 대표적인 트랜잭션 처리 방식에는 선점 잠금과 비선점 잠금의 두 가지 방식이 있다.</strong></p>
 <h2><span id="isolation-repeatable_read-으로-해결-못하는-이유">Isolation REPEATABLE_READ 으로 해결 못하는 이유</span></h2>
 <p>REPEATABLE_READ은 트랜잭션이 지속되는 동안 다른 트랜잭션이 해당 필드를 변경할 수 없는 격리 레벨이다. <strong>이것으로 위의 문제를 해결할 수 있지는 않다.</strong></p>
-<p><img src="https://github.com/cheese10yun/TIL/raw/master/draw/transaction-thread.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/transaction-thread.png" alt=""></p>
 <ol>
 <li>운영자 스레드가 주문 애그리거트를 구함 (배송 이전 상태)</li>
 <li>고객 스레드가 주문 애그리거트를 구함 (배송 이전 상태) REPEATABLE_READ 속성이므로 select 트랜잭션이 진행중에 있더라도 select는 진행됨</li>
@@ -260,12 +260,12 @@
 <p>운영자는 배송 상태로 변경하고, 고객은 배송지를 변경이 모두 데이터베이스에 반영된다는 것이다. <strong>2번 고객 스레드가 주문 애그리거트를 구하는것을 Lock 해야 이 문제를 해결 할 수 있다.</strong></p>
 <h2><span id="선점-잠금">선점 잠금</span></h2>
 <p>선점 잠금은 먼저 애그리거트를 구한 스레드가 애그리거트 사용이 끝날 때까지 다른 스레드가 해당 애그리거트를 수정하는 것을 막는 방식이다.</p>
-<p><img src="https://github.com/cheese10yun/TIL/raw/master/draw/transaction-thread2.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/transaction-thread2.png" alt=""></p>
 <p>스레드1 선점 잠금방식으로 애그리거트를 구한 뒤 이에서 스레드2가 같은 애그리거트를 구하고 있는데, 이 경우 스레드2는 스레드1이 애그리거트에대한 잠금을 해제할 때 까지 블로킹된다.</p>
 <p>스레드1이 애그리거트를 수정하고 트랜잭션을 커밋하면 잠금을 해제한다. 이 순간 대기하고 있던 스레드2가 애그리거트에 접근하게 된다. 스레드1이 트랜잭션을 커밋 뒤에 스레드2가 애그리거트를 구하게 되므로 스레드2는 스레드1이 수정한 애그리거트의 내용을 보게된다.</p>
 <p>한 스레드가 애그리거트를 구하고 수정하는 동안 다른 스레드가 수정할 수 없음으로로 동시에 애그리거트를 수정할 때 발생하는 데이터 충돌 문제를 해소할 수 있다.</p>
 <h3><span id="선점-잠금-적용">선점 잠금 적용</span></h3>
-<p><img src="https://github.com/cheese10yun/TIL/raw/master/draw/transaction-thread3.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/transaction-thread3.png" alt=""></p>
 <ol>
 <li>운영자 스레드가 먼저 선점 잠금 방식으로 주문 애그리거트를 구함</li>
 <li>고객 스레드는 운영자 스레드가 잠금을 해제할 때까지 고객 스레드는 대기 상태</li>
@@ -306,7 +306,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">UPDATE</span> aggrable <span class="keyword">SET</span> <span class="keyword">version</span> = <span class="keyword">version</span> +<span class="number">1</span>, colx = ?, coly =?</div><div class="line"><span class="keyword">WHERE</span> aggid =? <span class="keyword">and</span> <span class="keyword">version</span> = 현재 버전</div></pre></td></tr></table></figure>
 <p>이 쿼리는 수정할 애그리거트와 매핑되는 테이블의 버전 값이 현재 애그리거트의 버전과 동일한 경우에만 데이터를 수정한다. 그리고 수정에 성공하면 버전 값을 1증가 시킨다. 따라서, <strong>다른 트랜잭션이 먼저 데이터를 수정해서 버전 값이 바뀌면 데이터 수정에 실패하게 된다.</strong></p>
 <h3><span id="비선점-잠금을-이용한-트랜잭션-충돌-방지">비선점 잠금을 이용한 트랜잭션 충돌 방지</span></h3>
-<p><img src="https://github.com/cheese10yun/TIL/raw/master/draw/transacion-thread4.png" alt=""></p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/transacion-thread4.png" alt=""></p>
 <ol>
 <li>스레드 1 애그리거트 조회</li>
 <li>스레드 2 애그리거트 조회</li>
