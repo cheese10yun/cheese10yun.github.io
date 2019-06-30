@@ -520,13 +520,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Service/</loc>
-        <lastmod>2019-05-18T08:57:39.127Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Batch/</loc>
         <lastmod>2019-05-18T10:53:43.044Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -632,13 +625,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Guide/</loc>
-        <lastmod>2019-06-15T15:42:58.335Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Directory/</loc>
         <lastmod>2019-06-15T15:42:58.335Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -660,13 +646,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-06-20T16:39:02.471Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/RabbitMQ/</loc>
         <lastmod>2019-06-20T16:39:02.471Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -683,6 +662,27 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Lock/</loc>
         <lastmod>2019-06-20T16:39:02.485Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-06-30T16:33:01.618Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Guide/</loc>
+        <lastmod>2019-06-30T16:33:01.618Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Service/</loc>
+        <lastmod>2019-06-30T16:33:01.618Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
