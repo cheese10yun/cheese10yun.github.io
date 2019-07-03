@@ -205,14 +205,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -646,13 +646,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-06-30T16:33:01.618Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2019-06-30T16:33:01.618Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -683,6 +676,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Tip/</loc>
         <lastmod>2019-07-03T15:49:56.357Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-07-03T17:24:52.286Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Actuator/</loc>
+        <lastmod>2019-07-03T17:24:52.286Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
