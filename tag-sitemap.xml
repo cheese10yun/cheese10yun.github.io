@@ -520,13 +520,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
-        <lastmod>2019-05-18T10:53:43.044Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Refactoring/</loc>
         <lastmod>2019-05-18T11:17:14.593Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -681,15 +674,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
+        <lastmod>2019-07-04T13:51:32.077Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-07-04T13:36:33.047Z</lastmod>
+        <lastmod>2019-07-04T16:32:12.815Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Actuator/</loc>
-        <lastmod>2019-07-04T13:36:33.047Z</lastmod>
+        <lastmod>2019-07-04T16:32:12.815Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
