@@ -205,14 +205,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.834Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -471,13 +471,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2019-05-14T15:13:41.763Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Slice-Test/</loc>
         <lastmod>2019-05-14T15:13:41.763Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -576,14 +569,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
         <lastmod>2019-06-13T13:16:52.963Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
         <lastmod>2019-06-13T13:16:52.963Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -674,13 +667,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-07-07T05:36:18.451Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Actuator/</loc>
         <lastmod>2019-07-07T05:36:18.451Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -697,6 +683,20 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Fetch-Join/</loc>
         <lastmod>2019-07-08T17:11:24.997Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-07-21T04:59:49.455Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2019-07-21T04:59:49.455Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
