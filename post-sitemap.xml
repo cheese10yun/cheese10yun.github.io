@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
+        <lastmod>2019-08-12T15:31:25.162Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-about-test/</loc>
         <lastmod>2019-07-22T18:32:29.259Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -33,14 +41,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-actuator/</loc>
         <lastmod>2019-07-07T05:36:18.451Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
-        <lastmod>2019-07-04T13:51:32.077Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
