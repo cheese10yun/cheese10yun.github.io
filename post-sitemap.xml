@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
+        <lastmod>2019-08-29T16:17:07.866Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/transaction-lcok/</loc>
         <lastmod>2019-08-28T15:33:31.640Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -225,14 +233,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-10/</loc>
         <lastmod>2019-05-14T15:13:41.742Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
-        <lastmod>2019-05-05T02:42:40.440Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
