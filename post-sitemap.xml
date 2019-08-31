@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/utterances/</loc>
+        <lastmod>2019-08-31T15:11:54.378Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
         <lastmod>2019-08-29T16:17:07.866Z</lastmod>
         <changefreq>weekly</changefreq>
