@@ -235,8 +235,8 @@
                 <blockquote>
 <p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/custom-validation" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
 </blockquote>
-<p>스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어 로테이션을 확장도 쉽게 구현할 수 있습니다.</p>
-<p>아래에서 작성하는 어 로테이션은 해당 이메일이 유니크한지 검증을 하고 유니크하지 않은 이메일일 경우 Bad Request를 응답하는 어노테이션 입니다.</p>
+<p>스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.</p>
+<p>아래에서 작성하는 어노테이션은 해당 이메일이 유니크한지 검증을 하고 유니크하지 않은 이메일일 경우 Bad Request를 응답하는 어노테이션 입니다.</p>
 <h2><span id="어노테이션-정의">어노테이션 정의</span></h2>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="meta">@Constraint</span>(validatedBy = EmailDuplicationValidator.class)</div><div class="line"><span class="meta">@Target</span>(&#123;ElementType.METHOD, ElementType.FIELD&#125;)</div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EmailUnique &#123;</div><div class="line"></div><div class="line">  <span class="function">String <span class="title">message</span><span class="params">()</span> <span class="keyword">default</span> "Email is Duplication"</span>;</div><div class="line"></div><div class="line">  Class&lt;?&gt;[] groups() <span class="keyword">default</span> &#123;&#125;;</div><div class="line"></div><div class="line">  Class&lt;? extends Payload&gt;[] payload() <span class="keyword">default</span> &#123;&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2><span id="validator-로직-작성">Validator 로직 작성</span></h2>

@@ -268,13 +268,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Embedded/</loc>
-        <lastmod>2018-06-22T15:26:04.129Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Jackson/</loc>
         <lastmod>2018-07-08T10:03:55.914Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -450,13 +443,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Validate/</loc>
-        <lastmod>2019-03-21T15:30:07.923Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Builder/</loc>
         <lastmod>2019-05-04T18:53:01.219Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -562,13 +548,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2019-06-13T13:16:52.963Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
         <lastmod>2019-06-13T13:16:52.963Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -632,13 +611,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2019-07-08T17:11:24.997Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Fetch-Join/</loc>
         <lastmod>2019-07-08T17:11:24.997Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -648,13 +620,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/%EC%83%9D%EC%82%B0%EC%84%B1/</loc>
         <lastmod>2019-07-21T16:08:11.927Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2019-07-22T18:32:29.259Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -688,13 +653,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2019-08-29T16:17:07.866Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2019-08-29T16:17:07.866Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -711,6 +669,48 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Utterances/</loc>
         <lastmod>2019-08-31T15:30:13.872Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Validate/</loc>
+        <lastmod>2019-09-21T17:31:05.191Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2019-09-21T17:31:05.199Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2019-09-21T17:31:05.211Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2019-09-21T17:31:05.211Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Embedded/</loc>
+        <lastmod>2019-09-21T17:31:05.211Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2019-09-21T17:31:05.211Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

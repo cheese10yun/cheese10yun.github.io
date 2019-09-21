@@ -7,6 +7,38 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
+        <lastmod>2019-09-21T17:31:05.211Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
+        <lastmod>2019-09-21T17:31:05.206Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
+        <lastmod>2019-09-21T17:31:05.199Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-custom-valdate-annotation/</loc>
+        <lastmod>2019-09-21T17:31:05.191Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/ConstraintValidator/</loc>
         <lastmod>2019-09-21T16:13:46.955Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -263,24 +295,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-custom-valdate-annotation/</loc>
-        <lastmod>2019-03-21T15:30:07.923Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-guide-exception/</loc>
         <lastmod>2019-02-25T13:43:13.706Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
-        <lastmod>2019-02-16T15:58:19.883Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -481,22 +497,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-jpa-best-08/</loc>
         <lastmod>2018-06-29T10:51:56.291Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
-        <lastmod>2018-06-22T15:26:07.492Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
-        <lastmod>2018-06-22T15:26:04.129Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
