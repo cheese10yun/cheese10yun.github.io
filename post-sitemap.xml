@@ -7,6 +7,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
+        <lastmod>2019-10-01T14:49:47.969Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best/</loc>
+        <lastmod>2019-10-01T14:49:47.961Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/ConstraintValidator/</loc>
         <lastmod>2019-09-22T12:13:18.467Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -73,14 +89,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-directory/</loc>
         <lastmod>2019-08-28T14:41:55.689Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
-        <lastmod>2019-08-12T15:34:00.346Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -553,14 +561,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
         <lastmod>2018-06-22T15:25:29.870Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best/</loc>
-        <lastmod>2018-06-22T15:22:12.813Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
