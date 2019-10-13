@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -164,13 +164,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -179,6 +172,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -238,12 +238,12 @@
 이러한 경우에 <strong><em>반복문을 사용하지 않고 여러 개를 Insert 하는 방법을 소개해드리겠습니다.</em></strong></p>
 <p><img src="https://i.imgur.com/0v9jD2z.png" alt=""><br>
 위와 같은 데이터베이스 구조일 경우의 예로 설명을 진행하겠습니다.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> stmt_multiple_insert = <span class="string">'insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values ?;'</span>; <span class="comment">// 쿼리문</span></div><div class="line"><span class="keyword">var</span> values = [</div><div class="line">    [<span class="string">'user_001'</span>, <span class="string">'pw_01'</span>, <span class="string">'name_01'</span>, <span class="string">'email_01@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_002'</span>, <span class="string">'pw_02'</span>, <span class="string">'name_02'</span>, <span class="string">'email_02@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_003'</span>, <span class="string">'pw_03'</span>, <span class="string">'name_03'</span>, <span class="string">'email_03@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_004'</span>, <span class="string">'pw_04'</span>, <span class="string">'name_04'</span>, <span class="string">'email_04@a.com'</span>, <span class="string">'2016-10-10'</span>],</div><div class="line">    [<span class="string">'user_005'</span>, <span class="string">'pw_05'</span>, <span class="string">'name_05'</span>, <span class="string">'email_05@a.com'</span>, <span class="string">'2016-10-10'</span>]</div><div class="line">];</div><div class="line"></div><div class="line"><span class="keyword">var</span> str_query = connection.query(stmt_multiple_insert, [values], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">        <span class="built_in">console</span>.log(err);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(str_query.sql);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> stmt_multiple_insert = <span class="string">'insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values ?;'</span>; <span class="comment">// 쿼리문</span></span><br><span class="line"><span class="keyword">var</span> values = [</span><br><span class="line">    [<span class="string">'user_001'</span>, <span class="string">'pw_01'</span>, <span class="string">'name_01'</span>, <span class="string">'email_01@a.com'</span>, <span class="string">'2016-10-10'</span>],</span><br><span class="line">    [<span class="string">'user_002'</span>, <span class="string">'pw_02'</span>, <span class="string">'name_02'</span>, <span class="string">'email_02@a.com'</span>, <span class="string">'2016-10-10'</span>],</span><br><span class="line">    [<span class="string">'user_003'</span>, <span class="string">'pw_03'</span>, <span class="string">'name_03'</span>, <span class="string">'email_03@a.com'</span>, <span class="string">'2016-10-10'</span>],</span><br><span class="line">    [<span class="string">'user_004'</span>, <span class="string">'pw_04'</span>, <span class="string">'name_04'</span>, <span class="string">'email_04@a.com'</span>, <span class="string">'2016-10-10'</span>],</span><br><span class="line">    [<span class="string">'user_005'</span>, <span class="string">'pw_05'</span>, <span class="string">'name_05'</span>, <span class="string">'email_05@a.com'</span>, <span class="string">'2016-10-10'</span>]</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str_query = connection.query(stmt_multiple_insert, [values], <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(str_query.sql);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>구조는 간단합니다. <strong><em>쿼리문은 입력값과 1:1로 대응시키고, 입력값은</em></strong> <code><b>var values</b></code> <strong><em>처럼 배열형태로 선언합니다.</em></strong></p>
 <p><code><b>var str_query = connection.query(…)</b></code> 이렇게 connection 객체를 변수로 할당시키고 <code><b>console.log(str_query.sql)</b></code><br>
 으로 해당 쿼리를 확인할 수 있습니다.</p>
 <p>쿼리문을 확인하기 위한 작업이라서 실제 배포하는 소스코드에서는 사용하지 않는 것을 권장합니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">//해당 쿼리문</div><div class="line">insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values</div><div class="line">(&apos;user_001&apos;, &apos;pw_01&apos;, &apos;name_01&apos;, &apos;email_01@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_002&apos;, &apos;pw_02&apos;, &apos;name_02&apos;, &apos;email_02@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_003&apos;, &apos;pw_03&apos;, &apos;name_03&apos;, &apos;email_03@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_004&apos;, &apos;pw_04&apos;, &apos;name_04&apos;, &apos;email_04@a.com&apos;, &apos;2016-10-10&apos;),</div><div class="line">(&apos;user_005&apos;, &apos;pw_05&apos;, &apos;name_05&apos;, &apos;email_05@a.com&apos;, &apos;2016-10-10&apos;);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//해당 쿼리문</span><br><span class="line">insert into `user` (`user_id`, `password`, `nickname`, `email`, `signup_dt`) values</span><br><span class="line">(&apos;user_001&apos;, &apos;pw_01&apos;, &apos;name_01&apos;, &apos;email_01@a.com&apos;, &apos;2016-10-10&apos;),</span><br><span class="line">(&apos;user_002&apos;, &apos;pw_02&apos;, &apos;name_02&apos;, &apos;email_02@a.com&apos;, &apos;2016-10-10&apos;),</span><br><span class="line">(&apos;user_003&apos;, &apos;pw_03&apos;, &apos;name_03&apos;, &apos;email_03@a.com&apos;, &apos;2016-10-10&apos;),</span><br><span class="line">(&apos;user_004&apos;, &apos;pw_04&apos;, &apos;name_04&apos;, &apos;email_04@a.com&apos;, &apos;2016-10-10&apos;),</span><br><span class="line">(&apos;user_005&apos;, &apos;pw_05&apos;, &apos;name_05&apos;, &apos;email_05@a.com&apos;, &apos;2016-10-10&apos;);</span><br></pre></td></tr></table></figure>
 <h3><span id="마무리">마무리</span></h3>
 <p>뭐 별 내용이 없네요…</p>
 
@@ -254,12 +254,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/blog-start-part2/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">&larr; Previous Post</a>
+                            <a href="/API-CALL/" data-toggle="tooltip" data-placement="top" title="Node 다른 서버 API 호출">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/blog-start/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">Next Post &rarr;</a>
+                            <a href="/blog-start-part2/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게(2)">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

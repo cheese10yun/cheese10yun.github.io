@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -162,13 +162,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -177,6 +170,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -235,12 +235,12 @@
                 <h2><span id="spring-boot-https-적용하기">Spring Boot HTTPS 적용하기</span></h2>
 <p>스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.</p>
 <h2><span id="키스토어-생성">키스토어 생성</span></h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000</div><div class="line"></div><div class="line">키 저장소 비밀번호 입력:</div><div class="line">새 비밀번호 다시 입력:</div><div class="line">이름과 성을 입력하십시오.</div><div class="line">  [Unknown]:  test</div><div class="line">조직 단위 이름을 입력하십시오.</div><div class="line">  [Unknown]:  test</div><div class="line">조직 이름을 입력하십시오.</div><div class="line">  [Unknown]:  test</div><div class="line">구/군/시 이름을 입력하십시오?</div><div class="line">  [Unknown]:  test</div><div class="line">시/도 이름을 입력하십시오.</div><div class="line">  [Unknown]:  test</div><div class="line">이 조직의 두 자리 국가 코드를 입력하십시오.</div><div class="line">  [Unknown]:  01</div><div class="line">CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?</div><div class="line">  [아니오]:  y</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000</span><br><span class="line"></span><br><span class="line">키 저장소 비밀번호 입력:</span><br><span class="line">새 비밀번호 다시 입력:</span><br><span class="line">이름과 성을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 단위 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">구/군/시 이름을 입력하십시오?</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">시/도 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">이 조직의 두 자리 국가 코드를 입력하십시오.</span><br><span class="line">  [Unknown]:  01</span><br><span class="line">CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?</span><br><span class="line">  [아니오]:  y</span><br></pre></td></tr></table></figure>
 <h2><span id="properties-설정">properties 설정</span></h2>
 <h3><span id="yml">YML</span></h3>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  ssl:</span></div><div class="line"><span class="attr">    key-store:</span> <span class="string">keystore.p12</span></div><div class="line"><span class="attr">    key-store-password:</span> <span class="string">cheese</span></div><div class="line"><span class="attr">    keyStoreType:</span> <span class="string">PKCS12</span></div><div class="line"><span class="attr">    keyAlias:</span> <span class="string">tomcat</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  ssl:</span></span><br><span class="line"><span class="attr">    key-store:</span> <span class="string">keystore.p12</span></span><br><span class="line"><span class="attr">    key-store-password:</span> <span class="string">cheese</span></span><br><span class="line"><span class="attr">    keyStoreType:</span> <span class="string">PKCS12</span></span><br><span class="line"><span class="attr">    keyAlias:</span> <span class="string">tomcat</span></span><br></pre></td></tr></table></figure>
 <h3><span id="properties">Properties</span></h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">server.ssl.key-store: keystore.p12</div><div class="line">server.ssl.key-store-password: cheese</div><div class="line">server.ssl.keyStoreType: PKCS12</div><div class="line">server.ssl.keyAlias: tomcat</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server.ssl.key-store: keystore.p12</span><br><span class="line">server.ssl.key-store-password: cheese</span><br><span class="line">server.ssl.keyStoreType: PKCS12</span><br><span class="line">server.ssl.keyAlias: tomcat</span><br></pre></td></tr></table></figure>
 <h2><span id="https-요청">https 요청</span></h2>
 <p><img src="https://github.com/cheese10yun/blog-sample/blob/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.38.png?raw=true" alt="스크린샷 2018-09-10 오전 2.01.38"></p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.42.png" alt="스크린샷 2018-09-10 오전 2.01.42"></p>
@@ -260,7 +260,7 @@
                     
                     
                         <li class="next">
-                            <a href="/intellij-Assistant/" data-toggle="tooltip" data-placement="top" title="인텔리제이 Properties 자동완성">Next Post &rarr;</a>
+                            <a href="/spring-jpa-best-10/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -286,7 +286,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spring Boot HTTPS 적용하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">키스토어 생성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">properties 설정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">YML</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Properties</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">https 요청</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spring Boot HTTPS 적용하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">키스토어 생성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">properties 설정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">YML</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Properties</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">https 요청</span></a></li></ol>
         
         </div>
       </aside>

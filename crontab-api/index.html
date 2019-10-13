@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -164,13 +164,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -179,6 +172,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -249,16 +249,16 @@
 </code></pre>
 <h3><span id="crontab-등록">Crontab 등록</span></h3>
 <p>Crontab 설치는 여기서 다루지 않고 진행하겠습니다. 등록하기 전에 crontab에서 실행될 쉘스크립트 파일을 생성합니다. 해당 스크립트 작성은 Crontab등록이후 진행하겠습니다. 저 같은 경우는 crontab.sh로 생성했습니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">crontab -e</div><div class="line">5 0 * * * /path/../crontab.sh</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line">5 0 * * * /path/../crontab.sh</span><br></pre></td></tr></table></figure>
 <p>crontab -e 명령어를 입력하게 되면 VI 모드로 반복될 시간 설정과 해당 스크립프 파일 경로를 설정합니다. 위에서 설명 했다 싶이 매일 12시간 05분에 crontab.sh를 호출하게 설정하였습니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">crontab -l</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -l</span><br></pre></td></tr></table></figure>
 <p>위의 명령어로 crontab 등록을 확인합니다.</p>
 <p><code>crontab.sh</code> 스크립트 파일 작성</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'start delete table info...'</span>;</div><div class="line"></div><div class="line">curl -H <span class="string">"Content-Type: application/json"</span> -X DELETE -d <span class="string">'</span></div><div class="line"><span class="string">  &#123;"sql":"delete from `user` where  `user_id` is not null;"&#125;</span></div><div class="line"><span class="string">  '</span> http://localhost:3500/api/v1/crontab</div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'success...'</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'start delete table info...'</span>;</span><br><span class="line"></span><br><span class="line">curl -H <span class="string">"Content-Type: application/json"</span> -X DELETE -d <span class="string">'</span></span><br><span class="line"><span class="string">  &#123;"sql":"delete from `user` where  `user_id` is not null;"&#125;</span></span><br><span class="line"><span class="string">  '</span> http://localhost:3500/api/v1/crontab</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'success...'</span>;</span><br></pre></td></tr></table></figure>
 <p>사실 게임데이터는 레디스에 저장하고 있어 셈플 예제로는 다소 복잡해서 이전에 설명했던 예제로 간단한 user 테이블의 모든 항목의 user 칼럼을 지우는 예제로 대체 하겠습니다. &quot;DELETE&quot;을 PUT, POST로 변경하셔도 그대로 작성 가능합니다</p>
 <h3><span id="node-api-설정">Node API 설정</span></h3>
 <p><code>api.js</code> <a href="https://cheese10yun.github.io/2017/01/05/passport-mysql/">api.js 설정</a> 은 이전 블로그 포스팅 내용을 참고해주세요.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">router.delete(<span class="string">'/crontab'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> sql = req.body.sql;</div><div class="line">  connection.query(sql, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (err) &#123;</div><div class="line">      res.json(&#123;</div><div class="line">        success: <span class="literal">false</span>,</div><div class="line">        err: err</div><div class="line">      &#125;);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      res.json(&#123;</div><div class="line">        success: <span class="literal">true</span>,</div><div class="line">        msg: <span class="string">'Delete Success'</span></div><div class="line">      &#125;)</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">router.delete(<span class="string">'/crontab'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> sql = req.body.sql;</span><br><span class="line">  connection.query(sql, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      res.json(&#123;</span><br><span class="line">        success: <span class="literal">false</span>,</span><br><span class="line">        err: err</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      res.json(&#123;</span><br><span class="line">        success: <span class="literal">true</span>,</span><br><span class="line">        msg: <span class="string">'Delete Success'</span></span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <p>req.body.sql 객체로 쿼리문을 받고 해당 쿼리문을 실행하는 간단한 예제입니다.</p>
 <h3><span id="crontab-실행-확인">Crontab 실행 확인</span></h3>
 <p><img src="https://i.imgur.com/BFB2EKG.png" alt="EC2 Innound"></p>
@@ -305,7 +305,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Crontab 간단 설명</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Crontab 등록</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Node API 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Crontab 실행 확인</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">마무리…</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Crontab 간단 설명</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Crontab 등록</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Node API 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Crontab 실행 확인</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">마무리…</span></a></li></ol>
         
         </div>
       </aside>

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -162,13 +162,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -177,6 +170,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -234,7 +234,7 @@
 
                 <p><img src="https://i.imgur.com/SHu3JYX.png" alt="EC2 Innound"></p>
 <p>부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">'.modal'</span>).on(<span class="string">'hidden.bs.modal'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'modal close'</span>);</div><div class="line">  $(<span class="keyword">this</span>).find(<span class="string">'form'</span>)[<span class="number">0</span>].reset()</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.modal'</span>).on(<span class="string">'hidden.bs.modal'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'modal close'</span>);</span><br><span class="line">  $(<span class="keyword">this</span>).find(<span class="string">'form'</span>)[<span class="number">0</span>].reset()</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h3><span id="활용방법">활용방법</span></h3>
 <p>해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.</p>
 <p>생각 보다 내용이 없네요…</p>
@@ -277,7 +277,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">활용방법</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">활용방법</span></a></li></ol>
         
         </div>
       </aside>

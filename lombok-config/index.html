@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -162,13 +162,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -177,6 +170,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -235,7 +235,7 @@
                 <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/lombok" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에 공개되어 있습니다.</strong></p>
 <h2><span id="lombokconfig-설정">lombok.config 설정</span></h2>
 <p>lombok.config 설정 파일을 통해서 lombok 어노테이션을 제한 할 수 있습니다. <a href="https://cheese10yun.github.io/lombok/">이전 포스팅에</a>서 언급한 <code>@Data</code> 등 사용을 했을 경우 위험 부담이 있는 어노테이션들은 해당 설정에서 제한 할 수 있습니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">lombok.Setter.flagUsage = error</div><div class="line">lombok.AllArgsConstructor.flagUsage = error</div><div class="line">lombok.ToString.flagUsage = warning</div><div class="line">lombok.data.flagUsage= error</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lombok.Setter.flagUsage = error</span><br><span class="line">lombok.AllArgsConstructor.flagUsage = error</span><br><span class="line">lombok.ToString.flagUsage = warning</span><br><span class="line">lombok.data.flagUsage= error</span><br></pre></td></tr></table></figure>
 <p><strong>lombok.config 파일을 작성한뒤 Proejct root path에 위치시킵니다</strong></p>
 <p><code>lombok.{해당어노테이션}.flagUsage = [warning or error]</code> 이러한 규칙으로 lombok 어노테이션들을 설정 할 수 있습니다.</p>
 <p><img src="https://github.com/cheese10yun/blog-sample/blob/master/lombok/assets/lombok-config.png?raw=true" alt=""></p>
@@ -280,7 +280,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">lombok.config 설정</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">lombok.config 설정</span></a></li></ol>
         
         </div>
       </aside>

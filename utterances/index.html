@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -160,13 +160,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -175,6 +168,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -246,16 +246,16 @@
 <p><code>Blog Post ↔️ Issue Mapping</code> 설정은 자신의 블로그 플랫폼에 맞게 설정합니다.</p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/cheese10yun.github.io/master/utterances/utterances-copy-button.png" alt=""></p>
 <p>최종적으로 <code>Copy</code>을 누르면</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;script src=<span class="string">"https://utteranc.es/client.js"</span></div><div class="line">        repo=<span class="string">"cheese10yun/blog-comment"</span></div><div class="line">        issue-term=<span class="string">"pathname"</span></div><div class="line">        theme=<span class="string">"github-light"</span></div><div class="line">        crossorigin=<span class="string">"anonymous"</span></div><div class="line">        <span class="keyword">async</span>&gt;</div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"https://utteranc.es/client.js"</span></span><br><span class="line">        repo=<span class="string">"cheese10yun/blog-comment"</span></span><br><span class="line">        issue-term=<span class="string">"pathname"</span></span><br><span class="line">        theme=<span class="string">"github-light"</span></span><br><span class="line">        crossorigin=<span class="string">"anonymous"</span></span><br><span class="line">        <span class="keyword">async</span>&gt;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
 <p>위 같은 코드가 복사되는 것을 확인할 수 있습니다. 이제 사용 중인 블로그 플랫폼에 해당 코드를 적용하면 됩니다. 저는 Hexo Blog을 사용하고 있어 Hexo 기준으로 설명드리겠습니다.</p>
 <h2><span id="hexo에-utterances-적용">Hexo에 Utterances 적용</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># _config.yml</span></div><div class="line"><span class="attr">utterances:</span></div><div class="line"><span class="attr">  enable:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  repo:</span> <span class="string">cheese10yun/blog-comment</span></div><div class="line"><span class="attr">  issue_term:</span> <span class="string">title</span></div><div class="line"><span class="attr">  theme:</span> <span class="string">github-light</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># _config.yml</span></span><br><span class="line"><span class="attr">utterances:</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  repo:</span> <span class="string">cheese10yun/blog-comment</span></span><br><span class="line"><span class="attr">  issue_term:</span> <span class="string">title</span></span><br><span class="line"><span class="attr">  theme:</span> <span class="string">github-light</span></span><br></pre></td></tr></table></figure>
 <p>위에서 생성된 코드의 값들을 설정 파일로 분리 시켰습니다. 이제 설정값 기반으로 컴포넌트를 만들면 됩니다</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># /themes/beantech/layout/comment.ejs</div><div class="line">&lt;!--  utteranc comment --&gt;</div><div class="line">&lt;% if (config.utterances.enable == true) &#123; %&gt;</div><div class="line">&lt;script src=&quot;https://utteranc.es/client.js&quot;</div><div class="line">        repo=&quot;&lt;%= config.utterances.repo %&gt;&quot;</div><div class="line">        issue-term=&quot;&lt;%= config.utterances.issue_term %&gt;&quot;</div><div class="line">        label=&quot;Comment&quot;</div><div class="line">        theme=&quot;&lt;%= config.utterances.theme %&gt;&quot;</div><div class="line">        crossorigin=&quot;anonymous&quot;</div><div class="line">        async&gt;</div><div class="line">&lt;/script&gt;</div><div class="line">&lt;% &#125; %&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># /themes/beantech/layout/comment.ejs</span><br><span class="line">&lt;!--  utteranc comment --&gt;</span><br><span class="line">&lt;% if (config.utterances.enable == true) &#123; %&gt;</span><br><span class="line">&lt;script src=&quot;https://utteranc.es/client.js&quot;</span><br><span class="line">        repo=&quot;&lt;%= config.utterances.repo %&gt;&quot;</span><br><span class="line">        issue-term=&quot;&lt;%= config.utterances.issue_term %&gt;&quot;</span><br><span class="line">        label=&quot;Comment&quot;</span><br><span class="line">        theme=&quot;&lt;%= config.utterances.theme %&gt;&quot;</span><br><span class="line">        crossorigin=&quot;anonymous&quot;</span><br><span class="line">        async&gt;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
 <p>Comment 컴포넌트를 만들었으면 Post Layout에 Comment 컴포넌트를 추가하겠습니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># /themes/beantech/layout/post.ejs</div><div class="line">...</div><div class="line">&lt;!-- Comment --&gt;</div><div class="line">&lt;%- partial(&apos;comment&apos;) %&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># /themes/beantech/layout/post.ejs</span><br><span class="line">...</span><br><span class="line">&lt;!-- Comment --&gt;</span><br><span class="line">&lt;%- partial(&apos;comment&apos;) %&gt;</span><br></pre></td></tr></table></figure>
 <p><code>post.ejs</code>에 위의 코드를 입력합니다.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo server --watch --draft</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server --watch --draft</span><br></pre></td></tr></table></figure>
 <p>hexo를 실행하면</p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/cheese10yun.github.io/master/utterances/utterances-view.png" alt=""><br>
 적용된것을 확인 확인할 수있습니다.</p>
@@ -272,7 +272,7 @@
                     
                     
                         <li class="next">
-                            <a href="/생산성향상/" data-toggle="tooltip" data-placement="top" title="생산성 향상 - 비기는 없다">Next Post &rarr;</a>
+                            <a href="/생산성향상/" data-toggle="tooltip" data-placement="top" title="생산성 향상 - 비기는 없다">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -298,7 +298,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Utterances 소개</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Utterances 적용하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Hexo에 Utterances 적용</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Utterances 소개</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Utterances 적용하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Hexo에 Utterances 적용</span></a></li></ol>
         
         </div>
       </aside>

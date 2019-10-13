@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="nofollow">
@@ -164,13 +164,6 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -179,6 +172,13 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -266,14 +266,14 @@
 </table>
 <p>위 처럼 환경이 분리되었을 경우를 기준으로 설명드리겠습니다.</p>
 <h2><span id="applicationyml">application.yml</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>모든 환경에서 공통으로 사용할 정보들을 작성합니다.</li>
 <li>모든 환경에서 사용할 것을 공통으로 사용하기 때문에 코드의 중복과 변경에 이점이 있습니다.</li>
 <li>본 예제에서는 port만 공통으로 설정했습니다.</li>
 </ul>
 <h2><span id="application-envyml">application-{env}.yml</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="attr">user:</span></div><div class="line"><span class="attr">  email:</span> <span class="string">"yun@test"</span></div><div class="line"><span class="attr">  nickname:</span> <span class="string">"nickname"</span></div><div class="line"><span class="attr">  age:</span> <span class="number">28</span></div><div class="line"><span class="attr">  auth:</span> <span class="literal">false</span></div><div class="line"><span class="attr">  amount:</span> <span class="number">101</span></div><div class="line"></div><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  jpa:</span></div><div class="line"><span class="attr">    database:</span> <span class="string">h2</span></div><div class="line"><span class="attr">    hibernate:</span></div><div class="line"><span class="attr">      ddl-auto:</span> <span class="string">create-drop</span></div><div class="line"><span class="attr">    show-sql:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  datasource:</span></div><div class="line"><span class="attr">    data:</span> <span class="attr">classpath:init.sql</span> <span class="comment"># 시작할때 실행시킬 script</span></div><div class="line"></div><div class="line"><span class="attr">  jackson:</span></div><div class="line"><span class="attr">    serialization:</span></div><div class="line"><span class="attr">      WRITE_DATES_AS_TIMESTAMPS:</span> <span class="literal">false</span></div><div class="line"></div><div class="line"><span class="attr">logging:</span></div><div class="line"><span class="attr">  level:</span></div><div class="line"><span class="attr">    ROOT:</span> <span class="string">info</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line"><span class="attr">  email:</span> <span class="string">"yun@test"</span></span><br><span class="line"><span class="attr">  nickname:</span> <span class="string">"nickname"</span></span><br><span class="line"><span class="attr">  age:</span> <span class="number">28</span></span><br><span class="line"><span class="attr">  auth:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  amount:</span> <span class="number">101</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  jpa:</span></span><br><span class="line"><span class="attr">    database:</span> <span class="string">h2</span></span><br><span class="line"><span class="attr">    hibernate:</span></span><br><span class="line"><span class="attr">      ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line"><span class="attr">    show-sql:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  datasource:</span></span><br><span class="line"><span class="attr">    data:</span> <span class="attr">classpath:init.sql</span> <span class="comment"># 시작할때 실행시킬 script</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  jackson:</span></span><br><span class="line"><span class="attr">    serialization:</span></span><br><span class="line"><span class="attr">      WRITE_DATES_AS_TIMESTAMPS:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line"><span class="attr">    ROOT:</span> <span class="string">info</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>각 개발환경에 맞는 properties 설정을 정의합니다.</li>
 <li>대표적으로 데이터베이스 정보, 외부 설정 정보 등이 있습니다.</li>
@@ -281,7 +281,7 @@
 </ul>
 <h2><span id="env-설정-방법">env 설정 방법</span></h2>
 <h3><span id="applicationyml에서-설정하는-방법">application.yml에서 설정하는 방법</span></h3>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  profiles:</span></div><div class="line"><span class="attr">    active:</span> <span class="string">local</span></div><div class="line"></div><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  profiles:</span></span><br><span class="line"><span class="attr">    active:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li><code>profiles.active</code> 속성에 원하는 정보 env를 작성합니다.</li>
 </ul>
@@ -295,7 +295,7 @@
 <h2><span id="우선순위">우선순위</span></h2>
 <p>외부 환경 설정에 대한 우선순위는 <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config" rel="external nofollow noopener noreferrer" target="_blank">Spring-Boot Document</a>에 표시되어 있습니다. 실제 배포시에는 우선순위를 반드시 고려해야합니다.</p>
 <h2><span id="env-구동">env 구동</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  profiles:</span></div><div class="line"><span class="attr">    active:</span> <span class="string">local</span></div><div class="line"></div><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">8080</span></div></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  profiles:</span></span><br><span class="line"><span class="attr">    active:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
 <p><code>application.yml</code>으로 설정해서 스프링을 구동시켜보겠습니다.</p>
 <p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/spring-profile.png" alt=""></p>
 <p><code>application.yml</code>에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.</p>
@@ -338,7 +338,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">application.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">application-{env}.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">env 설정 방법</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">application.yml에서 설정하는 방법</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">IntelliJ에서 설정 하는 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">우선순위</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">env 구동</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">application.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">application-{env}.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">env 설정 방법</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">application.yml에서 설정하는 방법</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">IntelliJ에서 설정 하는 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">우선순위</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">env 구동</span></a></li></ol>
         
         </div>
       </aside>
