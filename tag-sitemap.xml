@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
+        <lastmod>2019-10-16T15:16:06.322Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
+        <lastmod>2019-10-16T15:16:06.322Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/explain/</loc>
         <lastmod>2019-10-13T15:58:15.080Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -123,20 +137,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Tip/</loc>
-        <lastmod>2019-07-03T15:49:56.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
-        <lastmod>2019-07-03T15:49:56.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
         <lastmod>2019-07-03T15:49:56.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

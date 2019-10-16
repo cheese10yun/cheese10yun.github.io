@@ -22,14 +22,14 @@
     </url>
     
     <url>
-        <loc>https://cheese10yun.github.io/tags/</loc>
+        <loc>https://cheese10yun.github.io/archive/</loc>
         <lastmod>2017-10-12T13:35:04.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://cheese10yun.github.io/archive/</loc>
+        <loc>https://cheese10yun.github.io/tags/</loc>
         <lastmod>2017-10-12T13:35:04.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>

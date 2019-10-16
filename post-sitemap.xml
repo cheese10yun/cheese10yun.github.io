@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/intellij-execute-gradle-task/</loc>
+        <lastmod>2019-10-16T15:16:06.322Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/mysql-explian/</loc>
         <lastmod>2019-10-13T15:58:15.080Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -736,7 +744,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-board/</loc>
+        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -744,7 +752,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
+        <loc>https://cheese10yun.github.io/loopback-board/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -784,14 +792,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/n-1/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -801,6 +801,14 @@
 
     <url>
         <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
