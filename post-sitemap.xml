@@ -8,8 +8,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/intellij-execute-gradle-task/</loc>
-        <lastmod>2019-10-16T15:16:06.322Z</lastmod>
+        <loc>https://cheese10yun.github.io/jpa-nplus-1/</loc>
+        <lastmod>2019-10-27T09:23:58.463Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -17,7 +17,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/mysql-explian/</loc>
-        <lastmod>2019-10-13T15:58:15.080Z</lastmod>
+        <lastmod>2019-10-16T15:21:06.915Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/intellij-execute-gradle-task/</loc>
+        <lastmod>2019-10-16T15:16:06.322Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -808,7 +816,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -816,7 +824,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
