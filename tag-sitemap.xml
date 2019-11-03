@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2019-11-03T09:27:33.008Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Junit5/</loc>
+        <lastmod>2019-11-03T09:27:33.008Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/N-1/</loc>
         <lastmod>2019-10-27T16:19:13.900Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -54,13 +68,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2019-10-01T14:49:46.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2019-09-21T17:31:04.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
