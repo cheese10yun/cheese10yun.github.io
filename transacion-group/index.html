@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="스프링 Immutable으로 Properties 설정하기 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/immutable-properties/">
-    <meta property="og:description" content="스프링 Immutable으로 Properties 설정하기 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="스프링 트랜잭션 단위 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/transacion-group/">
+    <meta property="og:description" content="스프링 트랜잭션 단위 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/immutable-properties/">
+    <link rel="canonical" href="https://cheese10yun.github.io/transacion-group/">
 
 
     <title>
         
-          스프링 Immutable으로 Properties 설정하기 - Yun Blog | 기술 블로그
+          스프링 트랜잭션 단위 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/immutable-properties/">
+    <link rel="canonical" href="https://cheese10yun.github.io/transacion-group/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#properties" title="properties">properties</a>
+                              <a class="tag" href="/tags/#트랜잭션" title="트랜잭션">트랜잭션</a>
                             
                         </div>
-                        <h1>스프링 Immutable으로 Properties 설정하기</h1>
+                        <h1>스프링 트랜잭션 단위</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2019-11-20
+                            2019-11-23
                         </span>
                     </div>
                 
@@ -230,26 +230,23 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/kotlin-junit5" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에 공개되어 있습니다.</strong></p>
-<p>Spring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다. 해당 내용은 <a href="https://github.com/cheese10yun/spring-jpa-best-practices/blob/master/doc/step-10.md" rel="external nofollow noopener noreferrer" target="_blank">Properties 설정값 가져오기</a>를 참조하시면 됩니다. 기존 Properties의 단점은 Mutable이라는 점입니다. 아래 예제 코드에서 설명드리겠습니다.</p>
-<h2><span id="기존-mutable-properties-방법">기존 Mutable Properties 방법</span></h2>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"user"</span>)</span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleProperties</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Email</span></span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="meta">@NotEmpty</span></span><br><span class="line">    <span class="keyword">private</span> String nickname;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> auth;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> amount;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getter, setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>기존 방식은 위처럼 setter 기반으로 바인딩 되기 때문에 해당 Properties 설정은 언제든지 변경될 가능성이 있습니다.</strong> 이런 단점을 스프링 부트 2.2에서는 생성자 바인딩을 지원해서 해결했습니다.</p>
-<h2><span id="immutable-properties-방법">Immutable Properties 방법</span></h2>
-<p>해당 예제는 Kotlin <code>data class</code> 기준으로 작성했습니다.</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConstructorBinding</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = <span class="meta-string">"user"</span>)</span></span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProperties</span></span>(</span><br><span class="line">        <span class="meta">@field:Email</span></span><br><span class="line">        <span class="keyword">val</span> email: String,</span><br><span class="line"></span><br><span class="line">        <span class="meta">@field:NotEmpty</span></span><br><span class="line">        <span class="keyword">val</span> nickname: String,</span><br><span class="line"></span><br><span class="line">        <span class="meta">@field:Min</span>(<span class="number">10</span>)</span><br><span class="line">        <span class="keyword">val</span> age: <span class="built_in">Int</span>,</span><br><span class="line"></span><br><span class="line">        <span class="meta">@field:NotNull</span></span><br><span class="line">        <span class="keyword">val</span> auth: <span class="built_in">Boolean</span>,</span><br><span class="line"></span><br><span class="line">        <span class="meta">@field:Min</span>(<span class="number">10</span>)</span><br><span class="line">        <span class="keyword">val</span> amount: <span class="built_in">Double</span>,</span><br><span class="line"></span><br><span class="line">        <span class="meta">@DateTimeFormat(pattern = <span class="meta-string">"yyyy-MM-dd"</span>)</span></span><br><span class="line">        <span class="meta">@field:NotNull</span></span><br><span class="line">        <span class="keyword">val</span> date: LocalDate</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>사용법은 간단합니다. <code>@ConstructorBinding</code>을 추가하고 <code>data class</code>으로 넘겨받을 값을 생성자로 지정합니다. 위처럼 작성하면 객체는 Immutable 상태가 됩니다. <strong>스프링 부트 2.2.1 버전부터는 <code>@ConfigurationProperties</code> scanning 방식이 disabled 되면서 <code>@EnableConfigurationProperties</code>을 따로 지정해야 합니다. 자세한 내용은 <a href="https://github.com/spring-projects/spring-boot/issues/18674" rel="external nofollow noopener noreferrer" target="_blank">여기</a>를 참고하세요.</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(UserProperties::class)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KotlinJunit5Application</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;KotlinJunit5Application&gt;(*args)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.2.1 버전 부터는 <code>@EnableConfigurationProperties</code>으로 클래스를 지정해야합니다. <code>@Validated</code> 어노테이션으로 properteis에 대한 검증도 가능합니다.</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line"><span class="attr">  email:</span> <span class="string">"yuntest.com"</span></span><br><span class="line"><span class="attr">  nickname:</span> <span class="string">""</span></span><br><span class="line"><span class="attr">  age:</span> <span class="number">9</span></span><br><span class="line"><span class="attr">  auth:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  amount:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  date:</span> <span class="string">"2019-10-10"</span></span><br></pre></td></tr></table></figure>
-<p>위 처럼 유효하지 않은 값들에 대해서 아래 화면처럼 검증할 수 있습니다.</p>
-<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/kotlin-junit5//img/error-img.png" alt=""></p>
-<p>스프링 부트가 구동될 때 해당 값에 대한 유효성 검사를 어노테이션 기반으로 쉽게 검증할 수 있습니다. <strong>해당 값이 유효하지 않은 경우 스프링이 구동되지 않기 때문에 장점이 있습니다.</strong></p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line"><span class="attr">  email:</span> <span class="string">"yun@test.com"</span></span><br><span class="line"><span class="attr">  nickname:</span> <span class="string">"yun"</span></span><br><span class="line"><span class="attr">  age:</span> <span class="number">28</span></span><br><span class="line"><span class="attr">  auth:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  amount:</span> <span class="number">101</span></span><br><span class="line"><span class="attr">  date:</span> <span class="string">"2019-10-10"</span></span><br></pre></td></tr></table></figure>
-<p>위 <code>yml</code> 처럼 유효한 값을 입력하면 정상적으로 동작하는 것을 확인할 수 있습니다.</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppRunner</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> userProperties: UserProperties) :ApplicationRunner&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">run</span><span class="params">(args: <span class="type">ApplicationArguments</span>?)</span></span> &#123;</span><br><span class="line">        println(<span class="string">"====================="</span>)</span><br><span class="line">        println(userProperties.toString())</span><br><span class="line">        println(<span class="string">"====================="</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/kotlin-junit5//img/properteis-result.png" alt=""><br>
-값들이 유요한 경우 객체에 바인딩 되는 것을 학인할 수 있습니다.</p>
+                <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/sample"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleController</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> aRepository: ARepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> bRepository: BRepository</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">transaction</span><span class="params">()</span></span> &#123;</span><br><span class="line">        aRepository.save(A(<span class="string">"A"</span>))</span><br><span class="line">        bRepository.save(B(<span class="string">"B"</span>)) <span class="comment">// 여기에서 exception 발생시 위 save는 Rollback 되지 않는다.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>bRepository.save(B(&quot;B&quot;))</code> 에서 예외가 발생했을 경우 트랜잭션 단위는 클라스 단위로 지정되기 때문에 <code>aRepository.save(A(&quot;A&quot;))</code> Rollback 되지 않습니다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/transacion-proxy.png?raw=true" alt=""></p>
+<p>스프링 부트에서는 기본적으로 CGLIB Proxy 방식으로 트랜잭션을 처리합니다. (이전에는  Dynamic Proxy 패턴) Proxy 패턴을 사용하기 때문에 클래스 단위로 트랜잭션이 시작되고 묶이게 됩니다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/transacion-group.png?raw=true" alt=""></p>
+<p>트랜잭션 단위를 보면 위와 같습니다. Proxy 방식이기 때문에 클래스 단위로 묶이게 됩니다. 그렇가면 JPA Repository는 interface인데 어떻게 트랜잭션이 발생하게 되는지 의문을 갖는 분들도 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ARepository</span> : <span class="type">JpaRepository</span>&lt;<span class="type">A, Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/jpa-simple-repository.png?raw=true" alt=""></p>
+<p><code>JpaRepository</code> 인터페이스의 세부 구현체가 <code>SimpleJpaRepository</code>가 있습니다. 세부 코드를 보면 아래와 같습니다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/jpa-simple-repository-save.png?raw=true" alt=""></p>
+<p><code>save()</code> 메서드에 <code>@Transactional</code>이 있고 여기에서 트랜잭션이 동작하게 됩니다. 다시 본론으로 돌아와서 아래 그림처럼 트랜잭션 그룹이 다르기 때문에 commit, rollback 기준도 클래스를 기반으로 나뉘게 됩니다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/transacion-group.png?raw=true" alt=""></p>
+<p>그렇다면 위 두 개의 트랜잭션을 묶을려면 어떻게 해야할까요? 답은 간단합니다 이 두개를 묶는 트랜잭션을 설정하면 됩니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/sample"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleController</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> aRepository: ARepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> bRepository: BRepository</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="meta">@Transactional</span> <span class="comment">// aRepository, bRepository 트랜잭션을 묶는다.</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">transaction</span><span class="params">()</span></span> &#123;</span><br><span class="line">        aRepository.save(A(<span class="string">"A"</span>))</span><br><span class="line">        bRepository.save(B(<span class="string">"B"</span>)) <span class="comment">// 여기에서 exception 발생시 위 save는 Rollback 된다.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@Transactional</code>을 추가하게 되면 <code>aRepository, bRepository</code> 트랜잭션이 같이 묶이게 됩니다.(물론 컨트롤러에 추가하는 것보다 별도의 트랜잭션를 담당하는 Service 영역을 추가하는 것이 바람직합니다.)</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/transacion-group-2.png?raw=true" alt=""></p>
+<p>이렇게 되면 두 트랜잭션이 같이 묶이게 되고 <code>bRepository.save(B(&quot;B&quot;))</code> 에서 exception이 발생하게 되면 <code>bRepository.save(B(&quot;B&quot;))</code>, <code>aRepository.save(A(&quot;A&quot;))</code>이 모두 rollback이 진행됩니다.</p>
 
                 
 
@@ -257,13 +254,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/transacion-group/" data-toggle="tooltip" data-placement="top" title="스프링 트랜잭션 단위">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/junit5-in-spring/" data-toggle="tooltip" data-placement="top" title="Junit5 with Spring boot">Next Post &rarr;</a>
+                            <a href="/immutable-properties/" data-toggle="tooltip" data-placement="top" title="스프링 Immutable으로 Properties 설정하기">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -289,7 +282,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">기존 Mutable Properties 방법</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Immutable Properties 방법</span></a></li></ol>
+          <ol class="nav">none</ol>
         
         </div>
       </aside>
@@ -309,7 +302,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#properties" title="properties">properties</a>
+                          <a class="tag" href="/tags/#트랜잭션" title="트랜잭션">트랜잭션</a>
                         
                     </div>
                 </section>
