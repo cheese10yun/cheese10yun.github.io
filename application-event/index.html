@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/blog-start-part2/">
-    <meta property="og:description" content="블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="스프링 Application Event - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/application-event/">
+    <meta property="og:description" content="스프링 Application Event - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/application-event/">
 
 
     <title>
         
-          블로그를 시작하려는 당신에게(2) - Yun Blog | 기술 블로그
+          스프링 Application Event - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/blog-start-part2/">
+    <link rel="canonical" href="https://cheese10yun.github.io/application-event/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,14 +106,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                              <a class="tag" href="/tags/#트랜잭션" title="트랜잭션">트랜잭션</a>
                             
                         </div>
-                        <h1>블로그를 시작하려는 당신에게(2)</h1>
+                        <h1>스프링 Application Event</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2017-01-31
+                            2019-11-30
                         </span>
                     </div>
                 
@@ -230,36 +230,29 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://cheese10yun.github.io/blog-start">블로그를 시작하려는 당신에게(1)</a>에서는 블로그를 선택하는 과정을 말했다면 이번 포스팅은 블로그를 많은 사람이 볼 수 있도록 노출 시키는 방법에 대해서 다루어보겠다.</p>
-<p>이왕 시작한 블로그 많은 사람이 보는 게 좀 더 좋지 않겠는가?<del><b>누구나 관종의 피는 가지고 있으니 말이다.</b></del></p>
-<p><strong>네이버 웹마스터 도구, 구글 웹마스터, 구글 에널틱스를 블로그를 노출 시키고 관리해 보자.</strong></p>
-<h3><span id="네이버-웹마스터-도구">네이버 웹마스터 도구</span></h3>
-<p><strong>네이버 웹마스터</strong>에들어가서 사이트를 추가 시킨다.</p>
-<p><img src="https://i.imgur.com/iJNq0q1.png" alt=""></p>
-<p><strong>등록 절차는 간단하니 다루지 않겠다. (사실 스크린샷을 깜빡하고 못 찍었다.)</strong></p>
-<h4><span id="검증에서-웹-페이지-최적화-검사를-진행한다">검증에서 웹 페이지 최적화 검사를 진행한다.</span></h4>
-<p><img src="https://i.imgur.com/IVQHkGT.png" alt=""></p>
-<p>검색결과가 표시되고 문제가 있는 경우는 빨간색으로 X 표시가 나타난다. <strong><em>그 빨간색 표시를 중점으로 개선작업을 진행하면 된다. ?를 클릭하면 친절하게 개선방법을 네이버에서 제안해준다. 대표적인 설정만 짚고 넘어가겠다.</em></strong></p>
-<p><img src="https://i.imgur.com/GfExIWL.png" alt=""></p>
-<h5><span id="오픈-그래프-정보-amp-소셜-미디어">오픈 그래프 정보 &amp; 소셜 미디어</span></h5>
-<p>오픈 그래프 &amp; 소셜미디어 태그는 사이트가 소셜 미디어로 공유될 때 우선적으로 활용되는 정보로, 아래 그림 처럼 미리 사이트를 보여주는 기능이다.</p>
-<p><img src="https://i.imgur.com/e2onpRV.png" alt=""></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--오픈 그래프 정보--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:type"</span> <span class="attr">content</span>=<span class="string">"blog"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:description"</span> <span class="attr">content</span>=<span class="string">"Node.js....."</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:image"</span> <span class="attr">content</span>=<span class="string">"https:...images/cover4.jpg"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">property</span>=<span class="string">"og:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--소셜 미디어--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:card"</span> <span class="attr">content</span>=<span class="string">"summary"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:title"</span> <span class="attr">content</span>=<span class="string">"Yun Blog"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:url"</span> <span class="attr">content</span>=<span class="string">"https://cheese10yun.github.io/"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:image"</span> <span class="attr">content</span>=<span class="string">"https:../images/cover4.jpg"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"twitter:description"</span> <span class="attr">content</span>=<span class="string">"...."</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-<p><strong>해당 테그가 추가안되있는 경우에는 추가시키자.</strong></p>
-<p><img src="/img/blog-start-2/2.png" alt=""></p>
-<p><strong>블로그에 글이 추가되면 네이버 검색로봇이 웹 페이지에 접근해 정보를 수집해가 자동으로 블로그를 네이버에 노출 시켜준다. 설정은 아주 간단하다.</strong></p>
-<h5><span id="robotstxt-설정">robots.txt 설정</span></h5>
-<p><img src="https://i.imgur.com/vyJsG6s.png" alt=""></p>
-<p>검증 탭의 <strong>robots.txt</strong> 에서 설정이 가능하다.<br>
-네이버에서 해당 robots.txt 파일을 작성해주고 그것을 <strong><em>복사해서 robots.txt을 root에 위치시킨다.</em></strong></p>
-<p>작업이 완료되면 robots.txt 검사를 진행한다. 정상 처리되었으면 ~~수집이 가능합니다. 라는 alert 창을 확인할 수가 있을 것이다.</p>
-<h5><span id="rss-제출">RSS 제출</span></h5>
-<p><img src="https://i.imgur.com/TH3OBbT.png" alt=""></p>
-<p>요청에 RSS 제출 텝에서 RSS 제출해준다.</p>
-<h4><span id="웹-페이지-최적화-검사">웹 페이지 최적화 검사</span></h4>
-<p>위의 작업을 완료하면 다시 웹 페이지 최적화 작업을 진행하고 안 돼 있는 부분이 있다면 네이버에서 제안해주는 작업을 진행한다.</p>
-<h3><span id="마무리">마무리</span></h3>
-<p>생각보다 정리해야할 내용이 많아 구글 웹마스터, 구글 에널틱스는 다음 포스팅에서 다루겠습니다… 분량 조절 실패</p>
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/application-event" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인할 수 있습니다.</p>
+</blockquote>
+<p>스프링에서는 Application Event를 재공해주고 있습니다. <code>Application Event Publisher</code>, <code>Application Event Subscriber</code> 방식으로 결합도를 낮춰 느슨한 결합 관계를 갖을 수 있습니다.</p>
+<h2><span id="시나리오">시나리오</span></h2>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/event-part-1.png?raw=true" alt=""></p>
+<p>주문 단계에 (주문, 결제)가 완료되면 주문 완료 이후 로직들이 동작해야 합니다. 대표적으로</p>
+<ul>
+<li>장바구니 제거 (장바구니에 등록된 상품 주문시)</li>
+<li>제품 재고 변경</li>
+<li>주문 완료 알람 (시스템, 유저 등등)</li>
+</ul>
+<p>주문 완료 이후 매우 다양한 작업들이 있고 해당 로직들이 <code>OrderService</code>에 모두 구현하는 경우 <strong>강한 결합 관계</strong>를 갖게 되고 변경 및 유지보수에 악영향이 발생하게 됩니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderService</span></span>(</span><br><span class="line">        ... <span class="comment">// 필요한 의존성 주입, 강한 관계를 갖는 경우 필요한 의존성 들이 많아진다.</span></span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">order</span><span class="params">()</span></span>: Order &#123;</span><br><span class="line">        orderRepository.save(order) <span class="comment">// 주문 저장</span></span><br><span class="line">        stockService.adjust(order) <span class="comment">// 재고 조정</span></span><br><span class="line">        cartService.remove(order) <span class="comment">// 장바구니 제거 (장바구니 상품중 주문 완료된 상품 제거)</span></span><br><span class="line">        <span class="keyword">return</span> order</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>OrderService</code> 객체에 의존성 주입받아야 하는 항목들이 많아지는 것이 대표적인 외부와 결합관계를 갖게 되는 대표적인 신호입니다. 주문, 주문 완료 이후 로직이 추가될 때마다 <code>OrderService</code>의 변경이 야기됩니다. 이런 문제를 <code>Application Event</code>으로 쉽게 해결 할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/event-part-2.png?raw=true" alt=""></p>
+<p><code>주문-결제</code> 이후 결제 완료 이벤트를 발생시키고 주문 완료 이후 로직들은 <code>Application Event Subscriber</code>에서 구현하게 작성하는 구조를 갖을 수 있습니다. 그렇게 되면 <code>OrderService</code>에 필요 의존성이 줄게 되고 자연스럽게 해당 서비스의 책임이 작아지게 되며 이벤트에 의해 느슨한 결합관계를 갖게 됩니다.</p>
+<h2><span id="구현">구현</span></h2>
+<p>주문 완료 이후 구매한 제품중 장바구니에 있는 제품을 제거 하는 로직을 구현 했습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderService</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> orderRepository: OrderRepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> itemRepository: ItemRepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> eventPublisher: ApplicationEventPublisher</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">order</span><span class="params">(itemCode: <span class="type">List</span>&lt;<span class="type">String</span>&gt;)</span></span>: Order &#123;</span><br><span class="line">        <span class="keyword">val</span> items = itemRepository.findByCodeIn(itemCode) <span class="comment">// 상품(Item) 조회</span></span><br><span class="line">        <span class="keyword">val</span> orderItems: MutableList&lt;OrderItem&gt; = mutableListOf()</span><br><span class="line">        items.mapTo(orderItems) &#123; OrderItem(it.code, it.price, it.name) &#125;</span><br><span class="line">        <span class="keyword">val</span> order = orderRepository.save(Order(orderItems))</span><br><span class="line">        eventPublisher.publishEvent(OrderCompletedEvent(itemCode)) <span class="comment">// 주문 완료 이벤트 발생, 주문한 아이템 code 전송</span></span><br><span class="line">        <span class="keyword">return</span> order</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>요청 받은 상품(Item)를 주문 하고, 주문 완료 event를 발생시키게 됩니다. 장바구니 제거 관련 코드는 존재하지 않고 주문 완료 이벤트만 발생시킵니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderEventHandler</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> cartRepository: CartRepository</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@EventListener</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">orderEventHandler</span><span class="params">(event: <span class="type">OrderCompletedEvent</span>)</span></span> &#123;</span><br><span class="line">        cartRepository.deleteAllByCodes(codes = event.itemCodes)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>이벤트 리스너를 담당합니다. 주문 완료 이벤트가 발생하면 해당 리스너가 동작하게 되고 장바구니에서 주문 상품들을 제거하는 코드입니다.</p>
 
                 
 
@@ -267,13 +260,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/mysql-multiple-insert/" data-toggle="tooltip" data-placement="top" title="Node Mysql Multiple Insert">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/blog-start/" data-toggle="tooltip" data-placement="top" title="블로그를 시작하려는 당신에게">Next Post &rarr;</a>
+                            <a href="/transacion-group/" data-toggle="tooltip" data-placement="top" title="스프링 트랜잭션 단위">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -299,7 +288,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">네이버 웹마스터 도구</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">검증에서 웹 페이지 최적화 검사를 진행한다.</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">오픈 그래프 정보 &amp; 소셜 미디어</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">robots.txt 설정</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">RSS 제출</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">웹 페이지 최적화 검사</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">시나리오</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">구현</span></a></li></ol>
         
         </div>
       </aside>
@@ -319,7 +308,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                          <a class="tag" href="/tags/#트랜잭션" title="트랜잭션">트랜잭션</a>
                         
                     </div>
                 </section>

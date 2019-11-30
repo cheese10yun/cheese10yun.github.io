@@ -160,14 +160,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -230,7 +230,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/sample"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleController</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> aRepository: ARepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> bRepository: BRepository</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">transaction</span><span class="params">()</span></span> &#123;</span><br><span class="line">        aRepository.save(A(<span class="string">"A"</span>))</span><br><span class="line">        bRepository.save(B(<span class="string">"B"</span>)) <span class="comment">// 여기에서 exception 발생시 위 save는 Rollback 되지 않는다.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/kotlin-junit5" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인할 수 있습니다.</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/sample"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleController</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> aRepository: ARepository,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> bRepository: BRepository</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">transaction</span><span class="params">()</span></span> &#123;</span><br><span class="line">        aRepository.save(A(<span class="string">"A"</span>))</span><br><span class="line">        bRepository.save(B(<span class="string">"B"</span>)) <span class="comment">// 여기에서 exception 발생시 위 save는 Rollback 되지 않는다.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>bRepository.save(B(&quot;B&quot;))</code> 에서 예외가 발생했을 경우 트랜잭션 단위는 클라스 단위로 지정되기 때문에 <code>aRepository.save(A(&quot;A&quot;))</code> Rollback 되지 않습니다.</p>
 <p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/transacion-proxy.png?raw=true" alt=""></p>
 <p>스프링 부트에서는 기본적으로 CGLIB Proxy 방식으로 트랜잭션을 처리합니다. (이전에는  Dynamic Proxy 패턴) Proxy 패턴을 사용하기 때문에 클래스 단위로 트랜잭션이 시작되고 묶이게 됩니다.</p>
@@ -253,6 +256,10 @@
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/application-event/" data-toggle="tooltip" data-placement="top" title="스프링 Application Event">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
