@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Lock/</loc>
+        <lastmod>2019-11-30T16:31:32.288Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Transaction/</loc>
+        <lastmod>2019-11-30T16:31:32.288Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98/</loc>
         <lastmod>2019-11-30T15:03:24.618Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -159,20 +173,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Utterances/</loc>
         <lastmod>2019-08-31T15:30:12.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Lock/</loc>
-        <lastmod>2019-08-28T15:33:30.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Transaction/</loc>
-        <lastmod>2019-08-28T15:33:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

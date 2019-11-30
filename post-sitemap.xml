@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/transaction-lcok/</loc>
+        <lastmod>2019-11-30T16:31:32.288Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/application-event/</loc>
         <lastmod>2019-11-30T15:03:24.618Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -186,14 +194,6 @@
     <url>
         <loc>https://cheese10yun.github.io/utterances/</loc>
         <lastmod>2019-08-31T15:30:12.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/transaction-lcok/</loc>
-        <lastmod>2019-08-28T15:33:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
