@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
+        <lastmod>2020-01-13T16:18:49.903Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2020-01-13T16:18:49.903Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Lock/</loc>
         <lastmod>2019-11-30T16:45:00.052Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -39,13 +53,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2019-11-23T13:04:32.074Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2019-11-23T13:04:32.074Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -138,13 +145,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
         <lastmod>2019-10-16T15:16:06.322Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Batch/</loc>
-        <lastmod>2019-10-01T14:49:46.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
