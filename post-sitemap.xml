@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-persistent-context/</loc>
+        <lastmod>2020-01-26T16:03:06.262Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
         <lastmod>2020-01-13T16:18:49.903Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -840,7 +848,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -848,7 +856,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
