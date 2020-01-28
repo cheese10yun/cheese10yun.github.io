@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-flush/</loc>
+        <lastmod>2020-01-28T15:20:58.557Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-persistent-context/</loc>
         <lastmod>2020-01-28T13:43:23.224Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -848,7 +856,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -856,7 +864,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
