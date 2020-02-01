@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/rest-template-mock-test/</loc>
+        <lastmod>2020-02-01T09:32:09.164Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-bulk/</loc>
         <lastmod>2020-02-01T04:21:28.835Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -872,7 +880,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -880,7 +888,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

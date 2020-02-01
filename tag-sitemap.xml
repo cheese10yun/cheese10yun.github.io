@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/RestTemplate/</loc>
+        <lastmod>2020-02-01T09:32:09.164Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2020-02-01T09:32:09.164Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Bulk/</loc>
         <lastmod>2020-02-01T04:21:28.835Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -61,13 +75,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/N-1/</loc>
         <lastmod>2019-11-28T16:09:50.416Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2019-11-23T13:04:32.074Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
