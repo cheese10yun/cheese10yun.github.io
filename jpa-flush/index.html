@@ -169,14 +169,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -259,8 +259,8 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">insert(member1); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member2); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member3); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member4); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member5); <span class="comment">// INSERT INTO ...</span></span><br><span class="line"></span><br><span class="line">commit();</span><br></pre></td></tr></table></figure>
 <p><strong>네트워크 호출 한번은 단순한 메소드를 수만 번 호출하는 것보다 더 큰 비용이 든다.</strong> 이 코드는 5번의 INSERT SQL과 1번의 커밋으로 총 6번 데이터 베이스와 통신한다. 이것을 최적화하라면 5번의 INSERT SQL을 모아서 한 번에 데이터베이스로 보내면 된다. <strong>JDBC가 제공하는 SQL 배치 기능을 사용하면 SQL을 모아서 데이터베이스에 한 번에 보낼 수 있다.</strong> 하지만 이 기능을 사용하라면 많은 코드를 수정해야한다. <strong>JPA는 플러시 기능이 있이므로 SQL 배치 기능을 효과적으로 사용할 수 있다.</strong></p>
 <p><strong><code>hibernate.jdbc.batch_size</code> 속성의 값을 50으로 주면 최대 50건씩 모아서 SQL 배치를 실행한다. 하지만 SQL 배치는 같은 SQL일 때만 유효하다. 중간에 다른 처리가 들어가면 SQL 배치를 다시 시작한다.</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 3</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 4</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Orders()); <span class="comment">// 5, 다른 SQL이 추가 되었기 때문에  SQL 배치를 다시 시작 해야 한다</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
-<p>1,2,3,4를 모아서 하나의 SQL 배치를 실행하고 5를 한 번 실행하고 1,2을 모아서 실행한다. 따라서 총 3번의 SQL 배치를 실행한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 3</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 4</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Orders()); <span class="comment">// 1-1, 다른 SQL이 추가 되었기 때문에  SQL 배치를 다시 시작 해야 한다</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>1,2,3,4를 모아서 하나의 SQL 배치를 실행하고 1-1를 한 번 실행하고 1,2을 모아서 실행한다. 따라서 총 3번의 SQL 배치를 실행한다.</p>
 <p>모든 경우에 사용할 수 이쓴ㄴ것은 아니다. 엔티티가 영속 상태가 디려면 식별자가 꼭 필요하다. <strong>그런데 IDENTITY 식별자 생성 전략은 엔티티를 데이터베이스에 저장해야 식별자를 구할 수 있으므로 em.persist()를 호출하는 즉시 INSERT SQL이 데이터베이스에 전달된다. 따라서 쓰지 지연을 활용한 성능 최적화를 할 수가 없다.</strong></p>
 <h4><span id="트랜잭션을-지원하는-쓰기-지연과-애플리케이션-확장성">트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성</span></h4>
 <p><strong>트랜잭션을 지원하는 쓰기 지연의 가장큰 장점은 데이터베이스 테이블 로우에 락이 걸리는 시간을 최소한다는 것이다. 이 기능은 트랜잭션을 커밋해서 영속성 컨텍스트를 플러시하기 전까지는 데이터베이스에 데이터를 등록, 수정, 삭제 하지 않는다. 따라서 커밋 전까지 데이터베이스 로우에 락을 걸지 않는다.</strong></p>
@@ -321,6 +321,10 @@ JPA는 엔티티를 영속성 컨텍스트에 보관할 때, <strong>최초 상�
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/jpa-bulk/" data-toggle="tooltip" data-placement="top" title="JPA 벌크 작업 주의점">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">

@@ -8,8 +8,16 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-bulk/</loc>
+        <lastmod>2020-02-01T04:18:41.697Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-flush/</loc>
-        <lastmod>2020-01-28T15:20:58.557Z</lastmod>
+        <lastmod>2020-01-29T13:22:56.340Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -832,14 +840,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/Node-AWS-Nginx/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/Node-AWS-S3-Upload/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -848,7 +848,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/n-1/</loc>
+        <loc>https://cheese10yun.github.io/Node-AWS-Nginx/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -856,7 +856,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <loc>https://cheese10yun.github.io/n-1/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -873,6 +873,14 @@
 
     <url>
         <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
