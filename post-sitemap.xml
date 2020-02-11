@@ -8,6 +8,54 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
+        <lastmod>2020-02-11T14:42:25.200Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
+        <lastmod>2020-02-11T14:42:25.193Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
+        <lastmod>2020-02-11T14:42:25.187Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
+        <lastmod>2020-02-11T14:42:25.183Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-guide-exception/</loc>
+        <lastmod>2020-02-11T14:42:25.167Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/jpa-flush/</loc>
+        <lastmod>2020-02-11T14:42:25.161Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-bulk/</loc>
         <lastmod>2020-02-04T17:14:15.713Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -24,24 +72,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/jpa-flush/</loc>
-        <lastmod>2020-01-29T13:22:56.340Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/jpa-persistent-context/</loc>
         <lastmod>2020-01-28T13:43:23.224Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
-        <lastmod>2020-01-13T16:18:49.903Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -80,14 +112,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
-        <lastmod>2019-11-23T13:04:32.074Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-guide-service/</loc>
         <lastmod>2019-11-23T13:04:32.073Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -97,14 +121,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
-        <lastmod>2019-11-23T13:04:32.072Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-exception/</loc>
         <lastmod>2019-11-23T13:04:32.072Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -154,14 +170,6 @@
     <url>
         <loc>https://cheese10yun.github.io/junit5-in-spring/</loc>
         <lastmod>2019-11-04T12:56:30.804Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
-        <lastmod>2019-11-03T14:27:12.472Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -642,14 +650,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-oop-03/</loc>
         <lastmod>2018-06-22T15:25:36.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
-        <lastmod>2018-06-22T15:25:28.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
