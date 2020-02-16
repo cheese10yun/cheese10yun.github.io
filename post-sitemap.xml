@@ -8,8 +8,40 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/mysql-explian/</loc>
+        <lastmod>2020-02-16T15:46:32.459Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
+        <lastmod>2020-02-11T16:37:08.652Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-preference/</loc>
-        <lastmod>2020-02-11T16:34:09.237Z</lastmod>
+        <lastmod>2020-02-11T16:37:08.646Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-15/</loc>
+        <lastmod>2020-02-11T16:37:08.637Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-16/</loc>
+        <lastmod>2020-02-11T16:37:08.632Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -26,14 +58,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
         <lastmod>2020-02-11T14:42:25.193Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-test-1/</loc>
-        <lastmod>2020-02-11T14:42:25.187Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -192,14 +216,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/mysql-explian/</loc>
-        <lastmod>2019-10-16T15:21:06.915Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/intellij-execute-gradle-task/</loc>
         <lastmod>2019-10-16T15:16:06.322Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -298,22 +314,6 @@
     <url>
         <loc>https://cheese10yun.github.io/encapsulation-part-1/</loc>
         <lastmod>2019-06-16T15:02:10.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-16/</loc>
-        <lastmod>2019-06-13T13:16:52.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-15/</loc>
-        <lastmod>2019-06-12T16:21:58.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

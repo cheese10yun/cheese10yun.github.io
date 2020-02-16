@@ -3,15 +3,50 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/explain/</loc>
+        <lastmod>2020-02-16T15:46:32.459Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2020-02-11T16:37:08.652Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2020-02-11T16:37:08.652Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Flush/</loc>
-        <lastmod>2020-02-11T16:34:09.237Z</lastmod>
+        <lastmod>2020-02-11T16:37:08.646Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2020-02-11T16:34:09.237Z</lastmod>
+        <lastmod>2020-02-11T16:37:08.646Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
+        <lastmod>2020-02-11T16:37:08.637Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
+        <lastmod>2020-02-11T16:37:08.637Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -24,22 +59,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2020-02-11T14:42:25.200Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/OOP/</loc>
         <lastmod>2020-02-11T14:42:25.193Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2020-02-11T14:42:25.187Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -150,13 +171,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/explain/</loc>
-        <lastmod>2019-10-16T15:21:06.915Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
         <lastmod>2019-10-16T15:16:06.322Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -166,13 +180,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/IntelliJ/</loc>
         <lastmod>2019-10-16T15:16:06.322Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Best-Practices/</loc>
-        <lastmod>2019-10-01T14:49:46.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -229,13 +236,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/%EC%BA%A1%EC%8A%90%ED%99%94/</loc>
         <lastmod>2019-06-16T15:02:26.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/QueryDsl/</loc>
-        <lastmod>2019-06-13T13:16:52.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
