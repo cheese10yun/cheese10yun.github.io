@@ -8,8 +8,16 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
+        <lastmod>2020-02-21T15:15:13.814Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/querydsl-projections/</loc>
-        <lastmod>2020-02-20T14:42:46.355Z</lastmod>
+        <lastmod>2020-02-21T15:15:13.808Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -154,14 +162,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-service/</loc>
         <lastmod>2019-11-23T13:04:32.073Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
-        <lastmod>2019-11-23T13:04:32.072Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
