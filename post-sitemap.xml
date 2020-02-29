@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-test-support/</loc>
+        <lastmod>2020-02-29T19:02:20.313Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/querydsl-support/</loc>
         <lastmod>2020-02-29T14:02:39.470Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -896,15 +904,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
+        <loc>https://cheese10yun.github.io/n-1/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -920,7 +920,15 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/n-1/</loc>
+        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/npm-sudo-err/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

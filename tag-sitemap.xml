@@ -3,14 +3,21 @@
 
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Querydsl/</loc>
-        <lastmod>2020-02-29T14:02:39.470Z</lastmod>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2020-02-29T19:02:20.313Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2020-02-29T19:02:20.313Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Querydsl/</loc>
         <lastmod>2020-02-29T14:02:39.470Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -40,13 +47,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/OOP/</loc>
         <lastmod>2020-02-29T12:57:10.586Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2020-02-29T12:57:10.582Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -689,14 +689,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
+        <loc>https://cheese10yun.github.io/tags/spring/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
