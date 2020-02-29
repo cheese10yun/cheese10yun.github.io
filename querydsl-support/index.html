@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/Node-AWS-Nginx/">
-    <meta property="og:description" content="AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Querydsl Repository Support 활용 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/querydsl-support/">
+    <meta property="og:description" content="Querydsl Repository Support 활용 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
 
 
@@ -25,16 +25,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-Nginx/">
+    <link rel="canonical" href="https://cheese10yun.github.io/querydsl-support/">
 
 
     <title>
         
-          AWS EC2 Nginx Node.js 설정 - Yun Blog | 기술 블로그
+          Querydsl Repository Support 활용 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/Node-AWS-Nginx/">
+    <link rel="canonical" href="https://cheese10yun.github.io/querydsl-support/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -106,20 +106,16 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
                             
-                              <a class="tag" href="/tags/#Nginx" title="Nginx">Nginx</a>
-                            
-                              <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                            
-                              <a class="tag" href="/tags/#EC2" title="EC2">EC2</a>
+                              <a class="tag" href="/tags/#Querydsl" title="Querydsl">Querydsl</a>
                             
                         </div>
-                        <h1>AWS EC2 Nginx Node.js 설정</h1>
+                        <h1>Querydsl Repository Support 활용</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2016-12-13
+                            2020-02-29
                         </span>
                     </div>
                 
@@ -236,50 +232,25 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>안녕하세요. 스타트업에서 근무 중인 신입 개발자입니다. 근무하면서 얻은 정보를 정리하며 올려봅니다. 사내환경 같은 경우는 각자 로컬 환경에서 개발하고, 어느 정도 작업이 완료됐다 싶으면 테스트 서버(EC2)에 프로젝트를 올리는 작업을 아래와 같이 진행하게 됩니다.</p>
-<ol>
-<li>EC2 기본 셋팅 (AMI)</li>
-<li>EC2 Node.js 설치</li>
-<li>GitHub Clone</li>
-<li>Nginx 연동</li>
-</ol>
-<h3><span id="1-ec2-기본-셋팅-ami">1. EC2 기본 셋팅 (AMI)</span></h3>
-<p>AWS EC2에 접속하셔서 필수 패키지 설치를 진행합니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update -y</span><br><span class="line">sudo yum install gcc gcc-c++</span><br><span class="line">sudo yum  install -y git</span><br><span class="line">sudo yum install -y nginx</span><br></pre></td></tr></table></figure>
-<h4><span id="port-설정">Port 설정</span></h4>
-<p>EC2의 포트 80, 3000이 열려있어야 합니다. EC2포트 설정은 여기서 다룰 내용이 아니니 생략하겠습니다. 포트 설정은 원하시는 포트를 사용하셔도 됩니다만 기본 포트를 권장합니다.</p>
-<p><img src="https://i.imgur.com/XnEOclk.png" alt="EC2 Innound"></p>
-<h4><span id="github-설정">GitHub 설정</span></h4>
-<p>GitHub에 프로젝트를 업로드해주세요. GitHub 설정은 여기서 다룰 내용이 아니니 생략하겠습니다.</p>
-<h3><span id="2-ec2-nodejs-설치">2. EC2 Node.js 설치</span></h3>
-<p>AWS EC2에 접속하셔서 아래 명령어를 순차적으로 입력합니다. 다른 버전 노드를 설치해도 무방합니다만 로컬에 있는 노드 버전과 동일하게 설치하는 것을 권장합니다. 다소 시간이 걸리는 작업입니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget https://nodejs.org/dist/v6.7.0/node-v6.7.0.tar.gz</span><br><span class="line">tar -xvf node-v6.7.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> 해당폴더이동</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-<p>설치를 완료하셨다면 아래의 명령어로 Node, NPM 버전을 확인합니다</p>
-<p><img src="https://i.imgur.com/joOtMGi.png" alt="Node, NPM Version"></p>
-<h3><span id="3-github-clone">3. GitHub Clone</span></h3>
-<p>이미 프로젝트가 GitHub에 업로드되었 다고 가정하고 진행하겠습니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git remote add origin [단축 이름] [url]</span><br><span class="line">ex) git remote add origin https://github.com/cheese10yun/node-yun.git</span><br><span class="line">git <span class="built_in">clone</span> [url]</span><br><span class="line">ex) git <span class="built_in">clone</span> https://github.com/cheese10yun/node-yun.git</span><br></pre></td></tr></table></figure>
-<p><strong>node_modules 디렉토리는 gitignore 시키는 것을 권장합니다.</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> gitclone 폴더이동/</span><br><span class="line">npm install</span><br><span class="line">npm start</span><br></pre></td></tr></table></figure>
-<p>노드 모듈을 설치한 이후 해당 노드 프로젝트에 알맞게 노드 서버를 실행시켜주세요. 저 같은 경우는 <code>npm start</code>로 프로젝트를 실행시켰습니다.<br>
-<img src="https://i.imgur.com/bLIrf9x.png" alt="Node Server"></p>
-<p>EC2 IP:3000로 접속하시면 해당 노드 서버가 실행 있는 것을 확인하실 수 있습니다. 만약 접속이 안되시면 EC2 IP 및 inbound 설정을 확인해보세요.</p>
-<h3><span id="4-nginx-연동">4. Nginx 연동</span></h3>
-<p>nginx를 실행시킨 이후 EC2 IP로 접속하시면 아래 그림과 같은 화면이 출력되시면 nginx 설정으로 진행하시면 됩니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/ShyNzxi.png" alt="Nginx"><br>
-<strong>Nginx 기본 포트는 80으로 설정되어있습니다.</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/rBNAhpq.png" alt="Nginx.conf"></p>
-<p>위의 그림과 같이 server {<br>
-아래의 location을 붙여 넣습니다.<br>
-} Nginx를 재실행시킵니다.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">      proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">      proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">      proxy_set_header Host <span class="variable">$http_host</span>;</span><br><span class="line">      proxy_set_header X-NginX-Proxy <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">      proxy_pass http://127.0.0.1:3000/;</span><br><span class="line">      proxy_redirect off;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nginx restart</span><br></pre></td></tr></table></figure>
-<p><img src="https://i.imgur.com/jEsxV1H.png" alt="Nginx Node"></p>
-<p>Nginx를 재실행시키시고 EC2 IP에 접속하시면 Nginx 화면이 아니라 노드 서버 화면이 나오시는 것을 확인할 수 있습니다.</p>
-<p>최대한 쉽게 설명하려 노력했으나 도움이 됐을지 의문입니다. 어려운 주제는 아니지만, 문서로 정리해보니 이틀이라는 시간이 걸리긴 했습니다만 뭔가 코딩하는 거랑 비슷한 느낌이라고 할까요? 결과물을 보니 뭔가 뿌듯하고 재미도 있네요. 다들 이런 재미로 블로그를 하시나 봅니다.</p>
-<p>현재 회사에서 노드를 기반으로 서비스하고 있어 node 중심적으로 블로그 진행할 거 같습니다. 노드나 스타트업에 관심이 있는 분이시면 종종 찾아와 주시기 바랍니다.</p>
+                <p>개발을 진행할 하다 보면 다양한 조회 쿼리를 만들게 됩니다. JPA를 이용한다면 Querydsl Support를 사용하면 세부 구현체를 숨기고 Repository를 통해서 조회 쿼리를 제공해 줄 수 있어 장점이 있습니다.</p>
+<p>관련 <a href="https://github.com/cheese10yun/spring-jpa-best-practices/blob/master/doc/step-15.md" rel="external nofollow noopener noreferrer" target="_blank">step-15: Querydsl를 이용해서 Repository 확장하기 (1)</a>, <a href="https://cheese10yun.github.io/jpa-preference/">JPA 선호하는 패턴</a>을 참고해 주세요</p>
+<h2><span id="querydslrepositorysupport-사용시-문제점">QuerydslRepositorySupport 사용시 문제점</span></h2>
+<p>QuerydslRepositorySupport은 <code>JPQLQuery</code>를 이용해서 JPQL 작업을 진행합니다. 그래서 약간 단점이 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.example.querydsl.domain.QPayment.payment <span class="keyword">as</span> qPayment</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PaymentCustomRepositoryImpl</span> : <span class="type">QuerydslCustomRepositorySupport</span></span>(Payment::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>), <span class="type">PaymentCustomRepository &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findUseForm</span><span class="params">(targetAmount: <span class="type">BigDecimal</span>)</span></span>: List&lt;Payment&gt;? &#123;</span><br><span class="line">        <span class="keyword">return</span> from(qPayment)</span><br><span class="line">            .where(qPayment.amount.gt(targetAmount))</span><br><span class="line">            .fetch()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>해당 코드를 보면 <code>form</code>으로 시작해야 합니다. <code>QuerydslRepositorySupport</code> 구현체의 form 메서드는 아래와 같습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> &lt;T&gt; JPQLQuery&lt;T&gt; from(EntityPath&lt;T&gt; path) &#123;</span><br><span class="line">    <span class="keyword">return</span> getRequiredQuerydsl().createQuery(path).select(path);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>즉 <code>JPQLQuery</code>을 사용해서 쿼리 작업을 진행해야 되기 때문에 <code>form</code>으로 시작할 수밖에 없습니다.</p>
+<p>사실 별거 아닌 거 같지만 우리는 일반적으로 query를 시작할 때는 <code>select</code>으로 시작합니다. <code>queryFactory</code>을 이용하면 select, selectFrom으로 쿼리를 시작할 수 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findUseSelectForm</span><span class="params">(targetAmount: <span class="type">BigDecimal</span>)</span></span>: List&lt;Payment&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> selectFrom(qPayment)</span><br><span class="line">        .where(qPayment.amount.gt(targetAmount))</span><br><span class="line">        .fetch()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">findUseSelect</span><span class="params">(targetAmount: <span class="type">BigDecimal</span>)</span></span>: List&lt;<span class="built_in">Long</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> select(qPayment.id)</span><br><span class="line">        .from(qPayment)</span><br><span class="line">        .where(qPayment.amount.gt(targetAmount))</span><br><span class="line">        .fetch()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>selectFrom</code>은 조회하는 타입이 일치하는 경우 사용할 수 있고, <code>select</code>는 리턴 받을 타입을 지정할 수 있습니다. 우리가 일반적으로 사용하는 SQL 문과 아주 유사한 구조입니다.</p>
+<h2><span id="querydslcustomrepositorysupport-작성하기">QuerydslCustomRepositorySupport 작성하기</span></h2>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">QuerydslCustomRepositorySupport</span></span>(domainClass: Class&lt;*&gt;) : QuerydslRepositorySupport(domainClass) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> queryFactory: JPAQueryFactory <span class="keyword">by</span> Delegates.notNull()</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PersistenceContext</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">setEntityManager</span><span class="params">(entityManager: <span class="type">EntityManager</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.setEntityManager(entityManager)</span><br><span class="line">        <span class="keyword">this</span>.queryFactory = JPAQueryFactory(entityManager)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">select</span><span class="params">(expr: <span class="type">Expression</span>&lt;<span class="type">T</span>&gt;)</span></span>: JPAQuery&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> queryFactory.select(expr)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">selectFrom</span><span class="params">(from: <span class="type">EntityPath</span>&lt;<span class="type">T</span>&gt;)</span></span>: JPAQuery&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> queryFactory.selectFrom(from)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>사용법은 간단합니다. <code>QuerydslRepositorySupport</code>을 상속하는 클래스를 <strong>직접 정의해서 제공하는 것입니다.</strong></p>
+<p>코드는 간단합니다. <code>EntityManager</code>을 상위 클래스에서 전달해 주며 <code>JPAQuery</code>에서 제공해 주는 <code>select</code>, <code>selectFrom</code>을 구현(JPAQuery의 메서드를 복붙)하면 됩니다. <code>select</code>, <code>selectFrom</code> 외에도 다양한 기능들을 제공해 줄 수 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentRepositoryTest</span></span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> paymentRepository: PaymentRepository</span><br><span class="line">) : SpringBootTestSupport() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `findUseSelectForm`<span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">//given</span></span><br><span class="line">        <span class="keyword">val</span> targetAmount = <span class="number">200.</span>toBigDecimal()</span><br><span class="line"></span><br><span class="line">        <span class="comment">//when</span></span><br><span class="line">        <span class="keyword">val</span> payments = paymentRepository.findUseSelectForm(targetAmount)</span><br><span class="line"></span><br><span class="line">        <span class="comment">//then</span></span><br><span class="line">        then(payments).anySatisfy &#123;</span><br><span class="line">            then(it.amount).isGreaterThan(targetAmount)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `findUseSelect`<span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">//given</span></span><br><span class="line">        <span class="keyword">val</span> targetAmount = <span class="number">200.</span>toBigDecimal()</span><br><span class="line"></span><br><span class="line">        <span class="comment">//when</span></span><br><span class="line">        <span class="keyword">val</span> ids = paymentRepository.findUseSelect(targetAmount)</span><br><span class="line"></span><br><span class="line">        <span class="comment">//then</span></span><br><span class="line">        then(ids).hasSizeGreaterThan(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/queydsl-support-result.png" alt=""></p>
+<p>테스트 코드를 통과로 정상 동작하는 것을 확인할 수 있습니다.<br>
+<code>select</code>, <code>selectFrom</code> 시작해서 큰 이득을 얻을 수 없지만 최대한 SQL스럽게 코드를 작성할 수 있어서 개인적으로 선호하는 방식입니다.</p>
 
                 
 
@@ -287,13 +258,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/new-Developer-work-challenge/" data-toggle="tooltip" data-placement="top" title="신입 개발자 취업도전기">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/new-developer-portfolio/" data-toggle="tooltip" data-placement="top" title="신입 개발자 포트폴리오">Next Post &rarr;</a>
+                            <a href="/querydsl-projections/" data-toggle="tooltip" data-placement="top" title="Querydsl Projection 방법 소개 및 선호하는 패턴 정리">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -319,7 +286,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. EC2 기본 셋팅 (AMI)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Port 설정</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">GitHub 설정</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. EC2 Node.js 설치</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. GitHub Clone</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. Nginx 연동</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">QuerydslRepositorySupport 사용시 문제점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">QuerydslCustomRepositorySupport 작성하기</span></a></li></ol>
         
         </div>
       </aside>
@@ -339,13 +306,9 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Node" title="Node">Node</a>
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
                         
-                          <a class="tag" href="/tags/#Nginx" title="Nginx">Nginx</a>
-                        
-                          <a class="tag" href="/tags/#AWS" title="AWS">AWS</a>
-                        
-                          <a class="tag" href="/tags/#EC2" title="EC2">EC2</a>
+                          <a class="tag" href="/tags/#Querydsl" title="Querydsl">Querydsl</a>
                         
                     </div>
                 </section>
