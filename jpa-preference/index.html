@@ -256,8 +256,8 @@
 <p><strong>무엇보다 OnyToMany, ManyToOne 관계는 설정은 선호하지 않는다.</strong> OneToMany를 관계를 갖게 되면 N+1 문제(물론 OneToMany를 관계에서만 N+1 문제가 발생하지는 않는다.) OneToMany 2개 이상 갖는 경우 카테시안 곱 문제로 <code>MultipleBagFetchException</code> 발생한다. <strong>양방향 메서드를 반드시 지정해야 할 이유가 없다면 단방향 관계를 지향하는 것이 좋다고 생각한다.</strong></p>
 <h2><span id="open-setting-view-false로-두자">Open Setting View false로 두자</span></h2>
 <p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-osiv-2.png" alt=""></p>
-<p>OSVI는 영속성 컨텍스트를 View 레이어까지 열어 둘 수 있다. 영속성 컨텍스트가 살아있으면 엔티티는 영속 상태로 유지된다. 따라서 <strong>뷰에서도 지연 로딩을 사용할 수 있다. 하지만 View에서 트랜잭션을 계속 가지고 있는 것이 좋다고 생각하지 않는다.</strong></p>
-<p>기존 OSVI 문제를 해결하기 위해서 비즈니스 계층에서만 트랜잭션을 유지하는 방식의 OSVI를 스프링에서 지원해주고 있긴 하지만 ModelAndView를 사용하지 않고 <strong>단순하게 API로 JSON 같은 응답을 내려주는 서버로 사용한다면 View false를 false 두는 것이 좋다.(기본이 true이다)</strong></p>
+<p>OSIV는 영속성 컨텍스트를 View 레이어까지 열어 둘 수 있다. 영속성 컨텍스트가 살아있으면 엔티티는 영속 상태로 유지된다. 따라서 <strong>뷰에서도 지연 로딩을 사용할 수 있다. 하지만 View에서 트랜잭션을 계속 가지고 있는 것이 좋다고 생각하지 않는다.</strong></p>
+<p>기존 OSIV 문제를 해결하기 위해서 비즈니스 계층에서만 트랜잭션을 유지하는 방식의 OSIV를 스프링에서 지원해주고 있긴 하지만 ModelAndView를 사용하지 않고 <strong>단순하게 API로 JSON 같은 응답을 내려주는 서버로 사용한다면 View false를 false 두는 것이 좋다.(기본이 true이다)</strong></p>
 <h2><span id="객체-그래프-탐색은-어디까지-할것인가-좀-끊자">객체 그래프 탐색은 어디까지 할것인가? 좀 끊자!</span></h2>
 <p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/eggregate.png?raw=true" alt=""></p>
 <p>관계형 데이터베이스는 FK를 통해서 연관 탐색을 계속 진행할 수 있다. 마찬가지로 JPA도 객체 그래프 탐색을 통해서 연관 탐색을 계속 진행할 수 있다. <strong>이것은 그래프 탐색의 오용이라고 생각한다.</strong></p>
