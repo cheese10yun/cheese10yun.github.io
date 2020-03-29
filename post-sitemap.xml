@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-mock-test/</loc>
+        <lastmod>2020-03-29T11:39:26.577Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-preference/</loc>
         <lastmod>2020-03-05T17:40:52.600Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -856,7 +864,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
+        <loc>https://cheese10yun.github.io/loopback-board/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -864,7 +872,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-board/</loc>
+        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
