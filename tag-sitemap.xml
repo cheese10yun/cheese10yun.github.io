@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Action/</loc>
+        <lastmod>2020-05-12T16:25:51.782Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Github/</loc>
+        <lastmod>2020-05-12T16:25:51.782Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Mock/</loc>
         <lastmod>2020-03-29T12:13:52.340Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -507,13 +521,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Github/</loc>
-        <lastmod>2018-07-17T13:53:54.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Slideshare/</loc>
         <lastmod>2018-07-08T10:03:54.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -696,14 +703,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
+        <loc>https://cheese10yun.github.io/tags/spring/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
