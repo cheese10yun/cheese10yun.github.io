@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Gateway/</loc>
+        <lastmod>2020-08-22T16:12:12.740Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
+        <lastmod>2020-08-22T16:12:12.740Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Event/</loc>
         <lastmod>2020-08-16T12:10:11.839Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -33,13 +47,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2020-08-13T14:37:29.638Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
-        <lastmod>2020-08-01T09:36:49.476Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -647,14 +654,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -745,14 +752,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/LoopBack/</loc>
+        <loc>https://cheese10yun.github.io/tags/Mysql/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Mysql/</loc>
+        <loc>https://cheese10yun.github.io/tags/LoopBack/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -780,13 +787,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Image-Upload/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/EC2/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -795,6 +795,13 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Nginx/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Image-Upload/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

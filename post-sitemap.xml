@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-cloud-gateway/</loc>
+        <lastmod>2020-08-22T16:12:12.740Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/event-transaction/</loc>
         <lastmod>2020-08-16T12:10:11.839Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -928,7 +936,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
+        <loc>https://cheese10yun.github.io/loopback-board/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -936,7 +944,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/loopback-board/</loc>
+        <loc>https://cheese10yun.github.io/loopback-begin/</loc>
         <lastmod>2018-03-17T05:47:30.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -960,14 +968,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/Node-AWS-Nginx/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/Node-AWS-S3-Upload/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -976,7 +976,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
+        <loc>https://cheese10yun.github.io/Node-AWS-Nginx/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -993,6 +993,14 @@
 
     <url>
         <loc>https://cheese10yun.github.io/new-Developer-work-challenge/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/new-developer-portfolio/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
