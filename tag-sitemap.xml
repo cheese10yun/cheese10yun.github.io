@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Mock/</loc>
+        <lastmod>2020-09-28T15:01:34.938Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2020-09-28T15:01:34.938Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Gateway/</loc>
         <lastmod>2020-08-22T16:15:10.354Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -117,20 +131,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Github/</loc>
         <lastmod>2020-05-13T17:37:44.653Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Mock/</loc>
-        <lastmod>2020-03-29T12:13:52.340Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2020-03-29T12:13:52.340Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -640,13 +640,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
-        <lastmod>2018-05-02T15:44:12.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/S3/</loc>
         <lastmod>2018-05-02T15:44:12.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -654,14 +647,21 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
+        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
         <lastmod>2018-05-02T15:44:12.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/imagemin/</loc>
+        <loc>https://cheese10yun.github.io/tags/JavaScript/</loc>
+        <lastmod>2018-05-02T15:44:12.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/AWS/</loc>
         <lastmod>2018-05-02T15:44:12.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -773,6 +773,13 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/NPM/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -780,7 +787,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/Image-Upload/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -795,13 +802,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Nginx/</loc>
-        <lastmod>2018-03-17T05:47:08.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Image-Upload/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
