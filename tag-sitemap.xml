@@ -3,14 +3,21 @@
 
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Where/</loc>
-        <lastmod>2020-10-10T05:31:24.214Z</lastmod>
+        <loc>https://cheese10yun.github.io/tags/Rx-Kotlin/</loc>
+        <lastmod>2020-12-05T14:08:32.556Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2020-12-05T14:08:32.556Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Where/</loc>
         <lastmod>2020-10-10T05:31:24.214Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
