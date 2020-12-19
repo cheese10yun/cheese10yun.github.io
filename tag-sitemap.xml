@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
+        <lastmod>2020-12-19T12:55:53.069Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Rx-Kotlin/</loc>
         <lastmod>2020-12-05T14:08:32.556Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -787,14 +794,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
+        <loc>https://cheese10yun.github.io/tags/spring/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
