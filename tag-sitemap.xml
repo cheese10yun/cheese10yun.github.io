@@ -3,8 +3,15 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/CSV/</loc>
+        <lastmod>2020-12-20T07:22:23.439Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
-        <lastmod>2020-12-19T12:55:53.069Z</lastmod>
+        <lastmod>2020-12-20T07:22:23.439Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
