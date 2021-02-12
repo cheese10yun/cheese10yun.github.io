@@ -239,7 +239,7 @@
 <p>그리고 <code>fetch join</code>통해서 <code>teamA</code>와 <code>teamA</code>에 속한 <code>member</code>를 조회하고 있습니다. 그리고 <code>then</code>절에서 <code>member1</code>, <code>member2</code>가 <code>teamA</code>에 있는지 검증을 진행합니다.</p>
 <p><strong>이 테스트 코드는 실패합니다.</strong></p>
 <p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/team-members-result.png" alt=""></p>
-<p>디버깅 모드로 보면 <code>memebers</code> szie가 0인 것을 확인할 수 있습니다. 그렇다면 실제 데이터베이에 <code>member1</code>, <code>member2</code>가 영속화가 안 된 것일 까요?</p>
+<p>디버깅 모드로 보면 <code>memebers</code> SIZE가 0인 것을 확인할 수 있습니다. 그렇다면 실제 데이터베이에 <code>member1</code>, <code>member2</code>가 영속화가 안 된 것일 까요?</p>
 <p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/insert-result.png" alt=""></p>
 <p><code>teamA</code> insert, <code>member1</code>, <code>memeber2</code> insert 쿼리를 확인할 수 있습니다. 물론 insert query log를 출력했더라도 실제 데이터베이스에 insert 됐다고는 볼 수 없습니다. <strong>정확하게 테스트하기 위해서는 실제 데이터베이스에 저장됐는지 확인하는 것이 바람직합니다.</strong> 해당 경우는 실제 데이터베이스에 commit까지 되는 경우입니다.</p>
 <p>그렇다면 왜 해당 테스트 코드가 실패할까요? 그 이유를 알기 위해서는 영속성 컨텍스트의 1차 케시의 저장 메커니즘을 이해해야 합니다.</p>
