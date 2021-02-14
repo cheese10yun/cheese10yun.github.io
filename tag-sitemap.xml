@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
+        <lastmod>2021-02-14T13:57:23.176Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/N-1/</loc>
         <lastmod>2021-02-11T13:08:47.109Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -18,13 +25,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/CSV/</loc>
-        <lastmod>2021-02-11T13:08:47.099Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
         <lastmod>2021-02-11T13:08:47.099Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -801,14 +801,14 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
+        <loc>https://cheese10yun.github.io/tags/spring/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/spring/</loc>
+        <loc>https://cheese10yun.github.io/tags/NPM/</loc>
         <lastmod>2018-03-17T05:47:08.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
