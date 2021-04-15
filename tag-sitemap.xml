@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Gateway/</loc>
+        <lastmod>2021-04-15T12:19:24.614Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
+        <lastmod>2021-04-15T12:19:24.614Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Flush/</loc>
         <lastmod>2021-03-07T15:47:29.653Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -89,20 +103,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Test/</loc>
         <lastmod>2020-09-28T15:38:15.018Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Gateway/</loc>
-        <lastmod>2020-08-22T16:15:10.354Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Cloud/</loc>
-        <lastmod>2020-08-22T16:15:10.354Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
