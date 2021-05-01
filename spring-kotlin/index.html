@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="코틀린으로 스프링 개발할 때 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-kotlin/">
+    <meta property="og:description" content="코틀린으로 스프링 개발할 때 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-kotlin/">
+
+
+    <title>
+        
+          코틀린으로 스프링 개발할 때 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-kotlin/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                            
+                        </div>
+                        <h1>코틀린으로 스프링 개발할 때</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2021-05-02
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>코틀린 기반으로 스프링 프레임워크를 사용하는 경우 다양한 플러그인의 도움으로 보다 쉽게 개발을 진행할 수 있습니다. 어떤 플러그인이 있고 그것이 어떤 역할을 하는지에 대해서 정리해 보았습니다.</p>
+<h2><span id="kotlin-plugin">Kotlin Plugin</span></h2>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    kotlin(<span class="string">"plugin.spring"</span>) version <span class="string">"1.4.32"</span></span><br><span class="line">    kotlin(<span class="string">"plugin.jpa"</span>) version <span class="string">"1.4.32"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>코틀린 언어로 스프링을 사용하는 경우는 <code>plugin.spring</code> 플러그인은 필수적이고, JPA를 사용한다면 <code>plugin.jpa</code> 또 한 필수적으로 사용하게 됩니다. 각각의 플러그인에 대해서 이야기해보겠습니다.</p>
+<h2><span id="pluginspring-플러그인">plugin.spring 플러그인</span></h2>
+<h3><span id="all-open">all-open</span></h3>
+<p>해당 플러그인을 사용하면 아래 어노테이션이 있으면 <code>all-open</code>을 자동으로 추가시킵니다. 참고로 <code>kotlin-allopen</code>, <code>plugin.spring</code>는 동일한 프로젝트입니다.</p>
+<ul>
+<li><code>@Component</code></li>
+<li><code>@Async</code></li>
+<li><code>@Transactional</code></li>
+<li><code>@Cacheable</code></li>
+<li><code>@SpringBootTest</code></li>
+<li><code>@Configuration</code>, <code>@Controller</code>, <code>@RestController</code>, <code>@Service</code>, <code>@Repository</code>, <code>@Component</code></li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>코틀린에서는 기본적으로 클래스에는 <code>final</code> 키워드가 추가되며, 위 코드도 <code>final</code> 키워드를 생략하더라도 자동으로 추가합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>() &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span>: kotlin.<span class="built_in">Unit</span> &#123; <span class="comment">/* compiled code */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Foo</code> 클래스를 빌드 하면 위처럼 <code>final</code> 키워드가 붙어 있는 것을 확인할 수 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@Transactional</code> 어노테이션을 붙이고 다시 빌드 해보고 클래스 파일을 살펴보겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@org</span>.springframework.transaction.<span class="keyword">annotation</span>.Transactional <span class="keyword">public</span> <span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>() &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">open</span> <span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span>: kotlin.<span class="built_in">Unit</span> &#123; <span class="comment">/* compiled code */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>class</code>, <code>fun</code> 키워드 앞에 <code>open</code> 키워드가 추가된 것을 확인할 수 있습니다. <code>plugin.spring</code>이 위의 어노테이션이 추가된 클래스에는 자동으로 <code>open</code> 키워드를 자동으로 추가합니다. <a href="https://start.spring.io/" rel="external nofollow noopener noreferrer" target="_blank">Spring Initializr</a>를 이용해서 프로젝트를 구성하면 <code>plugin.spring</code> 플러그인은 자동 적용됩니다.</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">allOpen &#123;</span><br><span class="line">    annotation(<span class="string">"javax.persistence.Entity"</span>)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>gradle</code> 설정으로 특정 어노테이션에 대해서 <code>allOpen</code>을 동작 시킬 수 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="meta-string">"book"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span></span>(</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"title"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> title: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"writer"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> writer: String,</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">) : AuditingEntity() &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 객체를 빌드 해서 클래스 파일을 확인하면 아래와 같습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@javax</span>.persistence.Entity <span class="meta">@javax</span>.persistence.Table <span class="keyword">public</span> <span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>(title: kotlin.String, writer: kotlin.String, publisher: kotlin.String, price: java.math.BigDecimal) : com.spring.sample.AuditingEntity &#123;</span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> price: java.math.BigDecimal <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> publisher: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> title: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> writer: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>특정 어노테이션에 <code>open</code> 키워드를 편리하기 추가할 수 있습니다.</p>
+<h3><span id="all-open은-왜-필요할까">all-open은 왜 필요할까?</span></h3>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/result-3.png" alt=""></p>
+<p>Spring Boot 2.x 버전부터는 CGLIB Proxy 방식으로 Bean을 관리하고 있습니다. CGLIB Proxy는 Target Class를 상속받아 생성하기 때문에 <code>open</code>으로 상속이 가능한 상태이어야 합니다. 그러기 때문에 <code>all-open</code> 플러그인이 필요합니다.</p>
+<h3><span id="no-arg">no-arg</span></h3>
+<p><code>no-arg</code>는 argument가 없는 기본 생성자를 의미합니다. 클래스는 기본 생성자가 기본적으로 생성되며 다른 생성자를 만들면 기본 생성자는 명시적으로 선언하지 않는 이상 사라지게 됩니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bar</span></span>(<span class="keyword">val</span> name: String) &#123;</span><br><span class="line">    <span class="comment">// constructor() : this("none name")</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 기본 생성자를 주석한 경우</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Bar</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>(name: kotlin.String) &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">val</span> name: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 기본 생성자를 주석 하지 않는 경우</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Bar</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>(name: kotlin.String) &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">constructor</span>() &#123; <span class="comment">/* compiled code */</span> &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">val</span> name: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>no-arg</code>는 주로 <code>plugin.jpa</code> 플러그인과 같이 사용됩니다. <code>kotlin-spring</code> 플러그인과 마찬가지로 <code>@Entity</code>, <code>@Embeddable</code>, <code>@MappedSuperclass</code> 어노테이션에 자동으로 동작합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="meta-string">"book"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span></span>(</span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"title"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> title: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"writer"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> writer: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"publisher"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> publisher: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"price"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> price: BigDecimal</span><br><span class="line"></span><br><span class="line">) : AuditingEntity() &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 빌드한 클래스를 Decompile 결과</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="title">extends</span> <span class="title">AuditingEntity</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">public</span> Book(<span class="meta">@NotNull</span> String title, <span class="meta">@NotNull</span> String writer, <span class="meta">@NotNull</span> String publisher, <span class="meta">@NotNull</span> BigDecimal price) &#123;</span><br><span class="line">      Intrinsics.checkNotNullParameter(title, <span class="string">"title"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(writer, <span class="string">"writer"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(publisher, <span class="string">"publisher"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(price, <span class="string">"price"</span>);</span><br><span class="line">      <span class="keyword">super</span>();</span><br><span class="line">      <span class="keyword">this</span>.title = title;</span><br><span class="line">      <span class="keyword">this</span>.writer = writer;</span><br><span class="line">      <span class="keyword">this</span>.publisher = publisher;</span><br><span class="line">      <span class="keyword">this</span>.price = price;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> Book() &#123;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Book 객체에 기본 생성자가 없지만 <code>plugin.jpa</code> 플러그인으로 인해서 기본 생성자가 생성됩니다.</p>
+<h2><span id="pluginjpa-플러그인">plugin.jpa 플러그인</span></h2>
+<p><code>no-arg</code>에서 언급했듯이 <code>plugin.jpa</code> 플러그인을 사용 하면 <code>@Entity</code>, <code>@Embeddable</code>, <code>@MappedSuperclass</code> 어노테이션을 사용해면 <code>no-arg</code>생성자(기본 생성자)가 자동으로 생성됩니다.</p>
+<h3><span id="no-arg이-왜-필요할까">no-arg이 왜 필요할까?</span></h3>
+<p><code>plugin.jpa</code> 플러그인 없이, 즉 기본 생성자가 없는 상태에서 JPA 아래 테스트 코드를 실행해보겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="meta-string">"book"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span></span>(</span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"title"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> title: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"writer"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> writer: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"publisher"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> publisher: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"price"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> price: BigDecimal</span><br><span class="line">) : AuditingEntity() <span class="comment">// @Id 필드는 AuditingEntity 객체에 있습니다.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">BookTest</span></span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> bookRepository: BookRepository,</span><br><span class="line">) : SpringTestSupport() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `boot save`<span class="params">()</span></span> &#123;</span><br><span class="line">        bookRepository.save(</span><br><span class="line">            Book(</span><br><span class="line">                title = <span class="string">"title"</span>,</span><br><span class="line">                writer = <span class="string">"writer"</span>,</span><br><span class="line">                publisher = <span class="string">"publisher"</span>,</span><br><span class="line">                price = BigDecimal.TEN</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/kotlin-jpa-no-arg-error.png" alt=""></p>
+<p>기본 생성자가 없어 Error가 발생하는 것을 확인할 수 있습니다. Book 클래스 파일을 decompile 해서 코드를 확인해보겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">extends</span> <span class="title">AuditingEntity</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(@NotNull String title, @NotNull String writer, @NotNull String publisher, @NotNull BigDecimal price)</span> </span>&#123;</span><br><span class="line">      Intrinsics.checkNotNullParameter(title, <span class="string">"title"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(writer, <span class="string">"writer"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(publisher, <span class="string">"publisher"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(price, <span class="string">"price"</span>);</span><br><span class="line">      <span class="keyword">super</span>();</span><br><span class="line">      <span class="keyword">this</span>.title = title;</span><br><span class="line">      <span class="keyword">this</span>.writer = writer;</span><br><span class="line">      <span class="keyword">this</span>.publisher = publisher;</span><br><span class="line">      <span class="keyword">this</span>.price = price;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>all-argument</code>생성자는 존재하지만, <code>no-arg</code>생성자는 존재하지 않습니다. <strong>Hibernate는 Reflection으로 객체를 생성하기 때문에 <code>protected</code> 이상의 생성자가 필요합니다.</strong> 다시 <code>plugin.jpa</code> 플러그인 적용해서 decompile 해보겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">extends</span> <span class="title">AuditingEntity</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(@NotNull String title, @NotNull String writer, @NotNull String publisher, @NotNull BigDecimal price)</span> </span>&#123;</span><br><span class="line">      Intrinsics.checkNotNullParameter(title, <span class="string">"title"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(writer, <span class="string">"writer"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(publisher, <span class="string">"publisher"</span>);</span><br><span class="line">      Intrinsics.checkNotNullParameter(price, <span class="string">"price"</span>);</span><br><span class="line">      <span class="keyword">super</span>();</span><br><span class="line">      <span class="keyword">this</span>.title = title;</span><br><span class="line">      <span class="keyword">this</span>.writer = writer;</span><br><span class="line">      <span class="keyword">this</span>.publisher = publisher;</span><br><span class="line">      <span class="keyword">this</span>.price = price;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>no-arg</code>생성자가 코드가 있는 것을 확인할 수 있고, 테스트 코드도 정상적으로 동작하는 것을 확인할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/kotlin-jpa-test-code.png" alt=""></p>
+<h2><span id="all-open-in-jpa">all-open In JPA</span></h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># build.gradle.kts</span><br><span class="line">allOpen &#123;</span><br><span class="line">    annotation(&quot;javax.persistence.Entity&quot;)</span><br><span class="line">    annotation(&quot;javax.persistence.MappedSuperclass&quot;)</span><br><span class="line">    annotation(&quot;javax.persistence.Embeddable&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>plugin.jpa</code>을 사용하면 <code>no-arg</code> <code>@Entity</code>, <code>@Embeddable</code>, <code>@MappedSuperclass</code> 코드에 자동으로 추가되지만 <code>all-open</code> 명시적으로 위처럼 선언해야 합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># allOpen 없는 경우</span><br><span class="line"><span class="meta">@javax</span>.persistence.Entity <span class="meta">@javax</span>.persistence.Table <span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>(title: kotlin.String, writer: kotlin.String, publisher: kotlin.String, price: java.math.BigDecimal) : com.spring.sample.AuditingEntity &#123;</span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">var</span> price: java.math.BigDecimal <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">var</span> publisher: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">var</span> title: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">var</span> writer: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># allOpen 있는 경우</span><br><span class="line"><span class="meta">@javax</span>.persistence.Entity <span class="meta">@javax</span>.persistence.Table <span class="keyword">public</span> <span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">public</span> <span class="keyword">constructor</span></span>(title: kotlin.String, writer: kotlin.String, publisher: kotlin.String, price: java.math.BigDecimal) : com.spring.sample.AuditingEntity &#123;</span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> price: java.math.BigDecimal <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> publisher: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> title: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@field:javax</span>.persistence.Column <span class="keyword">public</span> <span class="keyword">open</span> <span class="keyword">var</span> writer: kotlin.String <span class="comment">/* compiled code */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 코드의 차이점은 allOpen이 없는 경우 <code>fianl</code> 키워드가 있고, allOpen이 있는 경우 <code>open</code> 키워드가 있습니다. <strong><code>open</code> 키워드가 없으면 Proxy 기반으로 Lazy 로딩을 할 수 없습니다.</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="meta-string">"book"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span></span>(</span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"title"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> title: String,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ManyToOne(fetch = FetchType.LAZY, targetEntity = Order::class)</span></span><br><span class="line">    <span class="meta">@JoinColumn(name = <span class="meta-string">"order_id"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> order: Order</span><br><span class="line">) : AuditingEntity()</span><br><span class="line"></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="meta-string">"orders"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Order</span></span>(</span><br><span class="line">    <span class="meta">@Column(name = <span class="meta-string">"title"</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> number: String</span><br><span class="line">) : AuditingEntity()</span><br></pre></td></tr></table></figure>
+<p><code>@ManyToOne</code> 관계이며, Lazy fetch 전략을 설정했습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `lazy loading test`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 데이터 set up</span></span><br><span class="line">    <span class="keyword">val</span> order = orderRepository.save(Order(<span class="string">"202012-12"</span>))</span><br><span class="line">    <span class="keyword">val</span> book = bookRepository.save(Book(title = <span class="string">"title"</span>, order = order))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 영속성 컨텍스트 초기화</span></span><br><span class="line">    entityManager.clear()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// lazy loading 이기 때문에 book에 대한 조회 쿼리는 발생하지 않을 것이라고 예상</span></span><br><span class="line">    <span class="keyword">val</span> findBook = bookRepository.findByIdOrNull(book.id!!)!!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Lazy 패치 전략을 사용했기 때문에 book에 대한 조회 시 order에 대한 조회가 쿼리가 발생하지 않을 것이라고 예상했지만 결과는 다릅니다.</strong></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/kotlin-lazy-query.png" alt=""></p>
+<p>order에 대한 조회 발생합니다. 디버깅 모드를 활용해서 해당 값을 확인해보겠습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/jpa-proxy.png" alt=""></p>
+<p>Lazy Loading이기 때문에 order는 Proxy 객체이어야 합니다. <strong>하지만 Proxy 객체가 아니라 실제 order 객체를 가지고 있는 것을 확인할 수 있습니다.</strong> 그 이유는 Kotlin은 기본적으로 <code>final</code>이기 때문에 Proxy 클래스를 생성하지 못합니다. Proxy 클래스를 생성하기 위해서는 상속이 가능해야 하므로 <code>open</code>이 필요한데 없으니 Proxy 기반으로 Lazy Loading을 진행할 수 없는 것입니다. 그렇다면 allOpen을 적용하고 다시 테스트해보겠습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/jpa-proxy-3.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/jpa-proxy-2.png" alt=""></p>
+<p>Lazy Loading이 정상적으로 동작하고 Proxy 기반으로 order 객체를 가져오는것을 확인할 수 있습니다.</p>
+<h2><span id="jackson-module-kotlin-모듈">jackson-module-kotlin 모듈</span></h2>
+<p><a href="https://start.spring.io/" rel="external nofollow noopener noreferrer" target="_blank">Spring Initializr</a>를 이용해서 <code>Spring Web MVC</code> 프로젝트를 생성하게 되면 <code>com.fasterxml.jackson.module:jackson-module-kotlin</code> 디펜던시가 자동으로 추가된다. <a href="https://github.com/FasterXML/jackson-module-kotlin" rel="external nofollow noopener noreferrer" target="_blank">jackson-module-kotlin</a>는 기존 Jackson으로 deserialize 하기 위해서는 기본 생성자가 반드시 필요합니다. 하지만 코틀린에서 <code>data class</code>의 객체를 deserialize를 진행하게 되면 기본 생성자가 없기 때문에 아래와 같은 예외가 발생합니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(no Creators, like default construct, exist): cannot deserialize from Object valu...</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleRequestBody</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line"><span class="comment">// all arguments 생성자는 주석</span></span><br><span class="line"><span class="comment">//    public SampleRequestBody(String name, int age) &#123;</span></span><br><span class="line"><span class="comment">//        this.name = name;</span></span><br><span class="line"><span class="comment">//        this.age = age;</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 같은 자바 코드는 all arguments 생성자가 주석인 경우 기본 생성자를 명시적으로 선언하지 않아도 존재하기 때문에 deserialize 진행에 문제가 없습니다. 만약 다른 생성자가 있다면 명시적으로 기본 생성자를 작성하지 않으면 예외가 발생합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleRequestBody</span></span>(</span><br><span class="line">    <span class="keyword">val</span> name: String,</span><br><span class="line">    <span class="keyword">val</span> age: <span class="built_in">Int</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 위 data class를 빌드 이후 Decompile 결과</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleRequestBody</span> </span>&#123;</span><br><span class="line">   <span class="meta">@NotNull</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> int age;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@NotNull</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">final</span> String getName() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">final</span> int getAge() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.age;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> SampleRequestBody(<span class="meta">@NotNull</span> String name, int age) &#123;</span><br><span class="line">      Intrinsics.checkNotNullParameter(name, <span class="string">"name"</span>);</span><br><span class="line">      <span class="keyword">super</span>();</span><br><span class="line">      <span class="keyword">this</span>.name = name;</span><br><span class="line">      <span class="keyword">this</span>.age = age;</span><br><span class="line">   &#125;</span><br><span class="line">   ..</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>코틀린의 <code>data class</code>는 all argument 생성자만 생성하기 때문에 기존 jackson으로 deserialize를 못하고 <code>jackson-module-kotlin</code>을 통해서 단일 생성자로 deserialize를 진행할 수 있습니다. <strong>하지만 최근에는 이 부분도 개선되어 굳이 <code>jackson-module-kotlin</code> 모듈의 도움 없이 기본 생성자가 없이도 deserialize를 진행할 수 있습니다.</strong></p>
+<h3><span id="parametername-이용">ParameterName 이용</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/spring-kotlin-api/master/docs/jackson-dependency.png" alt=""></p>
+<p><code>spring-boot-starter-web</code>의 디펜던시를 통해서 <code>jackson-module-parameter-names</code>는 자동으로 추가됩니다. 즉 <code>ParameterName</code> 모듈은 이미 사용할 수 있는 상태입니다. ParameterNameModule 모듈에 대한 자세한 정리는 <a href="https://blog.benelog.net/jackson-with-constructor.html#jsoncreator" rel="external nofollow noopener noreferrer" target="_blank">Jackson으로 파싱한 JSON 속성값을 생성자로 전달하기</a>에 잘 정리되어 있어 한 번 읽어 보시는 것을 권유 드립니다.</p>
+<p>해당 블로그의 내용을 정리하면 다음과 같습니다.</p>
+<ol>
+<li><code>@JsonProperty(&quot;ip&quot;)</code> 방식(<a href="https://github.com/cheese10yun/blog-sample/tree/master/jackson" rel="external nofollow noopener noreferrer" target="_blank">Jackson Deserialization Annotations: @JsonCreator 참고</a>) 같은 방식으로 생성자 파라미터와, json 필드명이 일치한다면 따로 속성을 지정하지 않아도 가져올 수 있음</li>
+<li><code>JDK 8</code> 이전까지는 Reflection만으로는 파라미터 이름을 가져올 수 없었으나 <code>JDK 8</code> 이상의 경우 컴퍼일 할 때 <code>-parameters</code> 옵션을 붙이면 Reflection API로 파라미터 정보를 가져올 수 있습니다.</li>
+<li>Spring Boot Gradle Plugin 플러그인에서 Java 컴파일의 <code>-parameters</code> 옵션을 자동으로 추가됩니다.</li>
+</ol>
+<p><code>@RequestBody</code>를 통해서 deserialize를 진행할 때 별다른 설정을 하지 않았다면 <code>WebMvcAutoConfiguration</code> 클래스의 정의된 아래의 코드에 의해 결정됩니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebMvcAutoConfiguration</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.messageConvertersProvider</span><br><span class="line">                .ifAvailable((customConverters) -&gt; converters.addAll(customConverters.getConverters()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JacksonAutoConfiguration</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Configuration</span>(proxyBeanMethods = <span class="keyword">false</span>)</span><br><span class="line">    <span class="meta">@ConditionalOnClass</span>(ParameterNamesModule.class)</span><br><span class="line">            <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ParameterNamesModuleConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Bean</span></span><br><span class="line">        <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">        <span class="function">ParameterNamesModule <span class="title">parameterNamesModule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ParameterNamesModule(JsonCreator.Mode.DEFAULT);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>HttpMessageConverter</code> 리스트에 기본으로 추가되는 Jackson에는 <code>ParameterNamesModule</code>이 추가되어 있습니다. 만약 <code>WebMvcConfigurer</code> 인터페이스를 기반으로 <code>extendMessageConverters</code>를 재정의 해서 사용하는 경우에는 <code>ParameterNamesModule</code> 설정을 추가해야 합니다. <strong>결과 적으로 <code>jackson-module-kotlin</code> 모듈 없이 <code>jackson-module-parameter-names</code> 모듈만으로 deserialize를 진행할 수 있습니다.</strong></p>
+<h2><span id="참고">참고</span></h2>
+<ul>
+<li><a href="https://kotlinlang.org/docs/all-open-plugin.html" rel="external nofollow noopener noreferrer" target="_blank">https://kotlinlang.org/docs</a></li>
+<li><a href="https://stackoverflow.com/questions/2935826/why-does-hibernate-require-no-argument-constructor" rel="external nofollow noopener noreferrer" target="_blank">Why does Hibernate require no argument constructor?</a></li>
+<li><a href="https://www.youtube.com/watch?v=Ou_-DFaAUhQ" rel="external nofollow noopener noreferrer" target="_blank">스프링캠프 2019 [Track 1 Session 6] : Kotlin + Spring Data JPA (김태호)<br>
+</a></li>
+<li><a href="https://blog.benelog.net/jackson-with-constructor.html#jsoncreator" rel="external nofollow noopener noreferrer" target="_blank">Jackson으로 파싱한 JSON 속성값을 생성자로 전달하기</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/ktlint/" data-toggle="tooltip" data-placement="top" title="Ktlint 코드 스타일 검사">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Kotlin Plugin</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">plugin.spring 플러그인</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">all-open</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">all-open은 왜 필요할까?</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">no-arg</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">plugin.jpa 플러그인</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">no-arg이 왜 필요할까?</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">all-open In JPA</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">jackson-module-kotlin 모듈</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">ParameterName 이용</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">참고</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
