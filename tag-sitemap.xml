@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/explain/</loc>
+        <lastmod>2021-06-04T16:36:05.666Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/ORM/</loc>
         <lastmod>2021-05-21T14:14:01.470Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -306,13 +313,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2020-02-21T15:15:13.814Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/explain/</loc>
-        <lastmod>2020-02-16T15:46:32.459Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

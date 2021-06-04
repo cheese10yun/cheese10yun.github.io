@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/mysql-explian/</loc>
+        <lastmod>2021-06-04T16:36:05.666Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/exposed/</loc>
         <lastmod>2021-05-21T14:14:01.470Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -298,14 +306,6 @@
     <url>
         <loc>https://cheese10yun.github.io/querydsl-projections/</loc>
         <lastmod>2020-02-21T15:15:13.808Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/mysql-explian/</loc>
-        <lastmod>2020-02-16T15:46:32.459Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
