@@ -8,8 +8,16 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
+        <lastmod>2021-06-10T13:14:13.063Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-batch-reader-performance/</loc>
-        <lastmod>2021-06-06T06:26:09.038Z</lastmod>
+        <lastmod>2021-06-06T08:58:23.830Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -82,14 +90,6 @@
     <url>
         <loc>https://cheese10yun.github.io/jpa-preference/</loc>
         <lastmod>2021-03-07T15:47:29.653Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
-        <lastmod>2021-03-07T15:47:29.648Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
