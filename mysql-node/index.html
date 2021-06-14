@@ -257,7 +257,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">router.get(<span class="string">'/mysql/test'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> stmt = <span class="string">'select *from ....'</span>;</span><br><span class="line">  connection.query(stmt, <span class="function"><span class="keyword">function</span> (<span class="params">err, result</span>) </span>&#123;</span><br><span class="line">    .....</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>위에서 설명한 connection 객체를 이용해서 쿼리 작업을 진행하시면 됩니다.</p>
 <p><img src="https://i.imgur.com/yloTaE9.png" alt="EC2 Innound"></p>
-<p>서버를 실행시키면 입력된 데이터베이스와 연결이 되고 <code>test_open</code> 메서드를 통해서 데이터베이스의 컨넥션이 제대로 생성이 됐나 간단한 로그로 출력됩니다. 이처럼 서버를 실행시켰을 때 데이터베이스와 제대로 연결되었는지 정보를 출력하시는 것을 권장합니다.</p>
+<p>서버를 실행시키면 입력된 데이터베이스와 연결이 되고 <code>test_open</code> 메서드를 통해서 데이터베이스의 커넥션이 제대로 생성이 됐나 간단한 로그로 출력됩니다. 이처럼 서버를 실행시켰을 때 데이터베이스와 제대로 연결되었는지 정보를 출력하시는 것을 권장합니다.</p>
 <h3><span id="마무리">마무리</span></h3>
 <p>이번 포스팅 내용은 짧긴 짧았지만 생각을 정리하고, 코드를 작성하고 또 그것을 문서로 다시 작성하는 것은 상당히 시간이 거리는 작업인 거 같습니다.  그래도 점점 익숙해지고 있기도 하고, 블로그를 포스팅한 날은 조회수를 보는 재미도 있습니다. 그런 의미로 좋아요, 공유하기 좀 부탁드리겠습니다…</p>
 <p>포스팅하다 보면 “아 이 내용이 먼저 나와야 이걸 설명하기가 편할 거 같아” 이런 생각이 계속 들어 제가 하고 싶은 포스팅하고 싶은 내용보다는 좀 더 앞부분을 계속 설명해드렸던 거 같습니다. 그래도 제가 전하고 싶은 기술 천천히, 꾸준하게 포스팅해 나아가겠습니다.</p>
