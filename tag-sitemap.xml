@@ -108,6 +108,13 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/WebStorm/</loc>
+        <lastmod>2021-06-17T10:07:07.517Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Transactions/</loc>
         <lastmod>2021-06-17T10:06:56.905Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -186,7 +193,7 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Gradle/</loc>
-        <lastmod>2021-06-17T09:55:02.030Z</lastmod>
+        <lastmod>2021-06-17T09:55:37.920Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -229,13 +236,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/HTTPS/</loc>
         <lastmod>2019-05-19T05:31:32.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/WebStorm/</loc>
-        <lastmod>2018-03-17T05:45:18.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
