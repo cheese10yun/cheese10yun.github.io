@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="JPA 플러시 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/jpa-flush/">
+    <meta property="og:description" content="JPA 플러시 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/jpa-flush/">
+
+
+    <title>
+        
+          JPA 플러시 정리 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/jpa-flush/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                        </div>
+                        <h1>JPA 플러시 정리</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2020-01-29
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p><a href="http://acornpub.co.kr/book/jpa-programmig" rel="external nofollow noopener noreferrer" target="_blank">자바 ORM 표준 JPA 프로그래밍</a>을 보고 플러시 관련 내요을 정리한 정리한 내용 입니다.</p>
+</blockquote>
+<h2><span id="플러시-란">플러시 란?</span></h2>
+<p>JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다. 보통 트랜잭션을 커밋하면 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화(등록, 수정, 삭제) 작업을 진행하게 됩니다.</p>
+<h2><span id="엔티티-등록">엔티티 등록</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">EntityMaanger em  = emf.createEnttiyManager();</span><br><span class="line">ENtityTranscation transaction = em.getTransaction();</span><br><span class="line"><span class="comment">// 엔티티 매니저는 데이터 변경 시 트랜잭션을 시작해야한다.</span></span><br><span class="line"></span><br><span class="line">transaction.begin();</span><br><span class="line"></span><br><span class="line">em.persist(memberA);</span><br><span class="line">em.persist(memberB);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 여기까지 Insert SQL을 데이터베이스에 보내지 않는다.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Commit을 하는 순간 데이터베이스에 Insert SQL을 보낸다</span></span><br><span class="line">transaction.commit();</span><br></pre></td></tr></table></figure>
+<p>엔티티 <strong>매니저는 트랜잭션을 커밋하기 직전까지 데이터베이스에 엔티티를 저장하지 않고 내부 쿼리 저장소에 INSERT SQL을 모아둔다.</strong> 그리고 트랜잭션을 커밋할 때 모아둔 쿼리를 데이터베이스에 보내느데 이것을 <strong>트랜잭션을 지원하는 쓰기 지연</strong> 이라 한다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent.png" alt=""><br>
+회원 A를 영속화 했다. 영속성 컨텍스트는 1차 캐시에 회원 엔티티를 저장하면서 동시에 회원 엔티티 정보로 등록 쿼리를 만든다. 그리고 만들어진 등록 쿼리를 쓰기 지연 SQL 저장소에 보관한다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-2.png" alt=""><br>
+다음으로 회원 B를 영속화했다. 마찬가지로 회원 엔티티 정보로 등록 쿼리를 생성해서 쓰지 지연 SQL 저장소에 보관한다. 현재 쓰기 지연 SQL저장소 에는 등록 쿼리가 2건이 저장되어 있다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-3.png" alt=""></p>
+<p>마지막으로 트랜잭션을 커밋했다. <strong>트랜잭션을 커밋하면 엔티티 매니저는 우선 영속성 컨텍스트를 플러시한다. 플러시는 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화하는 작업인데 이때 등록, 수정, 삭제한 엔티티를 데이터베이스에 반영한다.</strong></p>
+<p>즉, 쓰기 지연 SQL 저장소에 모인 쿼리를 데이터베이스에 보낸다. 이렇게 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화한 후에 실제 데이터베이스 트랜잭션을 커밋한다.<br>
+(flush가 먼저 동작하고 (데이터베이스에 동기화한 후에) 실제 데이터베이스 트랜잭션을 커밋한다.)</p>
+<h3><span id="트랜잭션을-지원하는-쓰기-지연이-가능한-이유">트랜잭션을 지원하는 쓰기 지연이 가능한 이유</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">begin(); <span class="comment">// 트랜잭션 시작</span></span><br><span class="line"></span><br><span class="line">save(A);</span><br><span class="line">save(B);</span><br><span class="line">save(C);</span><br><span class="line"></span><br><span class="line">commit(); <span class="comment">// 트랜잭션 커밋</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>데이터를 저장하는 즉시 등록 쿼리를 데이터베이스에 보낸다. 예제에서 save() 메서드를 호출할 때 마다 즉시 데이터베이스에 등록 쿼리를 보낸다. 그리고 마지막에 트랜잭션을 커밋한다.</li>
+<li>데이터를 저장하면 등록 쿼리를 <strong>데이터베이스에 보내지 않고 메모리에 모아 둔다.</strong> 그리고 <strong>트랜잭션을 커밋할 때 모아둔 등록 쿼리를 데이터베이스에 보낸다.</strong></li>
+</ol>
+<h3><span id="트랜잭션을-지원하는-쓰지-지연과-성능-최적화">트랜잭션을 지원하는 쓰지 지연과 성능 최적화</span></h3>
+<h4><span id="트랜잭션을-지원하는-쓰지-이연과-jdbc-배치">트랜잭션을 지원하는 쓰지 이연과 JDBC 배치</span></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">insert(member1); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member2); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member3); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member4); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member5); <span class="comment">// INSERT INTO ...</span></span><br><span class="line"></span><br><span class="line">commit();</span><br></pre></td></tr></table></figure>
+<p><strong>네트워크 호출 한번은 단순한 메소드를 수만 번 호출하는 것보다 더 큰 비용이 든다.</strong> 이 코드는 5번의 INSERT SQL과 1번의 커밋으로 총 6번 데이터 베이스와 통신한다. 이것을 최적화하라면 5번의 INSERT SQL을 모아서 한 번에 데이터베이스로 보내면 된다. <strong>JDBC가 제공하는 SQL 배치 기능을 사용하면 SQL을 모아서 데이터베이스에 한 번에 보낼 수 있다.</strong> 하지만 이 기능을 사용하라면 많은 코드를 수정해야한다. <strong>JPA는 플러시 기능이 있이므로 SQL 배치 기능을 효과적으로 사용할 수 있다.</strong></p>
+<p><strong><code>hibernate.jdbc.batch_size</code> 속성의 값을 50으로 주면 최대 50건씩 모아서 SQL 배치를 실행한다. 하지만 SQL 배치는 같은 SQL일 때만 유효하다. 중간에 다른 처리가 들어가면 SQL 배치를 다시 시작한다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 3</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 4</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Orders()); <span class="comment">// 1-1, 다른 SQL이 추가 되었기 때문에  SQL 배치를 다시 시작 해야 한다</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> Member()); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>1,2,3,4를 모아서 하나의 SQL 배치를 실행하고 1-1를 한 번 실행하고 1,2을 모아서 실행한다. 따라서 총 3번의 SQL 배치를 실행한다.</p>
+<p>모든 경우에 사용할 수 있는 것은 아니다. 엔티티가 영속 상태가 되려면 식별자가 꼭 필요하다. <strong>그런데 IDENTITY 식별자 생성 전략은 엔티티를 데이터베이스에 저장해야 식별자를 구할 수 있으므로 em.persist()를 호출하는 즉시 INSERT SQL이 데이터베이스에 전달된다. 따라서 쓰지 지연을 활용한 성능 최적화를 할 수가 없다.</strong></p>
+<h4><span id="트랜잭션을-지원하는-쓰기-지연과-애플리케이션-확장성">트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성</span></h4>
+<p><strong>트랜잭션을 지원하는 쓰기 지연의 가장큰 장점은 데이터베이스 테이블 로우에 락이 걸리는 시간을 최소한다는 것이다. 이 기능은 트랜잭션을 커밋해서 영속성 컨텍스트를 플러시하기 전까지는 데이터베이스에 데이터를 등록, 수정, 삭제 하지 않는다. 따라서 커밋 전까지 데이터베이스 로우에 락을 걸지 않는다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update(memberA); <span class="comment">// UPDATE SQL Member A</span></span><br><span class="line">비즈니스로직A(); <span class="comment">// UPDATE SQL ...</span></span><br><span class="line">비즈니스로직B(); <span class="comment">// UPDATE SQL ...</span></span><br><span class="line">commit();</span><br></pre></td></tr></table></figure>
+<p><strong>JPQL를 사용하지 않고 SQL 직접다루면 update(memberA)를 호출할 때 UPDATE SQL을 실행하면 데이터베이스 테이블 로우에 락을 건다. 이 락은 비즈니스 <code>로직A()</code>, <code>비즈니스 로직B()</code>를 모두 수행하고 <code>commit()</code>을 호출할 때까지 유지된다. 트랜잭션 격리 수준에 따라 다르지만 보통 많이 사용하는 커밋된 읽기 Read Committed 격리 수준이나 그 이상에는 데이터베이스에 현재 수정 중인 데이터(로우)를 수정하려는 다른 트랜잭션은 락이 풀릴 때까지 대기한다.</strong></p>
+<p><strong>JPA는 커밋을 해야 플러시를 호출하고 데이터베이스에 수정 쿼리를 보낸다.</strong> 예제에서 <code>commit()</code>을 호출할 때 UPDATE SQL을 실행하고 바로 데이터베이스 트랜잭션을 커밋한다. 쿼리를 보내고 보내고 바로 트랜잭션을 커밋하므로 결과적으로 데이터베이스에 락이 걸리는 시간을 최소화 한다. <strong>이는 동시에 더 많은 트래잭션을 처리할 수 있다는 장점이 된다.</strong></p>
+<h2><span id="엔티티-수정">엔티티 수정</span></h2>
+<h3><span id="변경-감지">변경 감지</span></h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EntityMaanger em  = emf.createEnttiyManager();</span><br><span class="line">ENtityTranscation transaction = em.getTransaction();</span><br><span class="line">transaction.begin(); // 트랜잭션 시작</span><br><span class="line"></span><br><span class="line">// 영성속 텐티티 조회</span><br><span class="line">Member memberA = em.find(Member.class, &quot;memberA&quot;);</span><br><span class="line"></span><br><span class="line">// 영속성 엔티티 데이터 수정</span><br><span class="line"></span><br><span class="line">memberA.setUsername(&quot;hi&quot;);</span><br><span class="line">memberA.setAge(10);</span><br><span class="line"></span><br><span class="line">//em.update(member) 이런 코드가 있어야하지 않을까?</span><br><span class="line"></span><br><span class="line">transaction.commit(); // 트랜잭션 커밋</span><br></pre></td></tr></table></figure>
+<p><strong>엔티티의 변경사항을 데이터베이스에 자동으로 반영하는 기능을 변경 감지(dirty checking) 이라 한다.</strong><br>
+<img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-persistent-dirty-checking.png" alt=""><br>
+JPA는 엔티티를 영속성 컨텍스트에 보관할 때, <strong>최초 상태를 복사해서 저장해두는데 이것을 스냅샷이리고 한다.</strong> 그리고 플러시 시점에서 스냡샵과 엔티티를 비교해서 변경된 엔티티를 찾는다.</p>
+<ol>
+<li><strong>트랜잭션을 커밋하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.</strong></li>
+<li>엔티티와 스냅샵을 비교해서 변경된 엔티티를 찾는다.</li>
+<li><strong>변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.</strong></li>
+<li>쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.</li>
+<li>데이터베이스 트랜잭션을 커밋한다.</li>
+</ol>
+<h3><span id="읽기-전용-트랜잭션">읽기 전용 트랜잭션</span></h3>
+<p>스프링 프레임워크를 사용하면 트랜잭션을 읽기 전용 모드로 설정할 수 있다. <code>@Transactional(readOnly = true)</code> 옵션을 주면 스프링 프레임워크가 하이버네이트 세션의 플러시 모드를 MANUAL로 설정한다 <strong>그렇게되면 강제로 플러시를 호출하지 않은 한 플러시가 일어나지 않는다.</strong> 따라서 트랜잭션을 커밋해도 영속성 컨텍스트 플러시하지 않는다. 영속성 컨텍스트를 플러시하지 않으니 엔티티의 등록, 수정, 삭제는 당연히 동작하지 않는다. <strong>플러시 할 때 일어나는 스냅샷비교와 같은 무거운 로직을 수행하지 않으므로 성능에 향상된다.</strong></p>
+<p><strong>변경 감지는 영속성 컨텍스타 관리하는 영속 상태의 엔티티에만 적용된다.</strong> 비영속, 준영속처럼 영속성 컨텍스트의 관리를받지 못하는 엔티티는 값을 변경해도 데이터베이스에 반영되지 않는다.</p>
+<h2><span id="엔티티-삭제">엔티티 삭제</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Member meberA = em.find(Member.class, <span class="string">"memberA"</span>); <span class="comment">// 삭제할 대상 엔티티 조회</span></span><br><span class="line">em.remove(memberA); <span class="comment">// 엔티티 삭제</span></span><br></pre></td></tr></table></figure>
+<p><strong>엔티티를 삭제하려면 먼저 삭제 대상 엔티티를 조회해야한다.</strong> em.remove()에 삭제 대상 엔티티를 넘겨주면 엔티티를 삭제한다. 물론 엔티티를 즉시 삭제하는 것이 아니라 엔티티 등록과 비슷하게 삭제 쿼리를 쓰기 지연 데이터베이스에 삭제 쿼리를 전달한다.</p>
+<h2><span id="영속성-컨텍스트를-플러시-하는-3-가지-방법">영속성 컨텍스트를 플러시 하는 3 가지 방법</span></h2>
+<p><strong>플러시는 영속성 컨텍스의 변경 내용을 데이터베이스에 반영한다.</strong> 플러시를 실행하면 구체적으로 다음과 같은 일이 일어난다</p>
+<ol>
+<li>변경 감자기 동작해서 영속성 컨텍스트에 있는 모든 엔티티를 스냅샷과 비교 해서 수정된 엔티티를 찾는다. 수정 엔티티는 수정 쿼리를 만들어 쓰기 지연 SQL 등록한다.</li>
+<li>쓰기 지연 SQL 의 저장소의 쿼리를 데이터베이스에 전송한다. (등록, 수정, 삭제 쿼리)</li>
+</ol>
+<p>영속성 컨텍스트를 플러시 하는 방법은 3가지다.</p>
+<ol>
+<li>em.flush()를 직접 호출한다.</li>
+<li>JPQL 쿼리 실행 시 플러시가 자동 호출된다.</li>
+<li>트랜잭션 커밋 시 플러시가 자동 호출된다.</li>
+</ol>
+<h3><span id="플러시를-직접-호출하는-경우">플러시를 직접 호출하는 경우</span></h3>
+<p>엔티티 매니저의 flush() 메서드를 직접 호출해서 영속성 컨텍스트를 강제로 플러시 한다. <strong>테스트나 다른 프레임워크와 JPA 함께 사용할 때는 제외하고 거의 사용하지 않는다.</strong></p>
+<h3><span id="트랜잭션-커밋-시-플러시가-자동-호출">트랜잭션 커밋 시 플러시가 자동 호출</span></h3>
+<p><strong>데이터베이스에 변경 내용을 SQL로 전달하지 않고 트랜잭션만 커밋하면 어떤 데이터도 데이터베이스에 반영되지 않는다. 따라서 트랜잭션을 커밋하기 전에 꼭 플러시를 호출해서 영속성 컨텍스트의 변경 내용을 데이터베이스에 반영해야 한다.</strong> JPA는 이런 문제를 예방하기 위해서 트랜잭션 커밋할 때 플러시를 자동으로 호출한다.</p>
+<h3><span id="jpql-쿼리-실행시-플러시-자동-호출">JPQL 쿼리 실행시 플러시 자동 호출</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `JPQL 쿼리 실행시 플러시 자동 호출`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> teamA = Team(<span class="string">"teamA"</span>)</span><br><span class="line">    <span class="keyword">val</span> teamB = Team(<span class="string">"teamB"</span>)</span><br><span class="line"></span><br><span class="line">    em.persist(teamA)</span><br><span class="line">    em.persist(teamB)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> teams = query.select(qTeam)</span><br><span class="line">            .from(qTeam)</span><br><span class="line">            .fetch()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">        println(<span class="string">"team : <span class="variable">$team</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>JPQL이나 QueryDSL 같은 객체지향 <strong>쿼리를 호출할 플러시가 실행된다.</strong></p>
+<ol>
+<li><code>teamA</code>, <code>teamB</code>를 영속성 컨텍스트에 저장한다.</li>
+<li>QueryDSL으로 Team 전체를 조회 한다.</li>
+<li>QueryDSL 쿼리 시점에 <code>teamA</code>, <code>teamB</code> 플러시를 이르켜 데이터베이스에 commit하지 않았다면 QueryDsl으로 조회한 값은 없을 것이다.</li>
+</ol>
+<p>이런 결과가 나오기 때문에 쿼리를 실행하기 직전에 영속성 컨텍스트를 플러시해서 변경 내용을 데이터베이스에 반영해야 한다. JPA는 이런 문제를 예방하기 위해서 JPQL을 실행할 때도 플러시르 자동 호출한다. <strong>참고로 식별자를 기준으로 조회하는 find() 메서드는 호출되지 않는다.</strong></p>
+<h2><span id="참고">참고</span></h2>
+<ul>
+<li><a href="http://acornpub.co.kr/book/jpa-programmig" rel="external nofollow noopener noreferrer" target="_blank">자바 ORM 표준 JPA 프로그래밍</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/rest-template-mock-test/" data-toggle="tooltip" data-placement="top" title="RestTemplate Mock 기반 테스트 하기">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/jpa-persistent-context/" data-toggle="tooltip" data-placement="top" title="JPA 영속성 컨텍스트 주의 점">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">플러시 란?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">엔티티 등록</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">트랜잭션을 지원하는 쓰기 지연이 가능한 이유</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">트랜잭션을 지원하는 쓰지 지연과 성능 최적화</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">트랜잭션을 지원하는 쓰지 이연과 JDBC 배치</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">엔티티 수정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">변경 감지</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">읽기 전용 트랜잭션</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">엔티티 삭제</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">영속성 컨텍스트를 플러시 하는 3 가지 방법</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">플러시를 직접 호출하는 경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">트랜잭션 커밋 시 플러시가 자동 호출</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">JPQL 쿼리 실행시 플러시 자동 호출</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">참고</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

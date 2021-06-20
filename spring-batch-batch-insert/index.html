@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Batch Insert 성능 향상기 2편 - 성능 측정 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-batch-batch-insert/">
+    <meta property="og:description" content="Batch Insert 성능 향상기 2편 - 성능 측정 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-batch-batch-insert/">
+
+
+    <title>
+        
+          Batch Insert 성능 향상기 2편 - 성능 측정 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-batch-batch-insert/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#성능" title="성능">성능</a>
+                            
+                              <a class="tag" href="/tags/#Exposed" title="Exposed">Exposed</a>
+                            
+                        </div>
+                        <h1>Batch Insert 성능 향상기 2편 - 성능 측정</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2021-02-27
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>JPA + MySQL + GenerationType.IDENTITY 조합으로는 Batch Insert를 사용할 수 없습니다. 자세한 내용은 <a href="https://cheese10yun.github.io/jpa-batch-insert/">Batch Insert 성능 향상기 1편 - With JPA</a>에서 자세하게 정리했습니다.</p>
+<p>JPA의 단일 insert와, batch insert의 성능적인 차이가 얼마나 발생하는지 측정해보고 batch insert를 지원하는 새로운 솔루션을 찾아 성능 측정을 진행한 포스팅입니다.</p>
+<h2><span id="다른-솔루션-찾기">다른 솔루션 찾기</span></h2>
+<h3><span id="솔루션에-대한-요구사항">솔루션에 대한 요구사항</span></h3>
+<ul>
+<li>SQL 관련 작업들을 문자열로 처리하지 하지 않고 DSL 표현하며 DSL 표현이 풍부할 것</li>
+<li>Batch Insert 외에도 조회 작업 등에도 사용이 용이할 것</li>
+<li>JDBC <code>addBatch()</code> 직접 호출하는 코드와 성능적인 차이가 거의 없을 것</li>
+</ul>
+<h3><span id="exposed">Exposed</span></h3>
+<p>결론부터 말씀드리면 <a href="https://github.com/JetBrains/Exposed" rel="external nofollow noopener noreferrer" target="_blank">Exposed</a>라는 도구를 선택했습니다. Batch Insert를 지원하며 DSL을 잘 지원해 JPA에서 사용 못 하는 쿼리를 진행할 수 있는 장점이 있습니다. Exposed에 대한 소개는 다음 포스팅에 진행해 보겠습니다.</p>
+<h3><span id="batch-code">Batch Code</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">const <span class="keyword">val</span> GLOBAL_CHUNK_SIZE = <span class="number">1</span>_000</span><br><span class="line">const <span class="keyword">val</span> DATA_SET_UP_SIZE = <span class="number">5</span>_000_000</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BulkInsertJobConfiguration</span></span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> jobBuilderFactory: JobBuilderFactory,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> jobDataSetUpListener: JobDataSetUpListener,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> dataSource: DataSource,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> exposedDataBase: Database,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> paymentBackJpaRepository: PaymentBackJpaRepository,</span><br><span class="line">    entityManagerFactory: EntityManagerFactory</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">bulkInsertJob</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        jdbcTemplateInsertStep: <span class="type">Step</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>: Job =</span><br><span class="line">        jobBuilderFactory[<span class="string">"bulkInsertJob"</span>]</span><br><span class="line">            .incrementer(RunIdIncrementer())</span><br><span class="line">            .listener(jobDataSetUpListener) <span class="comment">// payment 데이터 setup</span></span><br><span class="line">            .start(jdbcTemplateInsertStep)</span><br><span class="line">            .build()</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@JobScope</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">bulkInsertStep</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        stepBuilderFactory: <span class="type">StepBuilderFactory</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">        bulkInsertReader: <span class="type">JpaCursorItemReader</span>&lt;<span class="type">Payment</span>&gt;</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>: Step =</span><br><span class="line">        stepBuilderFactory[<span class="string">"bulkInsertStep"</span>]</span><br><span class="line">            .chunk&lt;Payment, Payment&gt;(GLOBAL_CHUNK_SIZE)</span><br><span class="line">            .reader(bulkInsertReader) <span class="comment">// Reader는 JpaCursorItemReader 기반으로 조회</span></span><br><span class="line"><span class="comment">//            .writer(writerWithStatement) // Statement addBatch() 기반 저장 </span></span><br><span class="line">            .writer(writerWithExposed) <span class="comment">// Exposed 기반 저장</span></span><br><span class="line"><span class="comment">//            .writer(writerWithJpa) // JPA 기반 저장</span></span><br><span class="line">            .build()</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@StepScope</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">bulkInsertReader</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        entityManagerFactory: <span class="type">EntityManagerFactory</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span> = JpaCursorItemReaderBuilder&lt;Payment&gt;()</span><br><span class="line">        .name(<span class="string">"bulkInsertReader"</span>)</span><br><span class="line">        .entityManagerFactory(entityManagerFactory)</span><br><span class="line">        .queryString(<span class="string">"SELECT p FROM Payment p"</span>)</span><br><span class="line">        .build()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> writerWithStatement: ItemWriter&lt;Payment&gt; = ItemWriter &#123; payments -&gt;</span><br><span class="line">        <span class="keyword">val</span> sql = <span class="string">"insert into payment_back (amount, order_id) values (?, ?)"</span></span><br><span class="line">        <span class="keyword">val</span> connection = dataSource.connection</span><br><span class="line">        <span class="keyword">val</span> statement = connection.prepareStatement(sql)!!</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (payment <span class="keyword">in</span> payments) &#123;</span><br><span class="line">                statement.apply &#123;</span><br><span class="line">                    <span class="keyword">this</span>.setBigDecimal(<span class="number">1</span>, payment.amount)</span><br><span class="line">                    <span class="keyword">this</span>.setLong(<span class="number">2</span>, payment.orderId)</span><br><span class="line">                    <span class="keyword">this</span>.addBatch()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            statement.executeBatch()</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">            <span class="keyword">throw</span> e</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (statement.isClosed.not()) &#123;</span><br><span class="line">                statement.close()</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (connection.isClosed.not()) &#123;</span><br><span class="line">                connection.close()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> writerWithJpa: ItemWriter&lt;Payment&gt; =</span><br><span class="line">        ItemWriter &#123; payments -&gt;</span><br><span class="line">            payments.map &#123; payment -&gt;</span><br><span class="line">                PaymentBackJpa(</span><br><span class="line">                    amount = payment.amount,</span><br><span class="line">                    orderId = payment.orderId</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">                .also &#123;</span><br><span class="line">                    paymentBackJpaRepository.saveAll(it)</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> writerWithExposed: ItemWriter&lt;Payment&gt; = ItemWriter &#123; payments -&gt;</span><br><span class="line">        transaction(</span><br><span class="line">            exposedDataBase</span><br><span class="line">        ) &#123;</span><br><span class="line">            PaymentBack.batchInsert(</span><br><span class="line">                <span class="keyword">data</span> = payments,</span><br><span class="line">                shouldReturnGeneratedValues = <span class="literal">false</span></span><br><span class="line">            ) &#123; payment -&gt;</span><br><span class="line">                <span class="keyword">this</span>[PaymentBack.orderId] = payment.orderId</span><br><span class="line">                <span class="keyword">this</span>[PaymentBack.amount] = payment.amount</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">object</span> PaymentBack : LongIdTable(name = <span class="string">"payment_back"</span>) &#123;</span><br><span class="line">    <span class="keyword">val</span> amount = decimal(<span class="string">"amount"</span>, <span class="number">19</span>, <span class="number">4</span>)</span><br><span class="line">    <span class="keyword">val</span> orderId = long(<span class="string">"order_id"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Spring Batch 기반으로 <code>payment</code> 테이블을 N 개 읽어서 <code>payment_back</code> 테이블로 저장하는 흐름입니다. Reader는 JpaCursorItemReader 기반으로 <code>payment</code> 테이블을 조회합니다. 그리고 각 저장하는 <code>wirter</code> 코드들이 있습니다. <code>writerWithExposed()</code> 메서드는 <code>Exposed</code> 라이브러리에서 지원하는 <code>batchInsert()</code>메서드를 이용해서 insert를 진행하고 있습니다.</p>
+<h3><span id="exposed-batch-insert">Exposed Batch Insert</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">transaction(</span><br><span class="line">    exposedDataBase</span><br><span class="line">) &#123;</span><br><span class="line">    PaymentBack.batchInsert(</span><br><span class="line">        <span class="keyword">data</span> = payments,</span><br><span class="line">        shouldReturnGeneratedValues = <span class="literal">false</span></span><br><span class="line">    ) &#123; payment -&gt;</span><br><span class="line">        <span class="keyword">this</span>[PaymentBack.orderId] = payment.orderId</span><br><span class="line">        <span class="keyword">this</span>[PaymentBack.amount] = payment.amount</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Exposed</code>는 <code>batchInsert()</code> 메서드를 지원하기 때문에 쉽게 batch insert를 진행할 수 있습니다. Mysql의 경우 JDBC 드라이버에 <code>rewriteBatchedStatements=true</code> 속성을 반드시 입력해야 batch insert가 가능합니다. <code>shouldReturnGeneratedValues</code> 값을 <code>false</code>로 지정하면 <code>auto_increment</code>으로 증가된 ID 값을 가져오지 않기에 성능이 향상될 수 있습니다.</p>
+<h2><span id="insert-성능-측정">Insert 성능 측정</span></h2>
+<p>Insert에 대한 성능 측정은 JPA, Statement, Exposed 3가지 라이브러리로 진행하겠습니다. JPA는 단건으로 저장하며, Statement는 문자열 기반으로 <code>addBatch()</code>를 직접 호출, Exposed는 자체적으로 지원하는 Batch Insert를 진행합니다.</p>
+<p><strong>해당 속도 측정은 JpaCursorItemReader 기반으로 조회하는 시간까지 포함된 시간입니다.</strong> 수백수만 데이터를 한 번에 저장하는 경우는 보다 페이징 처리를 진행해서 저장하는 것이 일반적이기도 하고 모두 동일한 Reader를 사용했기 때문에 비율은 동일하게 측정됩니다. 측정 단위는 모두 <code>ms</code>입니다.</p>
+<h4><span id="chunk-size-1000">chunk size = 1,000</span></h4>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/batch-study/docs/img/chunk_size_1000.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>rows</th>
+<th>JPA</th>
+<th>Statement</th>
+<th>Exposed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10,000</td>
+<td>9278</td>
+<td>577</td>
+<td>890</td>
+</tr>
+<tr>
+<td>50,000</td>
+<td>53330</td>
+<td>2632</td>
+<td>3119</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td>108460(1.8 min)</td>
+<td>3470</td>
+<td>4820</td>
+</tr>
+<tr>
+<td>500,000</td>
+<td>561756(9.3 min)</td>
+<td>14693</td>
+<td>21154</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1163130(19.3 min)</td>
+<td>28633</td>
+<td>46533</td>
+</tr>
+<tr>
+<td>5,000,000</td>
+<td>5452635(90.8 min)</td>
+<td>140117(2.3 min)</td>
+<td>227203(3.7 min)</td>
+</tr>
+<tr>
+<td>10,000,000</td>
+<td>x</td>
+<td>282603(4.7 min)</td>
+<td>438349(7.3 min)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>rows <code>10,000,000</code> 측정은 너무 오래 걸려 진행하지 못했습니다.</strong> <code>5,000,000</code> 보다 약 2배 정도 <code>10905270 ms (181 min)</code> 정도 예상됩니다. JPA 성능 측정은 더 이상 의미가 없을 거 같아서 Statement, Exposed를 chunk size 기준으로 진행하겠습니다.</p>
+<h4><span id="chunk-size-5000">chunk size = 5,000</span></h4>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/batch-study/docs/img/chunk_size_5000.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>rows</th>
+<th>Statement</th>
+<th>Exposed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10,000</td>
+<td>415</td>
+<td>787</td>
+</tr>
+<tr>
+<td>50,000</td>
+<td>1454</td>
+<td>2569</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td>2681</td>
+<td>3777</td>
+</tr>
+<tr>
+<td>500,000</td>
+<td>10607</td>
+<td>17911</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>22378</td>
+<td>33637</td>
+</tr>
+<tr>
+<td>5,000,000</td>
+<td>105275</td>
+<td>165472</td>
+</tr>
+<tr>
+<td>10,000,000</td>
+<td>215456</td>
+<td>311385</td>
+</tr>
+</tbody>
+</table>
+<h4><span id="chunk-size-10000">chunk size = 10,000</span></h4>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/batch-study/docs/img/chunk_size_100000.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>rows</th>
+<th>Statement</th>
+<th>Exposed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10,000</td>
+<td>421</td>
+<td>879</td>
+</tr>
+<tr>
+<td>50,000</td>
+<td>1713</td>
+<td>2582</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td>2636</td>
+<td>4101</td>
+</tr>
+<tr>
+<td>500,000</td>
+<td>10959</td>
+<td>15479</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>21159</td>
+<td>33711</td>
+</tr>
+<tr>
+<td>5,000,000</td>
+<td>105478</td>
+<td>150009</td>
+</tr>
+<tr>
+<td>10,000,000</td>
+<td>205380</td>
+<td>308874</td>
+</tr>
+</tbody>
+</table>
+<h3><span id="정리">정리</span></h3>
+<p>JPA(단일 insert)와 성능은 비교 자체가 되지 않으며, 자바 코드와, 데이터베이스가 동일하지 않은 네트워크 환경에서는 IO 작업이 더 많이 발생하기 때문에 위 성능 측정보다 안 좋은 결과가 예상됩니다.</p>
+<p><code>Exposed</code>도 내부적으로 <code>addBatch()</code>를 사용해서 batch insert를 진행하는데도 불과하고 대략 <code>30%</code>성능의 차이를 보였습니다. <code>Statement</code> 보다 느린 부분은 사실이지만 절대적인 성능 자체가 둘 모두 빠르기에 (<code>10,000,000</code> 기준 1분 40초 차이) 속도적인 측면보다는 개발 및 유지 보수 측면에서 <code>Exposed</code>가 더 좋다고 판단했습니다.</p>
+<p>그리고 chunk size <code>5,000</code>, <code>10,000</code> 각각 측정해 본 결과 <code>Exposed</code>가 조금 더 효율적으로 성능이 향상되었습니다. 물론 모든 측정은 로컬 환경에서 진행한 것이니 절대적인 수치보다는 각 rows 별 <code>JPA</code>, <code>Statement</code>, <code>Exposed</code>의 비율을 보는 게 더 바람직합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/ktlint/" data-toggle="tooltip" data-placement="top" title="Ktlint 코드 스타일 검사">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/jpa-batch-insert/" data-toggle="tooltip" data-placement="top" title="Batch Insert 성능 향상기 1편 - With JPA">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">다른 솔루션 찾기</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">솔루션에 대한 요구사항</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Exposed</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">Batch Code</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">Exposed Batch Insert</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Insert 성능 측정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.0.1.</span> <span class="toc-nav-text">chunk size = 1,000</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.0.2.</span> <span class="toc-nav-text">chunk size = 5,000</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.0.3.</span> <span class="toc-nav-text">chunk size = 10,000</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">정리</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#성능" title="성능">성능</a>
+                        
+                          <a class="tag" href="/tags/#Exposed" title="Exposed">Exposed</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

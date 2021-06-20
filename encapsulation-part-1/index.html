@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring OOP 프로그래밍 예제(6) - 캡슐화 내가 생각하는 캡슐화란(1) - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/encapsulation-part-1/">
+    <meta property="og:description" content="Spring OOP 프로그래밍 예제(6) - 캡슐화 내가 생각하는 캡슐화란(1) - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/encapsulation-part-1/">
+
+
+    <title>
+        
+          Spring OOP 프로그래밍 예제(6) - 캡슐화 내가 생각하는 캡슐화란(1) - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/encapsulation-part-1/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#OOP" title="OOP">OOP</a>
+                            
+                        </div>
+                        <h1>Spring OOP 프로그래밍 예제(6) - 캡슐화 내가 생각하는 캡슐화란(1)</h1>
+                        <h2 class="subheading">스프링 JPA로 알아보는 캡슐화</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2018-12-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/encapsulation" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에 공개되어 있습니다.</strong></p>
+<p>객체지향 개념에서 캡슐화는 정말 중요한 개념이라고 생각합니다. 캡슐화를 잘 지켜야 클래스 간의 결합도를 낮추어 코드를 유지 보수하기 쉽게 합니다.</p>
+<p>이미 수많은 책이 이 개념에 관해서 설명하고 있습니다. 글을 읽을 때는 이해되지만 정작 캡슐화 좋은 코드를 작성하는 것은 또 다른 영역입니다.</p>
+<p>저와 같은 주니어분들이 조금이라도 이해를 돕기 위해 제가 생각하는 캡슐화에 대해서 실무에서 많이 사용하는 Spring Boot, JPA 기반에서 설명해볼까 합니다.</p>
+<h2><span id="캡슐화의-정의">캡슐화의 정의</span></h2>
+<blockquote>
+<p>캡슐화는 정보은닉을 통해 높은 응집도와 낮은 결합도를 갖도록 한다. 정보 은닉이란 말 그대로 알 필요가 없는 정보는 외부에서 접근하지 못하도록 제한하는 것이다.</p>
+</blockquote>
+<p><strong>여기서 중요한 키워드는 <code>높은 응집도</code>, <code>낮은 결합도</code>, <code>정보 은닉</code> 입니다.</strong> 핵심 키워들 기반으로 설명을 진행하겠습니다.</p>
+<h2><span id="요구사항">요구사항</span></h2>
+<ul>
+<li>주문을 신청할 때 배송 출발시 받을 메시지 플랫폼을 N개 선택 할 수 있다.</li>
+<li>메시지 플랫폼은 KAKAO, SMS, EMAIL 등이 있다.</li>
+<li>메시지 플랫폼은 지속적으로 추가 될 수 있다.</li>
+</ul>
+<h2><span id="캡슐화가-안좋은-안티-패턴">캡슐화가 안좋은 안티 패턴</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span>(name = <span class="string">"product"</span>)</span><br><span class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Order</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"anti_message_types"</span>)</span><br><span class="line">    <span class="keyword">private</span> String messageTypes;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Builder</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Order</span><span class="params">(String messageTypes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.messageTypes = messageTypes;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Order 엔티티 객체가 있습니다.</li>
+<li>Order 엔티티는 주문을 완료시 메시지 플랫폼을 받을 수 있는 메시지 타입을 저장할 <code>messageTypes</code> 멤버 필드를 갖습니다.
+<ul>
+<li><strong>데이터베이스 정규화는 생략했습니다. 저런 타입일 경우 정규화의 대상이 된다고 생각하지 않습니다. 이 부분은 크게 생각 안하시고 순수하게 캡슐화의 관점에서 설명드리겠습니다.</strong></li>
+</ul>
+</li>
+<li>복수개의 문자열이 들어 오기 때문에 <code>&quot;,&quot;</code> 기반으로 문자열을 split 합니다.</li>
+</ul>
+<h3><span id="테스트-코드">테스트 코드</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderUnitTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">// (1) Order의 getMessageTypes 메서드를 사용 할 때 불편하다</span></span><br><span class="line">    <span class="comment">// 안좋은 캡슐화</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="string">"KAKAO,EMAIL,SMS"</span>);</span><br><span class="line">        <span class="keyword">final</span> String[] split = order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line"></span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"KAKAO"</span>));</span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"EMAIL"</span>));</span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"SMS"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">// (2) KAKAO를 KAOKO 라고 잘못 입력했을 경우</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_02</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="string">"KAOKO,EMAIL,SMS"</span>);</span><br><span class="line">        <span class="keyword">final</span> String[] split = order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line"></span><br><span class="line">        assertThat(split, not(hasItemInArray(<span class="string">"KAKAO"</span>)));</span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"EMAIL"</span>));</span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"SMS"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">// (3) 메시지에 KAKAO, EMAIL, SMS 처럼 공백이 들어 간다면 실패한다</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_03</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="string">"KAKAO, EMAIL, SMS"</span>);</span><br><span class="line">        <span class="keyword">final</span> String[] split = order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line"></span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"KAKAO"</span>));</span><br><span class="line">        assertThat(split, not(hasItemInArray(<span class="string">"EMAIL"</span>)));</span><br><span class="line">        assertThat(split, not(hasItemInArray(<span class="string">"SMS"</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">// (4) 메시지가 없을 때 빈문자열("")을 보낼 경우</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_04</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="string">""</span>);</span><br><span class="line">        <span class="keyword">final</span> String[] split = order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line"></span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">""</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span>(expected = NullPointerException.class)</span><br><span class="line">    <span class="comment">// (5) 메시지가 없을 때 null 을 보낼 경우</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_05</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="keyword">null</span>);</span><br><span class="line">        order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">// (6) 메시지가 중복으로 올경우</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">anti_message_test_06</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = build(<span class="string">"KAKAO, KAKAO, KAKAO"</span>);</span><br><span class="line">        <span class="keyword">final</span> String[] split = order.getMessageTypes().split(<span class="string">","</span>);</span><br><span class="line"></span><br><span class="line">        assertThat(split, hasItemInArray(<span class="string">"KAKAO"</span>));</span><br><span class="line">        assertThat(split.length, is(<span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="1-order의-getmessagetypes-메서드를-사용-할-때-불편하다">(1) Order의 getMessageTypes 메서드를 사용 할 때 불편하다</span></h3>
+<p>가장 쉽게 생각할 수 있는 방법입니다. 단순히 getter 메서드를 이용해서 외부 객체가 사용하게 제공합니다. 이는 캡슐화에 엄청난 악영향을 미치게 됩니다.</p>
+<p>우선 <code>getMessageTypes()</code> 메서드를 사용 하는 모든 곳에서 <code>split()</code> 메서드를 이용해서 메시지 타입을 배열로 만들어서 사용해야합니다.</p>
+<h3><span id="2-kakao를-kaoko-라고-잘못-입력했을-경우">(2) KAKAO를 KAOKO 라고 잘못 입력했을 경우</span></h3>
+<p>단순하게 String을 사용하기 때문에 type safe 하지 않습니다. KAKAO를 KAOKO로 잘못 입력해도 제대로 검증하기 어려우며 검증하는 로직을 추가 하더라도 해당 에러는 Runtime으로 넘어가게 됩니다. 이처럼 단순 문자열이면 이러한 단점을 갖게 됩니다.</p>
+<h3><span id="3-메시지에-kakao-email-sms-처럼-공백이-들어-간다면-실패한다">(3) 메시지에 KAKAO, EMAIL, SMS 처럼 공백이 들어 간다면 실패한다</span></h3>
+<p>일반적으로 웹 개발을 하면 대부분의 요청은 컨트롤러에서 받게 됩니다. 이 때 KAKAO, EMAIL, SMS 문자열 사이에 빈 공백이 들어오게 되면 <code>split()</code> 함수가 제대로 동작하지 않습니다. 테스트 코드를 보면 <code>EMAIL</code>, <code>SMS</code>는 <code>not(hasItemInArray..)</code> 으로 검증됩니다.</p>
+<p>물론 앞뒤 공백을 자르는 로직이 추가되면 되지만 이렇게 되면 점점 로직의 복잡도가 높아지게 됩니다.</p>
+<h3><span id="4-메시지가-없을-때-빈문자열quotquot을-보낼-경우">(4) 메시지가 없을 때 빈문자열(&quot;&quot;)을 보낼 경우</span></h3>
+<p>컨트롤러 요청을 받을 때 받을 메시지 플랫폼이 없다면 <code>&quot;&quot;</code> 으로 받게 됩니다. 이 빈 공백 이라는 것이 의미하는 게 어떤 메시지 플랫폼도 선택하지 않았다는 의미로 해석되기는 어렵습니다. <strong>문자열 자체는 이러한 타입에 적합하지 않기 때문에 메시지가 없을 때 어떤 식으로 처리해야 할지 고민하게 됩니다.</strong></p>
+<h3><span id="5-메시지가-없을-때-null-을-보낼-경우">(5) 메시지가 없을 때 null 을 보낼 경우</span></h3>
+<p>빈 공백의 의미가 정확하지 않다고 생각했을 경우 null로 요청을 받게 되면 <code>split()</code> 메서드에서 RuntimeException이 발생하게 됩니다. 물론 로직을 추가해서 null인 경우를 처리할 수 있지만, 이것은 3번에서 언급했던 것처럼 계속 코드의 복잡성이 높아지게 됩니다.</p>
+<h3><span id="6-메시지가-중복으로-올경우">(6) 메시지가 중복으로 올경우</span></h3>
+<p>메시지 플랫폼이 중복으로 넘어오게 될 실제 메시지가 중복으로 발송되기 때문에 로직을 추가 해야 됩니다.</p>
+<h3><span id="테스트-코드의-중요성">테스트 코드의 중요성</span></h3>
+<p>캡슐화에서 벗어난 주제이기 때문에 테스트 코드에 대한 부가적인 설명해 드리는 것이 조금은 어색하지만, 테스트 코드의 중요성을 한번 언급하고 싶었습니다.</p>
+<blockquote>
+<p>문제 있는 코드를 빨리 파악할 수 있다.</p>
+</blockquote>
+<p>해당 기능의 테스트 코드를 작성하면 이 코드의 문제점을 가장 빠르게 파악할 수 있습니다. 저는 코드가 왜 캡슐화에 안 좋은 코드인지 테스트 코드를 통해서 알게 됐습니다. 위에서 언급한 1~5 문제들을 테스트 코드 작성 시 파악했고 리팩토링 작업을 진행했습니다.</p>
+<p><strong>테스트 코드는 냄세나는 코드를 빠르게 찾게 해줍니다. 이것도 테스트 코드의 엄청난 장점이라고 생각합니다.</strong></p>
+<h2><span id="좋은-캡슐화-패턴">좋은 캡슐화 패턴</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Order</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Message message;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Embeddable</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"message_type"</span>)</span><br><span class="line">    <span class="keyword">private</span> String type;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Message</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = StringUtils.isEmpty(type) ? <span class="keyword">null</span> : type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Message <span class="title">of</span><span class="params">(Set&lt;MessageType&gt; types)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Message(joining(types));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;MessageType&gt; <span class="title">getTypes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (StringUtils.isEmpty(type)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(doSplit());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">joining</span><span class="params">(Set&lt;MessageType&gt; types)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> types.stream()</span><br><span class="line">                .map(Enum::name)</span><br><span class="line">                .collect(Collectors.joining(<span class="string">","</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Set&lt;MessageType&gt; <span class="title">doSplit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> String[] split = <span class="keyword">this</span>.type.split(<span class="string">","</span>);</span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(split)</span><br><span class="line">                .map(MessageType::valueOf)</span><br><span class="line">                .collect(Collectors.toSet());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> MessageType &#123;</span><br><span class="line">    EMAIL, SMS, KAKAO;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="message-ofset-types">Message of(Set<messagetype> types)</messagetype></span></h3>
+<p>기본 생성자를 private 메서드로 지정했기 때문에 외부에서 해당 객체를 생성 할 수 있는 유일한 방법은 <code>of()</code> 메서드를 이용하는 방법뿐입니다.</p>
+<p>이처럼 객체 생성도 최대한 제한해서 객체를 올바르게 생성할 수 있도록 제공해야 합니다. 이로써 좋은 캡슐화가 진행되고 있습니다.</p>
+<p>joining(types) 메서드를 통해서 넘겨받은 Set 자료형 types를 String 객체로 변경했습니다. 실제 데이터베이스에 문자열 자료형으로 저장하게 됩니다.</p>
+<h3><span id="public-list-gettypes">public List<messagetype> getTypes()</messagetype></span></h3>
+<p>위에서 언급한 정보 은닉 개념입니다.</p>
+<blockquote>
+<p>정보 은닉이란 말 그대로 알 필요가 없는 정보는 외부에서 접근하지 못하도록 제한하는 것이다.</p>
+</blockquote>
+<p>여기서 말하는 알 필요 없는 정보는 실제 데이터베이스에는 메시지 타입이 <code>&quot;,&quot;</code> 기준으로 메시지 타입을 구분하고 있다는 점입니다.</p>
+<p>getTypes 리턴 타입은 List이기 때문에 외부에서는 절대 데이터베이스에 저장돼 있는 평문 문자 <code>&quot;KAKAO,SMS,EAML&quot;</code> 문자열을 접근할 수 없습니다.</p>
+<p><strong>그것보다 더 중요한 건 데이터베이스에 어떤 형식으로 저장돼있는지 세부적인 것들은 관심 대상이 아니게 됩니다.</strong></p>
+<p>내가 필요할 때 메시지 타입을 편하게 List 형식으로 가져다 사용하면 됩니다. 이것이 캡슐화라고 생각합니다.</p>
+<h3><span id="테스트-코드">테스트 코드</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 메시지_타입이_EMAIL_KAKAO_SMS_일경우() &#123;</span><br><span class="line">        <span class="keyword">final</span> Set&lt;MessageType&gt; types = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        types.add(MessageType.EMAIL);</span><br><span class="line">        types.add(MessageType.KAKAO);</span><br><span class="line">        types.add(MessageType.SMS);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Message message = Message.of(types);</span><br><span class="line"></span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.EMAIL));</span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.KAKAO));</span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.KAKAO));</span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.SMS));</span><br><span class="line">        assertThat(message.getTypes(), hasSize(<span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 메시지_타입이_EMAIL_KAKAO일경우() &#123;</span><br><span class="line">        <span class="keyword">final</span> Set&lt;MessageType&gt; types = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        types.add(MessageType.EMAIL);</span><br><span class="line">        types.add(MessageType.KAKAO);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Message message = Message.of(types);</span><br><span class="line"></span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.EMAIL));</span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.KAKAO));</span><br><span class="line">        assertThat(message.getTypes(), not(hasItem(MessageType.SMS)));</span><br><span class="line">        assertThat(message.getTypes(), hasSize(<span class="number">2</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 메시지_타입이_없을경우() &#123;</span><br><span class="line">        <span class="keyword">final</span> Set&lt;MessageType&gt; types = Collections.emptySet();</span><br><span class="line">        <span class="keyword">final</span> Message message = Message.of(types);</span><br><span class="line"></span><br><span class="line">        assertThat(message.getTypes(), hasSize(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 메시지_타입이_중복되는경우() &#123;</span><br><span class="line">        <span class="keyword">final</span> Set&lt;MessageType&gt; types = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        types.add(MessageType.EMAIL);</span><br><span class="line">        types.add(MessageType.EMAIL);</span><br><span class="line">        types.add(MessageType.EMAIL);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Message message = Message.of(types);</span><br><span class="line"></span><br><span class="line">        assertThat(message.getTypes(), hasItem(MessageType.EMAIL));</span><br><span class="line">        assertThat(message.getTypes(), not(hasItem(MessageType.SMS)));</span><br><span class="line">        assertThat(message.getTypes(), not(hasItem(MessageType.KAKAO)));</span><br><span class="line">        assertThat(message.getTypes(), hasSize(<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>테스트 코드를 보시면 항상 올바른 데이터만 입력할 수 있고, 그것을 검증하는 것도 단순해졌고 이해하고 예측하기 쉬워졌습니다. 이런 것이 좋은 캡슐화라고 생각합니다.</p>
+<h3><span id="문제-해결">문제 해결</span></h3>
+<ul>
+<li>(1) Order의 getMessageTypes 메서드를 사용 할 때 불편하다
+<ul>
+<li>사용하는 곳에서 리스트를 만드는 것아 이나리 getTypes()의 리턴자료형이 List이기 때문에 사용하기 편합니다.</li>
+</ul>
+</li>
+<li>(2) KAKAO를 KAOKO 라고 잘못 입력했을 경우
+<ul>
+<li>enum 자료형을 사용했기 때문에 유효하지 않은 데이터를 입력할 수 없습니다.</li>
+</ul>
+</li>
+<li>(3) 메시지에 KAKAO, EMAIL, SMS처럼 공백이 들어간다면 실패한다
+<ul>
+<li>enum 자료형을 사용했기 때문에 공백처럼 유효하지 않은 데이터를 입력할 수 없습니다.</li>
+</ul>
+</li>
+<li>(4) 메시지가 없을 때 빈 문자열(&quot;&quot;)을 보내면
+<ul>
+<li>enum 자료형을 사용했기 때문에 공백처럼 유효하지 않은 데이터를 입력할 수 없습니다.</li>
+</ul>
+</li>
+<li>(5) 메시지가 없을 때 null을 보낼 경우
+<ul>
+<li>비어 있을 경우 null 아 아닌 빈 Set 객체를 넘기면 되기 때문에 null 자체를 입력하게 될 이유가 없어졌습니다.</li>
+</ul>
+</li>
+<li>(6) 메시지가 중복으로올 경우
+<ul>
+<li>자료형이기 때문에 데이터가 중복으로 입력되더라도 최종적으로는 중복을 제거하게 됩니다.</li>
+</ul>
+</li>
+</ul>
+<h3><span id="캡슐화를-통한-장점들">캡슐화를 통한 장점들</span></h3>
+<ul>
+<li>위에서 작성한 코드 구조상 유효하지 않은 메시지 타입을 강제로 입력하고 싶더라도 어렵습니다.</li>
+<li>실제 데이터베이스에 입력돼 있는 문자열을 가져올 수도 없으며, <strong>어떤 형식으로 저장돼 있는지 관심을 가질 필요가 없게 되었습니다.</strong></li>
+<li>메시지 타입이 없는 경우 컬렉션이 empty이기 때문에 보다 명확합니다.</li>
+<li>응집도가 높아졌습니다. 메시지에 대한 세부 로직들이 Order에서 분리되고 Message 객체에 응집해 있습니다.</li>
+<li>재사용성이 높아졌습니다. 만약 상품 등록이 성공했을 경우 메시지 플랫폼을 통해서 응답받고 싶다면 Product에서 Message 객체를 선언하기만 하면 됩니다.</li>
+</ul>
+<h2><span id="웹-환경">웹 환경</span></h2>
+<p>웹 환경에서 추가적으로 설명드리겠습니다.</p>
+<h3><span id="controller">Controller</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/orders"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderApi</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OrderRepository orderRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Order <span class="title">create</span><span class="params">(@RequestBody @Valid OrderRequest request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Order order = buildOrder(request);</span><br><span class="line">        <span class="keyword">return</span> orderRepository.save(order);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderRequest</span> </span>&#123;</span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="keyword">private</span> Set&lt;MessageType&gt; messageType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="request">Request</span></h3>
+<p><img src="https://github.com/cheese10yun/blog-sample/blob/master/encapsulation/assets/swagger-message-request.png?raw=true" alt=""></p>
+<p>요청은 배열으로 받게 합니다. 만약 받을 메시지가 없다면 빈 배열로 넘깁니다.</p>
+<h3><span id="테스트-코드">테스트 코드</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@AutoConfigureMockMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderApiTest</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ResourceLoader resourceLoader;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mvc;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 정상요청() <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">final</span> String json = readJson(<span class="string">"valid-request.json"</span>);</span><br><span class="line">        mvc.perform(post(<span class="string">"/orders"</span>)</span><br><span class="line">                .contentType(MediaType.APPLICATION_JSON_UTF8)</span><br><span class="line">                .content(json))</span><br><span class="line">                .andDo(print())</span><br><span class="line">                .andExpect(status().isOk());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> 요청바디가_유효하지않을경우() <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">final</span> String json = readJson(<span class="string">"invalid-request.json"</span>);</span><br><span class="line">        mvc.perform(post(<span class="string">"/orders"</span>)</span><br><span class="line">                .contentType(MediaType.APPLICATION_JSON_UTF8)</span><br><span class="line">                .content(json))</span><br><span class="line">                .andDo(print())</span><br><span class="line">                .andExpect(status().isBadRequest());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="정상요청">정상요청</span></h3>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"messageType"</span>: [</span><br><span class="line">    <span class="string">"EMAIL"</span>, <span class="string">"SMS"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>모든 값이 유효합니다. 200을 응답 받습니다.</p>
+<h3><span id="요청바디가_유효하지않을경우">요청바디가_유효하지않을경우</span></h3>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"messageType"</span>: [</span><br><span class="line">    <span class="string">"EMAIL"</span>, <span class="string">"KKA"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>유효하지 않은 값일 경우 400 응답을 받게됩니다.</p>
+<h3><span id="값-확인">값 확인</span></h3>
+<p><img src="https://github.com/cheese10yun/blog-sample/blob/master/encapsulation/assets/string-value.png?raw=true" alt=""></p>
+<p>배열 형식의 받을 입력 받고 응답해주지만, 실제 값은 <code>&quot;,&quot;</code>으로 구분하는 문자열입니다.</p>
+<p><strong>다시 한번 강조하지만 외부 객체에서는 저 문자열을 가져올 수 없을 뿐만 아니라 실제 데이터베이스에 문자열로 저장돼있는지 관심조차 가질 필요가 없습니다. <code>getTypes()</code> 메서드로 List형으로 외부에 제공해주기만 하면 됩니다.</strong> 이것이 캡슐화의 기본적 개념이라고 생각합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/lombok-config/" data-toggle="tooltip" data-placement="top" title="실무에서 Lombok 사용법 - lombok.config">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/lombok/" data-toggle="tooltip" data-placement="top" title="실무에서 Lombok 사용법">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">캡슐화의 정의</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">요구사항</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">캡슐화가 안좋은 안티 패턴</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">테스트 코드</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">(1) Order의 getMessageTypes 메서드를 사용 할 때 불편하다</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">(2) KAKAO를 KAOKO 라고 잘못 입력했을 경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">(3) 메시지에 KAKAO, EMAIL, SMS 처럼 공백이 들어 간다면 실패한다</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">(4) 메시지가 없을 때 빈문자열(&quot;&quot;)을 보낼 경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">(5) 메시지가 없을 때 null 을 보낼 경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">(6) 메시지가 중복으로 올경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.8.</span> <span class="toc-nav-text">테스트 코드의 중요성</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">좋은 캡슐화 패턴</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Message of(Set types)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">public List getTypes()</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">테스트 코드</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">문제 해결</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">캡슐화를 통한 장점들</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">웹 환경</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Controller</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Request</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">테스트 코드</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">정상요청</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.5.</span> <span class="toc-nav-text">요청바디가_유효하지않을경우</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.6.</span> <span class="toc-nav-text">값 확인</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#OOP" title="OOP">OOP</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

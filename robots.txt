@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /one_file_to_disallow.html
+Disallow: /2nd_file_to_disallow.html
+Disallow: /3rd_file_to_disallow.html
+Allow: /one_file_to_allow.html
+Allow: /2nd_file_to_allow.html
+Allow: /3rd_file_to_allow.html

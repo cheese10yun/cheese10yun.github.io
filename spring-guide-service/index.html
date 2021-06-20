@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Guide - Service 가이드 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-guide-service/">
+    <meta property="og:description" content="Spring Guide - Service 가이드 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-service/">
+
+
+    <title>
+        
+          Spring Guide - Service 가이드 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-guide-service/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                            
+                        </div>
+                        <h1>Spring Guide - Service 가이드</h1>
+                        <h2 class="subheading">서비스의 책임의 크기</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2019-04-09
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>도메인 레이어는 모든 레이어에서 사용됩니다. 이 때문에 자기 자신의 책임을 충분히 다하지 않으면 많은 영역에서 그 책임을 넘겨받게 됩니다. 이번에는 이 내용을 중심으로 포스팅을 진행하겠습니다.</p>
+<h2><span id="서비스-레이어란">서비스 레이어란 ?</span></h2>
+<p><img src="https://image.slidesharecdn.com/random-151127092631-lva1-app6892/95/-60-638.jpg?cb=1448755823" alt=""></p>
+<blockquote>
+<p>이미지 출저 <a href="https://www.slideshare.net/baejjae93/ss-55571345" rel="external nofollow noopener noreferrer" target="_blank">애플리케이션 아키텍처와 객체지향</a></p>
+</blockquote>
+<p>우리는 Member라는 객체로 회원가입(객체 생성), 프로필 수정(객체 수정) 모든 행위가 가능하지만 그것을 영속화 시켜야 하기 때문에 별도의 레이어가 필요하고 이것을 서비스 레이어라고 합니다. 서비스 레이어에서는 대표적으로 데이터베이스에 대한 트랜잭션을 관리합니다.</p>
+<p>서비스 영역은 도메인의 핵심 비즈니스 코드를 담당하는 영역이 아니라 인프라스트럭처(데이터베이스) 영역과 도메인 영역을 연결해주는 매개체 역할이라고 생각합니다.</p>
+<p><strong>다시 한번 강조하지만 Member 객체에 대한 제어는 Member 스스로 제어해야 합니다.</strong></p>
+<h2><span id="서비스의-적절한-책임의-크기-부여하기">서비스의 적절한 책임의 크기 부여하기</span></h2>
+<p>책임이란 것은 외부 객체의 요청에 대한 응답이라고 생각합니다. <strong>이러한 책임들이 모여 역할이 되고 역할은 대체 가능성을 의미합니다.</strong> 그렇기 때문에 대체가 가능할 정도의 적절한 크기를 가져야 합니다. 이 부분은 아래의 예제로 천천히 설명드리겠습니다.</p>
+<h3><span id="행위-기반으로-네이밍-하기">행위 기반으로 네이밍 하기</span></h3>
+<p>서비스의 책임의 크기를 잘 부여하는 방법 중에 가장 쉬운 방법이라고 생각합니다. 행위 기반으로 서비스를 만드는 것입니다.</p>
+<p><code>MemberService</code>라는 네이밍은 많이 사용하지만 정말 좋지 않은 패턴이라고 생각합니다. 우선 해당 클래스의 책임이 분명하지 않아서 모든 로직들이 <code>MemberService</code>으로 모이게 될 것입니다. 그 결과 외부 객체에서는 <code>MemberSerivce</code> 객체를 의존하게 됩니다. findById 메서드 하나를 사용하고 싶어도 <code>MemberSerivce</code>를 주입받아야 합니다. <code>MemberSerivce</code> 구현도 본인이 모든 구현을 하려고 하니 메서드의 라인 수도 방대해집니다. 테스트 코드 작성하기도 더욱 어렵게 만들어집니다.</p>
+<p>Member에 대한 조회 전용 서비스 객체인 <code>MemberFindService</code>으로 네이밍을 하면 자연스럽게 객체의 책임이 부여됩니다. <strong>객체를 행위 기반으로 바라보고 행위 기반으로 네이밍을 주어 자연스럽게 책임을 부여하는 것이 좋습니다.</strong></p>
+<h3><span id="역할은-대체-가능성을-의미">역할은 대체 가능성을 의미</span></h3>
+<blockquote>
+<p>책임이란 것은 외부 객체의 요청에 대한 응답이라고 생각합니다. <strong>이러한 책임들이 모여 역할이 되고 역할은 대체 가능성을 의미합니다.</strong></p>
+</blockquote>
+<p>위에서 언급한 말을 매우 과격하게 표현하면 아래와 같습니다.</p>
+<blockquote>
+<p>메서드(책임)란 것은 외부 객체의 호출에 대한 응답이고, 이러한 메서드(책임)들이 모여 클래스(역할)가되고 클래스(역할)는 인터페이스(대체 가능성)을 의미합니다.</p>
+</blockquote>
+<p><a href="https://github.com/cheese10yun/blog-sample/tree/master/service" rel="external nofollow noopener noreferrer" target="_blank">Service, ServiceImpl 구조에 대한 고찰</a>에 대해서 포스팅 한 내용을 다시 한번 설명드리겠습니다.</p>
+<h4><span id="책임의-크기가-적절해야하는-이유">책임의 크기가 적절해야하는 이유</span></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MemberService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Member <span class="title">findById</span><span class="params">(MemberId id)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Member <span class="title">findByEmail</span><span class="params">(Email email)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">changePassword</span><span class="params">(PasswordDto.ChangeRequest dto)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Member <span class="title">updateName</span><span class="params">(MemberId id, Name name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 같은 Service, ServiceImpl 구조는 스프링 예제에서 많이 사용되는 예제입니다. 위 객체의 책임은 크게 member 조회, 수정입니다. 이 책임이 모여 클래스가 됩니다.(여기서는 MemberServiceImpl) 이 클래스(역할)는 대체 가능성을 의미합니다. <strong>그런데 저 인터페이스가 대체가 될까요?</strong></p>
+<p>findById, findByEmail, changePassword, updateName의 세부 구현이 모두 다른 구현제가 있을까요? 일반적으로는 저 모든 메서드를 세부 구현이 다르게 대체하는 구현체는 2개 이상 갖기 힘듭니다. 이렇듯 객체의 책임이 너무 많으면 대체성을 갖지 못하고 SOLID 또 한 준수할 수가 없습니다.</p>
+<p>책임에 대한 자세한 내용은 <a href="https://github.com/cheese10yun/blog-sample/tree/master/service" rel="external nofollow noopener noreferrer" target="_blank">Service, ServiceImpl 구조에 대한 고찰</a>, <a href="https://github.com/cheese10yun/spring-SOLID/blob/master/docs/SRP.md" rel="external nofollow noopener noreferrer" target="_blank">단일 책임의 원칙: Single Responsibility Principle</a><br>
+를 참조해주세요</p>
+<p>물론 1개의 세부 구현체만 갖더라도 인프라스트럭처 영역 같은 경우에는 인터페이스로 바라보는 것이 좋습니다. 그 외에도 다양한 이유로 인터페이스로 바라보게 하는 것이 클래래스 간의 강결합을 줄일 수 있는 효과가 있습니다. 제가 말하고 싶은 것은 그렇게 인터페이스로 두더라도 <strong>올바른 책임의 크기에 의해서(대체 가능한 범위) 인터페이스를 나눠야 한다는 것입니다.</strong></p>
+<h3><span id="서비스의-적절한-크기는-대체-가능성을-염두-하는-것">서비스의 적절한 크기는 대체 가능성을 염두 하는 것</span></h3>
+<p>우선 행위 기반으로 서비스의 네이밍을 하면 자연스럽게 해당 행위에 대해서 책임이 할당됩니다. 이렇게 행위 기반으로 책임을 할당하면 자연스럽게 대체 가능성을 갖게 될 수 있습니다.</p>
+<p>물론 이것만으로 올바르게 객체지향 설계를 할 수 있는 것은 아니지만 최소한의 객체지향 프로그래밍을 할 수 있는 작은 시발점이 될 수 있다고 생각합니다.</p>
+<h2><span id="signup-sample-code">SignUp Sample Code</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Embeddable</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span>(access = AccessLevel.PROTECTED)</span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferralCode</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"referral_code"</span>, length = <span class="number">50</span>)</span><br><span class="line">    <span class="keyword">private</span> String value;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ReferralCode</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ReferralCode <span class="title">of</span><span class="params">(<span class="keyword">final</span> String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ReferralCode(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ReferralCode <span class="title">generateCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ReferralCode(RandomString.make(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberSignUpService</span> </span>&#123; <span class="comment">// (1)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MemberRepository memberRepository;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Member <span class="title">doSignUp</span><span class="params">(<span class="keyword">final</span> SignUpRequest dto)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (memberRepository.existsByEmail(dto.getEmail())) &#123; <span class="comment">//(2)</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EmailDuplicateException(dto.getEmail());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ReferralCode referralCode = generateUniqueReferralCode();</span><br><span class="line">        <span class="keyword">return</span> memberRepository.save(dto.toEntity(referralCode));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ReferralCode <span class="title">generateUniqueReferralCode</span><span class="params">()</span> </span>&#123; <span class="comment">//(3)</span></span><br><span class="line">        ReferralCode referralCode;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            referralCode = ReferralCode.generateCode(); <span class="comment">//(4)</span></span><br><span class="line">        &#125; <span class="keyword">while</span> (memberRepository.existsByReferralCode(referralCode)); <span class="comment">// (5)</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> referralCode;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>MemberSignUpService 네이밍을 통해서 행위 기반의 책임을 부여</li>
+<li>Email의 존재 여부는 데이터베이스에 있음으로 존재 여부는 memberRepository를 사용</li>
+<li>유니크한 referralCode를 생성을 위한 메서드</li>
+<li><strong>ReferralCode에 대한 생성은 ReferralCode 객체가 관리</strong></li>
+<li>해당 코드가 존재하는지는 데이터베이스에 있음으로 존재 여부는 memberRepository를 사용</li>
+</ol>
+<p>ReferralCode에 대한 생성 비즈니스 로직은 ReferralCode 객체가 스스로 제어하고 있습니다. 이것이 데이터베이스에 중복 여부 검사를 서비스 레이어에서 진행합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/spring-builder-pattern/" data-toggle="tooltip" data-placement="top" title="Builder 기반으로 객체를 안전하게 생성하는 방법">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-custom-valdate-annotation/" data-toggle="tooltip" data-placement="top" title="Spring Custom Validate 어노테이션 만들기">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">서비스 레이어란 ?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">서비스의 적절한 책임의 크기 부여하기</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">행위 기반으로 네이밍 하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">역할은 대체 가능성을 의미</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">책임의 크기가 적절해야하는 이유</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">서비스의 적절한 크기는 대체 가능성을 염두 하는 것</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">SignUp Sample Code</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-05/">
+    <meta property="og:description" content="Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-05/">
+
+
+    <title>
+        
+          Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-05/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
+                              <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                            
+                        </div>
+                        <h1>Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁</h1>
+                        <h2 class="subheading">OneToMany 관계 설정 팁</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2018-05-18
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>배송이 있고 배송의 상태를 갖는 배송 로그가 있고 각각의 관계는 1:N 관계입니다. 아래와 같은 특정한 1:N 관계에 대해서 포스팅을 진행해보겠습니다. 해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa-best-practices" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
+<h2><span id="배송-배송-로그">배송 - 배송 로그</span></h2>
+<ul>
+<li>배송이 있고 배송의 상태를 갖는 배송 로그가 있습니다.</li>
+<li>각각의 관계는 1:N 관계입니다.</li>
+<li>다음과 같은 JSON을 갖습니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"address"</span>: &#123;</span><br><span class="line">    <span class="attr">"address1"</span>: <span class="string">"서울 특별시..."</span>,</span><br><span class="line">    <span class="attr">"address2"</span>: <span class="string">"신림 ...."</span>,</span><br><span class="line">    <span class="attr">"zip"</span>: <span class="string">"020...."</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"logs"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"PENDING"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"DELIVERING"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"COMPLETED"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>배송 로그는 단순히 배송의 상태를 표시하기 위한 것임으로 배송 엔티티에서 추가되는 것이 맞는다고 생각합니다. 위의 특성을 만족하는 관계 설정을 진행해보겠습니다.</p>
+<h2><span id="관계-설정">관계 설정</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Delivery</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OneToMany</span>(mappedBy = <span class="string">"delivery"</span>, cascade = CascadeType.PERSIST, orphanRemoval = <span class="keyword">true</span>, fetch = FetchType.EAGER)</span><br><span class="line">    <span class="keyword">private</span> List&lt;DeliveryLog&gt; logs = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> DateTime dateTime;</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryLog</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Enumerated</span>(EnumType.STRING)</span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"status"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> DeliveryStatus status;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ManyToOne</span></span><br><span class="line">    <span class="meta">@JoinColumn</span>(name = <span class="string">"delivery_id"</span>, nullable = <span class="keyword">false</span>, updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> Delivery delivery;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> DateTime dateTime;</span><br><span class="line"></span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>@Embedded 타입으로 빼놓은 Address를 그대로 사용했습니다. 이처럼 핵심 도메인에 대해서 데이터의 연관성이 있는 것들을 Embedded 분리해놓으면 여러모로 좋습니다.</li>
+<li>DateTime 클래스도 Embedded 타입으로 지정해서 반복적인 생성일, 수정일 칼럼들을 일관성 있고 편리하게 생성할 수 있습니다.</li>
+</ul>
+<p><strong>지금부터는 1:N 관계 팁에 관한 이야기를 진행하겠습니다.</strong></p>
+<ul>
+<li>Delivery를 통해서 DeliveryLog를 관리함으로 <code>CascadeType.PERSIST</code> 설정을 주었습니다.</li>
+<li>1: N 관계를 맺을 경우 List를 주로 사용하는데 객체 생성을 null로 설정하는 것보다 <code>new ArrayList&amp;amplt&amp;ampgt();</code>설정하는 것이 바람직합니다. 이유는 다음과 같습니다.</li>
+</ul>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">verifyStatus</span><span class="params">(DeliveryStatus status, Delivery delivery)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!delivery.getLogs().isEmpty()) &#123;</span><br><span class="line">    ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>초기화하지 않았을 경우 null로 초기화되며 ArrayList에서 지원해주는 함수를 사용할 수 없습니다. 1:N 관계에서 N이 없는 경우 null인 상태인 보다 Empty 상태가 훨씬 직관적입니다. null의 경우 값을 못가져 온것인지 값이 없는 것인지 의미가 분명하지 않습니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLog</span><span class="params">(DeliveryStatus status)</span> </span>&#123;</span><br><span class="line">    logs.add(DeliveryLog.builder()</span><br><span class="line">            .status(status)</span><br><span class="line">            .delivery(<span class="keyword">this</span>)</span><br><span class="line">            .build());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>CascadeType.PERSIST 설정을 주면  Delivery에서 DeliveryLog를 저장시킬 수 있습니다. 이 때 ArrayList 형으로 지정돼 있다면 add 함수를 통해서 쉽게 저장할 수 있습니다. 이렇듯 ArrayList의 다양한 함수들을 사용할 수 있습니다.</li>
+<li>FetchType.EAGER 통해서 모든 로그 정보를 가져오고 있습니다. 로그 정보가 수십 개 이상일 경우는 Lazy 로딩을 통해서 가져오는 것이 좋지만 3~4개 정도로 가정했을 경우 FetchType.EAGER로 나쁘지 않다고 생각합니다.</li>
+</ul>
+<h2><span id="객체의-상태는-언제나-자기-자신이-관리합니다">객체의 상태는 언제나 자기 자신이 관리합니다.</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryLog</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Id</span></span><br><span class="line">  <span class="meta">@GeneratedValue</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">long</span> id;</span><br><span class="line">  ....</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      verifyNotYetDelivering();</span><br><span class="line">      <span class="keyword">this</span>.status = DeliveryStatus.CANCELED;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">verifyNotYetDelivering</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (isNotYetDelivering()) <span class="keyword">throw</span> <span class="keyword">new</span> DeliveryAlreadyDeliveringException();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">verifyAlreadyCompleted</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isCompleted())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"It has already been completed and can not be changed."</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>객체의 상태는 언제나 자기 자신이 관리합니다. 즉 자신이 생성되지 못할 이유도 자기 자신이 관리해야 한다고 생각합니다. 위의 로직은 다음과 같습니다.</p>
+<ul>
+<li>cancel() : 배송을 취소하기 위해서는 아직 배달이 시작하기 이전의 상태여야 가능합니다.</li>
+<li>verifyAlreadyCompleted() : 마지막 로그가 COMPLETED 경우 더는 로그를 기록할 수 없습니다.</li>
+</ul>
+<p>즉 자신이 생성할 수 없는 이유는 자기 자신이 갖고 있어야 합니다. 이렇게 되면 어느 곳에서 생성하든 같은 기준으로 객체가 생성되어 생성 관리 포인트가 한 곳에서 관리됩니다.</p>
+<h2><span id="배송-로그-저장">배송 로그 저장</span></h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeliveryService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Delivery <span class="title">create</span><span class="params">(DeliveryDto.CreationReq dto)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">final</span> Delivery delivery = dto.toEntity();</span><br><span class="line">      delivery.addLog(DeliveryStatus.PENDING);</span><br><span class="line">      <span class="keyword">return</span> deliveryRepository.save(delivery);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Delivery <span class="title">updateStatus</span><span class="params">(<span class="keyword">long</span> id, DeliveryDto.UpdateReq dto)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Delivery delivery = findById(id);</span><br><span class="line">    delivery.addLog(dto.getStatus());</span><br><span class="line">    <span class="keyword">return</span> delivery;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>create : Delivery 클래스를 생성하고 delivery.addLog를 PENDING 상태로 생성하고 Repository의 save 메소드를 통해서 저장할 수 있습니다. 최종적인 JSON 값은 아래와 같습니다.</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"address"</span>: &#123;</span><br><span class="line">    <span class="attr">"address1"</span>: <span class="string">"서울 특별시..."</span>,</span><br><span class="line">    <span class="attr">"address2"</span>: <span class="string">"신림 ...."</span>,</span><br><span class="line">    <span class="attr">"zip"</span>: <span class="string">"020...."</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"logs"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"PENDING"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>updateStatus : 해당 객체를 데이터베이스에서 찾고 해당 배송 객체에 배송 로그를 추가합니다. 배송 로그에 추가적인 로그 저장은 <code>delivery.addLog(..);</code> 메서드를 통해서 진행됩니다. 언제나 관리 포인트를 줄이는 것은 중요하다고 생각됩니다.</li>
+</ul>
+<h2><span id="마무리">마무리</span></h2>
+<p>코드 양이 많아지고 있어서 반드시 전체 코드와 테스트 코드를 돌려 보면서 이해하는 것을 추천해 드립니다. 이전 포스팅에서도 언급한 적 있지만 소스코드에서는 setter 메서드를 사용하지 않고 있습니다. 무분별하게 setter 메서드를 남용하는 것은 유지 보수와 가독성을 떨어트린다고 생각합니다. 다음 포스팅에서는 setter를 사용하지 않는 장점에 대해서 조금 더 깊게 설명해 보겠습니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/jackson-annotation/" data-toggle="tooltip" data-placement="top" title="Jackson 어노테이션 사용법(1)">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-jpa-best-04/" data-toggle="tooltip" data-placement="top" title="Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">배송 - 배송 로그</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">관계 설정</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">객체의 상태는 언제나 자기 자신이 관리합니다.</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">배송 로그 저장</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                        
+                          <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

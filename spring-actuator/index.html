@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Actuator 기초 설정 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-actuator/">
+    <meta property="og:description" content="Spring Actuator 기초 설정 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-actuator/">
+
+
+    <title>
+        
+          Spring Actuator 기초 설정 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-actuator/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                        </div>
+                        <h1>Spring Actuator 기초 설정</h1>
+                        <h2 class="subheading">Actuator</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2019-07-04
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><strong>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/actuator" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에 공개되어 있습니다.</strong></p>
+<p>스프링은 Actuator를 이용해서 애플리케이션 상태를 종합적으로 모니터링할 수 있습니다.</p>
+<h2><span id="의존성-주입">의존성 주입</span></h2>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation <span class="string">'org.springframework.boot:spring-boot-starter-actuator'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="actuator-호출">actuator 호출</span></h2>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/postman-api-call.png" alt=""></p>
+<p><code>http://localhost:8890/actuator</code>를 호출하면 위와 같은 Response를 받을 수 있습니다. 기본 설정으로는 모든 endpoint가 노출돼있지는 않습니다. 모든 endpoint를 노출하도록 설정해보겠습니다.</p>
+<h2><span id="endpoints-전체-노출">endpoints 전체 노출</span></h2>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml</span></span><br><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">  endpoints:</span></span><br><span class="line"><span class="attr">    web:</span></span><br><span class="line"><span class="attr">      exposure:</span></span><br><span class="line"><span class="attr">        include:</span> <span class="string">"*"</span></span><br></pre></td></tr></table></figure>
+<p><code>application.yml</code> 설정을 변경하고 다시 <code>/actuator</code> 호출하면 아래 Response와 같습니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"_links"</span>: &#123;</span><br><span class="line">        <span class="attr">"self"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"auditevents"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/auditevents"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"beans"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/beans"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"caches-cache"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/caches/&#123;cache&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"caches"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/caches"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"health"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"health-component"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health/&#123;component&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"health-component-instance"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health/&#123;component&#125;/&#123;instance&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"conditions"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/conditions"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"configprops"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/configprops"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"env"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/env"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"env-toMatch"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/env/&#123;toMatch&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"info"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/info"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"loggers"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/loggers"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"loggers-name"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/loggers/&#123;name&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"heapdump"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/heapdump"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"threaddump"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/threaddump"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"metrics-requiredMetricName"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/metrics/&#123;requiredMetricName&#125;"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"metrics"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/metrics"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"scheduledtasks"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/scheduledtasks"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"httptrace"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/httptrace"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">"mappings"</span>: &#123;</span><br><span class="line">            <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/mappings"</span>,</span><br><span class="line">            <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>경로</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/beans</td>
+<td>초기화된 모든 스프링 빈의 목록을 표시</td>
+</tr>
+<tr>
+<td>/env</td>
+<td>스프링 설정 가능한 환경 속성 목록욜 표시, OS 환경 변수 및 컨피규레이션 파일의 속성 목록</td>
+</tr>
+<tr>
+<td>/health</td>
+<td>애플리케이션 상태 정보 표시</td>
+</tr>
+<tr>
+<td>/info</td>
+<td>애플리케이션의 임의 정보 표시 properties 등</td>
+</tr>
+<tr>
+<td>/loggers</td>
+<td>로거 컨피규레이션 정보를 표시하고 수정</td>
+</tr>
+<tr>
+<td>/metrics</td>
+<td>매트릭스 정보를 표시(메모리, 실행중인 스레드 수, REST 메서드 응답 시간)</td>
+</tr>
+<tr>
+<td>/trace</td>
+<td>트레이스 정뵤 표시(기본적으로 마지막 100개의 HTTP Request)</td>
+</tr>
+</tbody>
+</table>
+<p>다양한 정보들이 포함되어 있습니다. 필요한 정보들을 확인한 후 아래와 같이 필요한 정보들만 노출할 수 있습니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">  endpoints:</span></span><br><span class="line"><span class="attr">    web:</span></span><br><span class="line"><span class="attr">      exposure:</span></span><br><span class="line"><span class="attr">        include:</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">"info"</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">"health"</span></span><br><span class="line"><span class="bullet">          -</span> <span class="string">"httptrace"</span></span><br></pre></td></tr></table></figure>
+<p><code>application.yml</code> 변경이후 다시 <code>/actuator</code>을 호출하면 <code>include</code>에 포함시킨 endpoint만 Response 받게 됩니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"_links"</span>: &#123;</span><br><span class="line">    <span class="attr">"self"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"health"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"health-component"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health/&#123;component&#125;"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"health-component-instance"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/health/&#123;component&#125;/&#123;instance&#125;"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"info"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/info"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"httptrace"</span>: &#123;</span><br><span class="line">      <span class="attr">"href"</span>: <span class="string">"http://localhost:8890/actuator/httptrace"</span>,</span><br><span class="line">      <span class="attr">"templated"</span>: <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="info-git-info-노출하기">Info Git Info 노출하기</span></h2>
+<p>기본 설정에서 <code>actuator/info</code> 호출시 아무 정보도 Response를 하지 않습니다. plugin을 이용하면 git에 대한 정보를 쉽게 노출할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    ...</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        ...</span><br><span class="line">        classpath &quot;gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:2.0.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">apply plugin: &quot;com.gorylenko.gradle-git-properties&quot;</span><br></pre></td></tr></table></figure>
+<p>필요한 디펜던시를 추가합니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line"><span class="attr">  info:</span></span><br><span class="line"><span class="attr">    git:</span></span><br><span class="line"><span class="attr">      mode:</span> <span class="string">SIMPLE</span> <span class="comment"># FULL or SIMPLE</span></span><br></pre></td></tr></table></figure>
+<p>git 정보에 대한 mode를 SMPLE, FULL을 지정할 수 있습니다. 이후에 서버를 실행시키면 아래 그림처럼 <code>git.properties</code> 파일에 Git에 대한 정보가 담겨있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/actuator-info-git-file.png" alt=""></p>
+<h3><span id="simple-mode">SIMPLE Mode</span></h3>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"git"</span>: &#123;</span><br><span class="line">    <span class="attr">"commit"</span>: &#123;</span><br><span class="line">      <span class="attr">"time"</span>: <span class="string">"2019-07-02T16:31:35Z"</span>,</span><br><span class="line">      <span class="attr">"id"</span>: <span class="string">"293e840"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"branch"</span>: <span class="string">"master"</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="full-mode">FULL Mode</span></h3>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"git"</span>: &#123;</span><br><span class="line">    <span class="attr">"build"</span>: &#123;</span><br><span class="line">      <span class="attr">"host"</span>: <span class="string">"yun"</span>,</span><br><span class="line">      <span class="attr">"version"</span>: <span class="string">"0.0.1-SNAPSHOT"</span>,</span><br><span class="line">      <span class="attr">"time"</span>: <span class="string">"2019-07-03T16:49:41Z"</span>,</span><br><span class="line">      <span class="attr">"user"</span>: &#123;</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"Yun"</span>,</span><br><span class="line">        <span class="attr">"email"</span>: <span class="string">"cheese10yun@gmail.com"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"branch"</span>: <span class="string">"master"</span>,</span><br><span class="line">    <span class="attr">"commit"</span>: &#123;</span><br><span class="line">      <span class="attr">"message"</span>: &#123;</span><br><span class="line">        <span class="attr">"short"</span>: <span class="string">"오타 수정"</span>,</span><br><span class="line">        <span class="attr">"full"</span>: <span class="string">"오타 수정\n"</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"id"</span>: &#123;</span><br><span class="line">        <span class="attr">"describe"</span>: <span class="string">""</span>,</span><br><span class="line">        <span class="attr">"abbrev"</span>: <span class="string">"293e840"</span>,</span><br><span class="line">        <span class="attr">"full"</span>: <span class="string">"293e840b752531eafb1be55e9cec78113743dd8d"</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"time"</span>: <span class="string">"2019-07-02T16:31:35Z"</span>,</span><br><span class="line">      <span class="attr">"user"</span>: &#123;</span><br><span class="line">        <span class="attr">"email"</span>: <span class="string">"cheese10yun@gmail.com"</span>,</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">"Yun"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"closest"</span>: &#123;</span><br><span class="line">      <span class="attr">"tag"</span>: &#123;</span><br><span class="line">        <span class="attr">"name"</span>: <span class="string">""</span>,</span><br><span class="line">        <span class="attr">"commit"</span>: &#123;</span><br><span class="line">          <span class="attr">"count"</span>: <span class="string">""</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"dirty"</span>: <span class="string">"true"</span>,</span><br><span class="line">    <span class="attr">"remote"</span>: &#123;</span><br><span class="line">      <span class="attr">"origin"</span>: &#123;</span><br><span class="line">        <span class="attr">"url"</span>: <span class="string">"https://github.com/cheese10yun/blog-sample.git"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"tags"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="attr">"total"</span>: &#123;</span><br><span class="line">      <span class="attr">"commit"</span>: &#123;</span><br><span class="line">        <span class="attr">"count"</span>: <span class="string">"212"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>mode</code>에 따라서 출력되는 정보가 다릅니다.</p>
+<h2><span id="health-database">Health Database</span></h2>
+<p>기본 설정에서 <code>/actuator/health</code>를 호출하면 아래와 같은 응답 정보를 받을 수 있습니다. (데이터베이스 정보를 표시하기 위해서 H2 의존성을 추가했습니다.)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;status&quot;: &quot;UP&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>데이터베이스에 대한 정보를 추가적으로 확인하기 위해서는 <code>application.yml</code>을 추가적으로 설정하면 됩니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line"><span class="attr">  endpoint:</span></span><br><span class="line"><span class="attr">    health:</span></span><br><span class="line"><span class="attr">      enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">      show-details:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+<p>위 설정을 추가하시고 <code>/actuator/health</code>를 다시 호출하면 아래와 같은 Response를 확인할 수 있습니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"status"</span>: <span class="string">"UP"</span>,</span><br><span class="line">  <span class="attr">"details"</span>: &#123;</span><br><span class="line">    <span class="attr">"db"</span>: &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"UP"</span>,</span><br><span class="line">      <span class="attr">"details"</span>: &#123;</span><br><span class="line">        <span class="attr">"database"</span>: <span class="string">"H2"</span>,</span><br><span class="line">        <span class="attr">"hello"</span>: <span class="number">1</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"diskSpace"</span>: &#123;</span><br><span class="line">      <span class="attr">"status"</span>: <span class="string">"UP"</span>,</span><br><span class="line">      <span class="attr">"details"</span>: &#123;</span><br><span class="line">        <span class="attr">"total"</span>: <span class="number">500068036608</span>,</span><br><span class="line">        <span class="attr">"free"</span>: <span class="number">389070479360</span>,</span><br><span class="line">        <span class="attr">"threshold"</span>: <span class="number">10485760</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="base-path-변경하기">Base Path 변경하기</span></h2>
+<p>기본으로 제공해주는 URL 정보는 변경해서 사용하는 것이 바람직합니다. <code>base-path</code> 속성을 이용하면 endpoint base path를 변경할 수 있습니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">  endpoints:</span></span><br><span class="line">    <span class="string">...</span></span><br><span class="line"><span class="attr">    web:</span></span><br><span class="line"><span class="attr">      base-path:</span> <span class="string">"/system"</span></span><br></pre></td></tr></table></figure>
+<p><code>base-path</code>을 변경하면 아래와 같이 endpoint base path가 변경되는 것을 확인할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/actuator-base-path.png" alt=""></p>
+<h2><span id="intellij-endpint">IntelliJ Endpint</span></h2>
+<p>IntelliJ를 이용하면 Actuator를 더욱 잘 활용할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/endpoint-mapping.png" alt=""></p>
+<p>Run/Debug Tab에서 Endpoints에서는 전체 Request Mapping를 볼 수 있습니다. 실제 <code>Run HTTP Request</code>를 이용하면 요청을 보낼 수 있습니다.</p>
+<p>우 클릭 이후 Edit을 활용하면 실제 매핑된 Controller 코드로 이동되어 컨트롤러에 있는 특정 Request Mapping 정보를 쉽게 찾을 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/endpoints-beans.png" alt=""></p>
+<p><code>Beans</code> Tab에서는 등록돼있는 Bean들을 볼 수 있습니다. 스프링 부트에서는 특정 빈의 유무에 따라서 설정들이 변경되는 일이 많기 때문에 디버깅 시 유용하게 사용할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/endpoints-heath.png" alt=""></p>
+<p><code>Health</code> Tab에서는 위에서 확인한 heath 정보도 확인할 수 있습니다. Http 요청을 보내서 확인하는 것보다는 인텔리 제이에서 확인하는 것이 개인적으로는 편리한 거 같습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/actuator/images/intellij-api-call.gif" alt=""></p>
+<p>Controller에서 HTTP Call을 위 그림처럼 진행할 수 있습니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/jpa-fetch-paging/" data-toggle="tooltip" data-placement="top" title="JPA Fetch Join 적용시 limit 동작하지 않는 이슈">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/intellij-delegate-gradle/" data-toggle="tooltip" data-placement="top" title="인텔리제이 Spring Boot Run Gradle에게 위임하기">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">의존성 주입</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">actuator 호출</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">endpoints 전체 노출</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Info Git Info 노출하기</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">SIMPLE Mode</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">FULL Mode</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Health Database</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Base Path 변경하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">IntelliJ Endpint</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
