@@ -340,7 +340,7 @@ Team 객체를 저장할 때 member1, member2를 members 컬렉션에 저장하�
 <li>사용자 A가 이름을 'Yun’으로 변경하고 커밋을 실행</li>
 <li>사용자 B는 똑같이 <strong>SELECT 하면 이번에는 결과가 1건이 조회된다.</strong></li>
 </ol>
-<p>이는 별다른 문제가 없어 보이지만, <strong>사실 사용자 B가 하나의 트랜잭션 내에서 똑같은 SELECT 쿼리를 실행했을 때는 항상 같은 결과를 가져와야 한다는 REPEATABLE READ 정합성에 어긋나는 것이다.</strong></p>
+<p>이는 별다른 문제가 없어 보이지만, <strong>사실 사용자 B가 하나의 트랜잭션 내에서 똑같은 SELECT 쿼리를 실행했을 때는 항상 같은 결과를 가져와야 한다는 REPEATABLE READ 정합성에 어긋납니다.</strong></p>
 <p>이것은 별다른 문제가 없어 보일 수 있습니다 <strong>하지만 사용자 B가 하나의 트랜잭션 내에서 똑같은 SELECT 쿼리를 실행했을 때는 항상 동일한 결과를 가져와야 합니다. 이를 REPEATABLE READ 라고 하며 READ COMMITTED 레벨에서는 NOE-REPEATABLE READ 문제가 발생하게 됩니다.</strong></p>
 <p>해당 문제를 정산 시스템의 시나리오로 다시 풀어서 설명드리겠습니다. (물론 아래 흐름처럼 정산 시스템이 동작하지는 않습니다. 예시를 들어 설명하기 위함입니다.)</p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/jpa-repeatable-read/docs/mysql_commited-3.png" alt=""></p>
