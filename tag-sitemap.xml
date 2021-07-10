@@ -3,28 +3,28 @@
 
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Isolation/</loc>
-        <lastmod>2021-07-01T14:48:58.257Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2021-07-01T14:48:58.257Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
-        <lastmod>2021-06-19T04:31:33.914Z</lastmod>
+        <lastmod>2021-07-10T06:54:39.542Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/%EC%84%B1%EB%8A%A5/</loc>
+        <lastmod>2021-07-10T06:54:39.504Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Isolation/</loc>
+        <lastmod>2021-07-10T06:54:39.499Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
         <lastmod>2021-06-19T04:31:33.914Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

@@ -237,7 +237,7 @@
                 post-container">
 
                 <h2><span id="jpql-조회-방식">JPQL 조회 방식</span></h2>
-<p>findById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. <strong>반면 JPQL은 영속성성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 Query 하여 결과를 가져옵니다.</strong> 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.</p>
+<p>findById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. <strong>반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 Query 하여 결과를 가져옵니다.</strong> 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.</p>
 <p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/query-result-.png" alt=""></p>
 <ol>
 <li><strong>JPQL을 호출하면 데이터베이스에 우선적으로 조회한다.</strong></li>
@@ -267,7 +267,7 @@ Team 객체를 저장할 때 member1, member2를 members 컬렉션에 저장하�
 </ol>
 <p>위와 같은 메커니즘으로 JPQL이 동작하니 해당 테스트는 실패하게 됩니다. <strong>그렇다면 조회 직전에 영속성 컨텍스트를 초기화 하면 어떻게 동작할까요?</strong></p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/jpa-repeatable-read/docs/jpql-3.png" alt=""></p>
-<p>3번 조회 잔에 영속성 컨텍스트를 초기화를 하면 위 이미지처럼 3번에서 조회한 값을 영속성 컨텍스트에 저장하게 됩니다.</p>
+<p>3번 조회 전에 영속성 컨텍스트를 초기화를 하면 위 이미지처럼 3번에서 조회한 값을 영속성 컨텍스트에 저장하게 됩니다.</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    <span class="comment">// select team0_.id as id1_1_0_, members1_.id as id1_0_1_, team0_.name as name2_1_0_, members1_.age as age2_0_1_, members1_.team_id as team_id4_0_1_, members1_.username as username3_0_1_, members1_.team_id as team_id4_0_0__, members1_.id as id1_0_0__ from team team0_ inner join member members1_ on team0_.id=members1_.team_id where team0_.name=?</span></span><br><span class="line">    em.clear() <span class="comment">// 영속성 컨텍스트를 초기화</span></span><br><span class="line">    <span class="keyword">val</span> team = teamRepository.findFetchJoinBy(<span class="string">"teamA"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//then</span></span><br><span class="line">    then(team.members).hasSize(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>em.clear() 메서드로 영속성 컨텍스트를 제거하고 테스트를 돌리면 정상적으로 동작하게 됩니다.</p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/jpa-repeatable-read/docs/test-code-2.png" alt=""></p>
