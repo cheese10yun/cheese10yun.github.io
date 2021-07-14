@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Redis Getting Started - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/redis-getting-started/">
+    <meta property="og:description" content="Redis Getting Started - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/redis-getting-started/">
+
+
+    <title>
+        
+          Redis Getting Started - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/redis-getting-started/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                            
+                        </div>
+                        <h1>Redis Getting Started</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2021-07-15
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/redis" rel="external nofollow noopener noreferrer" target="_blank">Github</a> 공개되어 있습니다.</p>
+</blockquote>
+<p>Redis에 대한 내용을 최대한 간략하게 설명한 포스팅입니다.</p>
+<h2><span id="redis-설치-docker">Redis 설치 (Docker)</span></h2>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.7'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">    redis:</span></span><br><span class="line"><span class="attr">        image:</span> <span class="attr">redis:6.2</span></span><br><span class="line"><span class="attr">        command:</span> <span class="string">redis-server</span> <span class="bullet">--requirepass</span> <span class="number">1234</span> <span class="bullet">--port</span> <span class="number">6379</span></span><br><span class="line"><span class="attr">        restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="bullet">            -</span> <span class="number">6379</span><span class="string">:6379</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose up -d</span><br></pre></td></tr></table></figure>
+<h3><span id="client-접속">Client 접속</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-2.png" alt=""></p>
+<p><a href="https://github.com/luin/medis" rel="external nofollow noopener noreferrer" target="_blank">Medis</a>를 이용해서 Redis Client 접속을 진행</p>
+<h2><span id="redis-용어-설명">Redis 용어 설명</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-1.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>용어</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Table</td>
+<td>하나의 DB에서 데이터를 저장하는 논리적인 구조</td>
+</tr>
+<tr>
+<td>Data Sets</td>
+<td>테이블을 구성하는 논리적단위, 하나의 Data-Set은 하나의 Key와 한 개 이상의 FIELD/ELEMENT로 구성</td>
+</tr>
+<tr>
+<td>Key</td>
+<td>하나의 Key는 하나 이상의 조합된 갓으로 펴현 가능 ex 주문번호, 주문번호+순번, 년월일+순번</td>
+</tr>
+<tr>
+<td>Values</td>
+<td>해당 Key에 대한 구체적인 데이터를 값으로 표현합니다.</td>
+</tr>
+</tbody>
+</table>
+<h2><span id="데이터-curd">데이터 CURD</span></h2>
+<table>
+<thead>
+<tr>
+<th>종류</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>set</td>
+<td>데이터를 저장(Key, Value)</td>
+</tr>
+<tr>
+<td>get</td>
+<td>저장된 데이터를 조회</td>
+</tr>
+<tr>
+<td>rename</td>
+<td>저장된 데이터 값을 변경할 때</td>
+</tr>
+<tr>
+<td>Keys</td>
+<td>지정된 모든 Key를 조회</td>
+</tr>
+<tr>
+<td>exits</td>
+<td>검색 대상 Key가 존재하는지 여부를 확인</td>
+</tr>
+<tr>
+<td>mset/mget</td>
+<td>여러 개의 Key와 Value를 한번 저장하고 검색할 때 사용</td>
+</tr>
+</tbody>
+</table>
+<h2><span id="실습">실습</span></h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">redis:6379&gt; set 1111 &quot;Yun&quot; # 해당 키값으로 벨류 저장</span><br><span class="line">redis:6379&gt; get 1111 # 해당 키에대한 데이터 검색</span><br><span class="line">redis:6379&gt; keys * # 저장되어 있는 모든 key 출력</span><br><span class="line">redis:6379&gt; keys *2 # 저장되어 있는 key 중에 2로 끝나는 key 검색 </span><br><span class="line">redis:6379&gt; rename 1111 1112 # key 1111 -&gt; 1112 변경</span><br><span class="line">redis:6379&gt; rename 1111 1112 # key 1111 -&gt; 1112 변경</span><br><span class="line">redis:6379&gt; randomkey # 현재 key중에서 랜덤 key 검색</span><br><span class="line">redis:6379&gt; exists 1116 # 키존재 여부 존재하는 경우 1</span><br><span class="line">redis:6379&gt; strlen 1111 # 해당 키 값의 value 길이길이</span><br><span class="line">redis:6379&gt; flushall # 저장되어 있는 모든 key 삭제</span><br><span class="line">redis:6379&gt; setex 123 30 &quot;Test&quot; # 일정시간 동안만 저장</span><br><span class="line">redis:6379&gt; ttl 123 # 현재 남아있는 시간</span><br><span class="line">redis:6379&gt; mset 111 &quot;111&quot; 123 &quot;123&quot; # 여러 개 필드를 한 번에 저장</span><br><span class="line">redis:6379&gt; mget 111 123 # Mset에 저장된 값을 한번에 다중 검색</span><br><span class="line">1) &quot;111&quot;</span><br><span class="line">2) &quot;123&quot;</span><br><span class="line">redis:6379&gt; mget 111 123 11 nonexisting # 존재하지 않는 경우 nil 출력</span><br><span class="line">1) &quot;111&quot;</span><br><span class="line">2) &quot;123&quot;</span><br><span class="line">3) (nil)</span><br><span class="line">4) (nil)</span><br><span class="line">redis&gt; mset seq_no 201909001 -&gt; 영속번호 발행을 위한 key/value 저장</span><br><span class="line">OK</span><br><span class="line">redis&gt; incr seq_no -&gt; Incremental 증가 +1</span><br><span class="line">201909002</span><br><span class="line">redis&gt; decr seq_no -&gt; Incremental 감소 -1</span><br><span class="line">201909003</span><br><span class="line">redis&gt; incrby seq_no 10 -&gt; Incremental 증가 + 10</span><br><span class="line">201909004</span><br><span class="line">redis&gt; decrby seq_no 10 -&gt; Incremental 감소 -10</span><br><span class="line">201909005</span><br><span class="line">redis:6379&gt; append 111 &quot;asdasd&quot; # 현재 value에 value 추가</span><br><span class="line">(integer) 9</span><br><span class="line">redis:6379&gt; get 111</span><br><span class="line">&quot;111asdasd&quot;</span><br><span class="line">redis:6379&gt; save # 현재 입력한 key/value 값을 파일로 저장</span><br><span class="line">OK</span><br><span class="line">redis:6379&gt; info # Redis 서버 설정 상태 조회</span><br><span class="line"># Server</span><br><span class="line">redis_version:6.2.1</span><br></pre></td></tr></table></figure>
+<h2><span id="데이터-타입">데이터 타입</span></h2>
+<table>
+<thead>
+<tr>
+<th>데이터 타입</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>strings</td>
+<td>문자, Binary 유형 데이터를 저장</td>
+</tr>
+<tr>
+<td>List</td>
+<td>하나의 Key에 여러 개의 배열 값을 저장</td>
+</tr>
+<tr>
+<td>Hash</td>
+<td>하나의 Key에 여러 개의 Fields와 Value로 구성된 테이블을 저장</td>
+</tr>
+<tr>
+<td>Bitmaps</td>
+<td>0,1로 표현하는 데이터 타입</td>
+</tr>
+<tr>
+<td>HyperLogLogs</td>
+<td>Element 중에 Unique 한 개수의 Element 만 계산</td>
+</tr>
+<tr>
+<td>Geospatial</td>
+<td>좌표 데이터를 저장 및 관리하는 데이터 타입</td>
+</tr>
+</tbody>
+</table>
+<p>본 포스팅에서는 <code>strings</code>, <code>List</code>, <code>Hash</code>만 살펴볼 예정입니다.</p>
+<h3><span id="hash">Hash</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-3.png" alt=""></p>
+<p>하나의 Key와 하나 이상의 <code>Field/Element</code> 값으로 저장할 수 있으며, Value에는 기본적으로 strings 데이터를 저장할 수 있습니다. 타입의 데이터들은 지정할 수 있으며 해당 컨테이너 타입에는 Hash, List,<br>
+Set/Sorted SEt 4가지 유형이 있습니다.</p>
+<ul>
+<li>Hash 타입은 기존 관계형 DB에서 Primary-Key와 하나 이상의 칼럼으로 구성된 테이블 구조와 매우 흡사한 데이터 유형</li>
+<li>하나의 Key는 오브젝트명과 하나 이상의 필드 값을 콜론 <code>:</code> 기호로 결합하여 표현할 수 있습니다. ex ex order:201809123, order_detail:201809123:01</li>
+<li>문자 값을 저장할 때는 인용부호 <code>&quot;&quot;</code>를 사용하며 숫자 값을 저장할 때는 인용부호가 필요하지 않습니다.</li>
+<li>기본적으로 필드 개수는 제한 없습니다.</li>
+<li>Hash 타입의 데이터를 처리할 때는 <code>hmset</code>, <code>hget</code>, <code>hgetall</code>, <code>hkey</code>, <code>hlen</code> 명령어를 사용합니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-4.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">hmset order:201809123 customer_name &quot;Woman &amp; Sports&quot; emp_name &quot;Magee&quot; total 601100 payment_type &quot;Credit&quot; order_filled &quot;Y&quot; ship_date 20180925</span><br><span class="line"></span><br><span class="line">redis&gt; hget order:201809123 customer_name -&gt; order:201809123 key에대한 customer_name 값 검색</span><br><span class="line">Woman &amp; Sports</span><br><span class="line"></span><br><span class="line">redis&gt; hgetall order:201809123 -&gt; order:201809123 key에 대한 모든 필드와 valu 검색</span><br><span class="line">customer_name Woman &amp; Sports</span><br><span class="line">emp_name Magee</span><br><span class="line">total 601100</span><br><span class="line">payment_type Credit</span><br><span class="line">order_filled Y</span><br><span class="line">ship_date 20180925</span><br><span class="line"></span><br><span class="line">redis&gt; hexists order:201809123 product_name -&gt; product_name field가 존재하는지 여부 획인</span><br><span class="line">0</span><br><span class="line">redis&gt; hexists order:201809123 customer_name -&gt; customer_name field가 존재하는지 여부 획인</span><br><span class="line">1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">redis&gt; hdel order:201809123 ship_date -&gt; ship_date 필드 제거</span><br><span class="line">1</span><br><span class="line"></span><br><span class="line">redis&gt; hgetall order:201809123 -&gt; ship_date 필드 제거 확인</span><br><span class="line">customer_name Woman &amp; Sports</span><br><span class="line">emp_name Magee</span><br><span class="line">total 601100</span><br><span class="line">payment_type Credit</span><br><span class="line">order_filled Y</span><br><span class="line"></span><br><span class="line">redis&gt; hmset order:201809123 ship_date 20180925 -&gt; ship_date 다시 추가</span><br><span class="line">OK</span><br><span class="line">redis&gt; hmgetall</span><br><span class="line"></span><br><span class="line">redis&gt; hgetall order:201809123</span><br><span class="line">customer_name Woman &amp; Sports</span><br><span class="line">emp_name Magee</span><br><span class="line">total 601100</span><br><span class="line">payment_type Credit</span><br><span class="line">order_filled Y</span><br><span class="line">ship_date 20180925</span><br><span class="line"></span><br><span class="line">redis&gt; hkeys order:201809123 -&gt; key에 대한 모든 Field 출력</span><br><span class="line">0 customer_name</span><br><span class="line">1 emp_name</span><br><span class="line">2 total</span><br><span class="line">3 payment_type</span><br><span class="line">4 order_filled</span><br><span class="line">5 ship_date</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">redis&gt; hvals order:201809123 -&gt; key에 대한 모든 Value 출력</span><br><span class="line">0 Woman &amp; Sports</span><br><span class="line">1 Magee</span><br><span class="line">2 601100</span><br><span class="line">3 Credit</span><br><span class="line">4 Y</span><br><span class="line">5 20180925</span><br><span class="line"></span><br><span class="line">hmget order:201809123 emp_name totla -&gt; 해당 필드의 value만 조회</span><br><span class="line">0 Magee</span><br><span class="line">1 601100</span><br></pre></td></tr></table></figure>
+<h3><span id="list-타입">List 타입</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-5.png" alt=""></p>
+<ul>
+<li>List 타입은 기존의 관계형 테이블에는 존재하지 않은 데이터 유형이며 일반적인 프로그래밍 언어에서 데이터를 처리할 때 사용되는 array 변수와 유사한 데이터 구조입니다.</li>
+<li>기본적으로 Strings 타입의 경우 배열에 저장할 때는 데이터 크기는 512MB입니다.</li>
+<li>List 타입의 데이터를 처리할 때는 lpush, lrange, rpush, rpop. llen, index 명령어를 사용합니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-6.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># Deta Format을 JOSN으로 저장</span><br><span class="line">lpush order_detail:201809123 &quot;&#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;&quot; &quot;&#123;item_id: 2, product_name: Pro Ski Boots, item_price: 380, qty: 400, price: 152000&#125;&quot;</span><br><span class="line"></span><br><span class="line"># Index 0~1 레인지 검색</span><br><span class="line">redis&gt; lrange order_detail:201809123 0 1</span><br><span class="line">0</span><br><span class="line">&#123;item_id: 2, product_name: Pro Ski Boots, item_price: 380, qty: 400, price: 152000&#125;</span><br><span class="line">1</span><br><span class="line">&#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;</span><br><span class="line"></span><br><span class="line"># 가장 이전 인덱스 제거</span><br><span class="line">redis&gt; rpop order_detail:201809123</span><br><span class="line">&#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;</span><br><span class="line"></span><br><span class="line"># 저장된 value count</span><br><span class="line">redis&gt; llen order_detail:201809123</span><br><span class="line">1</span><br><span class="line"></span><br><span class="line"># 데이터 추가</span><br><span class="line">lpush order_detail:201809123 &quot;&#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;&quot;</span><br></pre></td></tr></table></figure>
+<h3><span id="set-타입">Set 타입</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-7.png" alt=""></p>
+<ul>
+<li>List 타입은 하나의 필드에 여러 개의 배열 값을 저장할 수 있는 데이터 구조라면 Set 타입은 배열 구조가 아닌 여러 개의 엘리먼트로 데이터 값을 표현하는 구조입니다.</li>
+<li>Set 타입의 데이터를 처리할 때는 <code>sadd</code>, <code>smemebers</code>, <code>scard</code>, <code>sdiif</code>, <code>sunion</code> 명령어를 사용할 합니다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">SADD product &quot;id:11, product_name:Sky Pole, item_prifce:55, qty:100, price: 5500&quot; &quot;id:12, product_name:Bunny Boots, item_prifce:135, qty:500, price: 67000&quot;</span><br><span class="line"></span><br><span class="line"># product에 저장되 있는 Element(Value Sets) 조회</span><br><span class="line">redis&gt; SMEMBERS product</span><br><span class="line">0 id:12, product_name:Bunny Boots, item_prifce:135, qty:500, price: 67000</span><br><span class="line">1 id:11, product_name:Sky Pole, item_prifce:55, qty:100, price: 5500</span><br><span class="line"></span><br><span class="line"># 저장된 value count</span><br><span class="line">redis&gt; SCARD product</span><br><span class="line">2</span><br><span class="line"></span><br><span class="line">SADD product_old &quot;id:91, product_name: Old Sky Pole&quot;</span><br><span class="line"></span><br><span class="line"># product, product_old중 product에 만 있는 Value 검색</span><br><span class="line">redis&gt; sdiff product product_old</span><br><span class="line">0 id:12, product_name:Bunny Boots, item_prifce:135, qty:500, price: 67000</span><br><span class="line">1 id:11, product_name:Sky Pole, item_prifce:55, qty:100, price: 5500</span><br><span class="line"></span><br><span class="line"># product, product_old중 product_old에 만 있는 Value 검색</span><br><span class="line">redis&gt; sdiff product_old product</span><br><span class="line">0 id:91, product_name: Old Sky Pole</span><br><span class="line"></span><br><span class="line"># union</span><br><span class="line">redis&gt; SUNION  product product_old</span><br><span class="line">0 id:12, product_name:Bunny Boots, item_prifce:135, qty:500, price: 67000</span><br><span class="line">1 id:11, product_name:Sky Pole, item_prifce:55, qty:100, price: 5500</span><br><span class="line">2 id:91, product_name: Old Sky Pole</span><br><span class="line"></span><br><span class="line">SUNIONSTORE  product_new product product_old</span><br><span class="line"></span><br><span class="line"># union 결과를 product_new에 저장</span><br><span class="line">redis&gt; SUNIONSTORE  product_new product product_old</span><br><span class="line">3</span><br><span class="line"></span><br><span class="line"># Ramdom 제거</span><br><span class="line">redis&gt; SPOP product_new 1</span><br><span class="line">0 id:11, product_name:Sky Pole, item_prifce:55, qty:100, price: 5500</span><br></pre></td></tr></table></figure>
+<h3><span id="sorted-set-타입">Sorted Set 타입</span></h3>
+<ul>
+<li>Sorted Set 타입은 Set 타입과 동일한 데이터 구조이며 차이점은 저장된 데이터 값이 Sorting된 상태이면 Sroted Set이라고 합니다.</li>
+<li>데이터를 처리할 때는 <code>zadd</code>, <code>zragne,</code> <code>zcard</code>, <code>zcount</code>, <code>zrank</code> <code>zerverank</code> 명령어를 사용합니다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># Sorted된 값으로 데이터 저장</span><br><span class="line">redis&gt; ZADD order_detail:201809124 1 &quot;&#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;&quot; 2 &quot;&#123;item_id: 2, product_name: Pro Ski Boots, item_price: 380, qty: 400, price: 152000&#125;&quot;</span><br><span class="line"></span><br><span class="line"># 전체 조회</span><br><span class="line">redis&gt; ZRANGE order_detail:201809124 0 -1</span><br><span class="line">0 &#123;item_id: 1, product_name: Bunny Boots, item_price: 135, qty: 500, price: 67000&#125;</span><br><span class="line">1 &#123;item_id: 2, product_name: Pro Ski Boots, item_price: 380, qty: 400, price: 152000&#125;</span><br><span class="line"></span><br><span class="line"># count 조회</span><br><span class="line">redis&gt; ZCARd order_detail:201809124</span><br><span class="line">redis&gt; ZCOUNT order_detail:201809124</span><br><span class="line">2</span><br><span class="line"></span><br><span class="line"># 제거</span><br><span class="line">redis&gt; ZREM order_detail:2018091234 &#123;item_id: 1, product_name: Bunn</span><br><span class="line">y Boots, item_price: 135, qty: 500, price: 67000&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="spring-data-redis">Spring Data Redis</span></h2>
+<h3><span id="dependency-설정">Dependency 설정</span></h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(&quot;org.springframework.boot:spring-boot-starter-data-redis&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="yml-설정">yml 설정</span></h3>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    redis:</span></span><br><span class="line"><span class="attr">        host:</span> <span class="string">localhost</span></span><br><span class="line"><span class="attr">        port:</span> <span class="number">6379</span></span><br><span class="line"><span class="attr">        password:</span> <span class="string">root</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">    level:</span></span><br><span class="line"><span class="attr">        root:</span> <span class="string">INFO</span></span><br><span class="line">        <span class="string">redis.clients:</span> <span class="string">TRACE</span></span><br><span class="line">        <span class="string">org.springframework.data:</span> <span class="string">TRACE</span></span><br></pre></td></tr></table></figure>
+<h3><span id="data-redis-repositroy">Data Redis Repositroy</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RedisHash(</span></span><br><span class="line"><span class="meta">    value = <span class="meta-string">"member"</span></span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Member</span></span>(</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">var</span> id: <span class="built_in">Long</span>? = <span class="literal">null</span>,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@TimeToLive</span></span><br><span class="line">    <span class="keyword">val</span> ttl: <span class="built_in">Long</span> = <span class="number">20</span></span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">var</span> name: String = <span class="string">"name-<span class="variable">$id</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MemberRepository</span> : <span class="type">CrudRepository</span>&lt;<span class="type">Member, Long</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>@RedisHash</code> Redis Hash에 저장하는 aggregate 루트로 저장
+<ul>
+<li><code>value</code>: Redis Key에 대한 Prefix, <code>member:6</code></li>
+</ul>
+</li>
+<li><code>@timeToLive</code>: TTL 시간을 지정해서 저장합니다.</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `members 저장 테스트`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 10개의 Member를 10개를 TTL 20초로 저장</span></span><br><span class="line">    <span class="keyword">val</span> members = (<span class="number">1.</span><span class="number">.10</span>).map &#123;</span><br><span class="line">        Member(</span><br><span class="line">            id = it.toLong(),</span><br><span class="line">            ttl = <span class="number">20</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">    memberRepository.saveAll(members)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># member:1 전페 필드 조회</span><br><span class="line">redis:6379&gt; hgetall member:1</span><br><span class="line">1) &quot;_class&quot;</span><br><span class="line">2) &quot;com.example.redis.Member&quot;</span><br><span class="line">3) &quot;id&quot;</span><br><span class="line">4) &quot;1&quot;</span><br><span class="line">5) &quot;name&quot;</span><br><span class="line">6) &quot;name-1&quot;</span><br><span class="line">7) &quot;ttl&quot;</span><br><span class="line">8) &quot;20&quot;</span><br><span class="line"></span><br><span class="line"># member ttl 만료 시간</span><br><span class="line">redis:6379&gt; ttl member:1</span><br><span class="line">(integer) 20</span><br></pre></td></tr></table></figure>
+<h3><span id="medis-client-접속">Medis Client 접속</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/redis/docs/redis-8.png" alt=""></p>
+<p>Medis Client로 접속하면 전체키를 확인할 수 있습니다.</p>
+<h2><span id="참고">참고</span></h2>
+<ul>
+<li><a href="http://m.yes24.com/goods/detail/71131862" rel="external nofollow noopener noreferrer" target="_blank">빅데이터 저장 및 분석을 위한 NoSQL &amp; Redis</a></li>
+<li><a href="https://docs.spring.io/spring-data/data-redis/docs/current/reference/html#reference" rel="external nofollow noopener noreferrer" target="_blank">Spring Data Redis Reference Documentation</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/jpa-jpql/" data-toggle="tooltip" data-placement="top" title="JPA JPQL의 조회 동작 살펴보기">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Redis 설치 (Docker)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Client 접속</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Redis 용어 설명</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">데이터 CURD</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">실습</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">데이터 타입</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Hash</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">List 타입</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">Set 타입</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">Sorted Set 타입</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Spring Data Redis</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Dependency 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">yml 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">Data Redis Repositroy</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.4.</span> <span class="toc-nav-text">Medis Client 접속</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">참고</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
