@@ -3,6 +3,34 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/MSA/</loc>
+        <lastmod>2021-07-29T18:04:44.096Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2021-07-29T18:04:44.096Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Querydsl/</loc>
+        <lastmod>2021-07-29T18:01:56.338Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2021-07-29T18:01:56.338Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81/</loc>
         <lastmod>2021-07-18T09:05:20.591Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -17,13 +45,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2021-07-18T06:22:23.850Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Redis/</loc>
         <lastmod>2021-07-14T16:49:29.037Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -32,13 +53,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Database/</loc>
-        <lastmod>2021-07-14T15:41:56.765Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2021-07-14T15:41:56.765Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -60,13 +74,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
-        <lastmod>2021-06-17T14:18:01.980Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Querydsl/</loc>
         <lastmod>2021-06-17T14:18:01.980Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
