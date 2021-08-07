@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Cloud Config &amp; Cloud Bus 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-config-client/">
+    <meta property="og:description" content="Spring Cloud Config &amp; Cloud Bus 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-config-client/">
+
+
+    <title>
+        
+          Spring Cloud Config &amp; Cloud Bus 정리 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-config-client/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                            
+                              <a class="tag" href="/tags/#MSA" title="MSA">MSA</a>
+                            
+                        </div>
+                        <h1>Spring Cloud Config &amp; Cloud Bus 정리</h1>
+                        <h2 class="subheading">카프카를 이용한 Config 변경사항 전파</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2021-08-07
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/spring-msa" rel="external nofollow noopener noreferrer" target="_blank">Github</a>에서 확인할 수 있으며 <a href="https://cheese10yun.github.io/spring-config-server">Spring Config Server 정리</a> 글과 이어지는 글입니다.</p>
+</blockquote>
+<p><a href="https://cheese10yun.github.io/spring-config-server/">Spring Config Server 정리</a>를 통해서 Config Server에 대해서 알아봤습니다. 이번 포스팅에서는 Config Client를 알아보겠습니다.</p>
+<p>각 서비스 애플리케이션은 해당 애플리케이션이 구동시 Config Server에 자신의 Config의 설정 파일을 읽어 오며, <strong>애플리케이션이 구동 중에도 Config 설정을 변경해도 애플리케이션 재시작 없이 해당 변경 내용을 반영할 수 있습니다.</strong></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/config-server1.png" alt=""></p>
+<h2><span id="config-client-구성">Config Client 구성</span></h2>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation(<span class="string">"org.springframework.cloud:spring-cloud-starter-config"</span>)</span><br><span class="line">    implementation(<span class="string">"org.springframework.cloud:spring-cloud-starter-bus-kafka"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>config: Config Client 의존성</li>
+<li>bus-kafka: Cloud Bus를 이용해서 변경사항을 모든 인스턴스에게 전달하는 경우 사용</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">    port:</span> <span class="number">8181</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    application:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">order-service</span> <span class="comment"># (1)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    kafka:</span></span><br><span class="line"><span class="attr">        bootstrap-servers:</span> <span class="attr">localhost:29092</span> <span class="comment"># (2)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">        import:</span> <span class="string">"optional:configserver:http://localhost:8888"</span> <span class="comment"># (3)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">    endpoints:</span></span><br><span class="line"><span class="attr">        web:</span></span><br><span class="line"><span class="attr">            exposure:</span></span><br><span class="line"><span class="attr">                include:</span></span><br><span class="line"><span class="bullet">                    -</span> <span class="string">"*"</span> <span class="comment"># (4)</span></span><br><span class="line">                    <span class="comment"># - "refresh" # 위 '*'  으로 전체를 공개 해서 주석</span></span><br><span class="line">                    <span class="comment"># - "bus-refresh" # 위 '*'  으로 전체를 공개 해서 주석</span></span><br><span class="line"><span class="attr">    endpoint:</span></span><br><span class="line"><span class="attr">        refresh:</span></span><br><span class="line"><span class="attr">            enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1): 애플리케이션 이름을 지정 <code>spring.application.name</code> 값을 기준으로 <strong>Config Repositroy 저장소에 있는 Config 파일을 인식해서 가져오기 때문에 반드시 두 값을 일치 시켜야 합니다.</strong>
+<ul>
+<li><code>spring.application.name=order-service</code>의 경우 <code>order-service-{evn}.yml</code>을 Config 파일로 인식함</li>
+</ul>
+</li>
+<li>(2): 변경사항을 전파하는 카프카 주소 작성</li>
+<li>(3): Config Server 주소 작성, <code>optional:configserver:{address}</code>으로 작성</li>
+<li>(4): <code>actuator</code>의 속성을 <code>*</code>으로 전체 공개, <strong>실제 운영 애플리케이션에서는 필요한 부분만 공개해야 합니다.</strong></li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># order-service.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"default"</span></span><br><span class="line"><span class="attr">    server-name:</span> <span class="string">"Config Server"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># order-service-sandbox.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"sandbox"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># order-service-production.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"production"</span></span><br></pre></td></tr></table></figure>
+<p>Config Server 저장소 Gtihub Repository에는 위와 같은 <code>yml</code>이 구성되어 있습니다.</p>
+<h2><span id="애플리케이션-구동">애플리케이션 구동</span></h2>
+<p><code>spring.application.name=order-service</code>, <code>profile=local</code> 설정인 애플리케이션 구동했을 때는의 경우로 설명드리겠습니다. 애플리케이션이 구동할 때 Config Server에게 자신의 Config 설정을 가져옵니다. 위 이미지에서는 1, 2번 항목에 해당합니다. 자세히 코드 레벨로 살펴보겠습니다.</p>
+<p>서버가 구동하면 <code>/{name}/{profiles:.*[^-].*}</code> API를 호출합니다. 해당 API 코드는 아래와 같습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># EnvironmentController.class</span><br><span class="line"><span class="meta">@RequestMapping</span>(path = <span class="string">"/&#123;name&#125;/&#123;profiles:.*[^-].*&#125;"</span>,   produces = EnvironmentMediaType.V2_JSON)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Environment <span class="title">defaultLabelIncludeOrigin</span><span class="params">(@PathVariable String name, @PathVariable String profiles)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getEnvironment(name, profiles, <span class="keyword">null</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/config-debug.png" alt=""></p>
+<p><code>spring.application.name=order-service</code>, <code>profile=local</code> 설정을 기반으로 Config Server의 API를 호출하여 자신의 애플리케이션을 가져옵니다.</p>
+<h3><span id="order-application-설정-확인">Order Application 설정 확인</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/orders"</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderApi</span></span>(</span><br><span class="line">    <span class="meta">@Value(<span class="meta-string">"\$&#123;message.profile&#125;"</span>)</span> <span class="keyword">val</span> profile: String</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">"/profile"</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getRepoProfile</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> profile</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>message.profile</code> 설정 확인을 하기 위해서 간단한 API를 만들어 보고 테스트를 진행해 보겠습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8181/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: application/json</span><br><span class="line">Content-Length: 5</span><br><span class="line">Date: Sun, 01 Aug 2021 13:15:56 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">local</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 198ms; Content length: 5 bytes</span><br></pre></td></tr></table></figure>
+<p>Config 서버를 통해서 가져온 값이 정상적으로 order application에 가져온 것을 확인할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/config-debug-1.png" alt=""></p>
+<p>Config Server를 통해해서 가져온 Confg 값을 다시 살펴보겠습니다. <code>message.profile=local</code>은 정상적으로 가져온 것을 확인할 수 있으며, local 프로필에는 <code>message.server-name</code>값이 없기 때문에 해당 값은 default config인 <code>order-service.yml</code>값의 <code>message.server-name=Config Server</code>의 설정값을 사용합니다. <strong>즉 default 값도 확인해야 하기 때문에 profile, default profile을 조회합니다.</strong></p>
+<h3><span id="재시작-없이-config-변경">재시작 없이 Config 변경</span></h3>
+<p>Config Server의 가장 큰 장점 중 하나는 서버가 재시작 없이 Config 설정 파일을 바꿀 수 있다는 점입니다. 해당 기능에 대해서 살펴보겠습니다.</p>
+<p><code>actuator</code> 설정을 통해서 공개된 <code>refresh</code> API를 통해서 애플리케이션 구동 중에 Config 설정을 변경할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">GET http://192.168.0.5:8585/actuator</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: application/vnd.spring-boot.actuator.v3+json</span><br><span class="line">Content-Length: 435</span><br><span class="line">Date: Sat, 07 Aug 2021 00:53:20 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;_links&quot;: &#123;</span><br><span class="line">    &quot;self&quot;: &#123;</span><br><span class="line">      &quot;href&quot;: &quot;http://192.168.0.5:8585/actuator&quot;,</span><br><span class="line">      &quot;templated&quot;: false</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;info&quot;: &#123;</span><br><span class="line">      &quot;href&quot;: &quot;http://192.168.0.5:8585/actuator/info&quot;,</span><br><span class="line">      &quot;templated&quot;: false</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;refresh&quot;: &#123;</span><br><span class="line">      &quot;href&quot;: &quot;http://192.168.0.5:8585/actuator/refresh&quot;,</span><br><span class="line">      &quot;templated&quot;: false</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;busrefresh-destinations&quot;: &#123;</span><br><span class="line">      &quot;href&quot;: &quot;http://192.168.0.5:8585/actuator/busrefresh/&#123;*destinations&#125;&quot;,</span><br><span class="line">      &quot;templated&quot;: true</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;busrefresh&quot;: &#123;</span><br><span class="line">      &quot;href&quot;: &quot;http://192.168.0.5:8585/actuator/busrefresh&quot;,</span><br><span class="line">      &quot;templated&quot;: false</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 78ms; Content length: 435 bytes</span><br></pre></td></tr></table></figure>
+<p><code>GET https://localhost:8585/actuator</code> <code>refresh</code>, <code>busrefresh</code> API가 공개되어 있는 것을 확인할 수 있습니다. <code>refresh</code> 부터 설명드리겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="meta-string">"/orders"</span>)</span></span><br><span class="line"><span class="meta">@RefreshScope</span> <span class="comment">// (1)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderApi</span></span>(</span><br><span class="line">    <span class="meta">@Value(<span class="meta-string">"\$&#123;message.profile&#125;"</span>)</span> <span class="keyword">val</span> profile: String</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="meta">@GetMapping(<span class="meta-string">"/profile"</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getRepoProfile</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> profile</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># order-service-local.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"new local"</span> <span class="comment"># (2)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) <code>@RefreshScope</code> 어노테이션을 추가를 합니다.</li>
+<li>(2) Config Repositroy에 있는 Config 설정을 위처럼 변경해서 Push 합니다.</li>
+<li>(3) <code>POST /actuator/refresh</code> API를 호출하여 변경 내용을 반영합니다.</li>
+<li>(4) <code>GET /orders/profile</code>을 호출하여 변경 내용은 확인합니다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">POST http://localhost:8585/actuator/refresh</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: application/vnd.spring-boot.actuator.v3+json</span><br><span class="line">Content-Length: 43</span><br><span class="line">Date: Sun, 01 Aug 2021 14:22:38 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">  &quot;config.client.version&quot;,</span><br><span class="line">  &quot;message.profile&quot;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 6374ms; Content length: 43 bytes</span><br></pre></td></tr></table></figure>
+<p><code>POST /actuator/refresh</code> API를 호출하면 변경한 propertie의 key 값을 확인할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8181/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: application/json</span><br><span class="line">Content-Length: 10</span><br><span class="line">Date: Sun, 01 Aug 2021 14:22:57 GMT</span><br><span class="line">Keep-Alive: timeout=60111</span><br><span class="line">Connection: keep-alivew</span><br><span class="line"></span><br><span class="line">new local</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 186ms; Content length: 10 bytes</span><br></pre></td></tr></table></figure>
+<p><code>GET /orders/profile</code>을 호출하면 위에서 변경한 내용을 확인할 수 있습니다. 서버가 구동 중이라도 Config Server를 이용해서 설정 파일을 동적으로 변경할 수 있습니다.</p>
+<h3><span id="동일한-설정이-로컬-환경에도-있는-경우에는">동일한 설정이 로컬 환경에도 있는 경우에는?</span></h3>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># Config Server</span></span><br><span class="line"><span class="comment"># order-service-local.yml </span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"new local2"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># local project</span></span><br><span class="line"><span class="comment"># application-local.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line"><span class="attr">    profile:</span> <span class="string">"new local local"</span></span><br></pre></td></tr></table></figure>
+<p>로컬 프로퍼티와, Config 프로퍼티가 중복될 경우 어느 것을 우선되는지 확인해 보겠습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET http://192.168.0.5:8585/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line">Content-Length: 10</span><br><span class="line">Date: Sat, 07 Aug 2021 01:04:59 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">new local2</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 45ms; Content length: 10 bytes</span><br></pre></td></tr></table></figure>
+<p><strong><code>GET http://192.168.0.5:8585/orders/profile</code>을 호출해보면 본인 설정보다 Config Server 설정이 우선되는 것을 확인할 수 있습니다. 해당 설정을 로컬에도 가지고 있는 경우에는 이 점을 유의해야 합니다.</strong></p>
+<h3><span id="서버가-여러대의-경우-cloud-bus">서버가 여러대의 경우 Cloud Bus</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/config-client-1.png" alt=""></p>
+<p>일반적으로 서비스 인스턴스들은 2대 이상으로 구성하게 됩니다. 그러기 때문에 <code>/actuator/refresh</code> 호출을 인스턴스 수에 따라서 N 번 해야 하며, 컨테이너 환경에서는 해당 작업은 더 복잡합니다. 이러한 문제는 <a href="https://cloud.spring.io/spring-cloud-bus/reference/html/" rel="external nofollow noopener noreferrer" target="_blank">Spring Cloud Bus</a>를 이용해서 Kafka으로 브로드캐스팅 방식으로 변경사항을 모든 인스턴스에게 전달하는 방식으로 해결할 수 있습니다.</p>
+<p>메시지 플랫폼으로는 <code>spring-cloud-starter-bus-amqp</code>, <code>spring-cloud-starter-bus-kafka</code>을 선택할 수 있습니다. <code>bus-amqp</code>는 Rabbit MQ를 사용하고, <code>kafka</code>는 Kafka를 사용합니다. 본 예제는 Kafka를 기준으로 설명드리겠습니다.</p>
+<h4><span id="kafka-docker">Kafka Docker</span></h4>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># docker-compose.yaml</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  zookeeper:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">confluentinc/cp-zookeeper:latest</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      ZOOKEEPER_CLIENT_PORT:</span> <span class="number">2181</span></span><br><span class="line"><span class="attr">      ZOOKEEPER_TICK_TIME:</span> <span class="number">2000</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">22181</span><span class="string">:2181</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">  kafka:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">confluentinc/cp-kafka:latest</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">zookeeper</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="number">29092</span><span class="string">:29092</span></span><br><span class="line"><span class="attr">    environment:</span></span><br><span class="line"><span class="attr">      KAFKA_BROKER_ID:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">      KAFKA_ZOOKEEPER_CONNECT:</span> <span class="attr">zookeeper:2181</span></span><br><span class="line"><span class="attr">      KAFKA_ADVERTISED_LISTENERS:</span> <span class="attr">PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092</span></span><br><span class="line"><span class="attr">      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:</span> <span class="attr">PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span><br><span class="line"><span class="attr">      KAFKA_INTER_BROKER_LISTENER_NAME:</span> <span class="string">PLAINTEXT</span></span><br><span class="line"><span class="attr">      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose up -d</span><br></pre></td></tr></table></figure>
+<p>위 처럼 카프카 도커를 구성해서 도커를 구동시킵니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    application:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">order-service</span></span><br><span class="line"><span class="attr">    kafka:</span></span><br><span class="line"><span class="attr">        bootstrap-servers:</span> <span class="attr">localhost:29092</span></span><br><span class="line"></span><br><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">    endpoints:</span></span><br><span class="line"><span class="attr">        web:</span></span><br><span class="line"><span class="attr">            exposure:</span></span><br><span class="line"><span class="attr">                include:</span></span><br><span class="line"><span class="bullet">                    -</span> <span class="string">"refresh"</span></span><br><span class="line"><span class="bullet">                    -</span> <span class="string">"bus-refresh"</span></span><br></pre></td></tr></table></figure>
+<p>위에서 구성한 카프카 설정, actuator으로 <code>bus-refresh</code>을 노출시키는 설정을 완료합니다. 해당 설정을 완료했다면 인스턴스를 2대를 각각 다른 포트로 애플리케이션을 구동시킵니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/eureka.png" alt=""></p>
+<p>포스팅에서는 Eureka를 통해서 <code>order-service</code>를 랜덤 포트를 이용해서 2대를 구성했습니다. 포트가 각기 다르게 profile local으로 띄우기만 하면 되니 굳이 유레카에 해당 서버를 등록시킬 필요는 없습니다. 인스턴스가 2개를 띄웠다는 부분을 표시하기 위해서 이미지를 첨부했습니다.</p>
+<p>각각 서버에서 <code>/orders/profile</code>을 호출해서 <code>message.profile</code>를 확인해보겠습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">GET http://192.168.0.5:58704/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line">Content-Length: 10</span><br><span class="line">Date: Sat, 07 Aug 2021 04:36:43 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">new local2</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 59ms; Content length: 10 bytes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GET http://192.168.0.5:59013/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line">Content-Length: 10</span><br><span class="line">Date: Sat, 07 Aug 2021 04:36:30 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">new local2</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 56ms; Content length: 10 bytes</span><br></pre></td></tr></table></figure>
+<p>로컬 프로퍼티를 정상적으로 인식하는 것을 확인할 수 있습니다. 그렇다면 Config Server의 프로퍼티를 <code>message.profile=&quot;local&quot;</code>으로 Push 한 이후 포트 59013 서버 1대에 <code>/actuator/busrefresh</code>를 호출하겠습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST http://192.168.0.5:59013/actuator/busrefresh</span><br><span class="line"></span><br><span class="line">HTTP/1.1 204 </span><br><span class="line">Date: Sat, 07 Aug 2021 04:42:33 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&lt;Response body is empty&gt;</span><br><span class="line"></span><br><span class="line">Response code: 204; Time: 6842ms; Content length: 0 bytes</span><br></pre></td></tr></table></figure>
+<p>정상적으로 호출이 완료되었으면 59013, 58704 서버를 모두 확인해보겠습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">GET http://192.168.0.5:58704/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line">Content-Length: 5</span><br><span class="line">Date: Sat, 07 Aug 2021 04:42:47 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">local</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 47ms; Content length: 5 bytes</span><br><span class="line"></span><br><span class="line">GET http://192.168.0.5:59013/orders/profile</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line">Content-Length: 5</span><br><span class="line">Date: Sat, 07 Aug 2021 04:43:05 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">local</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 151ms; Content length: 5 bytes</span><br></pre></td></tr></table></figure>
+<p><strong>59013 서버에 이벤트를 반영했지만 58704 서버에도 해당 내용이 전파된 것을 확인할 수 있습니다.</strong></p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-config-server/" data-toggle="tooltip" data-placement="top" title="Spring Cloud Config Server 정리">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Config Client 구성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">애플리케이션 구동</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Order Application 설정 확인</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">재시작 없이 Config 변경</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">동일한 설정이 로컬 환경에도 있는 경우에는?</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">서버가 여러대의 경우 Cloud Bus</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.4.1.</span> <span class="toc-nav-text">Kafka Docker</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        
+                          <a class="tag" href="/tags/#MSA" title="MSA">MSA</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
