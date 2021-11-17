@@ -3,6 +3,27 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Resilience4j/</loc>
+        <lastmod>2021-11-17T16:36:37.527Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/CircuitBreaker/</loc>
+        <lastmod>2021-11-17T16:36:37.527Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/MSA/</loc>
+        <lastmod>2021-11-17T16:36:37.527Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Guide/</loc>
         <lastmod>2021-11-07T11:29:04.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -46,13 +67,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Kafka/</loc>
-        <lastmod>2021-08-12T18:54:02.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/MSA/</loc>
         <lastmod>2021-08-12T18:54:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
