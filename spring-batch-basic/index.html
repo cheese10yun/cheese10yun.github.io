@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="Spring Batch 간단 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-batch-basic/">
+    <meta property="og:description" content="Spring Batch 간단 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-batch-basic/">
+
+
+    <title>
+        
+          Spring Batch 간단 정리 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-batch-basic/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Spring Batch" title="Spring Batch">Spring Batch</a>
+                            
+                        </div>
+                        <h1>Spring Batch 간단 정리</h1>
+                        <h2 class="subheading">Sprong Batch 기초를 알아보자</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2018-11-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>출저 <a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791162241264&amp;orderClick=LAA&amp;Kc=" rel="external nofollow noopener noreferrer" target="_blank">처음으로 배우는 스프링 부트 2</a>을 보고 정리한 포스팅입니다. 배치 관련된 국내 서적 중에서 스프링 배치를 가장 잘 정리 한 거 같습니다.</p>
+</blockquote>
+<p>스프링 배치는 벡엔드의 배치처리 기능을 구현하는 데 사용하는 프레임워크입니다. 스프링 부트 배치는 스프링 배치 설정 요소들을 간편화시켜 스프링 배치를 빠르게 설정하는 데 도움을 줍니다.</p>
+<h2><span id="스프링-부트-배치의-장점">스프링 부트 배치의 장점</span></h2>
+<ul>
+<li>대용량 데이터 처리에 최적화되어 고성능을 발휘합니다.</li>
+<li>효과적인 로깅, 통계 처리, 트랜잭션 관리 등 재사용 가능한 필수 기능을 지원합니다.</li>
+<li>수동으로 처리하지 않도록 자동화되어 있습니다.</li>
+<li>예외사항과 비정상 동작에 대한 방어 기능이 있습니다.</li>
+<li>스프링 부트 배치는 반복적인 작업 프로세스를 이해하면 비니지스로직에 집중할 수 있습니다.</li>
+</ul>
+<h2><span id="스프링-부트-배치-주의사항">스프링 부트 배치 주의사항</span></h2>
+<p>스프링 부트 배치는 스프링 배치를 간편하게 사용 할 수 있게 래핑한 프로젝트입니다. 따라서 스프링 부트 배치와 스프링 배치에 모두에서 다음과 같은 주의사항을 염두해야 합니다.</p>
+<ul>
+<li>가능하면 단순화해서 복잡한 구조와 로직을 피해야합니다.</li>
+<li>데이터를 직접 사용하는 편이 빈번하게 일어나므로 데이터 무결성을 우지하는데 유효성 검사 등의 방어책이 있어야합니다.</li>
+<li>배치 처리 시스템 I/O 사용을 최소화해야합니다. 잦은 I/O로 데이터베이스 커넥션과 네트워크 비용이 커지면 성능에 영향을 줄 수 있기 때문입니다. 따라서 가능하면 한번에 데이터를 조회하여 메모리에 저장해두고 처리를 한 다음. 그결과를 한번에 데이터베이스에 저장하는것이 좋습니다.</li>
+<li>일반적으로 같은 서비스에 사용되는 웹 API, 배치, 기타 프로젝트들을 서로 영향을 줍니다. 따라서 배치 처리가 진행되는 동안 다른 프로젝트 요소에 영향을 주는 경우가 없는지 주의를 기울여야합니다.</li>
+<li>스프링 부트는 배치 스케쥴러를 제공하지 않습니다. 따라서 배치 처리 기능만 제공하여 스케쥴링 기능은 스프링에서 제공하는 쿼치 프레임워크 등을 이용해야합니다. <strong>리눅스 crontab 명령은 가장 간단히 사용 할 수 있지만 이는 추천하지 않습니다.</strong> crontab의 경우 각 서버마다 따로 스케쥴러를 관리해야 하며 무엇보다 클러스터링 기능이 제공되지 않습니다. 반면에 쿼츠 같은 스케쥴링은 프레임워크를 사용한다면 클러스터링뿐만 아니라 다양한 스케쥴링 기능, 실행 이력 관리 등 여러 이점을 얻을 수 있습니다.</li>
+</ul>
+<h2><span id="스프링-부트-배치-이해하기">스프링 부트 배치 이해하기</span></h2>
+<p>배치의 일반적인 시나리오는 다음과 같은 3단계로 이루어집니다.</p>
+<ol>
+<li>읽기(read) : 데이터 저장소(일반적으로 데이터베이스)에서 특정 데이터 레코드를 읽습니다.</li>
+<li>처리(processing) : 원하는 방식으로 데이터 가공/처리 합니다.</li>
+<li>쓰기(write) : 수정된 데이터를 다시 저장소(데이터베이스)에 저장합니다.</li>
+</ol>
+<p>배치 처리는 읽기 -&gt; 처리 -&gt; 쓰기 흐름을 갖습니다. 다음 그림은 스프링에서 이러한 배치 처리를 어떻게 구현 했는지 배치 처리와 관련된 객체의 관계를 보여줍니다.</p>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/batch-obejct-relrationship.png">
+</p>
+<ul>
+<li>Job과 Step은 1:M</li>
+<li>Step과 ItemReader, ItemProcessor, ItemWriter 1:1</li>
+<li>Job이라는 하나의 큰 일감(Job)에 여러 단계(Step)을 두고, 각 단계를 배치의 기본 흐름대로 구성합니다.</li>
+</ul>
+<h3><span id="job">Job</span></h3>
+<ul>
+<li>Job은 배치 처리 과정을 하나의 단위로 만들어 포현한 객체입니다. 또한 전체 배치 처리에 있어 항상 최상단 계층에 있습니다.</li>
+<li>위에서 하나의 Job(일감) 안에는 여러 Step(단계)이 있다고 설명했던 바와 같이 <strong>스프링 배치에서 Job 객체는 여러 Step 인스턴스를 포함하는 컨테이너 입니다</strong></li>
+<li>Job 객체를 만드는 빌더는 여러 개 있습니다. 여러 빌더를 통합하여 처리하는 공장인 JobBuilderFactory로 원하는 Job을 쉽게 만들수 있습니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JobBuilderFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> JobRepostiroy jobrepository;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JobBuilderFactory</span><span class="params">(JobRepository jobRepository)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.jobrepository = jobrepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JobBuilder <span class="title">get</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        JobBuilder builder = <span class="keyword">new</span> JobBuilder(name).repository(jobrepository);</span><br><span class="line">        <span class="keyword">return</span> builder;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>JobBuilderFactory는 JobBuilder를 생성할 수 있는 get() 메서드를 포함하고 있습니다. get()메서드는 새로운 JobBuilder를 생성해서 반환하는 것을 확인할 수있습니다.</li>
+<li>JobBuilderFactory에서 생성되는 모든 JobBulder가 레포지토리를 사용합니다.</li>
+<li>JobBuilderFactory는 JobBuilder를 생성하는 역할만 수행합니다. 이렇게 생성된 JobBuilder를 이용해서 Job을 생성해야 하는데, 그렇다면 JobBuilder의 역할은 무엇인지 JobBuilder의 메서드를 통해 기능을 알아보겠습니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> SimpleJobBuilder <span class="title">start</span><span class="params">(Step step)</span></span>&#123;</span><br><span class="line">    <span class="comment">//(1)</span></span><br><span class="line">    <span class="comment">// Step을 추가해서 가장 기본이되는 SimpleJobBuilder를 생성합니다.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SimpleJobBuilder(tihs).start(step);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> JobFlowBuilder <span class="title">start</span><span class="params">(Flow flow)</span></span>&#123;</span><br><span class="line">    <span class="comment">//(2)</span></span><br><span class="line">    <span class="comment">// Flow를 실행할 JobFlowBuilder를 생성합니다.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> JobFlowBuilder(tihs).start(flow);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> JobFlowBuilder <span class="title">flow</span><span class="params">(Step step)</span></span>&#123;</span><br><span class="line">    <span class="comment">//(3)</span></span><br><span class="line">    <span class="comment">// Step을 실행할 FlowJobBuilder를 생성합니다.</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> JobFlowBuilder(tihs).start(step);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>JobBuilder는 직접적으로 Job을 생성하는 것이 아니라 별도의 구체적 빌더를 생성하여 변환하여 경우에 따라 Job 생성 방법이 모두 다를 수 있는 점을 유연하게 처리할 수 있습니다.</li>
+</ul>
+<h3><span id="jobinstance">JobInstance</span></h3>
+<ul>
+<li><strong>JobInstance는 배치 처리에서 Job이 실행될 때 하나의 Job 실행 단위입니다.</strong> 만약 하루에 한 번 씩 배치의 Job이 실행된다면 어제와 오늘 실행 각각 Job을 JobInstance라고 부를 수 있습니다.</li>
+<li>각각의 JobInstance는 하나의 JobExecution을 갖는 것은아닙니다. 오늘 Job이 실행 했는데 실패했다면 다음날 동일한 JobInstance를 가지고 또 실행합니다.</li>
+<li>Job 실행이 실패하면 JobInstance가 끝난것으로 간주하지 않기 때문입니다. 그렇다면 JobInstance는 어제 실패한 JobExecution과 오늘의 성공한 JobExecution 두 개를 가지게 됩니다. <strong>즉 JobExecution 는 여러 개 가질 수 있습니다.</strong></li>
+</ul>
+<h3><span id="jobexecution">JobExecution</span></h3>
+<ul>
+<li>JobExecution은 JobIstance에 대한 한 번의 실행을 나타내는 객체입니다.</li>
+<li>만약 오늘 Job이 실패해 내일 다시 동일한 Job을 실행하면 오늘/내일의 실행 모두 같은 JobInstance를 사용합니다.</li>
+<li>실제로 JobExecution 인터페이스를 보면 Job 실행에 대한 정보를 담고 있는 도메인 객체가 있습니다. <em>JobExecution은 JobInstance, 배치 실행 상태, 시작 시간, 끝난 시간, 실패했을 때 메시지 등의 정보를 담고 있습니다. JobExecution 객체 안에 어떤 실행 정보를 포함 하고 있습니다.</em></li>
+</ul>
+<h3><span id="jobparameters">JobParameters</span></h3>
+<ul>
+<li>JobParameters는 Job이 실행될 때 필요한 파라미터들은 Map 타입으로 지정하는 객체 입니다.</li>
+<li>JobParameters는 JobInstance를 구분하는 기준이 되기도 합니다.</li>
+<li>JobParameters와 JobInstance는 1:1 관계입니다.</li>
+</ul>
+<h3><span id="step">Step</span></h3>
+<ul>
+<li>Step은 실직적인 배치 처리를 정의하고 제어 하는데 필요한 모든 정보가 있는 도메인 객체입니다. Job을 처리하는 실질적인 단위로 쓰입니다.</li>
+<li>모든 Job에는 1개 이상의 Step이 있어야 합니다.</li>
+</ul>
+<h4><span id="stepexecution">StepExecution</span></h4>
+<ul>
+<li>Job에 JobExecution Job실행 정보가 있다면 Step에는 StepExecution이라는 Step 실행 정보를 담는 객체가 있습니다.</li>
+</ul>
+<h3><span id="jobrepository">JobRepository</span></h3>
+<ul>
+<li>JobRepository는 배치 처리 정보를 담고 있는 매커니즘입니다. 어떤 Job이 실행되었으면 몇 번 실행되었고 언제 끝났는지 등 배치 처리에 대한 메타데이터를 저장합니다.</li>
+<li>예를들어 Job 하나가 실행되면 JobRepository에서는 배치 실행에 관련된 정보를 담고 있는 도메인 JobExecution을 생성합니다.</li>
+<li>JobRepository는 Step의 실행 정보를 담고 있는 StepExecution도 저장소에 저장하여 전체 메타데이터를 저장/관리하는 역할을 수행합니다.</li>
+</ul>
+<h3><span id="joblauncher">JobLauncher</span></h3>
+<ul>
+<li>JobLauncher는 Job. JobParamerters와 함께 배치를 실행하는 인터페이스입니다.</li>
+</ul>
+<h3><span id="itemreader">ItemReader</span></h3>
+<ul>
+<li>ItemReader는 Step의 대상이 되는 배치 데이터를 읽어오는 인터페이스입니다. File, Xml Db등 여러 타입의 데이터를 읽어올 수 있습니다.</li>
+</ul>
+<h3><span id="itemprocessor">ItemProcessor</span></h3>
+<ul>
+<li>ItemProcessor는 ItemReader로 읽어 온 배치 데이터를 변환하는 역할을 수행합니다. 이것을 분리하는 이유는 다음과 같습니다.</li>
+<li>비즈니스 로직의 분리 : ItemWriter는 저장 수행하고, ItemProcessor는 로직 처리만 수행해 역할을 명확하게 분리합니다.</li>
+<li>읽어온 배치 데이터와 씌여질 데이터의 타입이 다를 경우에 대응할 수 있기 때문입니다.</li>
+</ul>
+<h3><span id="itemwriter">ItemWriter</span></h3>
+<ul>
+<li>ItemWriter는 배치 데이터를 저장합니다. 일반적으로 DB나 파일에 저장합니다.</li>
+<li>ItemWriter도 ItemReader와 비슷한 방식을 구현합니다. 제네릭으로 원하는 타입을 받고 write() 메서드는 List를 사용해서 저장한 타입의 리스트를 매게변수로 받습니다.</li>
+</ul>
+<h2><span id="휴면회원-배치-설계">휴면회원 배치 설계</span></h2>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/bach-process.png">
+</p>
+<p><strong>가입한 회원 중 1년이 지나도록 상태 변화가 없는 회원을 휴면회원으로 전환하는 배치 처리</strong></p>
+<ul>
+<li>(1) DB에 저장된 데이터 중 1년간 업데이트되지 않은 사용자를 찾는 로직 ItemReader 구현합니다.</li>
+<li>(2) 대상 사용자 데이터의 상탯값을 휴면으로 전환하는 프로세스를 ItemProcessor에 구현합니다.</li>
+<li>(3) 상태값이 변환된 휴면회원을 실제DB에 저장하는 ItemWriter를 구현합니다.</li>
+</ul>
+<h2><span id="휴면회원-배치-구현">휴면회원 배치 구현</span></h2>
+<p>배치처리 순서는 다음과 같습니다.</p>
+<ol>
+<li>휴면 회원 Job 설정</li>
+<li>휴면 회원 Step 설정</li>
+<li>휴면 회원 Reader, Processor, Writer 설정</li>
+</ol>
+<h3><span id="job-설정">Job 설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InactiveUserJobConfig</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Job <span class="title">inactiveUserJob</span><span class="params">(JobBuilderFactory jobBuilderFactory, Step inactiveJobStep)</span> </span>&#123; <span class="comment">//(1)</span></span><br><span class="line">        <span class="keyword">return</span> jobBuilderFactory.get(<span class="string">"inactiveUserJob"</span>)</span><br><span class="line">                .preventRestart() <span class="comment">//(2)</span></span><br><span class="line">                .start(inactiveJobStep) <span class="comment">//(3)</span></span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) Job 생성을 직관적이고 편리하게 도와주는 빌더 JobBuilderFactory를 주입받습니다.</li>
+<li>(2) inactiveUserJob 이라는 JobBuilder를 생성하며 <code>preventRestart()</code> 설정을 통해 재실행을 막았습니다.</li>
+<li>(3) <code>start(inactiveJobStep)</code>은 파라미터에서 주입받은 휴면회원 관련 Step인 inactiveJobStep을 제일 먼저 실행하도록 설정하는 부분입니다.</li>
+</ul>
+<p>기본적인 Job설정은 완료 했습니다. Step 설정을 진행하겠습니다.</p>
+<h3><span id="step-설정">Step 설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Step <span class="title">inactiveJobStep</span><span class="params">(StepBuilderFactory stepBuilderFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> stepBuilderFactory.get(<span class="string">"inactiveUserStep"</span>) <span class="comment">//(1)</span></span><br><span class="line">            .&lt;User, User&gt; chunk(<span class="number">10</span>) <span class="comment">//(2)</span></span><br><span class="line">            .reader(inactiveUserReader()) <span class="comment">//(3)</span></span><br><span class="line">            .processor(inactiveUserProcessor())</span><br><span class="line">            .writer(inactiveUserWriter())</span><br><span class="line">            .build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) <code>stepBuilderFactory.get(&quot;inactiveUserStep&quot;)</code>로 inactiveUserStep 이라는 이름의 StepBuilder를 생성합니다.</li>
+<li>(2) 제네릭을 사용해서 <code>chunk()</code> 의 입력과 추력 타입을 User로 설정 했습니다. chunk의 인자값은 10으로 설정해서 <strong>쓰기 시에 청크 단위로 writer() 메서드를 실행시킬 단위를 지정했습니다. 즉 커밋단위가 10개입니다.</strong></li>
+<li>(3) step의 reader, proccsor, writer를 각각 설정했습니다.</li>
+</ul>
+<h3><span id="reader설정">Reader설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@StepScope</span> <span class="comment">//(1)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> QueueItemReader&lt;User&gt; <span class="title">inactiveUserReader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//(2)</span></span><br><span class="line">    List&lt;User&gt; oldUsers =</span><br><span class="line">            userRepository.findByUpdatedDateBeforeAndStatusEquals(</span><br><span class="line">                    LocalDateTime.now().minusYears(<span class="number">1</span>),</span><br><span class="line">                    UserStatus.ACTIVE);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> QueueItemReader&lt;&gt;(oldUsers); <span class="comment">//(3)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) 기본 빈 생성은 싱글턴이지만 @StepScope를 사용하면 해당 메서드는 Step의 주기에 따라 새로운 빈을 생성합니다. <strong>즉, 각 Step의 실행마다 새로운 빈을 만들기 때문에 지연 생성이 가능합니다. 주의할 사항은 @StepScode는 기본 프록시 모드가 반환되는 클래스 타임을 참조하기 때문에 @StepScode를 사용하면 반드시 구현된 반환 타입을 명시해 변환해야합니다.</strong> 해당 예제는 QueueItemReader<user>라고 명시했습니다.</user></li>
+<li>(2) <code>findByUpdatedDateBeforeAndStatusEquals()</code> 메서드를 통해서 휴면 회원 리스트를 가져옵니다.</li>
+<li>(3) QueueItemReader 객체를 생성하고 불러온 휴면회원 타깃 대상을 데이터 객체에 넣어 반환합니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueueItemReader</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">ItemReader</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Queue&lt;T&gt; queue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">QueueItemReader</span><span class="params">(List&lt;T&gt; data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.queue = <span class="keyword">new</span> LinkedList&lt;&gt;(data); <span class="comment">//(1)</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> Exception, UnexpectedInputException, ParseException, NonTransientResourceException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> queue.poll(); <span class="comment">//(2)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>QueueItemReader는 큐를 사용해서 자장하는 ItemReader 구현체입니다. ItemReader의 기본 반환 타입은 단수형인데 그 에 따라 구현하면 User 객체 1개씩 DB에 select 요청 하므로 매우 비효율적인 방식이 될 수 있습니다.</p>
+<ul>
+<li>(1) QueueItemReader를 사용해서 휴면회원으로 지정될 타깃 데이터를 한번에 불러와 큐에 담아 놓습니다.</li>
+<li>(2) reade() 메서드를 사용할 때 큐의 <code>poll()</code>메서드를 통해서 큐에서 데이터를 하나씩 반환합니다.</li>
+</ul>
+<h3><span id="processor-설정">Processor 설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ItemProcessor&lt;User, User&gt; <span class="title">inactiveUserProcessor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> user -&gt; user.setInactive();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>읽어온 타깃 데이터를 휴면 회원으로 전환시키는 Processor입니다. reader에서 읽은 User를 휴면 상태로 전환화는 Processor 메서드를 추가하는 예입니다.</p>
+<h3><span id="writer-설정">Writer 설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ItemWriter&lt;User&gt; <span class="title">inactiveUserWriter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((List&lt;? extends User&gt; users) -&gt; userRepository.saveAll(users));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ItemWriter는 리스트 타입을 앞서 설정한 청크 단위로 받습니다. 청크 단위를 10으로 설정했기 때문에 users에게 휴면회원 10개가 주어지며 saveAll()메서드를 통해서 한번에 DB에 저장합니다.</p>
+<h2><span id="배치-심화">배치 심화</span></h2>
+<ul>
+<li>다양한 ItemReader 구현 클래스</li>
+<li>다양한 ItemWriter 구현 클래스</li>
+<li>JobParameter 사용하기</li>
+<li>테스트 시에만 H2 DB를 사용 하도록 설정하기</li>
+<li>청크 지향 프로세싱</li>
+<li>배치 인터셉터 Listener 설정하기</li>
+<li>어노테이션 기반 Listener 설정하기</li>
+</ul>
+<h3><span id="다양한-itemreader-구현-클래스">다양한 ItemReader 구현 클래스</span></h3>
+<p>기존에는 QueueItemReader 객체를 사용 해서 모든 데이터를 한번에 와서 배치처치를 진행했습니다. <strong>하지만 수백, 수천 개 이상의 데이터를 한번에 가져와서 메모리에 올려놓게되면 좋지 않습니다.</strong> 이때 배치 프로젝트에서 제공하는 PagingItemRedaer 구현체를 사용 사용할 수있습니다. 구현체는 크게 JdbcPagingItemReader, JpaPagingItemRedaer, HibernatePagingItemRdaer가 있습니다. 해당 예쩨에서는 JpaPagingItemRedaer를 사용하겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span>(destroyMethod=<span class="string">""</span>) <span class="comment">//(1)</span></span><br><span class="line"><span class="meta">@StepScope</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JpaPagingItemReader&lt;User&gt; <span class="title">inactiveUserJpaReader</span><span class="params">(@Value(<span class="string">"#&#123;jobParameters[nowDate]&#125;"</span>)</span> Date nowDate) </span>&#123;</span><br><span class="line">    JpaPagingItemReader&lt;User&gt; jpaPagingItemReader = <span class="keyword">new</span> JpaPagingItemReader&lt;&gt;();</span><br><span class="line">    jpaPagingItemReader.setQueryString(<span class="string">"select u from User as u where u.createdDate &lt; :createdDate and u.status = :status"</span>); <span class="comment">//(2)</span></span><br><span class="line"></span><br><span class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    LocalDateTime now = LocalDateTime.ofInstant(nowDate.toInstant(), ZoneId.systemDefault());</span><br><span class="line">    map.put(<span class="string">"createdDate"</span>, now.minusYears(<span class="number">1</span>));</span><br><span class="line">    map.put(<span class="string">"status"</span>, UserStatus.ACTIVE);</span><br><span class="line"></span><br><span class="line">    jpaPagingItemReader.setParameterValues(map); <span class="comment">//(3)</span></span><br><span class="line">    jpaPagingItemReader.setEntityManagerFactory(entityManagerFactory); <span class="comment">//(4)</span></span><br><span class="line">    jpaPagingItemReader.setPageSize(CHUNK_SIZE); <span class="comment">//(5)</span></span><br><span class="line">    <span class="keyword">return</span> jpaPagingItemReader;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) 스프링에서 destroyMethod를 사용해서 삭제할 빈을 자동으로 추적합니다. destroyMethod=&quot;&quot;를 설정하면 warring 메세지를 제거할 수 있습니다.</li>
+<li>(2) JpaPagingItemReader를 사용하면 쿼리를 직접 짜거 실행 하는 방법밖에는 없습니다.</li>
+<li>(3) 쿼리리에서 사용된 updateDate, status 파라미터를 Mpa에 추가해서 사용할 파라미터를 설정합니다</li>
+<li>(4 )트랜잭션을 관리해줄 entityManagerFactory를 설정합니다.</li>
+<li>(5) 한번에 읽어올 크기를 CHUNK_SIZE 만큼 할당합니다.</li>
+</ul>
+<h3><span id="다양한-itemwriter-구현-클래스">다양한 ItemWriter 구현 클래스</span></h3>
+<p>ItemReader와 마찬가지로 상황에맞는 여러 구현 클래스를 제공합니다. JPA를 사용하고 있음으로 JpaItemWriter를 적용합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> JpaItemWriter&lt;User&gt; <span class="title">inactiveUserWriter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    JpaItemWriter&lt;User&gt; jpaItemWriter = <span class="keyword">new</span> JpaItemWriter&lt;&gt;();</span><br><span class="line">    jpaItemWriter.setEntityManagerFactory(entityManagerFactory);</span><br><span class="line">    <span class="keyword">return</span> jpaItemWriter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="jobparameter-사용하기">JobParameter 사용하기</span></h3>
+<p>JobParameter를 사용해서 Step을 실행시킬 때 동적으로 파라미터를 주입시킬 수 있습니다.</p>
+<h3><span id="테스트-시에만-h2-데이터베이스를-사용하도록-설정">테스트 시에만 H2 데이터베이스를 사용하도록 설정</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@AutoConfigureTestDatabase</span>(connection = EmbeddedDatabaseConnection.H2)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoApplication</span> </span>&#123;</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)</code> 어노테이션으로 간단하세 설정 가능합니다</p>
+<h3><span id="청크-지향-프로세싱">청크 지향 프로세싱</span></h3>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/chun-process.png">
+</p>
+청크 지향 프로세싱은 트랜잭션 경계 내에서 청크 단위로 데이터를 읽고 생성하는 프로그래밍 기법입니다. 청크란 아이템이 트랜잭션에 커밋되는 수를 말합니다. read한 데이터 수가 지정한 청크 단위와 칠치하면 write를 수행하고 트랜잭션을 커밋합니다. Step 설정에서 chunk()로 커밋 단위를 지정했던 부분입니다. 즉 기존에도 계속 사용해온 방법이 청크 지향 프로세싱입니다.
+<p>청크 지향프러그래밍의 이점은 1000개 개의 데이터에 대해 배치 로직을 실행한다고 가정했을 때 청크로 나누지 않았을 때는 하나만 실패해도 다른 성공한 999개의 데이터가 롤백됩니다. 그런데 청크 단위를 10으로 해서 배치처리를 하면 도중에 배치 처리에 실패하더라도 다른 청크는 영향을 받지 않습니다. 이러한 이유로 스프링 배치에 청크 단위로 프로그래밍을 지향합니다.</p>
+<h3><span id="배치-인터셉터-listener-설정하기">배치 인터셉터 Listener 설정하기</span></h3>
+<p>배치 흐름에서 전후 처리를 하는 Listener를 설정할 수 있습니다. 구체적으로 Job의 전후 처리 Step의 전후 처리 각 청크 단위의 전후 처리 등 세세한 과정 실행시 특정 로직을 할당해 제어할 수있습니다. 가장 대표적인 예로는 로깅 작업이 있습니다.</p>
+<h3><span id="어노테이션-기반-listener-설정하기">어노테이션 기반 Listener 설정하기</span></h3>
+<p>배치 인터셉터 인터페이스를 활용해서 사용하는 방법도 있고 애노테이션을 사용해서 활용하는 방법도 있습니다. 대표적으로 <code>@BefroeStep, @AsfterStep</code> 등이 있습니다. 해당 어노테이션으로 시작 전후에 로그를 남기는 설정도 가능합니다.</p>
+<h3><span id="jobparameter-사용하기">JobParameter 사용하기</span></h3>
+<p>JapParameter를 사용해 Step을 실행시킬 때 동적으로 파라미터를 주입시클 수 있습니다.</p>
+<h3><span id="step의-흐름을-제어하는-flow">Step의 흐름을 제어하는 Flow</span></h3>
+<p>Step의 가장 기본적은 흐름은 <code>읽기-처리-쓰기</code> 입니다. 여기서 세부적인 조건에 따라서 Step의 실행 여부를 정할 수 있습니다. 이런 흐름을 제어하는 <code>Flow</code> 제공 합니다.</p>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/batch-flow.png">
+</p>
+<p>흐름에 조건에 해당하는 부분을 <code>JobExecutionDecider</code> 인터페이스를 사용해 구현 할 수 있습니다. <code>JobExecutionDecider</code> 인터페이스는 <code>decide()</code> 메서드 하나만 제공합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">JobExecutionDecider</span> </span>&#123;</span><br><span class="line">    <span class="function">FlowExecutionStatus <span class="title">decide</span><span class="params">(JobExecution jobExecution, @Nullable StepExecution stepExecution)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Class xxxJobExecutionDecider implements  JobExecutionDecider &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FlowExecutionStatus <span class="title">decide</span><span class="params">(JobExecution jobExecution, @Nullable StepExecution stepExecution)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(특정 조건...)&#123; <span class="comment">// (1)</span></span><br><span class="line">            <span class="keyword">return</span> FlowExecutionsStatus.COMPLETED; <span class="comment">// (2)</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> FlowExecutionsStatus.FAILED; <span class="comment">// (3)</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) 특정 조건에 대한 로직</li>
+<li>(2) 조건에 만족하고 JobStep을 실행 시킬 경우 <code>COMPLETED</code> 리턴</li>
+<li>(3) 조건에 만족하지 않고 JobStep을 <strong>실행 하지않을 경우</strong>  <code>FAILED</code> 리턴</li>
+</ul>
+<p><code>Flow</code> 조건으로 사용될 경우 InactiveJobExceutionDecider 클래스를 구현 했습니다. 이를 사용할 Flow를 구현 해야합니다. <code>Step</code> 메서드가아닌 <code>Flow</code>를 주압 받고 주입받은 <code>Flow</code>를 빈으로 등록해야합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Flow <span class="title">xxxJobFlow</span><span class="params">(Step xxxJobStep)</span></span>&#123;</span><br><span class="line">    FlowBuilder&lt;Flow&gt; flowBuilder = <span class="keyword">new</span> FlowBuilder&lt;&gt;(<span class="string">"xxxJobFlow"</span>); <span class="comment">// (1)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> flowBuilder</span><br><span class="line">        .start(<span class="keyword">new</span> xxxJobExcetuinDeicder()) <span class="comment">// (2)</span></span><br><span class="line">        .on(FlowExecutionStatus.FAILED.getName()).end() <span class="comment">// (3)</span></span><br><span class="line">        .on(FlowExecutionStatus.COMPLETED.getName()).to(xxxJobStep).end(); <span class="comment">// (4)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) <code>FlowBuilder</code>를 시용해서 Flow 객체를 생성합니다.</li>
+<li>(2) 위에서 작성한 <code>xxxJobExecutionDecider</code> 클래스를 <code>start()</code> 으로 설정해 맨 처음 시작하도록 합니다.</li>
+<li>(3) <code>xxxJobExecutionDecider</code> 클래스의 decide() 메서드를 통해 리턴 값이 <code>FAILED</code> 일 경우 <code>end()</code> 메서드를 사용해서 끝나도록 설정합니다.</li>
+<li>(4) <code>xxxJobExecutionDecider</code> 클래스의 decide() 메서드를 통해 리턴 값이 <code>COMPLETED</code> 일 경우 기존에 설정한 <code>xxxJobStep</code>을 실행하도록 설정합니다.</li>
+</ul>
+<h2><span id="재시도">재시도</span></h2>
+<p>네트워크 접속이 끊어지거나 장비가 다운되는 등 실패 시나리오는 다양합니다. 시스템은 언젠가 복구 될테니 다시 한번 시도는 해볼 가치는 있습니다.</p>
+<h3><span id="스템-구성하기">스템 구성하기</span></h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Step <span class="title">step1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> steps.get(<span class="string">"user xxxxx"</span>)</span><br><span class="line">    .&lt;User, User&gt;chunk(<span class="number">10</span>)</span><br><span class="line">        .faulTolerant()</span><br><span class="line">            .retryLimit(<span class="number">3</span>).retry(XXXXXException.class)</span><br><span class="line">    .render(something())</span><br><span class="line">    .writer(something())</span><br><span class="line">    .build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>자바 구성으로 재시도를 활성화 할 경우, 첫 번째 스텝은 오류를 허용하도록 만들어야 재시도 제한 횟수 및 재시도 대상 예외를 지정할 수 있습니다. 먼저 <code>faulTolerant()</code>로 오류 허용 스탭을 얻은후, <code>retryLimit()</code> 메서드로 재시도 제한 횟수를, <code>retry()</code> 메서드로 재시도 대상 예외를 발생합니다.</p>
+<h3><span id="재시도-템플릿">재시도 템플릿</span></h3>
+<ul>
+<li>스프링 배치가 제공하는 재시도 및 복구 서비스를 코드에 활용하는 다른 방법도 있습니다. 재시도 로직을 구현된 커스텀 ItemWriter<t>를 작성하거나 아예 전체 서비스 인터페이스에 재시도 기능을 입힐 수 있습니다.</t></li>
+<li>스프링 배치 RetryTemplate은 바로 이런 용도로 만들어진 클래스입니다. 비니지스 로직과 재시도 로직을 분리해서 마치 재시도 없이 한 번만 시도하는 것처럼 코드를 작성할 수 있개 해줍니다.</li>
+<li>재시도 -&gt; 실패 -&gt; 복구 반복적인 과정을 간명한 하나의 API 메서드로 호출로 감싼 <code>RetryTemplate</code>는 여러 가지 유스 케이스를 지원합니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RetryableUserRegistrationServiceItemWriter</span> <span class="keyword">implements</span> <span class="title">ItemWriter</span>&lt;<span class="title">UserRegistration</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(RetryableUserRegistrationServiceItemWriter.class);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRegistrationService userRegistrationService;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RetryTemplate retryTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RetryableUserRegistrationServiceItemWriter</span><span class="params">(UserRegistrationService userRegistrationService, RetryTemplate retryTemplate)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userRegistrationService = userRegistrationService;</span><br><span class="line">        <span class="keyword">this</span>.retryTemplate = retryTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * takes aggregated input from the reader and 'writes' them using a custom implementation.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(List&lt;?extends UserRegistration&gt; items)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">final</span> UserRegistration userRegistration : items) &#123;</span><br><span class="line">            UserRegistration registeredUserRegistration = retryTemplate.execute(</span><br><span class="line">                    (RetryCallback&lt;UserRegistration, Exception&gt;) context -&gt; userRegistrationService.registerUser(userRegistration));</span><br><span class="line"></span><br><span class="line">            logger.debug(<span class="string">"Registered: &#123;&#125;"</span>, registeredUserRegistration);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  ....</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RetryTemplate <span class="title">retryTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        RetryTemplate retryTemplate = <span class="keyword">new</span> RetryTemplate();</span><br><span class="line">        retryTemplate.setBackOffPolicy(backOffPolicy());</span><br><span class="line">        <span class="keyword">return</span> retryTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ExponentialBackOffPolicy <span class="title">backOffPolicy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ExponentialBackOffPolicy backOffPolicy = <span class="keyword">new</span> ExponentialBackOffPolicy();</span><br><span class="line">        backOffPolicy.setInitialInterval(<span class="number">1000</span>);</span><br><span class="line">        backOffPolicy.setMaxInterval(<span class="number">10000</span>);</span><br><span class="line">        backOffPolicy.setMultiplier(<span class="number">2</span>);</span><br><span class="line">        <span class="keyword">return</span> backOffPolicy;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>재시도 시간 간격을 정하는 BackOffplicy는 RetryTemplate의 유용한 기능입니다. 실제로 실패 직후 재시도하는 시간 간격을 점점 늘려 여러 클라이언트가 같은 호출 할때 스텝이 잠기지 않도록 예방하는 수단으로 활용할 수있습니다.</li>
+</ul>
+<h3><span id="aop-기반-재시도">AOP 기반 재시도</span></h3>
+<p>스프링 배치가 제공하는 AOP 어드바이저를 이용해서 RetryTempate 처럼 사용할 수 있습니다. 프록시 전체에 재시 로직 어드바이스를 추가하면 RetryTempate이 빠진 본래 코드로 그대로 사용가능합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retryable</span>(backoff = <span class="meta">@Backoff</span>(delay = <span class="number">1000</span>, maxDely = <span class="number">10000</span>, multiplier = <span class="number">2</span>))</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">batchSomething</span><span class="params">()</span></span>&#123;....&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>구성 클래스에 반드시 @EnableRety 를추가 해야합니다.</strong></p>
+<h2><span id="spring-batch-table">Spring Batch Table</span></h2>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/meta-data-erd.png">
+</p>
+<h3><span id="batch_job_instance">BATCH_JOB_INSTANCE</span></h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`BATCH_JOB_INSTANCE`</span> (</span><br><span class="line">  <span class="string">`JOB_INSTANCE_ID`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`VERSION`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`JOB_NAME`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`JOB_KEY`</span> <span class="built_in">varchar</span>(<span class="number">32</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`JOB_INSTANCE_ID`</span>),</span><br><span class="line">  <span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`JOB_INST_UN`</span> (<span class="string">`JOB_NAME`</span>,<span class="string">`JOB_KEY`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>JOB_INSTANCE_ID</th>
+<th>VERSION</th>
+<th>JOB_NAME</th>
+<th>JOB_KEY</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>inactiveUserJob</td>
+<td>df9e59b818ab301226e71dcf67795b07</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0</td>
+<td>inactiveUserJob</td>
+<td>34c2f2838f31f237450a6c7659e36995</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0</td>
+<td>orderDailySumJob</td>
+<td>d41d8cd98f00b204e9800998ecf8427e</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0</td>
+<td>orderDailySumJob</td>
+<td>d6832decf796311c39d3d934a9d7cfd5</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0</td>
+<td>orderDailySumJob</td>
+<td>212470e06656926b4b339a42dc5d64c3</td>
+</tr>
+</tbody>
+</table>
+<p>JOB_INSTANCE_ID는 BATCH_JOB_INSTANCE 테이블의 PK, JOB_NAME 수행한 Batch Job Name</p>
+<p><strong>BATCH_JOB_INSTANCE 테이블은 Job Parameter에 따라 생성됩니다.</strong> Job Parameter는 Spring Batch가 실행될때 외부에서 받을 수 있는 파라미터 입니다. <strong>같은 Batch Job 이라도 Job Parameter가 다르면 다른 BATCH_JOB_INSTANCE 에 기록됩니다.</strong> BATCH_JOB_EXECUTION_PARAMS 기반으로 JOB_KEY를 만들며 해당 값은 유니크 제약조건이 있기 때문에 같은 BATCH_JOB_EXECUTION_PARAMS을 넘기는 경우 생성되지 않습니다.</p>
+<h3><span id="batch_job_execution">BATCH_JOB_EXECUTION</span></h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`BATCH_STEP_EXECUTION`</span> (</span><br><span class="line">  <span class="string">`STEP_EXECUTION_ID`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`VERSION`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`STEP_NAME`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`JOB_EXECUTION_ID`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`START_TIME`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`END_TIME`</span> datetime <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`STATUS`</span> <span class="built_in">varchar</span>(<span class="number">10</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`COMMIT_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`READ_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`FILTER_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`WRITE_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`READ_SKIP_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`WRITE_SKIP_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`PROCESS_SKIP_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`ROLLBACK_COUNT`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`EXIT_CODE`</span> <span class="built_in">varchar</span>(<span class="number">2500</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`EXIT_MESSAGE`</span> <span class="built_in">varchar</span>(<span class="number">2500</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`LAST_UPDATED`</span> datetime <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`STEP_EXECUTION_ID`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`JOB_EXEC_STEP_FK`</span> (<span class="string">`JOB_EXECUTION_ID`</span>),</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`JOB_EXEC_STEP_FK`</span> FOREIGN <span class="keyword">KEY</span> (<span class="string">`JOB_EXECUTION_ID`</span>) <span class="keyword">REFERENCES</span> <span class="string">`BATCH_JOB_EXECUTION`</span> (<span class="string">`JOB_EXECUTION_ID`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>JOB_EXECUTION_ID</th>
+<th>VERSION</th>
+<th>JOB_INSTANCE_ID</th>
+<th>CREATE_TIME</th>
+<th>START_TIME</th>
+<th>END_TIME</th>
+<th>STATUS</th>
+<th>EXIT_CODE</th>
+<th>EXIT_MESSAGE</th>
+<th>LAST_UPDATED</th>
+<th>JOB_CONFIGURATION_LOCATION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>2019-07-02 06:51:22</td>
+<td>2019-07-02 06:51:22</td>
+<td>2019-07-02 06:51:23</td>
+<td>COMPLETED</td>
+<td>COMPLETED</td>
+<td></td>
+<td>2019-07-02 06:51:23</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2019-07-02 07:14:00</td>
+<td>2019-07-02 07:14:00</td>
+<td>2019-07-02 07:14:01</td>
+<td>COMPLETED</td>
+<td>COMPLETED</td>
+<td></td>
+<td>2019-07-02 07:14:01</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>3</td>
+<td>2020-01-13 11:00:50</td>
+<td>2020-01-13 11:00:50</td>
+<td>2020-01-13 11:00:50</td>
+<td>COMPLETED</td>
+<td>COMPLETED</td>
+<td></td>
+<td>2020-01-13 11:00:50</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td>4</td>
+<td>2020-01-13 11:59:15</td>
+<td>2020-01-13 11:59:15</td>
+<td>2020-01-13 11:59:15</td>
+<td>COMPLETED</td>
+<td>COMPLETED</td>
+<td></td>
+<td>2020-01-13 11:59:15</td>
+<td>NULL</td>
+</tr>
+<tr>
+<td>5</td>
+<td>2</td>
+<td>5</td>
+<td>2020-01-13 12:48:53</td>
+<td>2020-01-13 12:48:53</td>
+<td>2020-01-13 12:48:54</td>
+<td>COMPLETED</td>
+<td>COMPLETED</td>
+<td></td>
+<td>2020-01-13 12:48:54</td>
+<td>NULL</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>JOB_EXECUTION_ID</code> 칼럼은 <code>BATCH_JOB_INSTANCE</code> 테이블의 PK를 참조 하고 있습니다.</li>
+<li><code>BATCH_STEP_EXECUTION</code> 와 <code>BATCH_JOB_INSTANCE</code>는 부모 자식관계입니다.</li>
+<li>BATCH_STEP_EXECUTION는 자신의 부모 BATCH_JOB_INSTANCE 성공/실패 내역을 모두 갖고 있습니다.</li>
+<li>jobParameters : Job 실행에 필요한 매개변수 데이터입니다.</li>
+<li>jobInstance : Job 실행 단위가 되는 객체입니다.</li>
+<li>stepExecutuons : StepExecutuon을 여러개 가질 수 있는 Collection 타입입니다.</li>
+<li>status : Job 실행 상태를 나타내는 필드(Enum)입니다. 상태값으로는 <code>COMPLETED, STARTING, STARTED, STOPPING, STOPPED, FAILED, ABANDONED, UNKNOWN</code> 이 있습니다.</li>
+<li>startTime : Job이 실행된 시간입니다. null이면 시작되지 않았다는 의미 입니다.</li>
+<li>createTime : JobExecution이 생성된 시간입니다.</li>
+<li>endTime: JobExecution이 끝난 시간입니다.</li>
+</ul>
+<p align="center">
+  <img src="https://github.com/cheese10yun/TIL/raw/master/assets/job-job-instance-job-execution.png">
+</p>
+<ul>
+<li><code>Job</code>: 특정 잡, 2달이상 로그인안한 유저 휴면 회원 처리 등</li>
+<li><code>Job Instance</code>: Job Parameter를 실행한 Job(Job Parameter 단위로 생성)</li>
+<li><code>Job Execution</code>: Job Parameter로 실행한 Job의 실행, 1번 째 시도 혹은 그 다음 등</li>
+</ul>
+<h3><span id="batch_job_execution_params">BATCH_JOB_EXECUTION_PARAMS</span></h3>
+<table>
+<thead>
+<tr>
+<th>JOB_EXECUTION_ID</th>
+<th>TYPE_CD</th>
+<th>KEY_NAME</th>
+<th>STRING_VAL</th>
+<th>DATE_VAL</th>
+<th>LONG_VAL</th>
+<th>DOUBLE_VAL</th>
+<th>IDENTIFYING</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>STRING</td>
+<td>requestDate</td>
+<td>2019-10-13</td>
+<td>1970-01-01 00:00:00</td>
+<td>0</td>
+<td>0</td>
+<td>N</td>
+</tr>
+<tr>
+<td>5</td>
+<td>LONG</td>
+<td><a href="http://run.id" rel="external nofollow noopener noreferrer" target="_blank">run.id</a></td>
+<td></td>
+<td>1970-01-01 00:00:00</td>
+<td>2</td>
+<td>0</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>5</td>
+<td>STRING</td>
+<td>version</td>
+<td>12</td>
+<td>1970-01-01 00:00:00</td>
+<td>0</td>
+<td>0</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>5</td>
+<td>STRING</td>
+<td>-job.name</td>
+<td>orderDailySumJob</td>
+<td>1970-01-01 00:00:00</td>
+<td>0</td>
+<td>0</td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+<p><strong>BATCH_JOB_EXECUTION에 대한 Parameter정보들이 저장되는 곳이다</strong> BATCH_JOB_EXECUTION, BATCH_JOB_EXECUTION_PARAMS 1:N 관계이며 위 테이블은 ID 5번에 들어가는 parameter 정보들이 저장된다</p>
+<h2><span id="참고">참고</span></h2>
+<ul>
+<li><a href="https://kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;ejkGb=KOR&amp;barcode=9791162241264&amp;orderClick=JAj" rel="external nofollow noopener noreferrer" target="_blank">처음으로 배우는 스프링 부트 2</a>를 정리한 글입니다.</li>
+<li><a href="https://github.com/jojoldu/spring-batch-in-action/blob/master/3_%EB%A9%94%ED%83%80%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%BF%EB%B3%B4%EA%B8%B0.md" rel="external nofollow noopener noreferrer" target="_blank">기억보단 기록을 - spring-batch-in-action</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/spring-oauth2-provider/" data-toggle="tooltip" data-placement="top" title="Spring OAuth2 Provider 정리">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-solid-srp/" data-toggle="tooltip" data-placement="top" title="Spring 예제로 보는 SOLID SRP">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">스프링 부트 배치의 장점</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">스프링 부트 배치 주의사항</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">스프링 부트 배치 이해하기</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Job</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">JobInstance</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">JobExecution</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">JobParameters</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">Step</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.5.1.</span> <span class="toc-nav-text">StepExecution</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">JobRepository</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">JobLauncher</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.8.</span> <span class="toc-nav-text">ItemReader</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.9.</span> <span class="toc-nav-text">ItemProcessor</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.10.</span> <span class="toc-nav-text">ItemWriter</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">휴면회원 배치 설계</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">휴면회원 배치 구현</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">Job 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">Step 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">Reader설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">Processor 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.5.</span> <span class="toc-nav-text">Writer 설정</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">배치 심화</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">다양한 ItemReader 구현 클래스</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">다양한 ItemWriter 구현 클래스</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">JobParameter 사용하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.4.</span> <span class="toc-nav-text">테스트 시에만 H2 데이터베이스를 사용하도록 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.5.</span> <span class="toc-nav-text">청크 지향 프로세싱</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.6.</span> <span class="toc-nav-text">배치 인터셉터 Listener 설정하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.7.</span> <span class="toc-nav-text">어노테이션 기반 Listener 설정하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.8.</span> <span class="toc-nav-text">JobParameter 사용하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.9.</span> <span class="toc-nav-text">Step의 흐름을 제어하는 Flow</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">재시도</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">스템 구성하기</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">재시도 템플릿</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.3.</span> <span class="toc-nav-text">AOP 기반 재시도</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Spring Batch Table</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">BATCH_JOB_INSTANCE</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">8.2.</span> <span class="toc-nav-text">BATCH_JOB_EXECUTION</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">8.3.</span> <span class="toc-nav-text">BATCH_JOB_EXECUTION_PARAMS</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">참고</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Spring Batch" title="Spring Batch">Spring Batch</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2021 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
