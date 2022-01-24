@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Error Response 서버로 전달하기 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="MSA 환경에서 Error Response 서버로 전달하기 - Yun Blog | 기술 블로그">
     <meta property="og:url" content="https://cheese10yun.github.io/error-response-2/">
-    <meta property="og:description" content="Error Response 서버로 전달하기 - Yun Blog | 기술 블로그">
+    <meta property="og:description" content="MSA 환경에서 Error Response 서버로 전달하기 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
     <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
@@ -32,7 +32,7 @@
 
     <title>
         
-          Error Response 서버로 전달하기 - Yun Blog | 기술 블로그
+          MSA 환경에서 Error Response 서버로 전달하기 - Yun Blog | 기술 블로그
         
     </title>
 
@@ -113,7 +113,7 @@
                               <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
                             
                         </div>
-                        <h1>Error Response 서버로 전달하기</h1>
+                        <h1>MSA 환경에서 Error Response 서버로 전달하기</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
@@ -234,8 +234,11 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://cheese10yun.github.io/spring-guide-exception/">Spring Guide - Exception 전략</a> 이전에 API Server에 Exception handling에 대해서 정리한 적 있습니다. 이번 포스팅에서는 여러 서버를 호출해서 예외가 발생하는 경우 Exception handling에 대한 포팅입니다.</p>
-<p>더 A API -&gt; B API -&gt; C API 호출을 진행하는 경우 C API에서 아래와 같은 예외가 발생하는 경우 A API에게 그대로 전달해야 하는 경우가 있습니다.</p>
+                <blockquote>
+<p>해당 코드는 <a href="https://github.com/cheese10yun/blog-sample/tree/master/msa-error-response" rel="external nofollow noopener noreferrer" target="_blank">Github</a> 공개되어 있습니다.</p>
+</blockquote>
+<p><a href="https://cheese10yun.github.io/spring-guide-exception/">Spring Guide - Exception 전략</a> 이전에 API Server에 Exception handling에 대해서 정리한 적 있습니다. 이번 포스팅에서는 여러 서버를 호출해서 예외가 발생하는 경우 Exception handling에 대한 포팅입니다.</p>
+<p>A API -&gt; B API -&gt; C API 호출을 진행하는 경우 C API에서 아래와 같은 예외가 발생하는 경우 A API에게 그대로 전달해야 하는 경우가 있습니다.</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"message"</span>: <span class="string">" Invalid Input Value"</span>,</span><br><span class="line">  <span class="attr">"status"</span>: <span class="number">400</span>,</span><br><span class="line">  <span class="attr">"errors"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"name.last"</span>,</span><br><span class="line">      <span class="attr">"value"</span>: <span class="string">""</span>,</span><br><span class="line">      <span class="attr">"reason"</span>: <span class="string">"must not be empty"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"field"</span>: <span class="string">"name.first"</span>,</span><br><span class="line">      <span class="attr">"value"</span>: <span class="string">""</span>,</span><br><span class="line">      <span class="attr">"reason"</span>: <span class="string">"must not be empty"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"code"</span>: <span class="string">"C001"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>실제 코드 레벨에서 더 단순하게 구성해서 정리해보겠습니다.</p>
 <h2><span id="b-service에서-문제-발생">B Service에서 문제 발생</span></h2>
