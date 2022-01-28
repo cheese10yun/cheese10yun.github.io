@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/http-client/</loc>
+        <lastmod>2022-01-28T15:55:39.186Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/error-response-2/</loc>
         <lastmod>2022-01-24T17:01:05.678Z</lastmod>
         <changefreq>weekly</changefreq>
