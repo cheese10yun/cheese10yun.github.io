@@ -3,6 +3,27 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Sleuth/</loc>
+        <lastmod>2022-05-28T09:39:21.754Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81/</loc>
+        <lastmod>2022-05-28T09:39:21.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/ELK/</loc>
+        <lastmod>2022-05-28T09:39:21.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
         <lastmod>2022-04-30T03:33:45.976Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -12,20 +33,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2022-04-30T03:33:45.974Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81/</loc>
-        <lastmod>2022-02-23T14:51:59.914Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/ELK/</loc>
-        <lastmod>2022-02-23T14:51:59.914Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

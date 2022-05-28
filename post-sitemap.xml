@@ -8,6 +8,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/slueth-fuel/</loc>
+        <lastmod>2022-05-28T09:39:21.754Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/elk-apm-2/</loc>
+        <lastmod>2022-05-28T09:39:21.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-batch-http-page-item-reader/</loc>
         <lastmod>2022-04-30T03:33:45.976Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -18,14 +34,6 @@
     <url>
         <loc>https://cheese10yun.github.io/http-client/</loc>
         <lastmod>2022-04-30T03:33:45.974Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/elk-apm-2/</loc>
-        <lastmod>2022-02-23T14:51:59.914Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
