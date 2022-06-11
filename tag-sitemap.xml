@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Spring-Gateway/</loc>
+        <lastmod>2022-06-11T14:11:37.004Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Sleuth/</loc>
         <lastmod>2022-05-30T17:48:55.085Z</lastmod>
         <changefreq>weekly</changefreq>

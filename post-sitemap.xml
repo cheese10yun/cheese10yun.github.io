@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-cloud-gateway-2/</loc>
+        <lastmod>2022-06-11T14:11:37.004Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/slueth-fuel/</loc>
         <lastmod>2022-05-30T17:48:55.085Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1080,7 +1088,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
+        <loc>https://cheese10yun.github.io/intellij-Assistant/</loc>
         <lastmod>2021-06-17T09:55:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1088,7 +1096,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/intellij-Assistant/</loc>
+        <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
         <lastmod>2021-06-17T09:55:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
