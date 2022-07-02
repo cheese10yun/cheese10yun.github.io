@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-jpql/</loc>
+        <lastmod>2022-07-02T03:04:31.564Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-cloud-gateway-2/</loc>
         <lastmod>2022-06-11T14:39:13.535Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -178,14 +186,6 @@
     <url>
         <loc>https://cheese10yun.github.io/redis-getting-started/</loc>
         <lastmod>2021-07-14T16:49:29.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jpa-jpql/</loc>
-        <lastmod>2021-07-14T15:41:56.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
