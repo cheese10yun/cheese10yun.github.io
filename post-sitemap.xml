@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/code-design/</loc>
+        <lastmod>2023-06-11T15:06:19.343Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/intellij-tip/</loc>
         <lastmod>2023-06-04T09:20:39.014Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -272,7 +280,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/querydsl-projections/</loc>
+        <loc>https://cheese10yun.github.io/querydsl-support/</loc>
         <lastmod>2021-06-17T14:18:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -280,7 +288,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/querydsl-support/</loc>
+        <loc>https://cheese10yun.github.io/querydsl-projections/</loc>
         <lastmod>2021-06-17T14:18:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1144,14 +1152,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/intellij-Assistant/</loc>
-        <lastmod>2021-06-17T09:55:02.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
         <lastmod>2021-06-17T09:55:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1161,6 +1161,14 @@
 
     <url>
         <loc>https://cheese10yun.github.io/intellij-code-review/</loc>
+        <lastmod>2021-06-17T09:55:02.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/intellij-Assistant/</loc>
         <lastmod>2021-06-17T09:55:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1184,7 +1192,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/github-proejct-part2/</loc>
+        <loc>https://cheese10yun.github.io/github-project-part3/</loc>
         <lastmod>2021-06-17T09:55:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1192,7 +1200,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/github-project-part3/</loc>
+        <loc>https://cheese10yun.github.io/github-proejct-part2/</loc>
         <lastmod>2021-06-17T09:55:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
