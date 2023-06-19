@@ -266,7 +266,7 @@
 <li>(3): csv 파일에 집계할 방식에 대해서 작성합니다. <code>CsvLineAggregator</code> 인터페이스를 기준으로 진행됩니다. csv 필드에 대한 구분은 <code>,</code>을 사용하며, <code>PaymentCsvMapper</code> 기반으로 필드 순서가 결정됩니다.</li>
 <li>(4): csv 파일에 header 정보를 입력합니다. <code>PaymentCsvMapper</code>에 headNames를 사용해서 (3)에서 사용한 필드 순서와 동일하게 지정합니다.</li>
 </ul>
-<p><code>CsvLineAggregator</code>, <code>PaymentCsvMapper</code>를 사용하지 않아도 문제는 없지만 Srping Batch에서 지원하는 <code>lineAggregator</code>, <code>headerCallback</code> 사용법을 단순화 시켰습니다. 프레임 워크에서는 상대적으로 저수준의 기능을 제공해주기 때문에 각 서비스에서 고수준으로 변경해서 사용하는 방법을 고려해서 개발하는 것도 개발자에게 중요한 스킬이라고 생각합니다.</p>
+<p><code>CsvLineAggregator</code>, <code>PaymentCsvMapper</code>를 사용하지 않아도 문제는 없지만 Spring Batch에서 지원하는 <code>lineAggregator</code>, <code>headerCallback</code> 사용법을 단순화 시켰습니다. 프레임 워크에서는 상대적으로 저수준의 기능을 제공해주기 때문에 각 서비스에서 고수준으로 변경해서 사용하는 방법을 고려해서 개발하는 것도 개발자에게 중요한 스킬이라고 생각합니다.</p>
 <h2><span id="실행-결과">실행 결과</span></h2>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar build/libs/study<span class="number">-0.0</span><span class="number">.1</span>-SNAPSHOT.jar --job.name=csvWriterJob</span><br></pre></td></tr></table></figure>
 <p>해당 테스트는 <code>docker-compose.yaml</code> 기반 mysql 5.7 기반으로 동작 됩니다.</p>
