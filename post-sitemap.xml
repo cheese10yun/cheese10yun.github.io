@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/code-design/</loc>
+        <lastmod>2023-06-24T18:22:14.155Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-kotlin/</loc>
         <lastmod>2023-06-19T16:32:11.639Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -26,14 +34,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
         <lastmod>2023-06-19T16:32:11.636Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/code-design/</loc>
-        <lastmod>2023-06-19T16:32:11.632Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

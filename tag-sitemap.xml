@@ -4,14 +4,28 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
-        <lastmod>2023-06-19T16:32:11.639Z</lastmod>
+        <lastmod>2023-06-24T18:22:14.155Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2023-06-24T18:22:14.155Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2023-06-19T16:32:11.639Z</lastmod>
+        <lastmod>2023-06-24T18:22:14.155Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
+        <lastmod>2023-06-24T18:22:14.155Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -19,20 +33,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
         <lastmod>2023-06-19T16:32:11.638Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2023-06-19T16:32:11.632Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
-        <lastmod>2023-06-19T16:32:11.632Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
