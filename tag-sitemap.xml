@@ -3,22 +3,22 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
+        <lastmod>2023-06-30T16:27:10.949Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/ORM/</loc>
-        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
+        <lastmod>2023-06-30T16:26:38.047Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Exposed/</loc>
-        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
-        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
+        <lastmod>2023-06-30T16:26:38.047Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
