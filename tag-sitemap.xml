@@ -3,8 +3,22 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
+        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Exposed/</loc>
+        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
-        <lastmod>2023-06-25T06:27:23.824Z</lastmod>
+        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -66,13 +80,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Exposed/</loc>
-        <lastmod>2022-11-09T15:22:34.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/Network/</loc>
         <lastmod>2022-11-06T16:37:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -103,13 +110,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring-Gateway/</loc>
         <lastmod>2022-06-11T14:39:13.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
-        <lastmod>2022-05-30T17:48:55.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

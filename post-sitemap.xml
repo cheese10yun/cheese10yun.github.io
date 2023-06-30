@@ -8,6 +8,22 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/exposed-2/</loc>
+        <lastmod>2023-06-30T16:15:49.478Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/exposed/</loc>
+        <lastmod>2023-06-30T16:13:30.040Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/code-design/</loc>
         <lastmod>2023-06-25T06:27:23.824Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -121,14 +137,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/slueth-fuel/</loc>
-        <lastmod>2022-05-30T17:48:55.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/exposed-2/</loc>
         <lastmod>2022-05-30T17:48:55.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -674,14 +682,6 @@
     <url>
         <loc>https://cheese10yun.github.io/API-CALL/</loc>
         <lastmod>2021-06-17T10:07:30.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/exposed/</loc>
-        <lastmod>2021-06-17T10:07:21.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
