@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="IntelliJ 자주 사용하는 기능 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/intellij-tip/">
+    <meta property="og:description" content="IntelliJ 자주 사용하는 기능 정리 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-tip/">
+
+
+    <title>
+        
+          IntelliJ 자주 사용하는 기능 정리 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-tip/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                            
+                              <a class="tag" href="/tags/#IDEA" title="IDEA">IDEA</a>
+                            
+                        </div>
+                        <h1>IntelliJ 자주 사용하는 기능 정리</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2023-06-04
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2><span id="tab">Tab</span></h2>
+<h3><span id="tab-limit">Tab Limit</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-1.png" alt=""></p>
+<ul>
+<li>settings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능</li>
+<li>여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천</li>
+</ul>
+<h3><span id="자주-사용하는-tab-이동">자주 사용하는 Tab 이동</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-2.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Hot Key</th>
+<th>Desc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Split Right</code></td>
+<td>fn + ctr +  ➡️</td>
+<td>현재 화면 오른 쪽으로 분활</td>
+</tr>
+<tr>
+<td><code>Split Down</code></td>
+<td>fn + ctr +  ⬇️</td>
+<td>현재 화면 아래 쪽으로 분할</td>
+</tr>
+<tr>
+<td><code>Goto Next Splitter</code></td>
+<td>shfit + cmd  ➡️</td>
+<td>현재 포커싱 화면애서 다음 Tab으로 이동</td>
+</tr>
+<tr>
+<td><code>Goto Previous Splitter</code></td>
+<td>shfit + cmd  ⬅️</td>
+<td>현재 포커싱 화면애서 이전 다음 Tab으로 이동</td>
+</tr>
+<tr>
+<td><code>&lt;- Back</code></td>
+<td>cmd + [</td>
+<td>현재 Tab의 이전 Tab, tab limit 1 지정시 유용</td>
+</tr>
+<tr>
+<td><code>-&gt; Forword</code></td>
+<td>cmd + ]</td>
+<td>현재 Tab의 다음 Tab, tab limit 1 지정시 유용</td>
+</tr>
+<tr>
+<td><code>Recent Files</code></td>
+<td>cmd + e</td>
+<td>최근 Open 파일 리스트</td>
+</tr>
+<tr>
+<td><code>Recent Locations</code></td>
+<td>shfit + cmd + e</td>
+<td>최근 Open 파일 커서 위치</td>
+</tr>
+<tr>
+<td><code>Bookmarks 지정</code></td>
+<td>cmd + F3</td>
+<td>북마크 지정</td>
+</tr>
+<tr>
+<td><code>Bookmarks</code></td>
+<td>F3</td>
+<td>지정한 북마크 리스트</td>
+</tr>
+<tr>
+<td><code>Go to file</code></td>
+<td>shfit + cmd + o</td>
+<td>파일 열기</td>
+</tr>
+</tbody>
+</table>
+<h2><span id="간단-팁">간단 팁</span></h2>
+<h3><span id="find-action">Find Action</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-3.png" alt=""></p>
+<ul>
+<li>특정한 기능을 찾고 싶은 경우 단축키 <code>shfit + cmd + a</code> Find Action으로 해당 기능을 찾을 수 있음</li>
+<li>대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash</li>
+</ul>
+<h3><span id="key-map">Key map</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-4.png" alt=""></p>
+<ul>
+<li>Key map 통해서 Hot Key 조회 및 등록 가능</li>
+<li>키워드를 통해 검색 or 단축키를 통한 검색도 지원</li>
+</ul>
+<h3><span id="live-template">Live Template</span></h3>
+<p><img src="https://camo.githubusercontent.com/5471e679d04d13a643230014376ab5e736a72b4252a10e644eb41e158b3e5ea4/68747470733a2f2f692e696d6775722e636f6d2f6d5a75444d64552e676966" alt=""></p>
+<ul>
+<li>코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.</li>
+<li><code>sout</code>, <code>psvm</code> 등이 여기에 해당합니다.</li>
+<li><code>ss</code>, <code>tdd</code>, <code>jobc</code>, <code>jobcode</code>, <code>comment-formatter</code> <code>sf</code> 등등을 커스텀 해서 사용</li>
+</ul>
+<h4><span id="등록-방법">등록 방법</span></h4>
+<p><img src="https://camo.githubusercontent.com/05c612752077fb8488efe81f76609936965dfeb0340540bdc7b45d8040cd5524/68747470733a2f2f692e696d6775722e636f6d2f483471523461612e706e67" alt=""></p>
+<ul>
+<li>Settings -&gt; Live Templates</li>
+</ul>
+<h3><span id="formatter-코드-정렬-제외">formatter 코드 정렬 제외</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-8.png" alt=""></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">asd</span><span class="params">()</span></span>: <span class="built_in">Unit</span> &#123;</span><br><span class="line">    <span class="comment">//@formatter:off</span></span><br><span class="line">    <span class="keyword">val</span> a = <span class="number">10</span></span><br><span class="line">        <span class="keyword">val</span> b = <span class="number">10</span> <span class="comment">// 코드 정렬에서 제외</span></span><br><span class="line">        <span class="keyword">val</span> c = <span class="number">10</span></span><br><span class="line">        <span class="keyword">val</span> d = <span class="number">10</span></span><br><span class="line">    <span class="keyword">val</span> e = <span class="number">10</span></span><br><span class="line">    <span class="keyword">val</span> f = <span class="number">10</span></span><br><span class="line">    <span class="comment">//@formatter:on</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>특정한 이유로 코드 정렬을 제외하고 싶을 때 <code>@formatter:off ~ @formatter:on</code>을 활용하여 제외할 수 있다.</li>
+</ul>
+<h3><span id="gradle-task">Gradle Task</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/gradle-task-run-1.gif" alt=""></p>
+<ul>
+<li>Gradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.</li>
+<li><code>build.gradle.kts</code>에 직접 작성한 TASK도 동작 가능</li>
+</ul>
+<h2><span id="문자열">문자열</span></h2>
+<h3><span id="동일-문자열-g">동일 문자열 ⌘ + ⌃ + g</span></h3>
+<p><img src="https://camo.githubusercontent.com/6980a81c4101651570d8f5d1d5f0ccfe951ec6c37af4b7856b4486ec5d92bdd3/68747470733a2f2f692e696d6775722e636f6d2f66414d41364f722e676966" alt=""></p>
+<h3><span id="동일-위치열-drag-or">동일 위치열 ⌥ + drag or ⌥⌥</span></h3>
+<p><img src="https://camo.githubusercontent.com/208370c96ef96e70a051b984025f8d954679d08cb32abbe724f6a39f5cb0ffb1/68747470733a2f2f692e696d6775722e636f6d2f5a3549596736772e676966" alt=""></p>
+<h3><span id="복사-히스토리-command-shift-v">복사 히스토리 command + shift + v</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-7.png" alt=""></p>
+<h3><span id="활용-방법">활용 방법</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-14.gif" alt=""></p>
+<p>특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.</p>
+<h2><span id="plugins">Plugins</span></h2>
+<h3><span id="string-manipulation-plugin">String Manipulation Plugin</span></h3>
+<p><a href="https://plugins.jetbrains.xn--com-tla/plugin/2162-string-manipulation/" rel="external nofollow noopener noreferrer" target="_blank">String Manipulation Plugin</a> 플러그인은 문자열에 대한 다양한 기능을 제공합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/string-manipulation-1.gif" alt=""></p>
+<ul>
+<li>특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-jpa/docs/string-manipulation-3.gif" alt=""></p>
+<ul>
+<li>Switch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.</li>
+</ul>
+<h3><span id="grep-console">Grep Console</span></h3>
+<blockquote>
+<p><img src="https://plugins.jetbrains.com/files/7125/screenshot_16117.png" alt=""><br>
+<img src="https://plugins.jetbrains.com/files/7125/screenshot_17407.png" alt=""><br>
+출처 <a href="https://plugins.jetbrains.com/plugin/7125-grep-console" rel="external nofollow noopener noreferrer" target="_blank">Grep Console</a></p>
+</blockquote>
+<p><a href="https://plugins.jetbrains.com/plugin/7125-grep-console" rel="external nofollow noopener noreferrer" target="_blank">Grep Console</a>를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인</p>
+<h3><span id="key-promoter-x">Key Promoter X</span></h3>
+<blockquote>
+<p><img src="https://plugins.jetbrains.com/files/9792/screenshot_17105.png" alt=""><br>
+출처 <a href="https://plugins.jetbrains.com/plugin/9792-key-promoter-x" rel="external nofollow noopener noreferrer" target="_blank">Key Promoter X</a></p>
+</blockquote>
+<p><a href="https://plugins.jetbrains.com/plugin/9792-key-promoter-x" rel="external nofollow noopener noreferrer" target="_blank">Key Promoter X</a>는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인</p>
+<h3><span id="presentation-assistant">Presentation Assistant</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-6.png" alt=""></p>
+<p><a href="https://plugins.jetbrains.com/plugin/7345-presentation-assistant" rel="external nofollow noopener noreferrer" target="_blank">Presentation Assistant</a>는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인</p>
+<h3><span id="플러그인-찾는-방법">플러그인 찾는 방법</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-15.png" alt=""></p>
+<p>플러그인 검색을 <code>/sortBy:downloads</code>으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택</p>
+<h2><span id="http-client">HTTP Client</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-9.gif" alt=""></p>
+<p>HTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능</p>
+<h3><span id="http-env">HTTP Env</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-10.png" alt=""></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"local"</span>: &#123;</span><br><span class="line">    <span class="attr">"shop-service"</span>: <span class="string">"http://localhost:8080"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"sandbox"</span>: &#123;</span><br><span class="line">    <span class="attr">"shop-service"</span>: <span class="string">"http://snadbox-xxxx"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"beta"</span>: &#123;</span><br><span class="line">    <span class="attr">"shop-service"</span>: <span class="string">"http://beta-xxxx"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.</p>
+<h3><span id="http-curl-copy-amp-paste">HTTP Curl Copy &amp; Paste</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-11.gif" alt=""></p>
+<p>Curl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-12.gif" alt=""></p>
+<p>반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.</p>
+<h3><span id="query-parameter-정리">Query parameter 정리</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-13.gif" alt=""></p>
+<p>Query parameter를 쉽게 정리할 수 있습니다.</p>
+<h2><span id="github-code-review">GitHub Code Review</span></h2>
+<p>GitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-3.png" alt=""></p>
+<p>PullRequest를 확인합니다. <code>Find Action</code> 기능을 통해서 찾을 수 있고 <code>CMD + 3</code> 단축키로도 찾을 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-4.png" alt=""></p>
+<p>PullRequest를 내용을 확인할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-5.png" alt=""></p>
+<p>Diff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-6.png" alt=""></p>
+<p>작성된 코멘트는 실제 Github에도 작성됩니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-8.png" alt=""></p>
+<p>IDEA에서 해당 PR을 Meger 할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-9.png" alt=""></p>
+<p>Pull Request 항목들을 필터를 통해서 검색도 가능합니다.</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/code-design/" data-toggle="tooltip" data-placement="top" title="좋은 코드 설계를 위한 답없는 고민들">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/kotlin-collection/" data-toggle="tooltip" data-placement="top" title="Kotlin groupBy, groupingBy, chunked, flatMap, aggregate 정리">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Tab</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Tab Limit</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">자주 사용하는 Tab 이동</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">간단 팁</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Find Action</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Key map</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">Live Template</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">등록 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">formatter 코드 정렬 제외</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">Gradle Task</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">문자열</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">동일 문자열 ⌘ + ⌃ + g</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">동일 위치열 ⌥ + drag or ⌥⌥</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">복사 히스토리 command + shift + v</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">활용 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Plugins</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">String Manipulation Plugin</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Grep Console</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Key Promoter X</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">Presentation Assistant</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">플러그인 찾는 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">HTTP Client</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">HTTP Env</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">HTTP Curl Copy &amp; Paste</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">Query parameter 정리</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">GitHub Code Review</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
+                        
+                          <a class="tag" href="/tags/#IDEA" title="IDEA">IDEA</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2023 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
