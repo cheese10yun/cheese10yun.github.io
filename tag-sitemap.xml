@@ -3,6 +3,34 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2023-07-03T02:32:33.036Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
+        <lastmod>2023-07-03T02:32:33.036Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
+        <lastmod>2023-07-03T02:32:33.036Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
+        <lastmod>2023-07-03T02:32:33.036Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Spring-Batch/</loc>
         <lastmod>2023-07-02T16:05:53.460Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -17,13 +45,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/Kotlin/</loc>
-        <lastmod>2023-07-02T14:55:38.523Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/ORM/</loc>
         <lastmod>2023-07-02T14:55:38.523Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -33,27 +54,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Exposed/</loc>
         <lastmod>2023-07-02T14:55:38.523Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2023-06-25T06:27:23.824Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/OOP/</loc>
-        <lastmod>2023-06-25T06:27:23.824Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Spring/</loc>
-        <lastmod>2023-06-25T06:27:23.824Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
