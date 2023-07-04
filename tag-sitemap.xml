@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2023-07-04T16:37:12.926Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/JPA/</loc>
         <lastmod>2023-07-03T02:32:33.036Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -89,13 +96,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Network/</loc>
         <lastmod>2022-11-06T16:37:01.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2022-10-16T07:16:06.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
