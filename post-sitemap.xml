@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-jpql/</loc>
+        <lastmod>2023-07-21T17:03:38.147Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/event-transaction/</loc>
         <lastmod>2023-07-12T02:14:10.647Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -194,14 +202,6 @@
     <url>
         <loc>https://cheese10yun.github.io/code-design/</loc>
         <lastmod>2023-07-12T02:12:16.436Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jpa-jpql/</loc>
-        <lastmod>2023-07-12T02:12:16.432Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -656,6 +656,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
+        <lastmod>2023-06-19T16:32:11.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-batch-writer-csv/</loc>
         <lastmod>2023-06-19T16:32:11.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -665,14 +673,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-kotlin/</loc>
-        <lastmod>2023-06-19T16:32:11.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
         <lastmod>2023-06-19T16:32:11.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1192,6 +1192,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/github-proejct/</loc>
+        <lastmod>2021-06-17T09:55:02.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/gradle-multi-module/</loc>
         <lastmod>2021-06-17T09:55:02.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1208,8 +1216,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/github-proejct/</loc>
-        <lastmod>2021-06-17T09:55:02.000Z</lastmod>
+        <loc>https://cheese10yun.github.io/encapsulation-part-1/</loc>
+        <lastmod>2021-06-17T09:55:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -1240,14 +1248,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/encapsulation-part-1/</loc>
-        <lastmod>2021-06-17T09:55:01.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-batch-application/</loc>
         <lastmod>2021-06-17T09:33:05.000Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1264,7 +1264,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
+        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
         <lastmod>2020-02-11T14:42:25.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1272,7 +1272,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
+        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
         <lastmod>2020-02-11T14:42:25.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
