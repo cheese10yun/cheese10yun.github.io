@@ -181,14 +181,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -244,7 +244,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>좋은 코드 설계를 위한 고민들을 평소에 많이 해왔고, 그에 관련한 학습들도 진행했었다. OOP, DDD, Clean Code, Clean Architecture 등등을 통해서 나름의 주관이 생겼으며 경력 초반에는 이런 것들을 지키기 위해 많이 노력해왔다. 현재는 이런 개념들을 선택적으로 적용하며 또 어떠한 의미에서는 이런 것들을 지키는 것들에 대해서 가성비가 좋지 않다고까지 생각한다. 해당 포스팅에서 작성한 내용은 개발하면서 코드 설계적인 부분에 대해서 아직까지 고민을 하고 있는 부분들에 대해서 정리한 것들이다. 만약 Spring, JPA, Kotlin을 통해서 프로젝트를 진행하고 있다면 공감이 될 수 있다.</p>
+                <p>좋은 코드 설계를 위한 고민들을 평소에 많이 해왔고, 그에 관련한 학습들도 진행했었다. OOP, DDD, Clean Code, Clean Architecture 등등을 통해서 나름의 주관이 생겼으며 경력 초반에는 이런 것들을 지키기 위해 많이 노력해왔다. 현재는 이런 개념들을 선택적으로 적용하며 또 어떠한 의미에서는 이런 것들을 지키는 것에 대해서 가성비가 좋지 않다고까지 생각한다. 해당 포스팅에서 작성한 내용은 개발하면서 코드 설계적인 부분에 대해서 아직까지 고민을 하고 있는 부분들에 대해서 정리한 것들이다. 만약 Spring, JPA, Kotlin을 통해서 프로젝트를 진행하고 있다면 공감이 될 수 있다.</p>
 <h2><span id="복잡도를-어디서-제어책임할-것인가">복잡도를 어디서 제어(책임)할 것인가?</span></h2>
 <p>요구사항이 복잡하면 코드 또한 복잡해진다. 결국 이러한 복잡도를 어느 코드에서는 해결해야 하는데 이 부분에 대한 고민이다.</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberStatus</span></span>(</span><br><span class="line">    desc: String</span><br><span class="line">) &#123;</span><br><span class="line">    NORMAL(<span class="string">"정상"</span>), <span class="comment">// 이메일 받는 회원 </span></span><br><span class="line">    UNVERIFIED(<span class="string">"미인증"</span>), <span class="comment">// 이메일 받는 회원</span></span><br><span class="line">    LOCK(<span class="string">"계정 일지 정지"</span>), <span class="comment">// 이메일 제외 회원</span></span><br><span class="line">    BAN(<span class="string">"계정 영구정지"</span>); <span class="comment">// 이메일 제외 회원</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
