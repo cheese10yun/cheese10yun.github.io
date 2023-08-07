@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2023-08-07T15:54:52.061Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
+        <lastmod>2023-08-07T15:54:52.061Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Batch-Insert/</loc>
         <lastmod>2023-07-27T14:33:27.953Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -11,20 +25,6 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Performance/</loc>
-        <lastmod>2023-07-27T14:33:27.953Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2023-07-27T14:33:27.953Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
         <lastmod>2023-07-27T14:33:27.953Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

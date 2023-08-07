@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-nplus-1/</loc>
+        <lastmod>2023-08-07T15:54:52.061Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/jpa-batch-insert/</loc>
         <lastmod>2023-07-27T14:33:27.953Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -146,14 +154,6 @@
     <url>
         <loc>https://cheese10yun.github.io/jpa-fetch-paging/</loc>
         <lastmod>2023-07-12T02:12:16.456Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jpa-nplus-1/</loc>
-        <lastmod>2023-07-12T02:12:16.453Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
