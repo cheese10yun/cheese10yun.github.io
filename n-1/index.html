@@ -239,7 +239,7 @@
                 <h1><span id="jpa-n-1-문제">JPA N + 1 문제</span></h1>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> o.* m.*</span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Order</span> o</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> <span class="keyword">Member</span> m <span class="keyword">on</span> o.MEMBER_ID=m.MEMBER_ID</span><br><span class="line"><span class="keyword">where</span> o.id =<span class="number">1</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li>실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함꼐 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.</li>
+<li>실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.</li>
 <li>위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Order&gt; orders = em.createQuery(<span class="string">"select o from Order o"</span>, Order.class)</span><br><span class="line">	.getResultList(); <span class="comment">// 연과된 모든 엔티티를 조회한다.</span></span><br></pre></td></tr></table></figure>

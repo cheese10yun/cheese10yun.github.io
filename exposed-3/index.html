@@ -266,7 +266,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">GROUP_CONCAT</span>(<span class="keyword">DISTINCT</span> writer.email), writer.<span class="string">`name`</span></span><br><span class="line"><span class="keyword">FROM</span> writer</span><br><span class="line"><span class="keyword">WHERE</span> writer.<span class="string">`name`</span> = <span class="string">'yun kim'</span></span><br></pre></td></tr></table></figure>
 <p>의도한 대로 <code>GROUP_CONCAT(DISTINCT writer.email)</code> SQL Function이 정상적으로 출력되었습니다. 그러면 조회한 데이터를 확인해 보겠습니다.</p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/exposed-study/docs/images/exposed-2.png" alt=""></p>
-<p>최정 결과로 문자열 <code>email-1@asd.com, email-2@asd.com</code>을 응답받은 것을 확인할 수 있습니다.</p>
+<p>최종 결과로 문자열 <code>email-1@asd.com, email-2@asd.com</code>을 응답받은 것을 확인할 수 있습니다.</p>
 
                 
 
