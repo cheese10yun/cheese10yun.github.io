@@ -9,7 +9,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/page-performance/</loc>
-        <lastmod>2023-09-05T14:31:33.848Z</lastmod>
+        <lastmod>2023-09-05T14:59:31.252Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-batch-update-performance/</loc>
+        <lastmod>2023-09-05T14:57:09.590Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -114,14 +122,6 @@
     <url>
         <loc>https://cheese10yun.github.io/jpa-embedded/</loc>
         <lastmod>2023-07-12T02:12:16.481Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-update-performance/</loc>
-        <lastmod>2023-07-12T02:12:16.478Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
