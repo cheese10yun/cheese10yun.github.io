@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="JPA Paging Performance 향상 방법 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="JPA 페이징 Performance 향상 방법 - Yun Blog | 기술 블로그">
     <meta property="og:url" content="https://cheese10yun.github.io/page-performance/">
-    <meta property="og:description" content="JPA Paging Performance 향상 방법 - Yun Blog | 기술 블로그">
+    <meta property="og:description" content="JPA 페이징 Performance 향상 방법 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
     <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
@@ -32,7 +32,7 @@
 
     <title>
         
-          JPA Paging Performance 향상 방법 - Yun Blog | 기술 블로그
+          JPA 페이징 Performance 향상 방법 - Yun Blog | 기술 블로그
         
     </title>
 
@@ -117,7 +117,7 @@
                               <a class="tag" href="/tags/#Querydsl" title="Querydsl">Querydsl</a>
                             
                         </div>
-                        <h1>JPA Paging Performance 향상 방법</h1>
+                        <h1>JPA 페이징 Performance 향상 방법</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
@@ -238,7 +238,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>일반적으로 어드민 페이지와 같이 데이터를 테이블 뷰 형식으로 제공할 때, Paging 기법을 사용하여 현재 페이지의 내용과 페이지 정보를 표시합니다. JPA를 활용하면 이러한 반복적인 코드 작성을 보다 쉽게 처리할 수 있습니다.</p>
+                <p>일반적으로 어드민 페이지와 같이 데이터를 테이블 뷰 형식으로 제공할 때, 페이징 기법을 사용하여 현재 페이지의 내용과 페이지 정보를 표시합니다. JPA를 활용하면 이러한 반복적인 코드 작성을 보다 쉽게 처리할 수 있습니다.</p>
 <p>데이터 모수가 적고 단순한 구조로 데이터를 보여주는 경우라면 JPA에서 제공해 주는 방식으로 처리하는 것이 효율적일 수 있으나 데이터 모수가 많고 여러 테이블을 조인해서 표현해야 하는 데이터 구조라면 성능적인 이슈가 발생할 수 있습니다. 이러한 이슈와 성능 개선 방법에 대해 알아보겠습니다.</p>
 <h2><span id="querydsl-페이징-처리-방식">Querydsl 페이징 처리 방식</span></h2>
 <p>데이터 모수가 적고 간단한 조회 구조를 가질 때, Querydsl의 applyPagination 메서드를 활용하면 페이징 로직을 더 쉽게 작성할 수 있습니다.</p>
