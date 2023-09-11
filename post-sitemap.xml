@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/https/</loc>
+        <lastmod>2023-09-11T15:41:02.348Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/page-performance/</loc>
         <lastmod>2023-09-10T15:15:36.719Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -690,14 +698,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-batch-basic/</loc>
         <lastmod>2023-06-19T16:32:11.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/https/</loc>
-        <lastmod>2022-11-06T16:37:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
