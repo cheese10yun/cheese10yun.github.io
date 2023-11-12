@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/spring-data-mongo-test-setup/">
+    <meta property="og:description" content="MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-data-mongo-test-setup/">
+
+
+    <title>
+        
+          MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/spring-data-mongo-test-setup/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Test" title="Test">Test</a>
+                            
+                              <a class="tag" href="/tags/#Mongo" title="Mongo">Mongo</a>
+                            
+                        </div>
+                        <h1>MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2023-11-12
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>테스트 코드의 가치가 널리 인정받으며, 이제 그 필요성을 언급하는 것은 의미가 없어졌습니다. 테스트 코드의 가장 큰 매력은 바로 구현 코드에 대한 실시간 피드백을 제공하고, 이를 바탕으로 구현 코드를 지속적으로 개선해 나갈 수 있다는 점입니다. 이 개념은 &quot;<a href="https://tech.kakaopay.com/post/mock-test-code-part-2/" rel="external nofollow noopener noreferrer" target="_blank">실무에서 적용하는 테스트 코드 작성 방법과 노하우 Part 2: 테스트 코드로부터 피드백 받기</a>&quot;사내 기술 블로그에 이미 다룬 바 있습니다. 폭넓은 테스트를 작성하고 실행하기 위해서는 테스트 코드의 간편한 작성이 필수적입니다. 본 포스팅에서는 Spring Data MongoDB를 사용하여 Given 절의 데이터 셋업을 쉽게 하는 방법을 소개하겠습니다.</p>
+<h2><span id="데이터-셋업의-어려움과-중요성">데이터 셋업의 어려움과 중요성</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/layer-4.png" alt=""></p>
+<p>위 이미지처럼 주문 테스트 코드에 대한 다양한 테스트 케이스를 작성하기 위해서는 다양한 데이터를 셋업 하는 것은 필수적입니다. 다양한 테스트 케이스를 작성하지 못하면 테스트 케이스가 커버하는 범위가 좁아지며, 이로 인해 테스트 코드로부터 양질의 피드백을 받을 수 없게 됩니다. 따라서, <strong>테스트 코드를 쉽게 작성하고 다양한 시나리오를 손쉽게 검증할 수 있는 환경을 만드는 것이 중요합니다.</strong></p>
+<p>스프링에서는 @Sql 어노테이션을 이용해 테스트 데이터를 간단히 셋업 할 수 있으며, 이를 통해 테스트 케이스를 원활하게 확장할 수 있습니다. 이에 관한 자세한 방법은 <a href="https://cheese10yun.github.io/sql-test/">Sql을 통해서 테스트 코드를 쉽게 작성하자&quot; 포스팅에서 설명하고 있습니다</a>. 해당 포스팅에서는 Sql을 활용하여 다양한 테스트 데이터를 쉽게 구성하는 방법을 제공합니다.</p>
+<h2><span id="sql-파일을-이용한-데이터-셋업-방식">SQL 파일을 이용한 데이터 셋업 방식</span></h2>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SqlGroup(</span></span><br><span class="line"><span class="meta">    Sql(</span></span><br><span class="line"><span class="meta">        value = [<span class="meta-string">"/schema.sql"</span>, <span class="meta-string">"/order-setup.sql"</span>, <span class="meta-string">"/coupon.sql"</span>, <span class="meta-string">"product.sql"</span>],</span></span><br><span class="line"><span class="meta">        config = SqlConfig(</span></span><br><span class="line"><span class="meta">            dataSource = <span class="meta-string">"dataSource"</span>,</span></span><br><span class="line"><span class="meta">            transactionManager = <span class="meta-string">"transactionManager"</span></span></span><br><span class="line"><span class="meta">        )</span>,</span><br><span class="line">        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD</span><br><span class="line">    ),</span><br><span class="line">    Sql(</span><br><span class="line">        value = [<span class="string">"/delete.sql"</span>],</span><br><span class="line">        config = SqlConfig(</span><br><span class="line">            dataSource = <span class="string">"dataSource"</span>,</span><br><span class="line">            transactionManager = <span class="string">"transactionManager"</span></span><br><span class="line">        ),</span><br><span class="line">        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `sql test code`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// test code</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@SqlGroup</code> 어노테이션을 사용하면 <code>*.sql</code> 파일을 통해 테스트 데이터를 쉽게 준비할 수 있습니다. 이렇게 데이터를 만들면 setter를 막아 데이터 변경 단위를 논리적으로 제공하는 경우라면 큰 장점이 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/order-flow.003.jpeg" alt=""></p>
+<ol>
+<li>Order라는 엔티티 객체를 테스트 코드를 작성하려면 특정 Snapshot 상태로 만들어야 한다.</li>
+<li>테스트 코드를 작성하는 구간은 상품 준비 -&gt; 배송시작 임으로 해당 객체를 상품 준비 상태로 만들어야 한다.</li>
+<li>하지만 단순 setter가 없기 때문에 상품 준비 중 객체로 직접 만드는 것이 어려운 부분이 있다.</li>
+</ol>
+<p><strong>이런 경우 <code>*.sql</code> 파일을 활용하면, setter가 없는 객체에 대해서도 비즈니스 로직의 제약 없이 테스트 데이터를 간편하게 준비할 수 있어, 다양한 테스트 케이스를 쉽게 설정할 수 있습니다.</strong></p>
+<h2><span id="json-파일을-이용한-테스트-데이터-셋업-방식">JSON 파일을 이용한 테스트 데이터 셋업 방식</span></h2>
+<p><code>@Sql</code>와 같은 어노테이 어노테이션을 제공해주지 않기 때문에 직접 만들어야 합니다. 우선 적용된 코드부터 살펴보도록하겠습니다.</p>
+<h3><span id="document">Document</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Document(collection = <span class="meta-string">"foo"</span>)</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>(</span><br><span class="line">    <span class="meta">@Field(<span class="meta-string">"address_detail"</span>)</span></span><br><span class="line">    <span class="keyword">var</span> addressDetail: String</span><br><span class="line">) : Auditable()</span><br><span class="line"></span><br><span class="line"><span class="meta">@Document(collection = <span class="meta-string">"bar"</span>)</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Bar</span></span>(</span><br><span class="line">    <span class="meta">@Field(<span class="meta-string">"email"</span>)</span></span><br><span class="line">    <span class="keyword">var</span> email: String</span><br><span class="line">) : Auditable()</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Auditable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">var</span> id: ObjectId? = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">internal</span> <span class="keyword">set</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Field(name = <span class="meta-string">"created_at"</span>)</span></span><br><span class="line">    <span class="meta">@CreatedDate</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> createdAt: LocalDateTime</span><br><span class="line">        <span class="keyword">internal</span> <span class="keyword">set</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Field(name = <span class="meta-string">"updated_at"</span>)</span></span><br><span class="line">    <span class="meta">@LastModifiedDate</span></span><br><span class="line">    <span class="keyword">open</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> updatedAt: LocalDateTime</span><br><span class="line">        <span class="keyword">internal</span> <span class="keyword">set</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>테스트를 위해 Foo, Bar Document를 간단한 필드들로 구성하며, <code>Auditable</code>을 상속하여 공통된 필드를 갖도록 합니다.</p>
+<h3><span id="mongodatasetup-활용">MongoDataSetup 활용</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MongoTestSupport</span> <span class="comment">//(1)</span></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@ActiveProfiles(<span class="meta-string">"test"</span>)</span></span><br><span class="line"><span class="meta">@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoDataSetupExecutionListenerBeforeTest</span></span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> mongoTemplate: MongoTemplate</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="comment">// (2)</span></span><br><span class="line">    <span class="meta">@MongoDataSetup(</span></span><br><span class="line"><span class="meta">        // [&#123;<span class="meta-string">"address_detail"</span>: <span class="meta-string">"1동, xxxx"</span>&#125;, &#123;<span class="meta-string">"address_detail"</span>: <span class="meta-string">"2동, xxxx"</span>&#125;]</span></span><br><span class="line"><span class="meta">        jsonPath = <span class="meta-string">"/mongo-document-foo.json"</span>, // (3)</span></span><br><span class="line">        clazz = Foo::<span class="class"><span class="keyword">class</span>, <span class="type">// </span></span>(<span class="number">4</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DisplayName(<span class="meta-string">"MongoDataSetup 단일 테스트"</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">mongoDataSetup</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// when</span></span><br><span class="line">        <span class="keyword">val</span> fooDocuments = mongoTemplate.findAll&lt;Foo&gt;()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// then</span></span><br><span class="line">        then(fooDocuments).hasSize(<span class="number">2</span>)</span><br><span class="line">        then(fooDocuments).allSatisfy(</span><br><span class="line">            Consumer &#123;</span><br><span class="line">                then(it.id).isNotNull()</span><br><span class="line">                then(it.addressDetail).isIn(</span><br><span class="line">                    <span class="string">"1동, xxxx"</span>,</span><br><span class="line">                    <span class="string">"2동, xxxx"</span></span><br><span class="line">                )</span><br><span class="line">                then(it.createdAt).isNotNull()</span><br><span class="line">                then(it.updatedAt).isNotNull()</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>적용된 코드부터 살펴보고 이후 구현 코드를 살펴보도록하겠습니다.</p>
+<ul>
+<li>(1): <code>@MongoTestSupport</code> 설정을 통해서 테스트 실행 리스너로 추가하여 데이터 설정을 자동화합니다.</li>
+<li>(2): <code>@MongoDataSetup</code>은 해당 JSON 파일일을 읽어 MongoDB에 삽입합니다.</li>
+<li>(3): <code>jsonPath</code>은 <code>test/resources/</code> 디렉토리에 위치한 JSON 파일의 경로를 지정합니다. 마지막으로,</li>
+<li>(4): MongoDB에 삽입할 문서의 클래스를 명시합니다.</li>
+</ul>
+<p><img src="https://github.com/cheese10yun/blog-sample/blob/391a198fecd66e4f972e8b5cab31e4ce906acadb/mongo-study/images/mongo-test-1.png?raw=true" alt=""></p>
+<p><code>@MongoDataSetup</code> 어노테이션을 사용하면, JSON 파일을 통해 MongoDB 테스트 데이터를 간편하게 설정할 수 있으며, 테스트 실행 시 Foo Document 객체가 성공적으로 저장되어 조회되는 것을 확인할 수 있습니다.</p>
+<h2><span id="테스트-데이터-셋업-코드">테스트 데이터 셋업 코드</span></h2>
+<h3><span id="mongodatasetup">MongoDataSetup</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> jsonPath json file의 경로를 작성한다.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> clazz MongoDB에 저장할 Document 객체</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> collectionName [clazz]와 Document collection 이름이 다른 경우 명시, 명시하지 않는 경우 [clazz]의 Document의 collection 으로 저장</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> com.example.mongostudy.MongoDataSetupExecutionListenerTest.mongoDataSetup</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> com.example.mongostudy.MongoDataSetupExecutionListenerTest.mongoDataSetupCollectionName</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target(AnnotationTarget.FUNCTION)</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.RUNTIME)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoDataSetup</span></span>(</span><br><span class="line">    <span class="keyword">val</span> jsonPath: String,</span><br><span class="line">    <span class="keyword">val</span> clazz: KClass&lt;*&gt;,</span><br><span class="line">    <span class="keyword">val</span> collectionName: String = <span class="string">""</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>단일 문서 데이터 셋업에 사용됩니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 여러 데이터를 셋업이 필요한 경우</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mongoDataSetup</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> com.example.mongostudy.MongoDataSetupExecutionListenerTest.mongoDataSetups</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.RUNTIME)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoDataSetups</span></span>(<span class="keyword">vararg</span> <span class="keyword">val</span> mongoDataSetup: MongoDataSetup)</span><br></pre></td></tr></table></figure>
+<p>여러 문서의 데이터 셋업 시 사용합니다.</p>
+<h3><span id="mongodatasetupexecutionlistener">MongoDataSetupExecutionListener</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoDataSetupExecutionListener</span> : <span class="type">TestExecutionListener &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 테스트 이전에 [MongoDataSetup]기반으로 Document를 생성한다.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">beforeTestMethod</span><span class="params">(testContext: <span class="type">TestContext</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> currentTestMethod = testContext.testMethod</span><br><span class="line">        <span class="keyword">val</span> mongoDataSetup = currentTestMethod.getAnnotation(MongoDataSetup::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        <span class="keyword">val</span> mongoDataSetups = currentTestMethod.getAnnotation(MongoDataSetups::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        <span class="keyword">when</span> &#123;</span><br><span class="line">            mongoDataSetup != <span class="literal">null</span> -&gt; insertDocuments(mongoDataSetup, testContext)</span><br><span class="line">            mongoDataSetups != <span class="literal">null</span> -&gt; mongoDataSetups.mongoDataSetup.forEach &#123; document -&gt;</span><br><span class="line">                insertDocuments(document, testContext)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 테스트가 끝난 이후 모든 모든 데이터를 삭제한다.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">afterTestMethod</span><span class="params">(testContext: <span class="type">TestContext</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> mongoTemplate = mongoTemplate(testContext)</span><br><span class="line">        <span class="keyword">val</span> currentTestMethod = testContext.testMethod</span><br><span class="line">        <span class="keyword">val</span> mongoDataSetup = currentTestMethod.getAnnotation(MongoDataSetup::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">        <span class="keyword">val</span> mongoDataSetups = currentTestMethod.getAnnotation(MongoDataSetups::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">when</span> &#123;</span><br><span class="line">            mongoDataSetup != <span class="literal">null</span> -&gt; &#123;</span><br><span class="line">                <span class="keyword">when</span> &#123;</span><br><span class="line">                    mongoDataSetup.collectionName.isEmpty() -&gt; mongoTemplate.dropCollection(mongoDataSetup.clazz.java)</span><br><span class="line">                    <span class="keyword">else</span> -&gt; mongoTemplate.dropCollection(mongoDataSetup.collectionName)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mongoDataSetups != <span class="literal">null</span> -&gt; &#123;</span><br><span class="line">                mongoDataSetups.mongoDataSetup.forEach &#123;</span><br><span class="line">                    <span class="keyword">when</span> &#123;</span><br><span class="line">                        it.collectionName.isEmpty() -&gt; mongoTemplate.dropCollection(it.clazz.java)</span><br><span class="line">                        <span class="keyword">else</span> -&gt; mongoTemplate.dropCollection(it.collectionName)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">insertDocuments</span><span class="params">(mongoDataSetup: <span class="type">MongoDataSetup</span>, testContext: <span class="type">TestContext</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> mongoTemplate = mongoTemplate(testContext)</span><br><span class="line">        <span class="keyword">val</span> documents = objectMapper.readValue&lt;List&lt;Any&gt;&gt;(</span><br><span class="line">            readFile(mongoDataSetup.jsonPath),</span><br><span class="line">            objectMapper.typeFactory.constructCollectionType(List::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>, <span class="type">mongoDataSetup.clazz.java)</span></span></span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> (documents.isNotEmpty()) &#123;</span><br><span class="line">            <span class="keyword">when</span> &#123;</span><br><span class="line">                mongoDataSetup.collectionName.isEmpty() -&gt; mongoTemplate.insertAll(documents)</span><br><span class="line">                <span class="keyword">else</span> -&gt; &#123;</span><br><span class="line">                    <span class="comment">// 객체와, collectionName 일치하지 않는 경우는 collectionName을 지정하여 저장한다.</span></span><br><span class="line">                    <span class="keyword">for</span> (document <span class="keyword">in</span> documents) &#123;</span><br><span class="line">                        mongoTemplate.insert(document, mongoDataSetup.collectionName)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">mongoTemplate</span><span class="params">(testContext: <span class="type">TestContext</span>)</span></span>: MongoTemplate &#123;</span><br><span class="line">        <span class="keyword">return</span> testContext.applicationContext.getBean(MongoTemplate::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">readFile</span><span class="params">(path: <span class="type">String</span>)</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> String(ClassPathResource(path).inputStream.readBytes())</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> objectMapper: ObjectMapper = ObjectMapper()</span><br><span class="line">        .registerKotlinModule()</span><br><span class="line">        .registerModules(JavaTimeModule(), Jdk8Module())</span><br><span class="line">        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, <span class="literal">false</span>)</span><br><span class="line">        .apply &#123; <span class="keyword">this</span>.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MongoDataSetupExecutionListener</code>는 <code>TestExecutionListener</code>를 상속받아 구현되며, 스프링의 테스트 컨텍스트 프레임워크를 사용합니다. 이 리스너는 <code>beforeTestMethod</code>와 <code>afterTestMethod</code> 이벤트를 활용해 테스트 메소드 실행 전에 데이터를 준비하고, 실행 후에 데이터를 정리하는 기능을 수행합니다. 이 리스너는 <code>TestContext</code>에 의존하여 테스트 애플리케이션 컨텍스트에서 Bean을 쉽게 가져올 수 있으며, 예시에서는 <code>MongoTemplate</code>를 추출하는 데 사용되며 테스트 환경을 설정하거나, <strong>테스트 데이터를 초기화하거나, 테스트 결과를 정리하는 등의 작업을 자동화하는 데 유용합니다.</strong> <code>TestExecutionListener</code> 인터페이스를 구현하고, 스프링의 테스트에 <code>@TestExecutionListeners</code> 어노테이션을 사용하여 리스너를 등록함으로써 활용할 수 있습니다.</p>
+<h3><span id="testexecutionlisteners-리스너-등록-방법">TestExecutionListeners 리스너 등록 방법</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TestExecutionListeners(</span></span><br><span class="line"><span class="meta">    listeners = [</span></span><br><span class="line"><span class="meta">        MongoDataSetupExecutionListener::class,</span></span><br><span class="line"><span class="meta">        DependencyInjectionTestExecutionListener::class</span></span><br><span class="line"><span class="meta">    ]</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(AnnotationTarget.CLASS)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoTestSupport</span></span></span><br></pre></td></tr></table></figure>
+<p><code>MongoDataSetupExecutionListener</code>는 테스트에 필요한 리스너로, <code>TestExecutionListeners</code> 어노테이션을 통해 등록합니다. 이 과정을 단순화하기 위해 <code>MongoTestSupport</code> 어노테이션을 생성하여, <code>TestExecutionListeners</code> 설정을 손쉽게 적용할 수 있도록 합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MongoTestSupport</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoDataSetupExecutionListenerBeforeTest</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>클래스 상단에 <code>@MongoTestSupport</code> 어노테이션을 추가함으로써, <code>MongoDataSetupExecutionListener</code>가 포함된 <code>TestExecutionListeners</code>를 쉽게 사용할 수 있습니다.</p>
+<h3><span id="mongodatasetups-여러-문서의-데이터-셋업">MongoDataSetups 여러 문서의 데이터 셋업</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MongoDataSetups(</span></span><br><span class="line"><span class="meta">    MongoDataSetup(</span></span><br><span class="line"><span class="meta">        jsonPath = <span class="meta-string">"/mongo-document-bar.json"</span>,</span></span><br><span class="line"><span class="meta">        clazz = Bar::class,</span></span><br><span class="line"><span class="meta">    )</span>,</span><br><span class="line">    MongoDataSetup(</span><br><span class="line">        jsonPath = <span class="string">"/mongo-document-foo.json"</span>,</span><br><span class="line">        clazz = Foo::<span class="class"><span class="keyword">class</span>,<span class="type"></span></span></span><br><span class="line">    ),</span><br><span class="line">)</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(<span class="meta-string">"MongoDataSetups 여러개 테스트"</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">mongoDataSetups</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// when</span></span><br><span class="line">    <span class="keyword">val</span> fooDocuments = mongoTemplate.findAll&lt;Foo&gt;()</span><br><span class="line">    <span class="keyword">val</span> barDocuments = mongoTemplate.findAll&lt;Bar&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// then</span></span><br><span class="line">    then(fooDocuments).hasSize(<span class="number">2</span>)</span><br><span class="line">    then(fooDocuments).allSatisfy(</span><br><span class="line">        Consumer &#123;</span><br><span class="line">            then(it.id).isNotNull()</span><br><span class="line">            then(it.addressDetail).isIn(</span><br><span class="line">                <span class="string">"1동, xxxx"</span>,</span><br><span class="line">                <span class="string">"2동, xxxx"</span></span><br><span class="line">            )</span><br><span class="line">            then(it.createdAt).isNotNull()</span><br><span class="line">            then(it.updatedAt).isNotNull()</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    then(barDocuments).hasSize(<span class="number">2</span>)</span><br><span class="line">    then(barDocuments).allSatisfy(</span><br><span class="line">        Consumer &#123;</span><br><span class="line">            then(it.id).isNotNull()</span><br><span class="line">            then(it.email).isIn(</span><br><span class="line">                <span class="string">"aaa@asd.com"</span>,</span><br><span class="line">                <span class="string">"bbb@asd.com"</span></span><br><span class="line">            )</span><br><span class="line">            then(it.createdAt).isNotNull()</span><br><span class="line">            then(it.updatedAt).isNotNull()</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MongoDataSetups</code>를 사용하면 다수의 <code>MongoDataSetup</code> 인스턴스를 결합하여 여러 문서를 쉽게 설정할 수 있습니다.</p>
+<h3><span id="mongodatasetup-projection-사용">MongoDataSetup Projection 사용</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">FooProjection</span></span>(</span><br><span class="line">    <span class="meta">@Field(<span class="meta-string">"address_detail"</span>)</span></span><br><span class="line">    <span class="keyword">var</span> addressDetail: String,</span><br><span class="line">    <span class="meta">@Field(<span class="meta-string">"created_at"</span>)</span></span><br><span class="line">    <span class="keyword">val</span> createdAt: LocalDateTime,</span><br><span class="line">    <span class="meta">@Field(<span class="meta-string">"updated_at"</span>)</span></span><br><span class="line">    <span class="keyword">val</span> updatedAt: LocalDateTime</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="meta">@MongoDataSetup(</span></span><br><span class="line"><span class="meta">    jsonPath = <span class="meta-string">"/mongo-document-foo-projection.json"</span>,</span></span><br><span class="line"><span class="meta">    clazz = FooProjection::class,</span></span><br><span class="line"><span class="meta">    collectionName = <span class="meta-string">"foo"</span></span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(<span class="meta-string">"collectionName 기반으로 테스트"</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">mongoDataSetupCollectionName</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// when</span></span><br><span class="line">    <span class="keyword">val</span> fooDocuments = mongoTemplate.findAll&lt;Foo&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// then</span></span><br><span class="line">    then(fooDocuments).hasSize(<span class="number">2</span>)</span><br><span class="line">    then(fooDocuments).allSatisfy(</span><br><span class="line">        Consumer &#123;</span><br><span class="line">            then(it.id).isNotNull()</span><br><span class="line">            then(it.addressDetail).isIn(</span><br><span class="line">                <span class="string">"1동, xxxx"</span>,</span><br><span class="line">                <span class="string">"2동, xxxx"</span></span><br><span class="line">            )</span><br><span class="line">            then(it.createdAt).isNotNull()</span><br><span class="line">            then(it.updatedAt).isNotNull()</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Document 클래스가 아닌 Projection 객체를 이용해 데이터를 설정하려면, collectionName을 사용하여 명시적으로 컬렉션 이름을 지정함으로써 데이터를 원하는 컬렉션에 설정할 수 있습니다.</p>
+<h2><span id="편리성-제공">편리성 제공</span></h2>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@ActiveProfiles(<span class="meta-string">"test"</span>)</span></span><br><span class="line"><span class="meta">@TestInstance(TestInstance.Lifecycle.PER_CLASS)</span></span><br><span class="line"><span class="meta">@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)</span></span><br><span class="line"><span class="meta">@MongoTestSupport</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoApplicationTests</span></span></span><br></pre></td></tr></table></figure>
+<p><code>@SpringBootTest</code> 어노테이션을 사용하는 테스트 클래스에 <code>@MongoTestSupport</code>를 추가함으로써, 개별 테스트 클래스에서 어노테이션을 중복하여 작성할 필요 없이 모든 테스트에 적용될 수 있으며, 이를 통해 Application Context를 효율적으로 재사용할 수 있습니다. 이러한 방식은 공통적인 설정을 일관되게 관리하는 데에도 도움이 됩니다.</p>
+<h2><span id="mongodatasetup-적절한-사용">@MongoDataSetup 적절한 사용</span></h2>
+<p><code>@Sql</code> 방식과 마찬가지로, JSON 파일 기반의 데이터 셋업에는 단점이 있습니다. 코드 내에서 객체를 생성하면 변수명과 주석을 통해 명확한 컨텍스트를 제공할 수 있는 반면, JSON 방식은 이러한 세부 사항을 전달하기 어렵습니다. 또한, <code>Document</code> 클래스의 코드 변경 시 관련 JSON 파일을 수동으로 업데이트해야 하는 번거로움이 있습니다.</p>
+<p><strong><code>@MongoDataSetup</code>을 사용한 데이터 셋업은 주로 대량의 데이터나 복잡한 데이터 조합이 필요한 로직을 테스트할 때 추천됩니다.</strong> 이런 케이스에서는 코드로 직접 작성할 경우 유지보수 비용이 증가하고, 변수명과 주석을 통한 컨텍스트 전달에 한계가 있기 때문에, 이러한 상황에서 <code>@MongoDataSetup</code>의 사용이 효과적입니다.</p>
+<h2><span id="마무리">마무리</span></h2>
+<p>이 포스팅에서는 MongoDB 데이터를 쉽게 설정하는 방법을 소개했지만, 강조하고 싶은 주요 메시지는 테스트 코드의 중요성과 함께 <strong>테스트 환경 구성의 중요성입니다.</strong> <strong>다양한 테스트 케이스를 작성할 수 있는 환경이 준비되어야만, 테스트 코드를 통해 유의미한 피드백을 얻고, 이를 통해 로직을 검증하고 코드 품질을 향상시킬 수 있습니다.</strong></p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/spring-data-mongo-repository/" data-toggle="tooltip" data-placement="top" title="Spring Data MongoDB Repository 확장">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">데이터 셋업의 어려움과 중요성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">SQL 파일을 이용한 데이터 셋업 방식</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">JSON 파일을 이용한 테스트 데이터 셋업 방식</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Document</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">MongoDataSetup 활용</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">테스트 데이터 셋업 코드</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">MongoDataSetup</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">MongoDataSetupExecutionListener</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">TestExecutionListeners 리스너 등록 방법</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">MongoDataSetups 여러 문서의 데이터 셋업</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">MongoDataSetup Projection 사용</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">편리성 제공</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">@MongoDataSetup 적절한 사용</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">마무리</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Test" title="Test">Test</a>
+                        
+                          <a class="tag" href="/tags/#Mongo" title="Mongo">Mongo</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2023 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
