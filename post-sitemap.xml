@@ -8,8 +8,16 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-data-mongodb-update-performance/</loc>
+        <lastmod>2023-12-17T11:29:10.160Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-data-mongo-test-setup/</loc>
-        <lastmod>2023-11-12T13:45:33.505Z</lastmod>
+        <lastmod>2023-12-17T11:25:31.448Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
