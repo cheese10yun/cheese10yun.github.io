@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Spring-Jpa Best Practices step-11 - Properties environment 설정하기 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-11/">
-    <meta property="og:description" content="Spring-Jpa Best Practices step-11 - Properties environment 설정하기 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="IntelliJ cannot resolve symbol 에러 해결 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/intellij-cannot-resolve-symbol/">
+    <meta property="og:description" content="IntelliJ cannot resolve symbol 에러 해결 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
     <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
@@ -27,16 +27,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-11/">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-cannot-resolve-symbol/">
 
 
     <title>
         
-          Spring-Jpa Best Practices step-11 - Properties environment 설정하기 - Yun Blog | 기술 블로그
+          IntelliJ cannot resolve symbol 에러 해결 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/spring-jpa-best-11/">
+    <link rel="canonical" href="https://cheese10yun.github.io/intellij-cannot-resolve-symbol/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -110,20 +110,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
-                            
-                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
-                            
-                              <a class="tag" href="/tags/#ORM" title="ORM">ORM</a>
-                            
-                              <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                              <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
                             
                         </div>
-                        <h1>Spring-Jpa Best Practices step-11 - Properties environment 설정하기</h1>
-                        <h2 class="subheading">Properties environment 설정하기</h2>
+                        <h1>IntelliJ cannot resolve symbol 에러 해결</h1>
+                        <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2019-01-10
+                            2023-12-23
                         </span>
                     </div>
                 
@@ -240,71 +234,20 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <blockquote>
-<p>해당 코드는 <a href="https://github.com/cheese10yun/spring-jpa-best-practices" rel="external nofollow noopener noreferrer" target="_blank">Github</a>를 확인해주세요.</p>
-</blockquote>
-<p>properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.</p>
-<table>
-<thead>
-<tr>
-<th>environment</th>
-<th>설명</th>
-<th>파일명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>local</td>
-<td>로컬 개발환경</td>
-<td>application-local.yml</td>
-</tr>
-<tr>
-<td>dev</td>
-<td>개발환경</td>
-<td>application-dev.yml</td>
-</tr>
-<tr>
-<td>prod</td>
-<td>운영</td>
-<td>application-prod.yml</td>
-</tr>
-</tbody>
-</table>
-<p>위 처럼 환경이 분리되었을 경우를 기준으로 설명드리겠습니다.</p>
-<h2><span id="applicationyml">application.yml</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>모든 환경에서 공통으로 사용할 정보들을 작성합니다.</li>
-<li>모든 환경에서 사용할 것을 공통으로 사용하기 때문에 코드의 중복과 변경에 이점이 있습니다.</li>
-<li>본 예제에서는 port만 공통으로 설정했습니다.</li>
-</ul>
-<h2><span id="application-envyml">application-{env}.yml</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line"><span class="attr">  email:</span> <span class="string">"yun@test"</span></span><br><span class="line"><span class="attr">  nickname:</span> <span class="string">"nickname"</span></span><br><span class="line"><span class="attr">  age:</span> <span class="number">28</span></span><br><span class="line"><span class="attr">  auth:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  amount:</span> <span class="number">101</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  jpa:</span></span><br><span class="line"><span class="attr">    database:</span> <span class="string">h2</span></span><br><span class="line"><span class="attr">    hibernate:</span></span><br><span class="line"><span class="attr">      ddl-auto:</span> <span class="string">create-drop</span></span><br><span class="line"><span class="attr">    show-sql:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  datasource:</span></span><br><span class="line"><span class="attr">    data:</span> <span class="attr">classpath:init.sql</span> <span class="comment"># 시작할때 실행시킬 script</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  jackson:</span></span><br><span class="line"><span class="attr">    serialization:</span></span><br><span class="line"><span class="attr">      WRITE_DATES_AS_TIMESTAMPS:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line"><span class="attr">    ROOT:</span> <span class="string">info</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>각 개발환경에 맞는 properties 설정을 정의합니다.</li>
-<li>대표적으로 데이터베이스 정보, 외부 설정 정보 등이 있습니다.</li>
-<li><code>application.yml</code> 에서 정의한 <code>server.port</code> 8080 값이 자동으로 설정됩니다.</li>
-</ul>
-<h2><span id="env-설정-방법">env 설정 방법</span></h2>
-<h3><span id="applicationyml에서-설정하는-방법">application.yml에서 설정하는 방법</span></h3>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  profiles:</span></span><br><span class="line"><span class="attr">    active:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>profiles.active</code> 속성에 원하는 정보 env를 작성합니다.</li>
-</ul>
-<h3><span id="intellij에서-설정-하는-방법">IntelliJ에서 설정 하는 방법</span></h3>
-<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/intellij-properties.png" alt=""></p>
-<p>IntelliJ에서는 외부에서 넘겨 받는 인자로 다양한 환경 설정을 제공해줍니다. 가장 대표적인 방법으로 VM options, Active profiles 설정이 있습니다. 아래의 방법중 하나를 선택하면 됩니다.</p>
-<ul>
-<li>VM options에 <code>-Dspring.profiles.active={env}</code> 추가합니다.</li>
-<li>Active profiles: <code>{env}</code></li>
-</ul>
-<h2><span id="우선순위">우선순위</span></h2>
-<p>외부 환경 설정에 대한 우선순위는 <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config" rel="external nofollow noopener noreferrer" target="_blank">Spring-Boot Document</a>에 표시되어 있습니다. 실제 배포시에는 우선순위를 반드시 고려해야합니다.</p>
-<h2><span id="env-구동">env 구동</span></h2>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  profiles:</span></span><br><span class="line"><span class="attr">    active:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
-<p><code>application.yml</code>으로 설정해서 스프링을 구동시켜보겠습니다.</p>
-<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/spring-profile.png" alt=""></p>
-<p><code>application.yml</code>에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.</p>
+                <p>자바에서 Lombok과 같은 라이브러리로 인한 <code>cannot resolve symbol</code> 오류는 대체로 SDK 버전 문제로 발생합니다. 이를 해결하기 위해서는 프로젝트 내의 SDK 버전을 일관되게 설정해야 합니다. 이 과정에서 여러 설정을 조정해야 하는데, 구체적인 SDK 설정 방법에 대해 안내해 드리겠습니다.</p>
+<h2><span id="project-settings-설정">Project Settings 설정</span></h2>
+<h3><span id="project-설정">Project 설정</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/Project-Structure.png" alt=""></p>
+<p>Project Structure 설정에서 SDK, Language Level을 동일한 버전으로 설정합니다.</p>
+<h3><span id="modules-설정">Modules 설정</span></h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/module.png" alt=""></p>
+<p>Module SDK 버전도 동일한 버전으로 설정합니다.</p>
+<h2><span id="gradle-설정">Gradle 설정</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/gradle.png" alt=""></p>
+<p>Gradle JVM SDK 버전도 동일하게 설정합니다.</p>
+<h2><span id="java-compiler-설정">Java Compiler 설정</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/java-compile.png" alt=""></p>
+<p>Java Compiler 설정도 동일한 버전으로 설정합니다.</p>
 
                 
 
@@ -312,13 +255,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/spring-boot-test/" data-toggle="tooltip" data-placement="top" title="Spring Boot Test">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/encapsulation-part-2/" data-toggle="tooltip" data-placement="top" title="Spring OOP 프로그래밍 예제(6) - 캡슐화 내가 생각하는 캡슐화란(2)">Next Post &rarr;</a>
+                            <a href="/spring-data-mongodb-update-performance/" data-toggle="tooltip" data-placement="top" title="MongoDB Update 성능 측정 및 분석">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -344,7 +283,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">application.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">application-{env}.yml</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">env 설정 방법</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">application.yml에서 설정하는 방법</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">IntelliJ에서 설정 하는 방법</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">우선순위</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">env 구동</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Project Settings 설정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Project 설정</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Modules 설정</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Gradle 설정</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Java Compiler 설정</span></a></li></ol>
         
         </div>
       </aside>
@@ -364,13 +303,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Guide" title="Guide">Guide</a>
-                        
-                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
-                        
-                          <a class="tag" href="/tags/#ORM" title="ORM">ORM</a>
-                        
-                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                          <a class="tag" href="/tags/#IntelliJ" title="IntelliJ">IntelliJ</a>
                         
                     </div>
                 </section>
