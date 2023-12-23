@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Spring Boot HTTPS 적용 하기 - Yun Blog | 기술 블로그">
-    <meta property="og:url" content="https://cheese10yun.github.io/spring-https/">
-    <meta property="og:description" content="Spring Boot HTTPS 적용 하기 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="Spring Boot3 Kotlin JPA &amp; Querydsl 적용하기 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/springboot3-jpa-querydsl/">
+    <meta property="og:description" content="Spring Boot3 Kotlin JPA &amp; Querydsl 적용하기 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
     <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
@@ -27,16 +27,16 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="canonical" href="https://cheese10yun.github.io/spring-https/">
+    <link rel="canonical" href="https://cheese10yun.github.io/springboot3-jpa-querydsl/">
 
 
     <title>
         
-          Spring Boot HTTPS 적용 하기 - Yun Blog | 기술 블로그
+          Spring Boot3 Kotlin JPA &amp; Querydsl 적용하기 - Yun Blog | 기술 블로그
         
     </title>
 
-    <link rel="canonical" href="https://cheese10yun.github.io/spring-https/">
+    <link rel="canonical" href="https://cheese10yun.github.io/springboot3-jpa-querydsl/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -110,16 +110,16 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
+                            
                               <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
                             
-                              <a class="tag" href="/tags/#Network" title="Network">Network</a>
-                            
                         </div>
-                        <h1>Spring Boot HTTPS 적용 하기</h1>
+                        <h1>Spring Boot3 Kotlin JPA &amp; Querydsl 적용하기</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Yun on
-                            2018-09-10
+                            2023-12-23
                         </span>
                     </div>
                 
@@ -236,21 +236,34 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2><span id="spring-boot-https-적용하기">Spring Boot HTTPS 적용하기</span></h2>
-<p>스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.</p>
-<h2><span id="키스토어-생성">키스토어 생성</span></h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000</span><br><span class="line"></span><br><span class="line">키 저장소 비밀번호 입력:</span><br><span class="line">새 비밀번호 다시 입력:</span><br><span class="line">이름과 성을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 단위 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">구/군/시 이름을 입력하십시오?</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">시/도 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">이 조직의 두 자리 국가 코드를 입력하십시오.</span><br><span class="line">  [Unknown]:  01</span><br><span class="line">CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?</span><br><span class="line">  [아니오]:  y</span><br></pre></td></tr></table></figure>
-<h2><span id="properties-설정">properties 설정</span></h2>
-<h3><span id="yml">YML</span></h3>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  ssl:</span></span><br><span class="line"><span class="attr">    key-store:</span> <span class="string">keystore.p12</span></span><br><span class="line"><span class="attr">    key-store-password:</span> <span class="string">cheese</span></span><br><span class="line"><span class="attr">    keyStoreType:</span> <span class="string">PKCS12</span></span><br><span class="line"><span class="attr">    keyAlias:</span> <span class="string">tomcat</span></span><br></pre></td></tr></table></figure>
-<h3><span id="properties">Properties</span></h3>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server.ssl.key-store: keystore.p12</span><br><span class="line">server.ssl.key-store-password: cheese</span><br><span class="line">server.ssl.keyStoreType: PKCS12</span><br><span class="line">server.ssl.keyAlias: tomcat</span><br></pre></td></tr></table></figure>
-<h2><span id="https-요청">https 요청</span></h2>
-<p><img src="https://github.com/cheese10yun/blog-sample/blob/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.38.png?raw=true" alt="스크린샷 2018-09-10 오전 2.01.38"></p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.42.png" alt="스크린샷 2018-09-10 오전 2.01.42"></p>
+                <p>Spring Boot 2에서 3으로 업데이트되면서 Spring Data JPA 관련 설정이 변경된 부분들이 있습니다. 프로젝트에서 손쉽게 Spring Boot 3으로 업데이트하면서 Spring Data JPA와 Querydsl 설정을 손쉽게 하는 방법에 대해서 살펴보겠습니다.</p>
+<h2><span id="사전-설정">사전 설정</span></h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./gradlew wrapper --gradle-version=8.5</span><br></pre></td></tr></table></figure>
+<p>Gradle Wrapper를 사용하는 경우, 사용하고 있는 버전을 8.5 이상으로 업데이트 및 IntelliJ를 사용하는 경우 프로젝트의 SDK 버전을 17 이상으로 설정하는 과정을 진행합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/Project-Structure.png" alt=""></p>
+<p>Project Structure 설정에서 SDK, Language Level을 17 버전 이상으로 지정합니다.<br>
+<img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/module.png" alt=""></p>
+<p>Module SDK 버전도 동일한 버전으로 설정합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/image/gradle.png" alt=""></p>
+<p>Gradle 마지막으로 gradle 버전도 동일한 버전으로 설정합니다.</p>
+<h2><span id="buildgradlekts">build.gradle.kts</span></h2>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id(<span class="string">"org.springframework.boot"</span>) version <span class="string">"3.2.1"</span></span><br><span class="line">    id(<span class="string">"io.spring.dependency-management"</span>) version <span class="string">"1.1.4"</span></span><br><span class="line">    kotlin(<span class="string">"jvm"</span>) version <span class="string">"1.9.21"</span></span><br><span class="line">    kotlin(<span class="string">"plugin.spring"</span>) version <span class="string">"1.9.21"</span></span><br><span class="line">    kotlin(<span class="string">"plugin.jpa"</span>) version <span class="string">"1.9.21"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li><a href="https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8" rel="external nofollow noopener noreferrer" target="_blank">스프링 부트</a> 참고</li>
+<li>스프링 부트 버전 <code>3.2.1</code>으로 설정합니다.</li>
+<li>코틀린 버전 <code>1.9.21</code>으로 설정합니다.</li>
 </ul>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">java &#123;</span><br><span class="line">    <span class="keyword">sourceCompatibility</span> = JavaVersion.VERSION_17</span><br><span class="line">    <span class="keyword">targetCompatibility</span> = JavaVersion.VERSION_17</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks.withType&lt;KotlinCompile&gt; &#123;</span><br><span class="line">    kotlinOptions &#123;</span><br><span class="line">        jvmTarget = <span class="string">"17"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>build.gradle.kts 설정에 각종 java version을 사전 설정과 동일한 버전으로 설정합니다.</p>
+<h2><span id="import-replace">Import Replace</span></h2>
+<p>Spring Data JPA에서의 주요 변경사항 중 하나는 패키지 경로의 변경입니다. 이전에 사용되던 <code>javax.persistence</code>가 <code>jakarta.persistence</code>로 업데이트되었습니다. IntelliJ의 Replace 기능을 이용하면 프로젝트 내의 모든 import 경로를 쉽게 변경할 수 있습니다. <code>cmd + shift + r</code> 단축키로 Replace 설정을 할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/query-dsl/docs/images/import-repace.png" alt=""></p>
+<p><code>import javax.persistence</code> -&gt; <code>jakarta.persistence</code> 작성한 이후 <code>REPLACE</code> 버튼으로 적용 합니다.</p>
+<h2><span id="querydsl-적용">Querydsl 적용</span></h2>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">// implementation("com.querydsl:querydsl-jpa")</span></span><br><span class="line">    implementation(<span class="string">"com.querydsl:querydsl-jpa:5.0.0:jakarta"</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// kapt("com.querydsl:querydsl-apt:5.0.0:jpa")</span></span><br><span class="line">    kapt(<span class="string">"com.querydsl:querydsl-apt:5.0.0:jakarta"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>기존 querydsl 의존성도 변경을 변경을 진행합니다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./gradlew build -x <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<p>해당 프로젝트를 빌드하면 QClass가 생성되는 것을 확인할 수 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/query-dsl/docs/images/qclass.png" alt=""></p>
 
                 
 
@@ -258,13 +271,9 @@
                 <!-- Pager -->
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/spring-social/" data-toggle="tooltip" data-placement="top" title="Spring Social Part 1 Google, Facebook 간단한 소셜 인증">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/intellij-Assistant/" data-toggle="tooltip" data-placement="top" title="인텔리제이 Properties 자동완성">Next Post &rarr;</a>
+                            <a href="/intellij-cannot-resolve-symbol/" data-toggle="tooltip" data-placement="top" title="IntelliJ cannot resolve symbol 에러 해결">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -290,7 +299,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Spring Boot HTTPS 적용하기</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">키스토어 생성</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">properties 설정</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">YML</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Properties</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">https 요청</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">사전 설정</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">build.gradle.kts</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Import Replace</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Querydsl 적용</span></a></li></ol>
         
         </div>
       </aside>
@@ -310,9 +319,9 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                          <a class="tag" href="/tags/#JPA" title="JPA">JPA</a>
                         
-                          <a class="tag" href="/tags/#Network" title="Network">Network</a>
+                          <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
                         
                     </div>
                 </section>
