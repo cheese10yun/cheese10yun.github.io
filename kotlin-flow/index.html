@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="nofollow">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Yun Blog | 기술 블로그">
+    <meta name="keyword" content="Node NodeJs Spring Spring Boot Javascript">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <meta property="fb:app_id" content="175938796225834">
+    <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
+
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
+    <meta property="og:url" content="https://cheese10yun.github.io/kotlin-flow/">
+    <meta property="og:description" content="코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
+    <meta property="og:image" content="">
+    <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+
+
+
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <link rel="canonical" href="https://cheese10yun.github.io/kotlin-flow/">
+
+
+    <title>
+        
+          코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그
+        
+    </title>
+
+    <link rel="canonical" href="https://cheese10yun.github.io/kotlin-flow/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://i.imgur.com/avC1Xor.jpg')
+            /*post*/
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/BeanTechSign-white.png');
+    }
+    
+</style>
+
+<header class="intro-header">
+
+
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                            
+                              <a class="tag" href="/tags/#Coroutines" title="Coroutines">Coroutines</a>
+                            
+                        </div>
+                        <h1>코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리</h1>
+                        <h2 class="subheading">Kotlin 코루틴으로 효율적인 대규모 요청 처리</h2>
+                        <span class="meta">
+                            Posted by Yun on
+                            2024-05-23
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yun Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>Kotlin의 코루틴을 이용한 비동기 프로그래밍은 성능을 크게 향상시킬 수 있는 강력한 도구입니다. 특히 <code>Flow</code>를 활용하여 여러 요청을 동시에 처리하는 방식은 효율적인 비동기 처리를 가능하게 합니다. 이 포스팅에서는는 <code>Flow</code>를 사용하여 다중 요청을 처리하는 방법과 이론적 배경, 그리고 이를 사용할 때 주의할 점에 대해 다루겠습니다.</p>
+<h2><span id="시나리오">시나리오</span></h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_005.png" alt=""></p>
+<p>300ms가 발생하는 API 요청을 100번 반복하는 시나리오를 가정해봅시다. 동기적으로 처리하면 100번의 요청을 처리하는 데 30초가 걸립니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OrderClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getOrder</span><span class="params">(orderRequest: <span class="type">OrderRequest</span>)</span></span>: ResponseResult&lt;OrderResponse&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> runBlocking &#123;</span><br><span class="line">            delay(<span class="number">300</span>) <span class="comment">// 300ms 지연, 실제 API를 호출하지 않고 시간만 지연 </span></span><br><span class="line">            ResponseResult.Success(OrderResponse(orderRequest.productId))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getOrderSync</span><span class="params">(orderRequests: <span class="type">List</span>&lt;<span class="type">OrderRequest</span>&gt;)</span></span>: List&lt;OrderResponse&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> orderRequests</span><br><span class="line">        .map &#123;</span><br><span class="line">            orderClient</span><br><span class="line">                .getOrder(it) <span class="comment">// 300ms 지연</span></span><br><span class="line">                .onFailure &#123; log.error(<span class="string">"Failure: <span class="variable">$it</span>"</span>) &#125;</span><br><span class="line">                .onSuccess &#123; log.info(<span class="string">"Success: <span class="variable">$it</span>"</span>) &#125;</span><br><span class="line">                .getOrThrow()</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 코드에서 <code>OrderClient</code>의 <code>getOrder</code> 함수는 각 호출마다 300ms가 소요된다고 가정합니다. 일반적인 API 호출의 경우 300ms 응답속도는 빠른 편에 속합니다. 하지만 100번을 호출 한다고 가정하면 총 소요 시간은 100 * 300ms = 30,000ms, 즉 30초가 됩니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getOrderSync</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">    <span class="keyword">val</span> flatMapMergeStudy = FlatMapMergeStudy()</span><br><span class="line">    <span class="keyword">val</span> orderRequests = (<span class="number">1.</span><span class="number">.100</span>).map &#123; OrderRequest(<span class="string">"<span class="variable">$it</span>"</span>) &#125;</span><br><span class="line"></span><br><span class="line">    stopWatch.start()</span><br><span class="line">    <span class="keyword">val</span> response = flatMapMergeStudy.getOrderSync(orderRequests)</span><br><span class="line">    stopWatch.stop()</span><br><span class="line">    println(stopWatch.totalTimeMillis)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 30,528ms</span></span><br><span class="line">    println(response)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="코루틴-flow를-이용한-성능-개선">코루틴 <code>Flow</code>를 이용한 성능 개선</span></h2>
+<p>Kotlin의 코루틴을 이용한 비동기 프로그래밍은 성능을 크게 향상시킬 수 있는 강력한 도구입니다. 특히 Flow를 활용하여 여러 요청을 동시에 처리하는 방식은 효율적인 비동기 처리를 가능하게 합니다. 이 블로그에서는 flatMapMerge를 사용하여 다중 요청을 처리하는 방법과 이론적 배경, 그리고 이를 사용할 때 주의할 점에 대해 다루겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@OptIn(FlowPreview::class)</span></span><br><span class="line">suspend <span class="function"><span class="keyword">fun</span> <span class="title">getOrderFlow</span><span class="params">(orderRequests: <span class="type">List</span>&lt;<span class="type">OrderRequest</span>&gt;)</span></span>: List&lt;OrderResponse&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> orderRequests</span><br><span class="line">        .asFlow()</span><br><span class="line">        .flatMapMerge &#123; request -&gt;</span><br><span class="line">            flow &#123;</span><br><span class="line">                orderClient</span><br><span class="line">                    .getOrder(request)</span><br><span class="line">                    .onFailure &#123; log.error(<span class="string">"Failure: <span class="variable">$it</span>"</span>) &#125;</span><br><span class="line">                    .onSuccess &#123;</span><br><span class="line">                        log.info(<span class="string">"Success: <span class="variable">$it</span>"</span>)</span><br><span class="line">                        emit(it)</span><br><span class="line">                    &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .toList()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위 코드에서 getOrderFlow 함수는 orderRequests 리스트를 플로우로 변환하고, flatMapMerge를 사용하여 각 요청을 병렬로 처리합니다. 각 요청은 코루틴 내에서 300ms 동안 지연된 후 결과를 반환합니다. 이 방식으로 100개의 요청을 동시에 처리하면, 전체 처리 시간은 가장 오래 걸리는 요청 하나의 시간인 300ms로 줄어듭니다.</p>
+<h3><span id="성능-테스트">성능 테스트</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getOrderFlow</span><span class="params">()</span></span>: <span class="built_in">Unit</span> = runBlocking &#123;</span><br><span class="line">        <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">        <span class="keyword">val</span> flatMapMergeStudy = FlatMapMergeStudy()</span><br><span class="line">        <span class="keyword">val</span> orderRequests = (<span class="number">1.</span><span class="number">.100</span>).map &#123; OrderRequest(<span class="string">"<span class="variable">$it</span>"</span>) &#125;</span><br><span class="line"></span><br><span class="line">        stopWatch.start()</span><br><span class="line">        <span class="keyword">val</span> response = flatMapMergeStudy.getOrderFlow(orderRequests)</span><br><span class="line">        stopWatch.stop()</span><br><span class="line">        <span class="comment">// 2,228ms</span></span><br><span class="line">        println(stopWatch.totalTimeMillis)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>이론상 100개의 요청을 동시에 처리하면 300ms 정도의 시간이 소요되어야 하지만, 실제로는 2,228ms가 소요됩니다. 이는 다음과 같은 요인들로 인한 것입니다.</p>
+<ol>
+<li><strong>코루틴 생성과 컨텍스트 전환 오버헤드</strong>:
+<ul>
+<li>코루틴을 생성하고 실행할 때 발생하는 오버헤드는 무시할 수 없는 시간 지연을 초래할 수 있습니다.</li>
+<li>특히, <code>flatMapMerge</code>를 사용하여 다수의 코루틴을 병렬로 실행할 때, 각 코루틴의 생성과 컨텍스트 전환 비용이 누적되어 총 실행 시간이 증가할 수 있습니다.</li>
+</ul>
+</li>
+<li><strong><code>flatMapMerge</code>의 병합 과정</strong>:
+<ul>
+<li><code>flatMapMerge</code>는 여러 플로우를 병합하면서 각 플로우의 결과를 수집합니다.</li>
+<li>이 과정에서 발생하는 추가적인 작업들, 예를 들어 플로우의 결과를 수집하고 병합하는 오버헤드가 존재할 수 있습니다.</li>
+<li>이 오버헤드는 특히 플로우의 개수가 많을 때 더 크게 작용합니다.</li>
+</ul>
+</li>
+<li><strong><code>emit</code> 호출과 플로우 수집의 지연</strong>:
+<ul>
+<li>각 플로우에서 <code>emit</code>을 호출하고, 최종적으로 <code>toList</code>로 수집하는 과정에서 발생하는 지연도 무시할 수 없습니다.</li>
+<li><code>emit</code>은 비동기적으로 데이터를 내보내는 작업이므로, 여러 번 호출될 때 지연이 누적될 수 있습니다.</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_001.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>Rows</th>
+<th>getOrderSync (ms)</th>
+<th>getOrderFlow (ms)</th>
+<th>Improvement (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>3,116</td>
+<td>375</td>
+<td>87.97</td>
+</tr>
+<tr>
+<td>50</td>
+<td>15,360</td>
+<td>1,306</td>
+<td>91.50</td>
+</tr>
+<tr>
+<td>100</td>
+<td>30,615</td>
+<td>2,228</td>
+<td>92.72</td>
+</tr>
+<tr>
+<td>500</td>
+<td>152,690</td>
+<td>9,851</td>
+<td>93.55</td>
+</tr>
+<tr>
+<td>1,000</td>
+<td>305,359</td>
+<td>19,321</td>
+<td>93.67</td>
+</tr>
+</tbody>
+</table>
+<p>위 표는 동기 방식(<code>getOrderSync</code>)과 비동기 방식(<code>getOrderFlow</code>)의 성능을 비교한 결과입니다. <code>getOrderFlow</code>를 사용한 비동기 방식은 모든 요청을 동시에 처리함으로써 동기 방식에 비해 큰 성능 개선을 보여주고 있습니다. 특히, 요청 수가 많을수록 비동기 방식의 성능 향상 효과가 더욱 두드러집니다. 이는 동기 방식이 요청 수에 비례하여 선형적으로 시간이 증가하는 반면, 비동기 방식은 병렬 처리를 통해 시간 증가를 억제할 수 있기 때문입니다.</p>
+<h2><span id="스레드와-코루틴-경량-스레드의-강점">스레드와 코루틴: 경량 스레드의 강점</span></h2>
+<p>Kotlin 문서에서는 코루틴을 경량 스레드라고 합니다. 이는 대부분의 스레드와 마찬가지로 코루틴이 프로세스가 실행할 명령어 집합의 실행을 정의하기 때문입니다. 또한 코루틴은 스레드와 비슷한 라이프 사이클을 갖고 있습니다.</p>
+<p>코루틴은 스레드 안에서 실행됩니다. 하나의 스레드에는 여러 개의 코루틴이 있을 수 있지만, 주어진 시간에 하나의 스레드에서는 하나의 명령만 실행될 수 있습니다. 즉, 같은 스레드에 10개의 코루틴이 있다면 해당 시점에는 하나의 코루틴만 실행됩니다.</p>
+<p>스레드와 코루틴의 가장 큰 차이점은 코루틴이 빠르고 적은 비용으로 생성될 수 있다는 점입니다. 수천 개의 코루틴도 쉽게 생성할 수 있으며, 수천 개의 스레드를 생성하는 것보다 빠르고 자원도 훨씬 적게 사용합니다.</p>
+<h3><span id="코루틴-생성-테스트">코루틴 생성 테스트</span></h3>
+<p>다음 코드는 코루틴을 생성하는 데 필요한 스레드 수를 테스트하는 예제입니다. 이 테스트를 통해 코루틴이 얼마나 적은 리소스로 동작하는지 확인할 수 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 코드 출처 코틀린 동시성 프로그래밍 </span></span><br><span class="line">suspend <span class="function"><span class="keyword">fun</span> <span class="title">createCoroutines</span><span class="params">(amount: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> jobs = ArrayList&lt;Job&gt;()</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1.</span>.amount) &#123;</span><br><span class="line">        jobs += GlobalScope.launch &#123;</span><br><span class="line">            delay(<span class="number">1000</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    jobs.forEach &#123; it.join() &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DelicateCoroutinesApi</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `코루틴 생성 테스트`<span class="params">()</span></span> = runBlocking &#123;</span><br><span class="line">    println(<span class="string">"<span class="subst">$&#123;Thread.activeCount()&#125;</span> thread active at the start"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        createCoroutines(<span class="number">100</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    println(<span class="string">"<span class="subst">$&#123;Thread.activeCount()&#125;</span> thread active at the end"</span>)</span><br><span class="line">    println(<span class="string">"Took <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>다음은 테스트 결과입니다. 다양한 수의 코루틴을 생성했을 때 사용되는 스레드 수를 보여줍니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_003.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>amount</th>
+<th>시작 시 활성 스레드 수</th>
+<th>종료 시 활성 스레드 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>4</td>
+<td>7</td>
+</tr>
+<tr>
+<td>100</td>
+<td>4</td>
+<td>15</td>
+</tr>
+<tr>
+<td>500</td>
+<td>4</td>
+<td>15</td>
+</tr>
+<tr>
+<td>1,000</td>
+<td>4</td>
+<td>15</td>
+</tr>
+<tr>
+<td>5,000</td>
+<td>4</td>
+<td>15</td>
+</tr>
+<tr>
+<td>10,000</td>
+<td>4</td>
+<td>15</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td>4</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<p>위 결과에서 알 수 있듯이, 코루틴을 많이 생성해도 사용되는 스레드 수는 크게 증가하지 않습니다. 시작 시에는 4개의 스레드가 활성화되어 있었고, 종료 시에도 최대 15개의 스레드만 활성화되었습니다. 이는 코루틴이 얼마나 적은 리소스를 사용하여 병렬 작업을 수행할 수 있는지를 잘 보여줍니다. 위 Flow 처리에서도 요청 수가 10에서 1,000일 때 4개의 스레드만 필요합니다.</p>
+<p>코루틴은 스레드와 비교했을 때 훨씬 가볍고, 생성 및 전환 비용이 낮습니다. 이러한 특성 덕분에 코루틴은 높은 동시성을 요구하는 애플리케이션에서 매우 유용합니다. 동기 방식에서 수천 개의 스레드를 생성하는 것은 비효율적이고 리소스 낭비가 심하지만, 코루틴을 사용하면 동일한 작업을 더 적은 리소스로 처리할 수 있습니다.</p>
+<h2><span id="flow-concurrency-size-조절">Flow Concurrency Size 조절</span></h2>
+<h3><span id="concurrency-기본-개념">Concurrency 기본 개념</span></h3>
+<p>Concurrency(동시성)은 여러 작업이 동시에 진행되는 것을 의미합니다. 컴퓨팅에서 이는 여러 작업이 동시에 실행되거나, 하나의 작업이 다른 작업의 실행 중간에 개입하는 것을 의미합니다. 코루틴을 활용한 동시성은, 실제로 동시에 실행되지 않더라도, 작업이 비동기적으로 실행되는 것처럼 보이게 만듭니다. 이는 특히 IO 바운드 작업에서 효과적입니다.</p>
+<p>Kotlin의 <code>flatMapMerge</code>에서 <code>concurrency</code> 파라미터는 동시에 병렬로 실행할 최대 코루틴 수를 설정합니다. 이 파라미터를 통해 한 번에 얼마나 많은 코루틴이 실행될 수 있는지를 제어할 수 있습니다.</p>
+<h3><span id="concurrency-size-성능-테스트">Concurrency Size 성능 테스트</span></h3>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@OptIn(FlowPreview::class)</span></span><br><span class="line">suspend <span class="function"><span class="keyword">fun</span> <span class="title">getOrderFlow</span><span class="params">(orderRequests: <span class="type">List</span>&lt;<span class="type">OrderRequest</span>&gt;, concurrency: <span class="type">Int</span>)</span></span>: List&lt;OrderResponse&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> orderRequests</span><br><span class="line">        .asFlow()</span><br><span class="line">        <span class="comment">// concurrency 동시 실행할 코루틴 수 제한, </span></span><br><span class="line">        .flatMapMerge(concurrency) &#123; request -&gt;</span><br><span class="line">            flow &#123;</span><br><span class="line">                orderClient</span><br><span class="line">                    .getOrder(request)</span><br><span class="line">                    .onFailure &#123; log.error(<span class="string">"Failure: <span class="variable">$it</span>"</span>) &#125;</span><br><span class="line">                    .onSuccess &#123;</span><br><span class="line">                        log.info(<span class="string">"Success: <span class="variable">$it</span>"</span>)</span><br><span class="line">                        emit(it)</span><br><span class="line">                    &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .toList()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>flatMapMerge의 concurrency 파라미터는 동시에 실행되는 코루틴 수를 테스트 코드에서 지정할 수 있도록 코드를 수정합니다. 지정하지 않으면 기본값은 <code>DEFAULT_CONCURRENCY</code>로 설정됩니다. 위 예제에서는 16으로 지정된 상태입니다. 다음은 1,000개의 요청을 처리할 때 다양한 <code>concurrency</code> 값에 따른 성능 테스트 결과입니다</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_004.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>Concurrency</th>
+<th>Time (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16</td>
+<td>19,278</td>
+</tr>
+<tr>
+<td>50</td>
+<td>6,174</td>
+</tr>
+<tr>
+<td>100</td>
+<td>3,146</td>
+</tr>
+<tr>
+<td>200</td>
+<td>1,612</td>
+</tr>
+<tr>
+<td>300</td>
+<td>1,312</td>
+</tr>
+<tr>
+<td>400</td>
+<td>1,013</td>
+</tr>
+<tr>
+<td>500</td>
+<td>720</td>
+</tr>
+</tbody>
+</table>
+<p>위 결과에서 알 수 있듯이, <code>concurrency</code> 값을 늘릴수록 전체 처리 시간이 줄어듭니다. 특히, <code>concurrency</code> 값을 16에서 500까지 늘렸을 때, 전체 처리 시간이 19,278ms에서 720ms로 크게 감소한 것을 확인할 수 있습니다. 이는 <code>concurrency</code> 값을 적절히 설정하면 성능을 크게 향상시킬 수 있다는 것을 보여줍니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_006.png" alt=""></p>
+<p>1,000개의 요청을 처리하는 데 있어, 동기식 방식은 305,359ms가 소요되었으며 Flow Concurrency 16을 사용하면 처리 시간이 19,321ms로 줄어들어 약 93.67%의 성능 향상을 보였습니다. Concurrency 500으로 설정하면 처리 시간이 720ms로 더 향상됩니다. 이는 코루틴이 적은 양의 스레드로도 많은 데이터를 효율적으로 처리할 수 있음을 보여줍니다.</p>
+<h3><span id="concurrency-size-성능-최적화-시-고려-사항">Concurrency Size 성능 최적화 시 고려 사항</span></h3>
+<p>성능은 크게 향상됐지만 무턱대고 concurrency 값을 늘리는 것은 해결책이 아닙니다. concurrency 값을 너무 크게 설정하면 오히려 시스템 자원을 과도하게 사용하게 되어 성능 저하가 발생할 수 있습니다. 따라서 여러 코루틴을 사용하는 것은 자원을 더 많이 사용하게 되므로, 각자의 리소스와 환경에 맞는 concurrency 값을 적절하게 설정하는 것이 중요합니다. 시스템의 CPU, 메모리, 네트워크 대역폭 등을 고려하여 최적의 concurrency 값을 설정해야 합니다.</p>
+<p>또한 배치 애플리케이션처럼 특정 작업만 하고 애플리케이션이 종료되는 환경에서는 concurrency 값을 높여 처리량을 극대화하는 것이 좋습니다. 이런 경우에는 단기간에 최대한 많은 작업을 처리하는 것이 목표이므로, 가능한 한 높은 concurrency 값을 설정하여 성능을 최적화할 수 있습니다.</p>
+<h2><span id="출처">출처</span></h2>
+<ul>
+<li><a href="https://m.yes24.com/Goods/Detail/90338766" rel="external nofollow noopener noreferrer" target="_blank">코틀린 동시성 프로그래밍</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/kotlin-pattern/" data-toggle="tooltip" data-placement="top" title="Kotlin 자주 사용하는 패턴 정리">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">시나리오</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">코루틴 Flow를 이용한 성능 개선</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">성능 테스트</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">스레드와 코루틴: 경량 스레드의 강점</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">코루틴 생성 테스트</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Flow Concurrency Size 조절</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">Concurrency 기본 개념</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Concurrency Size 성능 테스트</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Concurrency Size 성능 최적화 시 고려 사항</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#null"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">출처</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                          <a class="tag" href="/tags/#Coroutines" title="Coroutines">Coroutines</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js" repo="cheese10yun/blog-comment" issue-term="title" label="Comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/cheese10yun" rel="external nofollow noopener noreferrer">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yun 2024 
+                    <br>
+                    Theme by <a href="http://huangxuan.me" rel="external nofollow noopener noreferrer" target="_blank">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org" rel="external nofollow noopener noreferrer" target="_blank">BeanTech</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://cheese10yun.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90907312-1';
+    var _gaDomain = 'https://cheese10yun.github.io/';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async></script>
+<!-- Image to hack wechat -->
+<img src="https://cheese10yun.github.io/img/icon_wechat.png" width="0" height="0">
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

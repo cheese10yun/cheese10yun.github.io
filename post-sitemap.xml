@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/kotlin-flow/</loc>
+        <lastmod>2024-05-22T17:17:30.070Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/kotlin-pattern/</loc>
         <lastmod>2024-05-06T17:03:57.519Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1320,7 +1328,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/github-project-part3/</loc>
+        <loc>https://cheese10yun.github.io/github-proejct-part2/</loc>
         <lastmod>2021-06-17T09:55:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1328,7 +1336,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/github-proejct-part2/</loc>
+        <loc>https://cheese10yun.github.io/github-project-part3/</loc>
         <lastmod>2021-06-17T09:55:01.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1352,7 +1360,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
+        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
         <lastmod>2020-02-11T14:42:25.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -1360,7 +1368,7 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
+        <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
         <lastmod>2020-02-11T14:42:25.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
