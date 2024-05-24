@@ -15,9 +15,9 @@
     <meta name="naver-site-verification" content="577f124124c409aa149a9b0163eca296de5d4533">
 
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="Kotlin 코루틴으로 성능 개선 - Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
+    <meta property="og:title" content="코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
     <meta property="og:url" content="https://cheese10yun.github.io/kotlin-flow/">
-    <meta property="og:description" content="Kotlin 코루틴으로 성능 개선 - Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
+    <meta property="og:description" content="코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그">
     <meta property="og:image" content="">
     <script data-ad-client="ca-pub-5813739623204880" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
@@ -32,7 +32,7 @@
 
     <title>
         
-          Kotlin 코루틴으로 성능 개선 - Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그
+          코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리 - Yun Blog | 기술 블로그
         
     </title>
 
@@ -117,7 +117,7 @@
                               <a class="tag" href="/tags/#Coroutines" title="Coroutines">Coroutines</a>
                             
                         </div>
-                        <h1>Kotlin 코루틴으로 성능 개선 - Flow를 활용한 다중 요청 처리</h1>
+                        <h1>코루틴을 이용한 성능 개선 Flow를 활용한 다중 요청 처리</h1>
                         <h2 class="subheading">Kotlin 코루틴으로 효율적인 대규모 요청 처리</h2>
                         <span class="meta">
                             Posted by Yun on
@@ -429,8 +429,50 @@
 </tbody>
 </table>
 <p>위 결과에서 알 수 있듯이, <code>concurrency</code> 값을 늘릴수록 전체 처리 시간이 줄어듭니다. 특히, <code>concurrency</code> 값을 16에서 500까지 늘렸을 때, 전체 처리 시간이 19,278ms에서 720ms로 크게 감소한 것을 확인할 수 있습니다. 이는 <code>concurrency</code> 값을 적절히 설정하면 성능을 크게 향상시킬 수 있다는 것을 보여줍니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_006.png" alt=""></p>
-<p>1,000개의 요청을 처리하는 데 있어, 동기식 방식은 305,359ms가 소요되었으며 Flow Concurrency 16을 사용하면 처리 시간이 19,321ms로 줄어들어 약 93.67%의 성능 향상을 보였습니다. Concurrency 500으로 설정하면 처리 시간이 720ms로 더 향상됩니다. 이는 코루틴이 적은 양의 스레드로도 많은 데이터를 효율적으로 처리할 수 있음을 보여줍니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/result_007.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>Rows</th>
+<th>getOrderSync (ms)</th>
+<th>getOrderFlow Concurrency 16 (ms)</th>
+<th>getOrderFlow Concurrency 500 (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>3,116</td>
+<td>375</td>
+<td>345</td>
+</tr>
+<tr>
+<td>50</td>
+<td>15,360</td>
+<td>1,306</td>
+<td>352</td>
+</tr>
+<tr>
+<td>100</td>
+<td>30,615</td>
+<td>2,228</td>
+<td>347</td>
+</tr>
+<tr>
+<td>500</td>
+<td>152,690</td>
+<td>9,851</td>
+<td>388</td>
+</tr>
+<tr>
+<td>1,000</td>
+<td>305,359</td>
+<td>19,321</td>
+<td>728</td>
+</tr>
+</tbody>
+</table>
+<p>1,000개의 요청을 처리하는 데 있어, 동기식 방식은 305,359ms가 소요되었으며, Flow Concurrency 16을 사용하면 처리 시간이 19,321ms로 줄어들어 약 93.67%의 성능 향상을 보였습니다. Concurrency를 500으로 설정하면 처리 시간이 728ms로 더욱 향상됩니다. Concurrency 값을 적절히 설정하면 성능을 크게 향상시킬 수 있음을 확인할 수 있습니다. 또 코루틴은 적은 양의 스레드로도 많은 데이터를 효율적으로 처리할 수 있음을 보여줍니다. 이러한 결과는 적절한 Concurrency 설정을 통해 애플리케이션의 성능을 극대화할 수 있음을 시사합니다.</p>
 <h3><span id="concurrency-size-성능-최적화-시-고려-사항">Concurrency Size 성능 최적화 시 고려 사항</span></h3>
 <p>성능은 크게 향상됐지만 무턱대고 concurrency 값을 늘리는 것은 해결책이 아닙니다. concurrency 값을 너무 크게 설정하면 오히려 시스템 자원을 과도하게 사용하게 되어 성능 저하가 발생할 수 있습니다. 따라서 여러 코루틴을 사용하는 것은 자원을 더 많이 사용하게 되므로, 각자의 리소스와 환경에 맞는 concurrency 값을 적절하게 설정하는 것이 중요합니다. 시스템의 CPU, 메모리, 네트워크 대역폭 등을 고려하여 최적의 concurrency 값을 설정해야 합니다.</p>
 <p>또한 배치 애플리케이션처럼 특정 작업만 하고 애플리케이션이 종료되는 환경에서는 concurrency 값을 높여 처리량을 극대화하는 것이 좋습니다. 이런 경우에는 단기간에 최대한 많은 작업을 처리하는 것이 목표이므로, 가능한 한 높은 concurrency 값을 설정하여 성능을 최적화할 수 있습니다.</p>
