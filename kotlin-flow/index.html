@@ -253,20 +253,20 @@
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getOrderFlow</span><span class="params">()</span></span>: <span class="built_in">Unit</span> = runBlocking &#123;</span><br><span class="line">        <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">        <span class="keyword">val</span> flatMapMergeStudy = FlatMapMergeStudy()</span><br><span class="line">        <span class="keyword">val</span> orderRequests = (<span class="number">1.</span><span class="number">.100</span>).map &#123; OrderRequest(<span class="string">"<span class="variable">$it</span>"</span>) &#125;</span><br><span class="line"></span><br><span class="line">        stopWatch.start()</span><br><span class="line">        <span class="keyword">val</span> response = flatMapMergeStudy.getOrderFlow(orderRequests)</span><br><span class="line">        stopWatch.stop()</span><br><span class="line">        <span class="comment">// 2,228ms</span></span><br><span class="line">        println(stopWatch.totalTimeMillis)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>이론상 100개의 요청을 동시에 처리하면 300ms 정도의 시간이 소요되어야 하지만, 실제로는 2,228ms가 소요됩니다. 이는 다음과 같은 요인들로 인한 것입니다.</p>
 <ol>
-<li><strong>코루틴 생성과 컨텍스트 전환 오버헤드</strong>:
+<li><strong>코루틴 생성과 컨텍스트 전환 오버헤드</strong>
 <ul>
 <li>코루틴을 생성하고 실행할 때 발생하는 오버헤드는 무시할 수 없는 시간 지연을 초래할 수 있습니다.</li>
 <li>특히, <code>flatMapMerge</code>를 사용하여 다수의 코루틴을 병렬로 실행할 때, 각 코루틴의 생성과 컨텍스트 전환 비용이 누적되어 총 실행 시간이 증가할 수 있습니다.</li>
 </ul>
 </li>
-<li><strong><code>flatMapMerge</code>의 병합 과정</strong>:
+<li><strong><code>flatMapMerge</code>의 병합 과정</strong>
 <ul>
 <li><code>flatMapMerge</code>는 여러 플로우를 병합하면서 각 플로우의 결과를 수집합니다.</li>
 <li>이 과정에서 발생하는 추가적인 작업들, 예를 들어 플로우의 결과를 수집하고 병합하는 오버헤드가 존재할 수 있습니다.</li>
 <li>이 오버헤드는 특히 플로우의 개수가 많을 때 더 크게 작용합니다.</li>
 </ul>
 </li>
-<li><strong><code>emit</code> 호출과 플로우 수집의 지연</strong>:
+<li><strong><code>emit</code> 호출과 플로우 수집의 지연</strong>
 <ul>
 <li>각 플로우에서 <code>emit</code>을 호출하고, 최종적으로 <code>toList</code>로 수집하는 과정에서 발생하는 지연도 무시할 수 없습니다.</li>
 <li><code>emit</code>은 비동기적으로 데이터를 내보내는 작업이므로, 여러 번 호출될 때 지연이 누적될 수 있습니다.</li>
