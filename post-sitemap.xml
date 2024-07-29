@@ -8,6 +8,14 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-guide-directory/</loc>
+        <lastmod>2024-07-29T15:55:52.354Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/kotlin-flow/</loc>
         <lastmod>2024-05-25T00:21:33.303Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1162,14 +1170,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
         <lastmod>2021-06-17T10:02:42.000Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-guide-directory/</loc>
-        <lastmod>2021-06-17T10:02:38.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
