@@ -8,8 +8,24 @@
     </url>
 
     <url>
+        <loc>https://cheese10yun.github.io/mysql-connection-pool-timeout/</loc>
+        <lastmod>2024-10-20T16:19:33.462Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/kotlin-flow/</loc>
         <lastmod>2024-10-17T12:54:27.475Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-batch-update-performance/</loc>
+        <lastmod>2024-10-17T12:26:21.213Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -106,14 +122,6 @@
     <url>
         <loc>https://cheese10yun.github.io/https/</loc>
         <lastmod>2023-09-13T15:14:53.364Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-batch-update-performance/</loc>
-        <lastmod>2023-09-05T14:57:09.590Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
