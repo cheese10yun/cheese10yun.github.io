@@ -346,12 +346,16 @@
 <li><strong>idleConnections</strong>: 0 - 유휴 상태의 커넥션은 없습니다.</li>
 <li><strong>threadsAwaitingConnection</strong>: 48 - 48개의 스레드가 커넥션을 기다리고 있습니다.</li>
 <li><strong>maximumPoolSize</strong>: 200 - 최대 커넥션 풀 크기가 200으로 설정되었습니다.</li>
-<li><strong>minimumIdle</strong>: 200 - 최소 유휴 커넥션이 200으로 설정되어 있어, 초기에 모든 커넥션이 생성된 상태입니다.</li>
+<li><strong>minimumIdle</strong>: 10 - 최소 유휴 커넥션이 10으로 설정되어 있어, 초기에 모든 커넥션이 생성된 상태입니다.</li>
 </ul>
 <p>이 설정을 통해 커넥션 풀은 트래픽이 적을 때에는 최소한의 자원만 사용하고, 트래픽이 증가할 때에는 최대 200개의 커넥션까지 확장하여 요청을 처리할 수 있습니다. 로그에서 볼 수 있듯이 TPS가 높은 상황에서도 커넥션 풀이 충분히 확장되었고, 전체적인 시스템 성능에는 큰 영향을 미치지 않았습니다. 이를 통해 시스템은 높은 TPS 환경에서도 안정적이고 일관된 성능을 제공할 수 있음을 확인할 수 있습니다.</p>
 <h2><span id="성능-테스트-결과-분석-tps-감소-상황에서의-커넥션-풀-동작">성능 테스트 결과 분석: TPS 감소 상황에서의 커넥션 풀 동작</span></h2>
 <p>아래 설정으로 TPS가 낮아진 상황에서 성능 테스트를 진행했습니다.</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    datasource:</span></span><br><span class="line"><span class="attr">        hikari:</span></span><br><span class="line"><span class="attr">            maximum-pool-size:</span> <span class="number">200</span>           <span class="comment"># 최대 커넥션 수</span></span><br><span class="line"><span class="attr">            minimum-idle:</span> <span class="number">10</span>                 <span class="comment"># 최소 유휴 커넥션 수</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">    datasource:</span></span><br><span class="line"><span class="attr">        hikari:</span></span><br><span class="line"><span class="attr">            maximum-pool-size:</span> <span class="number">200</span>           <span class="comment"># 최대 커넥션 수</span></span><br><span class="line"><span class="attr">            minimum-idle:</span> <span class="number">10</span>                 <span class="comment"># 최소 유휴 커넥션 수</span></span><br><span class="line"><span class="attr">            max-lifetime:</span> <span class="number">300000</span>             <span class="comment"># 커넥션이 유지될 최대 시간 (밀리초)</span></span><br><span class="line"><span class="attr">            idle-timeout:</span> <span class="number">250000</span>             <span class="comment"># 유휴 커넥션이 유지될 최대 시간 (밀리초)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>max-lifetime</strong>: 기본값은 1800000ms (30분)입니다. 각 커넥션이 일정 시간 동안만 유지된 후 새 커넥션으로 교체되도록 하여, 오래된 커넥션으로 인해 발생할 수 있는 문제를 방지합니다. 설정된 시간(예: 300,000ms = 5분) 이후에 커넥션은 제거되고 새로운 커넥션으로 대체됩니다.</li>
+<li><strong>idle-timeout</strong>: 기본값은 600000ms (10분)입니다. 유휴 상태의 커넥션이 설정된 시간 동안 사용되지 않으면 커넥션 풀에서 제거됩니다. 트래픽이 감소한 상황에서는 유휴 커넥션이 줄어들어 리소스가 절약됩니다. 위 설정에서는 250,000ms 동안 유휴 상태인 커넥션을 유지하고 이후에 해제하도록 설정했습니다.</li>
+</ul>
 <h3><span id="테스트-결과-분석">테스트 결과 분석</span></h3>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-coroutine/images/mysql-connection-pool-1-3.png" alt=""></p>
 <ul>
@@ -376,14 +380,16 @@
 </ul>
 <h3><span id="로그-분석">로그 분석</span></h3>
 <ul>
-<li><strong>totalConnections</strong>: 17 - 현재 총 17개의 커넥션이 생성되었습니다. 이전에 높은 트래픽으로 인해 확장되었던 커넥션 풀의 크기가 트래픽 감소에 따라 줄어들고 있습니다.</li>
-<li><strong>activeConnections</strong>: 7 - 활성 상태의 커넥션이 7개로 줄어들었습니다.</li>
-<li><strong>idleConnections</strong>: 10 - 최소 유휴 커넥션 설정(minimumIdle)이 10이므로, 트래픽이 낮을 때 10개의 유휴 커넥션을 유지합니다.</li>
-<li><strong>threadsAwaitingConnection</strong>: 0 - 커넥션을 기다리는 스레드가 없으며, 요청이 대기 없이 처리되고 있습니다.</li>
-<li><strong>maximumPoolSize</strong>: 200 - 최대 커넥션 풀 크기가 200으로 설정되어 있지만, 현재 TPS 수준에서는 모든 커넥션을 사용할 필요가 없어 크기가 줄어들었습니다.</li>
-<li><strong>minimumIdle</strong>: 10 - 최소 유휴 커넥션이 10으로 유지되어 트래픽이 적을 때 불필요한 커넥션 자원을 절약합니다.</li>
+<li><strong>totalConnections</strong>: 15 - 현재 총 15개의 커넥션이 생성되었습니다. 트래픽 감소에 따라 필요 없는 커넥션이 자동으로 해제되며, 풀 크기가 줄어든 상태입니다.</li>
+<li><strong>activeConnections</strong>: 6 - 현재 활성 상태로 사용 중인 커넥션이 6개입니다.</li>
+<li><strong>idleConnections</strong>: 9 - 최소 유휴 커넥션 설정(<code>minimumIdle</code>)이 10이므로, 트래픽이 줄어든 상황에서 9개의 유휴 커넥션이 유지됩니다.</li>
+<li><strong>threadsAwaitingConnection</strong>: 0 - 대기 중인 스레드가 없어 모든 요청이 즉시 처리되고 있습니다.</li>
+<li><strong>maximumPoolSize</strong>: 200 - 최대 커넥션 풀 크기가 200으로 설정되어 있지만, 현재 트래픽 수준에서는 전체를 사용할 필요 없이 적정 개수의 커넥션만 유지하고 있습니다.</li>
+<li><strong>minimumIdle</strong>: 10 - 최소 유휴 커넥션 수가 10으로 설정되어, 트래픽이 적을 때도 최소한의 커넥션을 유지해 자원을 절약합니다.</li>
+<li><strong>maxLifetime</strong>: 300000 (밀리초) - 각 커넥션이 5분(300초) 동안 유지된 후 자동으로 갱신되도록 설정되어 있어, 오래된 커넥션으로 인한 문제를 방지하고 안정적인 연결 상태를 보장합니다.</li>
+<li><strong>idleTimeout</strong>: 250000 (밀리초) - 유휴 상태의 커넥션이 4분 10초 동안 사용되지 않으면 풀에서 해제됩니다. 이를 통해 트래픽이 감소한 상황에서는 유휴 커넥션을 줄여 리소스를 절약할 수 있습니다.</li>
 </ul>
-<p>이 테스트 결과는 TPS가 줄어들면 <code>totalConnections</code>도 줄어드는 것을 보여줍니다. <code>minimum-idle</code> 설정 덕분에 커넥션 풀이 10개의 유휴 커넥션을 유지하고, 나머지 불필요한 커넥션은 자동으로 해제되어 리소스를 효율적으로 관리합니다. 이를 통해 시스템은 트래픽 변화에 따라 유연하게 대응할 수 있으며, 불필요한 자원 낭비를 최소화할 수 있습니다.</p>
+<p>이 테스트 결과는 TPS가 줄어들면 <code>totalConnections</code>도 함께 감소하며 리소스가 효율적으로 관리되는 모습을 보여줍니다. <code>minimum-idle</code> 설정을 통해 커넥션 풀이 최소 10개의 유휴 커넥션을 유지하고, <code>idleTimeout</code>이 설정된 시간 동안 유휴 상태인 커넥션을 자동으로 해제하여 불필요한 자원 낭비를 방지합니다. 또한 <code>maxLifetime</code> 설정으로 각 커넥션의 유지 시간을 제한하여 일정 시간이 지나면 커넥션이 새롭게 갱신되도록 함으로써 오래된 커넥션으로 인한 문제를 예방합니다. 이를 통해 시스템은 트래픽 변화에 유연하게 대응하며 안정적으로 자원을 관리할 수 있는 구조를 갖추게 됩니다.</p>
 <h2><span id="결론">결론</span></h2>
 <p>HikariCP를 사용한 커넥션 풀 설정은 트래픽 변화에 유연하게 대응할 수 있으며, 성능 최적화를 위해 중요한 도구가 됩니다. 적절한 <code>maximum-pool-size</code>와 <code>minimum-idle</code> 설정을 통해 고TPS 환경에서도 안정적이고 일관된 응답 시간을 제공할 수 있으며, 리소스를 효율적으로 관리하여 비용 절감 효과도 기대할 수 있습니다. 이를 통해 Spring Boot 애플리케이션은 다양한 트래픽 상황에서 성능을 최적화하며, 사용자 경험을 크게 개선할 수 있습니다.</p>
 
