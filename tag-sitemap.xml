@@ -3,6 +3,13 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/Redis/</loc>
+        <lastmod>2024-11-17T14:23:54.348Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Tool/</loc>
         <lastmod>2024-11-16T06:38:38.317Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -236,13 +243,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Gateway/</loc>
         <lastmod>2023-07-12T01:09:09.578Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Redis/</loc>
-        <lastmod>2021-07-14T16:49:29.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
