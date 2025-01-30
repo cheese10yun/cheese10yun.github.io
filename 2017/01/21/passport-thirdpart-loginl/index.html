@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Passport를 이용한 네이버, 카카오, 페이스북 로그인 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n이전에 Passport 간단로그인 Passport 데이터베이스 연동을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 페이스북, 카카오, 네이버 로그인 및 회원 가입 기능을 포스팅해보겠습니다. Passport에 대해서 기초지식이 없으시며 앞서 포스티한 주제를 보시는 것을 권장드립니다. 또한 GitHub develop-passport-social-login에 올려져있는 전체 소스를 보는 것을 권장드립니다.\nDevelopers 등록\n본 포스팅에서는 개발자 등록은 다루지 않겠습니다. 아래의 작업을 하기위해서는 네이버, 카카오, 페이스북 개발자 센터에서 앱설정을 완료해주세요. 본 포스팅은 Passport 로직에 집중하겠습니다.\n필수 모듈설치 및 require123npm install passport-facebook --savenpm install passport-kakao --savenpm install passport-naver --save\n\n\nindex.js(router)설치한 모듈을 require 시켜줍니다.\n123var NaverStrategy = require(&#x27;passport-naver&#x27;).Strategy;var FacebookStrategy = require(&#x27;passport-facebook&#x27;).Strategy;var KakaoStrategy = require(&#x27;passport-kakao&#x27;).Strategy;\n\nDevelopers 정보 등록더이상 데이터베이스 정보만 갖고 있지 않아 db_info.js 에서 secret.js  변경했습니다. db_info 로 데이터베이스 접근을 진행하겠습니다. 자세한 내용은 아래에서 다시 설명드리겠습니다.\n123456789101112131415161718192021222324252627282930module.exports = &#123;  &#x27;secret&#x27; :  &#x27;&#x27;,  &#x27;db_info&#x27;: &#123;    local: &#123; // localhost    ...    &#125;,    real: &#123; // real    ...    &#125;,    dev: &#123; // dev    ...    &#125;  &#125;,  &#x27;federation&#x27; : &#123;    &#x27;naver&#x27; : &#123;      &#x27;client_id&#x27; : &#x27;&#x27;,      &#x27;secret_id&#x27; : &#x27;&#x27;,      &#x27;callback_url&#x27; : &#x27;/auth/login/naver/callback&#x27;    &#125;,    &#x27;facebook&#x27; : &#123;      &#x27;client_id&#x27; : &#x27;&#x27;,      &#x27;secret_id&#x27; : &#x27;&#x27;,      &#x27;callback_url&#x27; : &#x27;/auth/login/facebook/callback&#x27;    &#125;,    &#x27;kakao&#x27; : &#123;      &#x27;client_id&#x27; : &#x27;&#x27;,      &#x27;callback_url&#x27; : &#x27;/auth/login/kakao/callback&#x27;    &#125;  &#125;&#125;;\n\nfederation 객체에 네이버, 카카오, 페이스북 Developers 정보를 입력합니다.  secret.js  민감한 정보를 갖고있는 파일들은 프로젝트 디렉토리에 포함시키지 않는 것이 바람직합니다. 깃허브에는 소스코드를 공개하기 위해서 업로드하긴 했습니다… 안티패턴도 좋은 경험 입니다.\n회원 가입 페이지login.hbs &lt;a href&gt; 태그에 로그인 처리를 담당할 URL을 입력합니다. 자세한 로직은 아래에서 설명하겠습니다.\n1234567891011121314151617181920212223242526&lt;form action=&quot;/login&quot; method=&quot;post&quot; name=&quot;frm_login&quot; id=&quot;frm_login&quot;&gt;    &lt;div class=&quot;modal-dialog&quot;&gt;        &lt;div class=&quot;modal-content&quot;&gt;            &lt;div class=&quot;modal-header&quot;&gt;                &lt;h1 class=&quot;text-center&quot;&gt;Node JS Passport Login&lt;/h1&gt;            &lt;/div&gt;            &lt;div class=&quot;modal-body&quot;&gt;                &lt;div class=&quot;form-group&quot;&gt;                    &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; class=&quot;form-control input-lg&quot; placeholder=&quot;ID&quot; required=&quot;required&quot; autocomplete=&quot;off&quot; /&gt;                &lt;/div&gt;                &lt;div class=&quot;errorTxt&quot;&gt;&lt;/div&gt;                &lt;div class=&quot;form-group&quot;&gt;                    &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; class=&quot;form-control input-lg&quot; placeholder=&quot;Password&quot; required=&quot;required&quot; autocomplete=&quot;off&quot; /&gt;                &lt;/div&gt;                &lt;div class=&quot;errorTxt&quot;&gt;&lt;/div&gt;                &lt;div class=&quot;form-group&quot;&gt;                    &lt;input type=&quot;submit&quot; class=&quot;btn btn-block btn-lg btn-default btn_login&quot; value=&quot;Login&quot; /&gt;                    &lt;a href=&quot;/auth/login/facebook&quot; class=&quot;btn btn-block btn-lg btn-primary btn_login&quot;&gt;FaceBook&lt;/a&gt;                    &lt;a href=&quot;/auth/login/kakao&quot; class=&quot;btn btn-block btn-lg btn-warning btn_login&quot;&gt;KaKao&lt;/a&gt;                    &lt;a href=&quot;/auth/login/naver&quot; class=&quot;btn btn-block btn-lg btn-success btn_login&quot;&gt;Naver&lt;/a&gt;                &lt;/div&gt;            &lt;/div&gt;        &lt;/div&gt;    &lt;/div&gt;&lt;/form&gt;\n\nPassport 로직 구현index.js(router)네이버 로그인\n123456789101112131415161718var secret_config = require(&#x27;../commons/secret&#x27;);passport.use(new NaverStrategy(&#123;    clientID: secret_config.federation.naver.client_id,    clientSecret: secret_config.federation.naver.secret_id,    callbackURL: secret_config.federation.naver.callback_url  &#125;,  function (accessToken, refreshToken, profile, done) &#123;    var _profile = profile._json;    loginByThirdparty(&#123;      &#x27;auth_type&#x27;: &#x27;naver&#x27;,      &#x27;auth_id&#x27;: _profile.id,      &#x27;auth_name&#x27;: _profile.nickname,      &#x27;auth_email&#x27;: _profile.email    &#125;, done);  &#125;));\n\nindex.js(router)카카오 로그인\n123456789101112131415passport.use(new KakaoStrategy(&#123;    clientID: secret_config.federation.kakao.client_id,    callbackURL: secret_config.federation.kakao.callback_url  &#125;,  function (accessToken, refreshToken, profile, done) &#123;    var _profile = profile._json;    loginByThirdparty(&#123;      &#x27;auth_type&#x27;: &#x27;kakao&#x27;,      &#x27;auth_id&#x27;: _profile.id,      &#x27;auth_name&#x27;: _profile.properties.nickname,      &#x27;auth_email&#x27;: _profile.id    &#125;, done);  &#125;));\n\nindex.js(router) 페이스북 로그인\n1234567891011121314151617passport.use(new FacebookStrategy(&#123;    clientID: secret_config.federation.facebook.client_id,    clientSecret: secret_config.federation.facebook.secret_id,    callbackURL: secret_config.federation.facebook.callback_url,    profileFields: [&#x27;id&#x27;, &#x27;email&#x27;, &#x27;gender&#x27;, &#x27;link&#x27;, &#x27;locale&#x27;, &#x27;name&#x27;, &#x27;timezone&#x27;,      &#x27;updated_time&#x27;, &#x27;verified&#x27;, &#x27;displayName&#x27;]  &#125;, function (accessToken, refreshToken, profile, done) &#123;    var _profile = profile._json;    loginByThirdparty(&#123;      &#x27;auth_type&#x27;: &#x27;facebook&#x27;,      &#x27;auth_id&#x27;: _profile.id,      &#x27;auth_name&#x27;: _profile.name,      &#x27;auth_email&#x27;: _profile.id    &#125;, done);  &#125;));\n\n\n\naccessToken : OAtuh tokken을 이용해서 네이버, 카카오, 페이스북 오픈 API를 호출합니다.\nrefreshToken : tokken이 만료되었을 때 재발급을 용청합니다.\nprofile : 네이버, 카카오, 페이스북의 사용자의 정보가 들어있습니다. (이걸 얻기위해서…이 많은 소스를…)\n\n로직은 크게 다르지 않아 한 번에 설명하겠습니다. secret.js federation 객체있는 client_id, secret_id, callback_url를  passport 에 바인딩 시킵니다.  profile 파라미터로 네이버, 카카오, 페이스북 프로필 정보가 각기 다르게 들어오기 때문에 공통이름으로 바인딩 시키고 loginByThirdparty() 메서드에 바인딩 시킨 유저 정보와 done을 넘겨 줍니다. loginByThirdparty() 메서드에서 로그인 처리 및 회원 가입 절차가 진행되게 됩니다. 아래에서 자세하게 설명하겠습니다.\nindex.js(router)라우처 처리\n1234567891011121314151617181920212223242526272829303132333435// naver 로그인router.get(&#x27;/auth/login/naver&#x27;,  passport.authenticate(&#x27;naver&#x27;));// naver 로그인 연동 콜백router.get(&#x27;/auth/login/naver/callback&#x27;,  passport.authenticate(&#x27;naver&#x27;, &#123;    successRedirect: &#x27;/&#x27;,    failureRedirect: &#x27;/login&#x27;  &#125;));// kakao 로그인router.get(&#x27;/auth/login/kakao&#x27;,  passport.authenticate(&#x27;kakao&#x27;));// kakao 로그인 연동 콜백router.get(&#x27;/auth/login/kakao/callback&#x27;,  passport.authenticate(&#x27;kakao&#x27;, &#123;    successRedirect: &#x27;/&#x27;,    failureRedirect: &#x27;/login&#x27;  &#125;));// facebook 로그인router.get(&#x27;/auth/login/facebook&#x27;,  passport.authenticate(&#x27;facebook&#x27;));// facebook 로그인 연동 콜백router.get(&#x27;/auth/login/facebook/callback&#x27;,  passport.authenticate(&#x27;facebook&#x27;, &#123;    successRedirect: &#x27;/&#x27;,    failureRedirect: &#x27;/login&#x27;  &#125;));\n\n반복적인 소스라 대표적으로 Naver 기준으로 통합해서 설명하겠습니다. login.hbs 에서 네이버 로그인을 클릭했을 경우 router.get(&#39;/auth/login/naver&#39;...) 으로 요청이들어고 아래의 NaverStrategy 모듈로 다시 전달됩니다.\npassport.use(new NaverStrategy(...) 여기에서는 OAuth 요청을 만들어서 네이버 로그인 처리를 진행하고 요청결과를 아래의 라우터로 리다이렉트를 시켜줍니다.\nrouter.get(&#39;/auth/login/naver/callback&#39;...) 해당 라우터는 로그인이 성공할 경우 인덱스 페이지로 리다이렉트 시켜주고 실패할 경우에는 다시 &#39;/login&#39; 다시 로그인 페이지로 리다이렉트 시켜줍니다.\n로그인 및 회원 가입 로직1234567891011121314151617181920212223242526272829303132function loginByThirdparty(info, done) &#123;  console.log(&#x27;process : &#x27; + info.auth_type);  var stmt_duplicated = &#x27;select *from `user` where `user_id` = ?&#x27;;  connection.query(stmt_duplicated, info.auth_id, function (err, result) &#123;    if (err) &#123;      return done(err);    &#125; else &#123;      if (result.length === 0) &#123;        // 신규 유저는 회원 가입 이후 로그인 처리        var stmt_thridparty_signup = &#x27;insert into `user` set `user_id`= ?, `nickname`= ?&#x27;;        connection.query(stmt_thridparty_signup, [info.auth_id, info.auth_name], function (err, result) &#123;          if(err)&#123;            return done(err);          &#125;else&#123;            done(null, &#123;              &#x27;user_id&#x27;: info.auth_id,              &#x27;nickname&#x27;: info.auth_name            &#125;);          &#125;        &#125;);      &#125; else &#123;        //기존유저 로그인 처리        console.log(&#x27;Old User&#x27;);        done(null, &#123;          &#x27;user_id&#x27;: result[0].user_id,          &#x27;nickname&#x27;: result[0].nickname        &#125;);      &#125;    &#125;  &#125;);&#125;\n\nauth.id 기반으로 신규 회원인지 기존 회원인지 판단합니다. 신규 회원일 경우에는 user 테이블에 회원 정보를 저장 시키고 로그인 처리를 진행하고, 기존 유저일 경우에는 쿼리로 조회한 회원정보를 기반으로 로그인 처리를 진행합니다.간단하게 말씀드리면 신규회원이든 기존 회원이든 원클릭으로 회원 가입 절차를 진행하게 할 수 있습니다.\n사실 위의 예제는 좀 과격?한 부분이 좀있습니다. auth.id 는 중복될 일이 거의 없을 거 같긴 하지만  auth.nickname 같은 경우는 중복의 여지가 상당합니다. 사실 위의 예제는 중복의 여지가 있으니 추후 로직은 각자 알아서….안티패턴도 좋은 경험 입니다.\n저희 서비스에는 타 게임회사의 계정과 연동해야 하기 때문에 소셜 회원가입을 진행한 사용자에 대해서는 게임 로그인 진행 전에 아이디, 패스워드, 닉네임값을 한 번 더 입력 더 받고 있습니다.\n교보문고 사이트 경우에도 네이버 아이디로 회원가입을 진행하고 교보문고 계정에 대해서 아이디, 패스워드를 한 번 더 입력받는 시스템입니다. 우리만 그런게 아니야…\n마무리위의 예제는 깃허브에 있는 전체 코드를 보시는 것을 권장해 드립니다. 생각보다 예제소스가 길어서 설명하는 게 매끄럽지 못한 거 같습니다. 로그인 및 회원 가입 로직은 각자 환경에 맞게 설계해야 할 거 같아 최대한 단순하게 로직 처리를 진행하게 됐습니다. 긴글 읽어주셔서 감사합니다.\n","dateCreated":"2017-01-21T00:00:00+09:00","dateModified":"2025-01-31T04:36:07+09:00","datePublished":"2017-01-21T00:00:00+09:00","description":"이전에 Passport 간단로그인 Passport 데이터베이스 연동을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 페이스북, 카카오, 네이버 로그인 및 회원 가입 기능을 포스팅해보겠습니다.","headline":"Passport를 이용한 네이버, 카카오, 페이스북 로그인","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2017/01/21/passport-thirdpart-loginl/","keywords":"Node"}</script>
+    <meta name="description" content="이전에 Passport 간단로그인 Passport 데이터베이스 연동을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 페이스북, 카카오, 네이버 로그인 및 회원 가입 기능을 포스팅해보겠습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Passport를 이용한 네이버, 카카오, 페이스북 로그인">
+<meta property="og:url" content="http://localhost:4000/2017/01/21/passport-thirdpart-loginl/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="이전에 Passport 간단로그인 Passport 데이터베이스 연동을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 페이스북, 카카오, 네이버 로그인 및 회원 가입 기능을 포스팅해보겠습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://i.imgur.com/dJDKGrn.png">
+<meta property="og:image" content="https://i.imgur.com/2qLERpk.png">
+<meta property="article:published_time" content="2017-01-20T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:36:07.124Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/dJDKGrn.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Passport를 이용한 네이버, 카카오, 페이스북 로그인
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-01-21T00:00:00+09:00">
+	
+		    2017/01/21
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><img src="https://i.imgur.com/dJDKGrn.png" alt="EC2 Innound"></p>
+<p>이전에 <a target="_blank" rel="noopener" href="https://cheese10yun.github.io/2017/01/01/Passport-part1/">Passport 간단로그인</a> <a target="_blank" rel="noopener" href="https://cheese10yun.github.io/2017/01/05/passport-mysql/">Passport 데이터베이스 연동</a>을 포스팅했습니다. 그래서 이번에는 Passport를 이용한 소셜 로그인 <strong>페이스북, 카카오, 네이버 로그인 및 회원 가입</strong> 기능을 포스팅해보겠습니다. Passport에 대해서 기초지식이 없으시며 앞서 포스티한 주제를 보시는 것을 권장드립니다. 또한 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/node-yun">GitHub develop-passport-social-login</a>에 올려져있는 전체 소스를 보는 것을 권장드립니다.</p>
+<h3 id="Developers-등록"><a href="#Developers-등록" class="headerlink" title="Developers 등록"></a>Developers 등록</h3><p><img src="https://i.imgur.com/2qLERpk.png" alt="EC2 Innound"></p>
+<p>본 포스팅에서는 개발자 등록은 다루지 않겠습니다. 아래의 작업을 하기위해서는 네이버, 카카오, 페이스북 개발자 센터에서 앱설정을 완료해주세요. 본 포스팅은 Passport 로직에 집중하겠습니다.</p>
+<h3 id="필수-모듈설치-및-require"><a href="#필수-모듈설치-및-require" class="headerlink" title="필수 모듈설치 및 require"></a>필수 모듈설치 및 require</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install passport-facebook --save</span><br><span class="line">npm install passport-kakao --save</span><br><span class="line">npm install passport-naver --save</span><br></pre></td></tr></table></figure>
+
+
+<p><code>index.js(router)</code>설치한 모듈을 require 시켜줍니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="title class_">NaverStrategy</span> = <span class="built_in">require</span>(<span class="string">&#x27;passport-naver&#x27;</span>).<span class="property">Strategy</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="title class_">FacebookStrategy</span> = <span class="built_in">require</span>(<span class="string">&#x27;passport-facebook&#x27;</span>).<span class="property">Strategy</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="title class_">KakaoStrategy</span> = <span class="built_in">require</span>(<span class="string">&#x27;passport-kakao&#x27;</span>).<span class="property">Strategy</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Developers-정보-등록"><a href="#Developers-정보-등록" class="headerlink" title="Developers 정보 등록"></a>Developers 정보 등록</h3><p>더이상 데이터베이스 정보만 갖고 있지 않아 <code>db_info.js</code> 에서 <code>secret.js </code> 변경했습니다. <code>db_info</code> 로 데이터베이스 접근을 진행하겠습니다. 자세한 내용은 아래에서 다시 설명드리겠습니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="string">&#x27;secret&#x27;</span> :  <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;db_info&#x27;</span>: &#123;</span><br><span class="line">    <span class="attr">local</span>: &#123; <span class="comment">// localhost</span></span><br><span class="line">    ...</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">real</span>: &#123; <span class="comment">// real</span></span><br><span class="line">    ...</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">dev</span>: &#123; <span class="comment">// dev</span></span><br><span class="line">    ...</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&#x27;federation&#x27;</span> : &#123;</span><br><span class="line">    <span class="string">&#x27;naver&#x27;</span> : &#123;</span><br><span class="line">      <span class="string">&#x27;client_id&#x27;</span> : <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;secret_id&#x27;</span> : <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;callback_url&#x27;</span> : <span class="string">&#x27;/auth/login/naver/callback&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&#x27;facebook&#x27;</span> : &#123;</span><br><span class="line">      <span class="string">&#x27;client_id&#x27;</span> : <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;secret_id&#x27;</span> : <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;callback_url&#x27;</span> : <span class="string">&#x27;/auth/login/facebook/callback&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&#x27;kakao&#x27;</span> : &#123;</span><br><span class="line">      <span class="string">&#x27;client_id&#x27;</span> : <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;callback_url&#x27;</span> : <span class="string">&#x27;/auth/login/kakao/callback&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>federation</code> 객체에 네이버, 카카오, 페이스북 Developers 정보를 입력합니다.  <code>secret.js</code>  민감한 정보를 갖고있는 파일들은 프로젝트 디렉토리에 포함시키지 않는 것이 바람직합니다. 깃허브에는 소스코드를 공개하기 위해서 업로드하긴 했습니다… <del>안티패턴도 좋은 경험 입니다.</del></p>
+<h3 id="회원-가입-페이지"><a href="#회원-가입-페이지" class="headerlink" title="회원 가입 페이지"></a>회원 가입 페이지</h3><p><code>login.hbs &lt;a href&gt;</code> 태그에 로그인 처리를 담당할 URL을 입력합니다. 자세한 로직은 아래에서 설명하겠습니다.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/login&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">name</span>=<span class="string">&quot;frm_login&quot;</span> <span class="attr">id</span>=<span class="string">&quot;frm_login&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;modal-dialog&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;modal-content&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;modal-header&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">h1</span> <span class="attr">class</span>=<span class="string">&quot;text-center&quot;</span>&gt;</span>Node JS Passport Login<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;modal-body&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">id</span>=<span class="string">&quot;username&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control input-lg&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">required</span>=<span class="string">&quot;required&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;errorTxt&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">id</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">class</span>=<span class="string">&quot;form-control input-lg&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;Password&quot;</span> <span class="attr">required</span>=<span class="string">&quot;required&quot;</span> <span class="attr">autocomplete</span>=<span class="string">&quot;off&quot;</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;errorTxt&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;form-group&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-block btn-lg btn-default btn_login&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Login&quot;</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/auth/login/facebook&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-block btn-lg btn-primary btn_login&quot;</span>&gt;</span>FaceBook<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/auth/login/kakao&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-block btn-lg btn-warning btn_login&quot;</span>&gt;</span>KaKao<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/auth/login/naver&quot;</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-block btn-lg btn-success btn_login&quot;</span>&gt;</span>Naver<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Passport-로직-구현"><a href="#Passport-로직-구현" class="headerlink" title="Passport 로직 구현"></a>Passport 로직 구현</h3><p><code>index.js(router)</code><strong>네이버 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> secret_config = <span class="built_in">require</span>(<span class="string">&#x27;../commons/secret&#x27;</span>);</span><br><span class="line"></span><br><span class="line">passport.<span class="title function_">use</span>(<span class="keyword">new</span> <span class="title class_">NaverStrategy</span>(&#123;</span><br><span class="line">    <span class="attr">clientID</span>: secret_config.<span class="property">federation</span>.<span class="property">naver</span>.<span class="property">client_id</span>,</span><br><span class="line">    <span class="attr">clientSecret</span>: secret_config.<span class="property">federation</span>.<span class="property">naver</span>.<span class="property">secret_id</span>,</span><br><span class="line">    <span class="attr">callbackURL</span>: secret_config.<span class="property">federation</span>.<span class="property">naver</span>.<span class="property">callback_url</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> _profile = profile.<span class="property">_json</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">loginByThirdparty</span>(&#123;</span><br><span class="line">      <span class="string">&#x27;auth_type&#x27;</span>: <span class="string">&#x27;naver&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;auth_id&#x27;</span>: _profile.<span class="property">id</span>,</span><br><span class="line">      <span class="string">&#x27;auth_name&#x27;</span>: _profile.<span class="property">nickname</span>,</span><br><span class="line">      <span class="string">&#x27;auth_email&#x27;</span>: _profile.<span class="property">email</span></span><br><span class="line">    &#125;, done);</span><br><span class="line">  &#125;</span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+<p><code>index.js(router)</code><strong>카카오 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">passport.<span class="title function_">use</span>(<span class="keyword">new</span> <span class="title class_">KakaoStrategy</span>(&#123;</span><br><span class="line">    <span class="attr">clientID</span>: secret_config.<span class="property">federation</span>.<span class="property">kakao</span>.<span class="property">client_id</span>,</span><br><span class="line">    <span class="attr">callbackURL</span>: secret_config.<span class="property">federation</span>.<span class="property">kakao</span>.<span class="property">callback_url</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> _profile = profile.<span class="property">_json</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">loginByThirdparty</span>(&#123;</span><br><span class="line">      <span class="string">&#x27;auth_type&#x27;</span>: <span class="string">&#x27;kakao&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;auth_id&#x27;</span>: _profile.<span class="property">id</span>,</span><br><span class="line">      <span class="string">&#x27;auth_name&#x27;</span>: _profile.<span class="property">properties</span>.<span class="property">nickname</span>,</span><br><span class="line">      <span class="string">&#x27;auth_email&#x27;</span>: _profile.<span class="property">id</span></span><br><span class="line">    &#125;, done);</span><br><span class="line">  &#125;</span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+<p><code>index.js(router)</code> <strong>페이스북 로그인</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">passport.<span class="title function_">use</span>(<span class="keyword">new</span> <span class="title class_">FacebookStrategy</span>(&#123;</span><br><span class="line">    <span class="attr">clientID</span>: secret_config.<span class="property">federation</span>.<span class="property">facebook</span>.<span class="property">client_id</span>,</span><br><span class="line">    <span class="attr">clientSecret</span>: secret_config.<span class="property">federation</span>.<span class="property">facebook</span>.<span class="property">secret_id</span>,</span><br><span class="line">    <span class="attr">callbackURL</span>: secret_config.<span class="property">federation</span>.<span class="property">facebook</span>.<span class="property">callback_url</span>,</span><br><span class="line">    <span class="attr">profileFields</span>: [<span class="string">&#x27;id&#x27;</span>, <span class="string">&#x27;email&#x27;</span>, <span class="string">&#x27;gender&#x27;</span>, <span class="string">&#x27;link&#x27;</span>, <span class="string">&#x27;locale&#x27;</span>, <span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;timezone&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;updated_time&#x27;</span>, <span class="string">&#x27;verified&#x27;</span>, <span class="string">&#x27;displayName&#x27;</span>]</span><br><span class="line">  &#125;, <span class="keyword">function</span> (<span class="params">accessToken, refreshToken, profile, done</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> _profile = profile.<span class="property">_json</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">loginByThirdparty</span>(&#123;</span><br><span class="line">      <span class="string">&#x27;auth_type&#x27;</span>: <span class="string">&#x27;facebook&#x27;</span>,</span><br><span class="line">      <span class="string">&#x27;auth_id&#x27;</span>: _profile.<span class="property">id</span>,</span><br><span class="line">      <span class="string">&#x27;auth_name&#x27;</span>: _profile.<span class="property">name</span>,</span><br><span class="line">      <span class="string">&#x27;auth_email&#x27;</span>: _profile.<span class="property">id</span></span><br><span class="line">    &#125;, done);</span><br><span class="line">  &#125;</span><br><span class="line">));</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>accessToken : OAtuh tokken을 이용해서 네이버, 카카오, 페이스북 오픈 API를 호출합니다.</li>
+<li>refreshToken : tokken이 만료되었을 때 재발급을 용청합니다.</li>
+<li>profile : 네이버, 카카오, 페이스북의 사용자의 정보가 들어있습니다. (이걸 얻기위해서…이 많은 소스를…)</li>
+</ul>
+<p>로직은 크게 다르지 않아 한 번에 설명하겠습니다. <code>secret.js</code> <code>federation</code> 객체있는 <code>client_id, secret_id, callback_url</code>를  passport 에 바인딩 시킵니다.  profile 파라미터로 네이버, 카카오, 페이스북 프로필 정보가 각기 다르게 들어오기 때문에 공통이름으로 바인딩 시키고 <code>loginByThirdparty()</code> 메서드에 바인딩 시킨 유저 정보와 done을 넘겨 줍니다. <code>loginByThirdparty()</code> 메서드에서 로그인 처리 및 회원 가입 절차가 진행되게 됩니다. 아래에서 자세하게 설명하겠습니다.</p>
+<p><code>index.js(router)</code>라우처 처리</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// naver 로그인</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/naver&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;naver&#x27;</span>)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// naver 로그인 연동 콜백</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/naver/callback&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;naver&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">successRedirect</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="attr">failureRedirect</span>: <span class="string">&#x27;/login&#x27;</span></span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// kakao 로그인</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/kakao&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;kakao&#x27;</span>)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// kakao 로그인 연동 콜백</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/kakao/callback&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;kakao&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">successRedirect</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="attr">failureRedirect</span>: <span class="string">&#x27;/login&#x27;</span></span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// facebook 로그인</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/facebook&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;facebook&#x27;</span>)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// facebook 로그인 연동 콜백</span></span><br><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/auth/login/facebook/callback&#x27;</span>,</span><br><span class="line">  passport.<span class="title function_">authenticate</span>(<span class="string">&#x27;facebook&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">successRedirect</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">    <span class="attr">failureRedirect</span>: <span class="string">&#x27;/login&#x27;</span></span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>반복적인 소스라 대표적으로 <strong>Naver</strong> 기준으로 통합해서 설명하겠습니다. <code>login.hbs</code> 에서 네이버 로그인을 클릭했을 경우 <code>router.get(&#39;/auth/login/naver&#39;...)</code> 으로 요청이들어고 아래의 <code>NaverStrategy</code> 모듈로 다시 전달됩니다.</p>
+<p><code>passport.use(new NaverStrategy(...)</code> 여기에서는 OAuth 요청을 만들어서 네이버 로그인 처리를 진행하고 요청결과를 아래의 라우터로 리다이렉트를 시켜줍니다.</p>
+<p><code>router.get(&#39;/auth/login/naver/callback&#39;...)</code> 해당 라우터는 로그인이 성공할 경우 인덱스 페이지로 리다이렉트 시켜주고 실패할 경우에는 다시 <code>&#39;/login&#39;</code> 다시 로그인 페이지로 리다이렉트 시켜줍니다.</p>
+<h3 id="로그인-및-회원-가입-로직"><a href="#로그인-및-회원-가입-로직" class="headerlink" title="로그인 및 회원 가입 로직"></a>로그인 및 회원 가입 로직</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">loginByThirdparty</span>(<span class="params">info, done</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;process : &#x27;</span> + info.<span class="property">auth_type</span>);</span><br><span class="line">  <span class="keyword">var</span> stmt_duplicated = <span class="string">&#x27;select *from `user` where `user_id` = ?&#x27;</span>;</span><br><span class="line"></span><br><span class="line">  connection.<span class="title function_">query</span>(stmt_duplicated, info.<span class="property">auth_id</span>, <span class="keyword">function</span> (<span class="params">err, result</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="title function_">done</span>(err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (result.<span class="property">length</span> === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 신규 유저는 회원 가입 이후 로그인 처리</span></span><br><span class="line">        <span class="keyword">var</span> stmt_thridparty_signup = <span class="string">&#x27;insert into `user` set `user_id`= ?, `nickname`= ?&#x27;</span>;</span><br><span class="line">        connection.<span class="title function_">query</span>(stmt_thridparty_signup, [info.<span class="property">auth_id</span>, info.<span class="property">auth_name</span>], <span class="keyword">function</span> (<span class="params">err, result</span>) &#123;</span><br><span class="line">          <span class="keyword">if</span>(err)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_">done</span>(err);</span><br><span class="line">          &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="title function_">done</span>(<span class="literal">null</span>, &#123;</span><br><span class="line">              <span class="string">&#x27;user_id&#x27;</span>: info.<span class="property">auth_id</span>,</span><br><span class="line">              <span class="string">&#x27;nickname&#x27;</span>: info.<span class="property">auth_name</span></span><br><span class="line">            &#125;);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//기존유저 로그인 처리</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Old User&#x27;</span>);</span><br><span class="line">        <span class="title function_">done</span>(<span class="literal">null</span>, &#123;</span><br><span class="line">          <span class="string">&#x27;user_id&#x27;</span>: result[<span class="number">0</span>].<span class="property">user_id</span>,</span><br><span class="line">          <span class="string">&#x27;nickname&#x27;</span>: result[<span class="number">0</span>].<span class="property">nickname</span></span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>auth.id</code> 기반으로 신규 회원인지 기존 회원인지 판단합니다. 신규 회원일 경우에는 <code>user</code> 테이블에 회원 정보를 저장 시키고 로그인 처리를 진행하고, 기존 유저일 경우에는 쿼리로 조회한 회원정보를 기반으로 로그인 처리를 진행합니다.<br>간단하게 말씀드리면 신규회원이든 기존 회원이든 원클릭으로 회원 가입 절차를 진행하게 할 수 있습니다.</p>
+<p>사실 위의 예제는 좀 과격?한 부분이 좀있습니다. <code>auth.id</code> 는 중복될 일이 거의 없을 거 같긴 하지만  <code>auth.nickname</code> 같은 경우는 중복의 여지가 상당합니다. 사실 위의 예제는 중복의 여지가 있으니 추후 로직은 각자 알아서….<del>안티패턴도 좋은 경험 입니다.</del></p>
+<p>저희 서비스에는 타 게임회사의 계정과 연동해야 하기 때문에 소셜 회원가입을 진행한 사용자에 대해서는 게임 로그인 진행 전에 아이디, 패스워드, 닉네임값을 한 번 더 입력 더 받고 있습니다.</p>
+<p>교보문고 사이트 경우에도 네이버 아이디로 회원가입을 진행하고 교보문고 계정에 대해서 아이디, 패스워드를 한 번 더 입력받는 시스템입니다. <del>우리만 그런게 아니야…</del></p>
+<h3 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h3><p>위의 예제는 깃허브에 있는 전체 코드를 보시는 것을 권장해 드립니다. 생각보다 예제소스가 길어서 설명하는 게 매끄럽지 못한 거 같습니다. 로그인 및 회원 가입 로직은 각자 환경에 맞게 설계해야 할 거 같아 최대한 단순하게 로직 처리를 진행하게 됐습니다. 긴글 읽어주셔서 감사합니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Node/" rel="tag">Node</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/01/28/blog-start/"
+                    data-tooltip="블로그를 시작하려는 당신에게"
+                    aria-label="이전: 블로그를 시작하려는 당신에게"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/01/11/crontab-api/"
+                    data-tooltip="Crontab을 이용한 노드 API 호출"
+                    aria-label="다음: Crontab을 이용한 노드 API 호출"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/01/28/blog-start/"
+                    data-tooltip="블로그를 시작하려는 당신에게"
+                    aria-label="이전: 블로그를 시작하려는 당신에게"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/01/11/crontab-api/"
+                    data-tooltip="Crontab을 이용한 노드 API 호출"
+                    aria-label="다음: Crontab을 이용한 노드 API 호출"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2017/01/21/passport-thirdpart-loginl/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

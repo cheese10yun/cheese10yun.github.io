@@ -1,0 +1,813 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>아카이브 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{}</script>
+    <meta name="description" content="기술 블로그">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Yun Blog">
+<meta property="og:url" content="http://localhost:4000/archives/page/3/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="기술 블로그">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Batch">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="기술 블로그">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="Mongo">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+    <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2023/06/04/intellij-tip/"
+                            aria-label=": IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리"
+                        >
+                            IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2023-06-04T00:00:00+09:00">
+	
+		    2023/06/04
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리
+                    
+                        <a
+                            href="/2023/06/04/intellij-tip/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/12/11/kotlin-collection/"
+                            aria-label=": Kotlin groupBy, groupingBy, chunked, flatMap, aggregate 정리"
+                        >
+                            Kotlin groupBy, groupingBy, chunked, flatMap, aggregate 정리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-12-11T19:14:31+09:00">
+	
+		    2022/12/11
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Kotlin groupBy, groupingBy, chunked, flatMap, aggregate 정리
+                    
+                        <a
+                            href="/2022/12/11/kotlin-collection/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Kotlin groupBy, groupingBy, chunked, flatMap, aggregate 정리"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/11/12/spring-batch-update-performance/"
+                            aria-label=": Spring Batch 업데이트 성능 최적화 및 분석"
+                        >
+                            Spring Batch 업데이트 성능 최적화 및 분석
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-11-12T23:41:19+09:00">
+	
+		    2022/11/12
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    아래와 같은 시나리오의 경우 배치 애플리케이션 성능을 높이기 위한 방법에 대한 내용을 정리했습니다.
+                    
+                        <a
+                            href="/2022/11/12/spring-batch-update-performance/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Batch 업데이트 성능 최적화 및 분석"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/11/07/mysql-batch-update/"
+                            aria-label=": MySQL Batch Update 성능 측정 및 분석"
+                        >
+                            MySQL Batch Update 성능 측정 및 분석
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-11-07T00:00:00+09:00">
+	
+		    2022/11/07
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    MySQL 기반으로 대량 업데이트를 진행하는 경우 JPA, Exposed 프레임워크 기반으로 테스트를 진행했습니다. 결론부터 말씀드리면 Exposed 기반 Batch Update가 가장 빨랐습니다.
+                    
+                        <a
+                            href="/2022/11/07/mysql-batch-update/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": MySQL Batch Update 성능 측정 및 분석"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/10/16/test-bandwidth/"
+                            aria-label=": 테스트 대역폭 늘리기"
+                        >
+                            테스트 대역폭 늘리기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-10-16T00:00:00+09:00">
+	
+		    2022/10/16
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    다양한 케이스에 대한 테스트 대역폭을 늘려서 테스트 코드를 작성하는 것은 중요한 작업입니다. 로직이 복잡하고 다양한 케이스에 대응하는 코드가 있다면 이러한 테스트 대역 폭은 더욱 중요합니다. 본 포스팅은 다양한 케이스에 대한 커버리지를 높이는 방법에 대한 방법에 관한 내용입니다.
+                    
+                        <a
+                            href="/2022/10/16/test-bandwidth/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 테스트 대역폭 늘리기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/10/10/external-infrastructure-testing/"
+                            aria-label=": 외부 인프라스트럭처 테스트"
+                        >
+                            외부 인프라스트럭처 테스트
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-10-10T00:00:00+09:00">
+	
+		    2022/10/10
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다.
+                    
+                        <a
+                            href="/2022/10/10/external-infrastructure-testing/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 외부 인프라스트럭처 테스트"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/09/26/data-grip/"
+                            aria-label=": DataGrip 살펴 보기"
+                        >
+                            DataGrip 살펴 보기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-09-26T00:00:00+09:00">
+	
+		    2022/09/26
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    DataGrip은 JetBrains에서 만든 데이터베이스 및 SQL 용 크로스 플랫폼 IDE입니다. 다양한 제품들이 있지만 저는 DataGrip 선호하며 애용하고 있는 제품입니다. 공식 자료에서도 충분히 다양한 기능들을 소개해 주고 있지만 개인적으로 DataGrip에 좋은 기능들을 정리해 보겠습니다.
+                    
+                        <a
+                            href="/2022/09/26/data-grip/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": DataGrip 살펴 보기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/06/11/spring-cloud-gateway-2/"
+                            aria-label=": Spring Cloud Gateway Error Handling &amp; Filter"
+                        >
+                            Spring Cloud Gateway Error Handling &amp; Filter
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-06-11T00:00:00+09:00">
+	
+		    2022/06/11
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Spring Cloud Gateway를 활용하여 여러 API를 서비싱 하는 경우 해당 API들은 이전에 포스팅한 Spring Guide - Exception 전략으로 통일된 Error Response를 갖게 할 수 있습니다.
+                    
+                        <a
+                            href="/2022/06/11/spring-cloud-gateway-2/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Cloud Gateway Error Handling &amp; Filter"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/05/30/exposed-2/"
+                            aria-label=": Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                        >
+                            Kotlin 기반 경량 ORM Exposed 추가 정리 part 1
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-05-30T00:00:00+09:00">
+	
+		    2022/05/30
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    실제 자주 사용하는 기능들 위주로 다루어 보겠습니다.
+                    
+                        <a
+                            href="/2022/05/30/exposed-2/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/05/28/slueth-fuel/"
+                            aria-label=": Sleuth 분산 환경 트래킹 With Fuel"
+                        >
+                            Sleuth 분산 환경 트래킹 With Fuel
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-05-28T00:00:00+09:00">
+	
+		    2022/05/28
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Spring Cloud Sleuth는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다.
+                    
+                        <a
+                            href="/2022/05/28/slueth-fuel/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Sleuth 분산 환경 트래킹 With Fuel"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+          <li class="pagination-prev">
+            <a
+                class="btn btn--default btn--small"
+                href="/archives/page/2/"
+                aria-label="최근 포스트"
+            >
+              <i class="fa fa-angle-left text-base icon-mr"></i>
+              <span>최근 포스트</span>
+            </a>
+          </li>
+        
+        
+          <li class="pagination-next">
+            <a
+                class="btn btn--default btn--small"
+                href="/archives/page/4/"
+                aria-label="이전 포스트"
+            >
+              <span>이전 포스트</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+        <li class="pagination-number">page 3 of 19</li>
+    </ul>
+</div>
+
+</section>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>

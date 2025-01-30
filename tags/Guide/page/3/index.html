@@ -1,0 +1,812 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>태그: Guide - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{}</script>
+    <meta name="description" content="기술 블로그">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Yun Blog">
+<meta property="og:url" content="http://localhost:4000/tags/Guide/page/3/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="기술 블로그">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Batch">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="기술 블로그">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="Mongo">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+    <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/01/10/spring-jpa-best-11/"
+                            aria-label=": Spring-Jpa Best Practices step-11 - Properties environment 설정하기"
+                        >
+                            Spring-Jpa Best Practices step-11 - Properties environment 설정하기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-01-10T00:50:00+09:00">
+	
+		    2019/01/10
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.
+                    
+                        <a
+                            href="/2019/01/10/spring-jpa-best-11/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices step-11 - Properties environment 설정하기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/12/22/lombok-config/"
+                            aria-label=": 실무에서 Lombok 사용법 - lombok.config"
+                        >
+                            실무에서 Lombok 사용법 - lombok.config
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-12-22T16:00:00+09:00">
+	
+		    2018/12/22
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    lombok.config 설정 파일을 통해서 lombok 어노테이션을 제한 할 수 있습니다. 이전 포스팅에서 언급한 @Data 등 사용을 했을 경우 위험 부담이 있는 어노테이션들은 해당 설정에서 제한 할 수 있습니다.
+                    
+                        <a
+                            href="/2018/12/22/lombok-config/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 실무에서 Lombok 사용법 - lombok.config"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/11/27/lombok/"
+                            aria-label=": 실무에서 Lombok 사용법"
+                        >
+                            실무에서 Lombok 사용법
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-11-27T00:26:00+09:00">
+	
+		    2018/11/27
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Lombok은 자바 컴파일 시점에서 특정 어노테이션으로 해당 코드를 추가할 수 있는 라이브러리입니디. 이는 코드의 다이어트? 가독 성 및 유지 보수에 많은 도움이 됩니다.
+                    
+                        <a
+                            href="/2018/11/27/lombok/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 실무에서 Lombok 사용법"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/08/05/spring-jpa-best-10/"
+                            aria-label=": Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기"
+                        >
+                            Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-08-05T00:00:00+09:00">
+	
+		    2018/08/05
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Properties 설정값을 가져오는 다양한 방법들이 있습니다. 방법이 많다 보니 좋지 않은 패턴으로 사용하는 예도 흔하게 발생합니다. 안티 패턴을 소개하고 이것이 왜 안 좋은지 간단하게 소개하고 제가 생각하는 좋은 패턴도 소개해드리겠습니다.
+                    
+                        <a
+                            href="/2018/08/05/spring-jpa-best-10/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices step-10 - Properties 설정값 가져오기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/07/17/spring-jpa-best-09/"
+                            aria-label=": Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)"
+                        >
+                            Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-07-17T00:00:00+09:00">
+	
+		    2018/07/17
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이전에 OneToMany 관계 설정 포스팅이 관계설정의 초점보다는 풍부한 객체 관점 중심으로 다루었습니다. 그러다 보니 OneToMany에 대한 관계에 대한 설명 부분이 부족해서 추가 포스팅을 하게 되었습니다.
+                    
+                        <a
+                            href="/2018/07/17/spring-jpa-best-09/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-09 - OneToMany 관계 설정 팁(2)"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/06/29/spring-jpa-best-08/"
+                            aria-label=": Spring-Jpa Best Practices Step-08 - OneToOne 관계 설정 팁"
+                        >
+                            Spring-Jpa Best Practices Step-08 - OneToOne 관계 설정 팁
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-06-29T00:00:00+09:00">
+	
+		    2018/06/29
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    OneToOne 관계 설정 시에 간단한 팁을 정리하겠습니다. 해당 객체들의 성격은 다음과 같습니다.
+                    
+                        <a
+                            href="/2018/06/29/spring-jpa-best-08/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-08 - OneToOne 관계 설정 팁"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/06/14/spring-jpa-best-07/"
+                            aria-label=": Spring-Jpa Best Practices Step-07 - Embedded를 적극 활용"
+                        >
+                            Spring-Jpa Best Practices Step-07 - Embedded를 적극 활용
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-06-14T00:00:00+09:00">
+	
+		    2018/06/14
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Embedded을 사용하면 칼럼들을 자료형으로 규합해서 응집력 및 재사용성을 높여 훨씬 더 객체지향 프로그래밍을 할 수 있게 도울 수 있습니다. Embedded은 다음과 같은 장점들이 있습니다.
+                    
+                        <a
+                            href="/2018/06/14/spring-jpa-best-07/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-07 - Embedded를 적극 활용"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/06/05/spring-jpa-best-06/"
+                            aria-label=": Spring-Jpa Best Practices Step-06 - Setter 사용하지 않기"
+                        >
+                            Spring-Jpa Best Practices Step-06 - Setter 사용하지 않기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-06-05T00:00:00+09:00">
+	
+		    2018/06/05
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    객체지향 언어에서 관습처럼 setter를 추가하는 때도 있습니다. 무분별하게 setter를 사용하는 것은 바람직하지 않다고 생각합니다. 특히 도메인 객체들에는 더더욱이 말입니다.
+                    
+                        <a
+                            href="/2018/06/05/spring-jpa-best-06/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-06 - Setter 사용하지 않기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/05/18/spring-jpa-best-05/"
+                            aria-label=": Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁"
+                        >
+                            Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-05-18T00:00:00+09:00">
+	
+		    2018/05/18
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    배송이 있고 배송의 상태를 갖는 배송 로그가 있고 각각의 관계는 1:N 관계입니다. 아래와 같은 특정한 1:N 관계에 대해서 포스팅을 진행해보겠습니다. 해당 코드는 Github를 확인해주세요.
+                    
+                        <a
+                            href="/2018/05/18/spring-jpa-best-05/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-05 - OneToMany 관계 설정 팁"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2018/05/12/spring-jpa-best-04/"
+                            aria-label=": Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리"
+                        >
+                            Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2018-05-12T00:00:00+09:00">
+	
+		    2018/05/12
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이번 포스팅에서는 Embedded를 이용해서 Password 클래스를 통해서 Password 관련 응집력을 높이는 것 방법과  JPA에서 LocalDateTime을 활용하는 방법에 대해서 중점으로 포스팅을 진행해 보겠습니다. 해당 코드는 Github를 확인해주세요.
+                    
+                        <a
+                            href="/2018/05/12/spring-jpa-best-04/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-Jpa Best Practices Step-04 - Embedded를 이용한 Password 처리"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+          <li class="pagination-prev">
+            <a
+                class="btn btn--default btn--small"
+                href="/tags/Guide/page/2/"
+                aria-label="최근 포스트"
+            >
+              <i class="fa fa-angle-left text-base icon-mr"></i>
+              <span>최근 포스트</span>
+            </a>
+          </li>
+        
+        
+          <li class="pagination-next">
+            <a
+                class="btn btn--default btn--small"
+                href="/tags/Guide/page/4/"
+                aria-label="이전 포스트"
+            >
+              <span>이전 포스트</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+        <li class="pagination-number">page 3 of 4</li>
+    </ul>
+</div>
+
+</section>
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>

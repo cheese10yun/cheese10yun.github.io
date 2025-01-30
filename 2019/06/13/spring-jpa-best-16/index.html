@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2) - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.\n12345678910public interface AccountRepository extends JpaRepository&lt;Account, Long&gt; &#123;  boolean existsByEmail(Email email);  boolean exsistByxxx(...)  long countByEmail(Email email);  long countByxxx(...)&#125;\n유사한 쿼리가 필요해지면 쿼리 메서드를 지속적으로 추가해야 하는 단점이 있습니다. 이런 경우에 QuerydslPredicateExecutor를 사용하면 매우 효과적입니다.\nQuerydslPredicateExecutor123456789public interface QuerydslPredicateExecutor&lt;T&gt; &#123;  ....  long count(Predicate predicate);              boolean exists(Predicate predicate);        &#125;\n\nQuerydslPredicateExecutor 코드의 일부입니다. Predicate를 매개변수로 받고 있기 때문에 Predicate를 통해서 새로운 쿼리를 만들수 있습니다.\nAccountRepository 적용하기12345public interface AccountRepository extends JpaRepository&lt;Account, Long&gt;, AccountSupportRepository,    QuerydslPredicateExecutor&lt;Account&gt; &#123;        ...&#125;\nAccountSupportRepository는 step-15: Querydsl를 이용해서 Repository 확장하기(1) 에서 추가한 코드이고 QuerydslPredicateExecutor&lt;Account&gt; 코드만 추가하면 완료 됩니다.\nQuerydslPredicateExecutor 사용하기\nAccountRepository는 QuerydslPredicateExecutor를 구현하고 있음으로 별다른 코드 없이 우리는 AccountRepository를 통해서 QuerydslPredicateExecutor의 메서드를 사용할 수 있습니다. 이것은 우리가 AccountRepository가 아무 메서드가 없어도 JpaRepository에 있는 findById, findAll 같은 메서드를 사용할 수 있는 이유와 동일합니다. \nTest Code12345678910111213141516171819202122232425262728293031323334353637383940414243444546@DataJpaTest@RunWith(SpringRunner.class)public class AccountRepositoryTest &#123;  @Autowired  private AccountRepository accountRepository;  private final QAccount qAccount = QAccount.account;  @Test  public void predicate_test_001() &#123;    //given    final Predicate predicate = qAccount.email.eq(Email.of(&quot;test001@test.com&quot;));    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isTrue();  &#125;  @Test  public void predicate_test_002() &#123;    //given    final Predicate predicate = qAccount.firstName.eq(&quot;test&quot;);    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isFalse();  &#125;  @Test  public void predicate_test_003() &#123;    //given    final Predicate predicate = qAccount.email.value.like(&quot;test%&quot;);    //when    final long count = accountRepository.count(predicate);    //then    assertThat(count).isGreaterThan(1);  &#125;&#125;\nPredicate 객체 생성을 통해서 쿼리 메서드 코드 추가 없이 다양한 쿼리들을 쉽게 만들 수 있습니다.\n\npredicate_test_001 테스트 코드에 대한 실제 쿼리 내용입니다. 해당 쿼리가 어떻게 출력되는지 직접 눈으로 확인하는 습관을 갖는 것이 좋습니다.\n결론조회용 쿼리를 만드는 것은 실제 현업에서 많은 업무 비중을 차지하다 보니 작업자들은 다양한 조회 전용 구현체들을 우후죽순처럼 만들게 됩니다. 이렇게 되면 중복 코드가 많이 발생하게 되고, 구현체가 늘어나는 만큼 의존 관계도 자연스레 높아지게 됩니다.\n이러한 문제를 위와 같이 객체지향 관점으로 풀어내어 AccountRepository 인터페이스를 통해서 DAO가 제공되고 세부 구현들을 숨길 수 있게 설계하는 것이 바람직하다고 생각합니다. \n단순하게 JPA를 잘 활용하는 것보다 위에서 언급한 내용을 조금 더 깊게 생각해보는 것이 이 포스팅에 취지입니다.\n","dateCreated":"2019-06-13T01:30:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-06-13T01:30:00+09:00","description":"JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.","headline":"Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/06/13/spring-jpa-best-16/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/06/13/spring-jpa-best-16/","keywords":"Guide, JPA, ORM, Spring, Querydsl"}</script>
+    <meta name="description" content="JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)">
+<meta property="og:url" content="http://localhost:4000/2019/06/13/spring-jpa-best-16/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/AccountRepository2.png">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/test-result.png">
+<meta property="article:published_time" content="2019-06-12T16:30:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.898Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Guide">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Querydsl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/AccountRepository2.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-06-13T01:30:00+09:00">
+	
+		    2019/06/13
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p>해당 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-jpa-best-practices">Github</a>를 확인해주세요.</p>
+</blockquote>
+<p>JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AccountRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;Account, Long&gt; &#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">existsByEmail</span><span class="params">(Email email)</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">exsistByxxx</span><span class="params">(...)</span></span><br><span class="line"></span><br><span class="line">  <span class="type">long</span> <span class="title function_">countByEmail</span><span class="params">(Email email)</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">long</span> <span class="title function_">countByxxx</span><span class="params">(...)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>유사한 쿼리가 필요해지면 쿼리 메서드를 지속적으로 추가해야 하는 단점이 있습니다. 이런 경우에 <code>QuerydslPredicateExecutor</code>를 사용하면 매우 효과적입니다.</p>
+<h2 id="QuerydslPredicateExecutor"><a href="#QuerydslPredicateExecutor" class="headerlink" title="QuerydslPredicateExecutor"></a>QuerydslPredicateExecutor</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">QuerydslPredicateExecutor</span>&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">  ....</span><br><span class="line"></span><br><span class="line">  <span class="type">long</span> <span class="title function_">count</span><span class="params">(Predicate predicate)</span>;            </span><br><span class="line"></span><br><span class="line">  <span class="type">boolean</span> <span class="title function_">exists</span><span class="params">(Predicate predicate)</span>;        </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>QuerydslPredicateExecutor</code> 코드의 일부입니다. <code>Predicate</code>를 매개변수로 받고 있기 때문에 Predicate를 통해서 새로운 쿼리를 만들수 있습니다.</p>
+<h2 id="AccountRepository-적용하기"><a href="#AccountRepository-적용하기" class="headerlink" title="AccountRepository 적용하기"></a>AccountRepository 적용하기</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AccountRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;Account, Long&gt;, AccountSupportRepository,</span><br><span class="line">    QuerydslPredicateExecutor&lt;Account&gt; &#123;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AccountSupportRepository</code>는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-jpa-best-practices/blob/master/doc/step-15.md">step-15: Querydsl를 이용해서 Repository 확장하기(1)</a> 에서 추가한 코드이고 <code>QuerydslPredicateExecutor&lt;Account&gt;</code> 코드만 추가하면 완료 됩니다.</p>
+<h2 id="QuerydslPredicateExecutor-사용하기"><a href="#QuerydslPredicateExecutor-사용하기" class="headerlink" title="QuerydslPredicateExecutor 사용하기"></a>QuerydslPredicateExecutor 사용하기</h2><p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/AccountRepository2.png"></p>
+<p><code>AccountRepository</code>는 <code>QuerydslPredicateExecutor</code>를 구현하고 있음으로 별다른 코드 없이 우리는 <code>AccountRepository</code>를 통해서 <code>QuerydslPredicateExecutor</code>의 메서드를 사용할 수 있습니다. 이것은 우리가 <code>AccountRepository</code>가 아무 메서드가 없어도 <code>JpaRepository</code>에 있는 findById, findAll 같은 메서드를 사용할 수 있는 이유와 동일합니다. </p>
+<h3 id="Test-Code"><a href="#Test-Code" class="headerlink" title="Test Code"></a>Test Code</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DataJpaTest</span></span><br><span class="line"><span class="meta">@RunWith(SpringRunner.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AccountRepositoryTest</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Autowired</span></span><br><span class="line">  <span class="keyword">private</span> AccountRepository accountRepository;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">QAccount</span> <span class="variable">qAccount</span> <span class="operator">=</span> QAccount.account;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">predicate_test_001</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//given</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">Predicate</span> <span class="variable">predicate</span> <span class="operator">=</span> qAccount.email.eq(Email.of(<span class="string">&quot;test001@test.com&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">boolean</span> <span class="variable">exists</span> <span class="operator">=</span> accountRepository.exists(predicate);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//then</span></span><br><span class="line">    assertThat(exists).isTrue();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">predicate_test_002</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//given</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">Predicate</span> <span class="variable">predicate</span> <span class="operator">=</span> qAccount.firstName.eq(<span class="string">&quot;test&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">boolean</span> <span class="variable">exists</span> <span class="operator">=</span> accountRepository.exists(predicate);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//then</span></span><br><span class="line">    assertThat(exists).isFalse();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">predicate_test_003</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//given</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">Predicate</span> <span class="variable">predicate</span> <span class="operator">=</span> qAccount.email.value.like(<span class="string">&quot;test%&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    <span class="keyword">final</span> <span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> accountRepository.count(predicate);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//then</span></span><br><span class="line">    assertThat(count).isGreaterThan(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Predicate 객체 생성을 통해서 쿼리 메서드 코드 추가 없이 다양한 쿼리들을 쉽게 만들 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/test-result.png"></p>
+<p><code>predicate_test_001</code> 테스트 코드에 대한 실제 쿼리 내용입니다. 해당 쿼리가 어떻게 출력되는지 직접 눈으로 확인하는 습관을 갖는 것이 좋습니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>조회용 쿼리를 만드는 것은 실제 현업에서 많은 업무 비중을 차지하다 보니 작업자들은 다양한 조회 전용 구현체들을 우후죽순처럼 만들게 됩니다. 이렇게 되면 중복 코드가 많이 발생하게 되고, 구현체가 늘어나는 만큼 의존 관계도 자연스레 높아지게 됩니다.</p>
+<p>이러한 문제를 위와 같이 객체지향 관점으로 풀어내어 <code>AccountRepository</code> 인터페이스를 통해서 DAO가 제공되고 세부 구현들을 숨길 수 있게 설계하는 것이 바람직하다고 생각합니다. </p>
+<p><strong>단순하게 JPA를 잘 활용하는 것보다 위에서 언급한 내용을 조금 더 깊게 생각해보는 것이 이 포스팅에 취지입니다.</strong></p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Guide/" rel="tag">Guide</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Querydsl/" rel="tag">Querydsl</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/06/16/spring-guide-directory/"
+                    data-tooltip="Spring Guide - Directory"
+                    aria-label="이전: Spring Guide - Directory"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/06/11/gradle-multi-module/"
+                    data-tooltip="Gradle 기반 멀티 모듈 구성하기"
+                    aria-label="다음: Gradle 기반 멀티 모듈 구성하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/06/16/spring-guide-directory/"
+                    data-tooltip="Spring Guide - Directory"
+                    aria-label="이전: Spring Guide - Directory"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/06/11/gradle-multi-module/"
+                    data-tooltip="Gradle 기반 멀티 모듈 구성하기"
+                    aria-label="다음: Gradle 기반 멀티 모듈 구성하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,801 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>태그: Guide - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{}</script>
+    <meta name="description" content="기술 블로그">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Yun Blog">
+<meta property="og:url" content="http://localhost:4000/tags/Guide/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="기술 블로그">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Batch">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="기술 블로그">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="Mongo">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+    <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2025/01/18/spring-data-mongo-update-guide-1/"
+                            aria-label=": Spring Data MongoDB에서의 Update 전략과 경험"
+                        >
+                            Spring Data MongoDB에서의 Update 전략과 경험
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2025-01-18T00:00:00+09:00">
+	
+		    2025/01/18
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이 글에서는 Spring Data MongoDB에서 업데이트 전략을 중심으로 개발 경험에서 얻은 인사이트를 공유하며, 각 메서드의 동작 방식과 적절한 사용 방법에 대해 논의합니다.
+                    
+                        <a
+                            href="/2025/01/18/spring-data-mongo-update-guide-1/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Data MongoDB에서의 Update 전략과 경험"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2023/06/12/code-design/"
+                            aria-label=": 좋은 코드 설계를 위한 답없는 고민들"
+                        >
+                            좋은 코드 설계를 위한 답없는 고민들
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2023-06-12T00:00:00+09:00">
+	
+		    2023/06/12
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    좋은 코드 설계를 위한 고민들을 평소에 많이 해왔고, 그에 관련한 학습들도 진행했었다. OOP, DDD, Clean Code, Clean Architecture 등등을 통해서 나름의 주관이 생겼으며 경력 초반에는 이런 것들을 지키기 위해 많이 노력해왔다.
+                    
+                        <a
+                            href="/2023/06/12/code-design/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 좋은 코드 설계를 위한 답없는 고민들"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/10/10/external-infrastructure-testing/"
+                            aria-label=": 외부 인프라스트럭처 테스트"
+                        >
+                            외부 인프라스트럭처 테스트
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-10-10T00:00:00+09:00">
+	
+		    2022/10/10
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다.
+                    
+                        <a
+                            href="/2022/10/10/external-infrastructure-testing/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 외부 인프라스트럭처 테스트"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/01/29/http-client/"
+                            aria-label=": HTTP Client 책임 분리하기"
+                        >
+                            HTTP Client 책임 분리하기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-01-29T00:00:00+09:00">
+	
+		    2022/01/29
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    일반적으로 특정 요구사항을 만족하기 위해서는 다른 서비스들과의 통신을 통하여 진행합니다. 가장 대표적인 통신은 HTTP으로 쉽고 간결하게 연결이 가능하여 많이 사용합니다. HTTP Client를 개발할 때 적절한 책임과 역할을 부여하는 방법에 대해서 이번 포스팅에서 다루려고 합니다.
+                    
+                        <a
+                            href="/2022/01/29/http-client/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": HTTP Client 책임 분리하기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2022/01/23/error-response-2/"
+                            aria-label=": MSA 환경에서 Error Response 서버로 전달하기"
+                        >
+                            MSA 환경에서 Error Response 서버로 전달하기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-01-23T00:00:00+09:00">
+	
+		    2022/01/23
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이전에 API Server에 Exception handling에 대해서 정리한 적 있습니다. 이번 포스팅에서는 여러 서버를 호출해서 예외가 발생하는 경우 Exception handling에 대한 포팅입니다.
+                    
+                        <a
+                            href="/2022/01/23/error-response-2/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": MSA 환경에서 Error Response 서버로 전달하기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/09/22/ConstraintValidator/"
+                            aria-label=": ConstraintValidator을 이용해서 효과적인 검증"
+                        >
+                            ConstraintValidator을 이용해서 효과적인 검증
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-09-22T00:00:00+09:00">
+	
+		    2019/09/22
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 @NotNull, @NotEmpty, @Email과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.
+                    
+                        <a
+                            href="/2019/09/22/ConstraintValidator/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": ConstraintValidator을 이용해서 효과적인 검증"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/06/16/spring-guide-directory/"
+                            aria-label=": Spring Guide - Directory"
+                        >
+                            Spring Guide - Directory
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-06-16T00:45:00+09:00">
+	
+		    2019/06/16
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    패키지 구성은 크게 레이어 계층형, 도메인형 이렇게 2 가지 유형이 있다고 생각합니다. 각 유형별로 간단하게 설명하고 제 개인적인 Best Practices를 설명하겠습니다.
+                    
+                        <a
+                            href="/2019/06/16/spring-guide-directory/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Guide - Directory"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/06/13/spring-jpa-best-16/"
+                            aria-label=": Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)"
+                        >
+                            Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-06-13T01:30:00+09:00">
+	
+		    2019/06/13
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.
+                    
+                        <a
+                            href="/2019/06/13/spring-jpa-best-16/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/05/17/checked-exception/"
+                            aria-label=": Checked Exception을 대하는 자세"
+                        >
+                            Checked Exception을 대하는 자세
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-17T01:28:00+09:00">
+	
+		    2019/05/17
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Checked Exception을 처리하는 전략과 그것에 유의해야 할 점들에 대해서 포스팅을 진행해보겠습니다. 자바에서는 대표적으로 Checked Exception 과 Unchecked Exception이 있습니다. 먼저 이 둘의 차이를 살펴보겠습니다.
+                    
+                        <a
+                            href="/2019/05/17/checked-exception/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Checked Exception을 대하는 자세"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/2019/05/05/spring-builder-pattern/"
+                            aria-label=": Builder 기반으로 객체를 안전하게 생성하는 방법"
+                        >
+                            Builder 기반으로 객체를 안전하게 생성하는 방법
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2019-05-05T03:58:00+09:00">
+	
+		    2019/05/05
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    JPA를 이용하면 엔티티 객체들을 Builder 기반으로 생성하는 것이 흔한 패턴입니다. 이러한 경우 Builder의 문제점들과 이것을 더욱 안전하게 사용하는 방법에 대해서 이야기해보겠습니다.
+                    
+                        <a
+                            href="/2019/05/05/spring-builder-pattern/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Builder 기반으로 객체를 안전하게 생성하는 방법"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+        
+          <li class="pagination-next">
+            <a
+                class="btn btn--default btn--small"
+                href="/tags/Guide/page/2/"
+                aria-label="이전 포스트"
+            >
+              <span>이전 포스트</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+        <li class="pagination-number">page 1 of 4</li>
+    </ul>
+</div>
+
+</section>
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>

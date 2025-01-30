@@ -1,0 +1,674 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>외부 인프라스트럭처 테스트 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다. 이런 경우 대부분 Mocking을 하여 테스트 코드를 작성하게 됩니다. 이전 포스팅 Mockserver Netty 사용해서 HTTP 통신 Mocking 하기에서 다룬 적이 있습니다. 해당 포스팅은 라이브러리에 대한 사용법을 설명한 것이고 본 포스팅은 외부 인프라스트럭처를 효율적으로 관리하는 방법론에 대한 개인적인 생각을 정리했습니다. 외부 인프라의 대표적인 예가 HTTP Server를 호출하는 것이라서 설명을 그 기준으로 하는 것이고 다른 외부 인프라를 사용하더라도 해당 방법이 적절한 대한이 될 수 있습니다.\n기본적인 HTTP Mocking 테스트 방법12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455class OrderService(    private val productQueryService: ProductQueryService,    private val exchangeRateClient: ExchangeRateClient) &#123;    /**     * 주문 객체를 영속화를 진행하고, 해당 금액에 맞는 환율 정보를 가져온다     */    fun order(        productId: Long,        orderDate: LocalDate,        orderAmount: BigDecimal,    ): String &#123;        val product = productQueryService.findById(productId)        val exchangeRateResponse = exchangeRateClient.getExchangeRate(orderDate, &quot;USD&quot;, &quot;KRW&quot;)        // 영속화        val orderNumber = save(            productId,            exchangeRateResponse.amount,        )        return orderNumber    &#125;&#125;class ExchangeRateClient(   ...) &#123;    fun getExchangeRate(        targetDate: LocalDate,        currencyForm: String,        currencyTo: String,    ) =        /**         * 외부 HTTP Server에 질의하여 환율 정보를 가져온다.         */        &quot;$host//exchange-rate&quot;            .httpGet(                parameters = listOf(                    &quot;targetDate&quot; to targetDate,                    &quot;currencyForm&quot; to currencyForm,                    &quot;currencyTo&quot; to currencyTo                )            )            .response()            .first.responseObject&lt;ExchangeRateResponse&gt;(objectMapper)            .third.get()&#125;data class ExchangeRateResponse(    val amount: BigDecimal)\n\n로직은 상품을 주문 시 금액을 환율을 조회하여 해당 환율로 주문 정보를 저장하는 것입니다. 로직에 대한 테스트 코드는 다음과 같습니다.\n123456789101112131415161718192021222324252627282930313233@Testinternal fun `환율 정보 기반으로 주문 금액 계산하여 주문 생성`() &#123;    //given    val responseBody = &quot;&quot;&quot;                    &#123;                      &quot;amount&quot;: &quot;140000&quot;                    &#125;                &quot;&quot;&quot;.trimIndent()    mockServer.`when`(        HttpRequest.request()            .withMethod(&quot;GET&quot;)            .withPath(&quot;/exchange-rate&quot;)            .withPathParameters(                listOf(                    Parameter.param(&quot;targetDate&quot;, &quot;2022-02-02&quot;),                    Parameter.param(&quot;currencyForm&quot;, &quot;USD&quot;),                    Parameter.param(&quot;currencyTo&quot;, &quot;KRW&quot;)                )            )    ).respond(        HttpResponse.response()            .withBody(responseBody)            .withStatusCode(200)    )    //when    val orderNumber = orderService.order(1L, LocalDate.of(2022, 2, 2), 100.toBigDecimal())    //then    val findOrder = orderQueryService.findOrderNumber(orderNumber)    then(findOrder.amount).isEqualByComparingTo(140000.toBigDecimal())&#125;\n\n로컬 환경에 Mock Server를 띄워 Given 절에 미리 요청&#x2F;응답을 정의한 것으로 동작하게 합니다.\n문제점다양한 케이스에한 커버리지물론 위처럼 정말 간단한 코드는 위 형식처럼 작성하는 것이 적절한 해결법이 될 수 있다고 생각합니다. 하지만 로직이 복잡하여 다양한 케이스에 대한 커버리지를 확보하기 위해서는 어려움이 있습니다. 20220202 기준일 이외의 테스트 시 Given 절에 해당하는 요청&#x2F;응답을 미리 정의해야 합니다. 1개의 객체를 처리하는 것은 어렵지 않으나 여러 객체를 처리하기 위해서는 어려움이 있습니다. 그리고 getExchangeRate() 메서드를 사용하는 모든 구간에서 동일하게 Mocking을 진행해야 합니다.\n테스트의 관심사order()메서드의 주 관심사는 주문을 객체를 환율 정보를 기반으로 영속화하는 것입니다. 그렇다는 것은 order() 테스트하는 관점도 해당 관점에서 진행해야 한다고 생각합니다. 즉 HTTP 통신의 관심사는 아니라고 생각하며 테스트 코드는 해당 관심사에 맞는 테스트를 진행해야 한다고 생각합니다.\n해결 방법 Interface결과적으로 다양한 케이스를 커버하기 위해서는 실제 Mock 서버로 커버하는 것은 비효율적이고 무엇보다 중요한 것은 order라는 관점에서 실제 외부 HTTP 통신이 큰 관심사가 아니라고 생각합니다. 그렇다면 Mocking을 진행한다면 HTTP 통신에 대한 Mocking을 하는 것보다 객체 자체를 Mocking 하는 것이 더 좋다고 생각합니다.\n\nInterface를 두고 실제 HTTP 통신을 하는 실제 구현체는 ExchangeRateClientImpl에서 진행하고, 테스트 코드 또는 일부 환경에서 구현체는 ExchangeRateClientMock을 사용하게 합니다.\n123456789101112131415161718192021222324252627@Configurationclass AppConfiguration &#123;    @Bean    @Profile(&quot;production | sandbox&quot;) // 특정 환경에서만 등록 하는 경우//    @Profile(&quot;!test&quot;) // 특정 환경만 제외하는 경우    fun exchangeRateClient() = ExchangeRateClientImpl()&#125;interface ExchangeRateClient &#123;    fun getExchangeRate(        targetDate: LocalDate,        currencyForm: String,        currencyTo: String,    ): ExchangeRateResponse&#125;class ExchangeRateClientImpl : ExchangeRateClient &#123;        override fun getExchangeRate(        targetDate: LocalDate,        currencyForm: String,        currencyTo: String,    ) =        ...        ...&#125;\n@Configuration을 통해서 Bean으로 등록할 실제 구현 객체를 작성합니다. 이때 @Profile을 통해서 특정 환경에서만 등록시킬지, 특정 환경에서만 제외할지 프로젝트에 특성에 맞게 조절하면 됩니다. 다음으로는 테스트에서 사용할 Mock 구현체로 테스트에서만 사용하는 것이라고 하면 test scope에 위치 시켜 실제 동작하는 코드 환경과 분리시키는 것이 바람직합니다.\n123456789101112131415└── src    ├── main    │   ├── kotlin    │   │   └── com    │   │       └── example    │   │           └── demo    │   │               └── ExchangeRateClientImpl.kt    │   └── resources    │       └── application.yml    └── test        └── kotlin            └── com                └── example                    └── demo                        └── ExchangeRateClientMock.kt\n위 경로처럼 test scope에서 ExchangeRateClientMock 객체를 위치 시켜 테스트 환경 외에는 해당 객체에 접근 못하도록 합니다.\n1234567891011121314151617181920@TestConfigurationclass TestSupport &#123;    @Bean    @Profile(&quot;test&quot;)    fun exchangeRateClient() = ExchangeRateClientMock()&#125;class ExchangeRateClientMock : ExchangeRateClient &#123;    override fun getExchangeRate(targetDate: LocalDate, currencyForm: String, currencyTo: String): ExchangeRateResponse &#123;        return when (targetDate) &#123;            LocalDate.of(2022, 2, 2) -&gt; ExchangeRateResponse(12000.12.toBigDecimal())            LocalDate.of(2022, 2, 3) -&gt; ExchangeRateResponse(13000.12.toBigDecimal())            LocalDate.of(2022, 2, 4) -&gt; ExchangeRateResponse(14000.12.toBigDecimal())            else -&gt; ExchangeRateResponse(15000.12.toBigDecimal())        &#125;    &#125;&#125;\n\n테스트 환경에서 사용할 설정 클래스인 @TestConfiguration 객체를 만들고 테스트 환경에서만 Bean이 등록 가능하도록 설정합니다. 그리고 실제 Mocking의 Given 절에 해당하는 코드를 작성합니다. 즉 20220202 날짜의 경우 USD &gt; KRW 환율이 12000으로 내려오게 설정합니다. order에 관심사는 해날 날짜에 환율 정보 기반으로 주문 금액이 정상적으로 영속화의 여부이기 때문에 미리 정의된 환율 정보 기반으로 정상적으로 금액이 잘 되었는지 검증하는 Then 절에 해당하는 테스트 코드를 작성합니다. Mock 구현체를 test 스코프에 위치 시켰지만 일반 main 위치 시키는 경우도 있습니다. 예를 사용해야 하는 외부 인프라가 특정 환경을 갖추지 못하는 경우, 외부 호출 경우 비용이 추가적으로 발생하는 경우 등등 이런 경우에서는 main 클래스에 위치 시키고 해당 환경에서 Mock 객체를 동작 시키는 것도 가능합니다. 물론 Mockito와 같은 테스트 도구를 이용하면 위와 같은 비슷한 방법으로 테스트가 가능합니다. 하지만 몇 가지 문제점들과 실제 객체를 Mockg 하는 방법이 더 효율적이라고 생각하여 위에서 설명한 방법으로 외부 인프라스트럭처 테스트를 진행합니다.\n\n특정 환경에서 다양한 이유로 해당 외부 인프라스트럭처를 이용하지 못하는 경우 Mock 객체로 갈아 끼우는 게 편리하다.\nMockito를 사용하면 단위 테스트 개념으로 실제 order가 영속화되었고 그 영속 화가 끝난 이후 데이터를 조회하여 실제로 원하는 형식으로 들어갔는지 테스트까지 어려우며, 내부 인프라에 대한 테스트가 또 필요 한 경우 거의 비슷한 테스트를 또 진행해야 합니다.\n@Mockbean을 사용하는 경우 스프링 빈 컨텍스트가 n 번 올라가기 때문에 속도적인 측면에서 많은 손해가 발생한다.\n외부 인프라를 의존하는 코드들에 모든 테스트에 Mockito와 같은 Given 절을 작성해야 합니다. 이는 HTTP Server를 Mocking 테스트와 동일하게 발생합니다.\n다양한 케이스에 대해서 애플리케이션 로직으로 처리가 가능합니다. ExchangeRateClientMock 객체의 getExchangeRate 메서드는 정해진 날짜 외에는 15000.12이 응답하게 했습니다. 이처럼 다양한 케이스에 대해서 추가적으로 애플리케이션 단에서 직관적으로 추가 및 변경이 가능합니다.\n\n이러한 이유들로 저는 Mockito와 같은 테스트 도구를 사용하지 않고 실제 Mock 객체를 직접 정의하여 사용합니다.\n그렇다면 Mocking은 불필요한 것일까?그렇다고 HTTP Server를 Mocking 하여 테스트하는 것은 의미가 없다고 할 수는 없습니다. 결국 중요한 것은 테스트의 관심사입니다. order 입장에서는 해당 행위가 큰 관심사가 아닐 수 있겠지만 getExchangeRate()메서드에서는 중요한 관점입니다. 즉 해당 테스트의 중요 관심사라면 Mocking 하여 테스트하는 것이 바람직합니다. getExchangeRate() 관심사는 요청&#x2F;응답입니다. 즉 요청한 HTTP 파라미터들이 미리 정의된 값으로 나갔고 해당 요청에 따른 응답이 오면 그 응답을 적절하게 deserialize 하여 자신을 호출한 객체로 넘겨 줄 수 있는 지입니다.\n12345678910111213141516171819202122232425262728293031323334353637@Testinternal fun `환율 정보 HTTP 통신 테스트`() &#123;    //given    val responseBody = &quot;&quot;&quot;                &#123;                  &quot;amount&quot;: &quot;140000&quot;                &#125;            &quot;&quot;&quot;.trimIndent()        mockServer.`when`(        HttpRequest.request()            .withMethod(&quot;GET&quot;)            .withPath(&quot;/exchange-rate&quot;)            .withPathParameters(                listOf(                    Parameter.param(&quot;targetDate&quot;, &quot;2022-02-02&quot;),                    Parameter.param(&quot;currencyForm&quot;, &quot;USD&quot;),                    Parameter.param(&quot;currencyTo&quot;, &quot;KRW&quot;)                )            )    ).respond(        HttpResponse.response()            .withBody(responseBody)            .withStatusCode(200)    )    //when    val clientImpl = ExchangeRateClientImpl()    clientImpl.getExchangeRate(        targetDate = LocalDate.of(2022, 2, 2),        currencyForm = &quot;USD&quot;,        currencyTo = &quot;KRW&quot;,    )&#125;\n\n이러한 관심사에 맞게 Givin 절에서 요청과 응답을 미리 정의하고 getExchangeRate() 메서드를 호출하면 Json 응답을 deserialize 하여 객체로 전달이 잘 되는지에 대한 관심사에 대해서 테스트 코드를 작성합니다. 외부 인프라에 대한 테스트도 마찬가지로 책임과 역할을 명확하게 구분하고 분리해야 한다고 생각합니다. 그렇지 않으면 특정 객체에 책임이 과중되고 결국 전체적인 설계 디자인이 좋지 않게 됩니다. 이러한 현상(냄새)를 가장 빠르게 눈치챌 수 있는 게 테스트 코드라고 생각합니다. 테스트 코드를 작성하다 보면 너무 많은 의존성이 필요 해지고 내가 검증하려는 관심사 외에도 다른 관심사에도 관여하게 되는 경우 문제가 있다고 빠른 피드백을 줄 수 있습니다. 저는 이것이 테스트 코드의 아주 큰 장점 중에 하나라고 생각합니다.\n123456789101112131415161718192021222324override fun getExchangeRate(        targetDate: LocalDate,        currencyForm: String,        currencyTo: String,): ExchangeRateResponse &#123;    val response = &quot;http://localhost:8080/exchange-rate&quot;        .httpGet(            parameters = listOf(                &quot;targetDate&quot; to targetDate,                &quot;currencyForm&quot; to currencyForm,                &quot;currencyTo&quot; to currencyTo            )        )        .response()    if (response.second.statusCode / 100 != 2) &#123;        // HTTP Status Code 2xx 아닌 경우는 어떻게         throw IllegalStateException(&quot;HTTP Status Code: $&#123;response.second.statusCode&#125; &quot;)    &#125;        return response        .first.responseObject&lt;ExchangeRateResponse&gt;(objectMapper)        .third.get()&#125;\n\ngetExchangeRate() 메서드에서 2xx 응답이 아닌 경우 예외를 발생시키는 코드를 추가했다고 가정하면 해당 메서드를 사용하는 오류가 발생해도 다음 로직을 이어 가야 하는 경우 try catch 묶는 해당 코드에서 예외 처리를 리팩토링 해야 합니다. 이러한 현상도 결국 역할과 책임이 과중 됐다고 생각합니다. getExchangeRate() 메서드는 HTTP 통신으로 요청&#x2F;응답에 대한 역할과 책임을 갖고 그 부분만 충실하게 하면 됩니다. 예외 처리에 대한 특히 비즈니스 로직에 의한 핸들링은 관여하지 않는 것이 좋은 설계라고 생각합니다.\n책임, 역활 분리HTTP Client 책임 분리하기에서 포스팅한 적 있듯 내부, 외부 인프라스트럭처는 추상화 단계를 가지며 그 단계에서 본인의 역할과 책임에 대해서 성실하게 다 하는 것이 좋다고 생각합니다.\n\nJPA를 사용하는 것으로 예를 들면 JpaRepository 영역은 ExchangeRateClient과 동일한 영역이라고 생각합니다. 특정 키값으로 조회하여 없는 경우 같은 비즈니스 영역의 책임을 JpaRepository에서 진행하지 않고 우리 비즈니스 로직을 풀어내는 서비스 영역에서 진행하는 것과 마찬가지로 HTTP 외부 통신도 동일하게 해당 요청&#x2F;응답에 관한 부분만 책임을 부여하고 그 외의 영역에서는 다른 서비스 객체를 만들고 그 객체에서 핸들링하는 것이 좋다고 생각합니다. 결과적으로 테스트 커버리지를 넓혀 다양한 케이스에 대한 테스트 코드를 작성하기 위해서는 객체 간에 역할 책임을 명확하게 구분하고 본인의 영역에 대해서는 충실하게 수행하는 코드가 동반되어야 가능하다고 생각합니다.\n정리해당 테스트 방법이 대부분의 환경에서 적절한 대안이 될 수 있다고는 생각하지 않습니다. 그래도 제가 경험한 환경에서는 외부 인프라스트럭처에 대한 테스트에 대한 코드를 작성할 때는 하고자 하는 테스트의 중요 관심사가 아닌 경우 불필요한 Mocking에 많은 코드를 작성하는 것이 효율적이지 못하다고 생각했습니다. 그리고 무엇보다 중요하는 것은 어떤 계층을 어떻게 바라보고 어떻게 테스트해야 할 것인지에 대한 팀 내부 차원의 합의된 부분이 먼저 선행되어야 한다고 생각합니다. 다양한 테스트 기법을 공부하는 것도 좋지만 프로젝트로 일을 진행하고 있다면 팀 내에서 토론하여 최소한의 합의를 먼저 구하고 테스트에 대한 기법을 적용하는 것이 더 좋을 거 같습니다.\n","dateCreated":"2022-10-10T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2022-10-10T00:00:00+09:00","description":"외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다.","headline":"외부 인프라스트럭처 테스트","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/10/10/external-infrastructure-testing/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2022/10/10/external-infrastructure-testing/","keywords":"Guide, Test"}</script>
+    <meta name="description" content="외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="외부 인프라스트럭처 테스트">
+<meta property="og:url" content="http://localhost:4000/2022/10/10/external-infrastructure-testing/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/tesing/demo/images/http-mock.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/msa-error-response/docs/http-client-layar.png">
+<meta property="article:published_time" content="2022-10-09T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.951Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Guide">
+<meta property="article:tag" content="Test">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/tesing/demo/images/http-mock.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            외부 인프라스트럭처 테스트
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-10-10T00:00:00+09:00">
+	
+		    2022/10/10
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>외부 인프라를 의존하는 로직의 경우 테스트 코드를 작성하기 어려운 부분이 있습니다. 예를 들어 특정 날짜 기준으로 환율 정보를 기반으로 금액을 계산하고, 그 환율 정보를 외부 HTTP Server에 질의한다고 하면 HTTP Server가 외부 인프라라에 해당합니다. 이런 경우 대부분 Mocking을 하여 테스트 코드를 작성하게 됩니다. 이전 포스팅 <a target="_blank" rel="noopener" href="https://cheese10yun.github.io/mockservernetty/">Mockserver Netty 사용해서 HTTP 통신 Mocking 하기</a>에서 다룬 적이 있습니다. 해당 포스팅은 라이브러리에 대한 사용법을 설명한 것이고 본 포스팅은 외부 인프라스트럭처를 효율적으로 관리하는 방법론에 대한 개인적인 생각을 정리했습니다. 외부 인프라의 대표적인 예가 HTTP Server를 호출하는 것이라서 설명을 그 기준으로 하는 것이고 다른 외부 인프라를 사용하더라도 해당 방법이 적절한 대한이 될 수 있습니다.</p>
+<h2 id="기본적인-HTTP-Mocking-테스트-방법"><a href="#기본적인-HTTP-Mocking-테스트-방법" class="headerlink" title="기본적인 HTTP Mocking 테스트 방법"></a>기본적인 HTTP Mocking 테스트 방법</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderService</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> productQueryService: ProductQueryService,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> exchangeRateClient: ExchangeRateClient</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 주문 객체를 영속화를 진행하고, 해당 금액에 맞는 환율 정보를 가져온다</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">order</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        productId: <span class="type">Long</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        orderDate: <span class="type">LocalDate</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        orderAmount: <span class="type">BigDecimal</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">val</span> product = productQueryService.findById(productId)</span><br><span class="line">        <span class="keyword">val</span> exchangeRateResponse = exchangeRateClient.getExchangeRate(orderDate, <span class="string">&quot;USD&quot;</span>, <span class="string">&quot;KRW&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 영속화</span></span><br><span class="line">        <span class="keyword">val</span> orderNumber = save(</span><br><span class="line">            productId,</span><br><span class="line">            exchangeRateResponse.amount,</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> orderNumber</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ExchangeRateClient</span>(</span><br><span class="line">   ...</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getExchangeRate</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        targetDate: <span class="type">LocalDate</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyForm: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyTo: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span> =</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 외부 HTTP Server에 질의하여 환율 정보를 가져온다.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="string">&quot;<span class="variable">$host</span>//exchange-rate&quot;</span></span><br><span class="line">            .httpGet(</span><br><span class="line">                parameters = listOf(</span><br><span class="line">                    <span class="string">&quot;targetDate&quot;</span> to targetDate,</span><br><span class="line">                    <span class="string">&quot;currencyForm&quot;</span> to currencyForm,</span><br><span class="line">                    <span class="string">&quot;currencyTo&quot;</span> to currencyTo</span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line">            .response()</span><br><span class="line">            .first.responseObject&lt;ExchangeRateResponse&gt;(objectMapper)</span><br><span class="line">            .third.<span class="keyword">get</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">ExchangeRateResponse</span>(</span><br><span class="line">    <span class="keyword">val</span> amount: BigDecimal</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>로직은 상품을 주문 시 금액을 환율을 조회하여 해당 환율로 주문 정보를 저장하는 것입니다. 로직에 대한 테스트 코드는 다음과 같습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `환율 정보 기반으로 주문 금액 계산하여 주문 생성`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//given</span></span><br><span class="line">    <span class="keyword">val</span> responseBody = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                    &#123;</span></span><br><span class="line"><span class="string">                      &quot;amount&quot;: &quot;140000&quot;</span></span><br><span class="line"><span class="string">                    &#125;</span></span><br><span class="line"><span class="string">                &quot;&quot;&quot;</span>.trimIndent()</span><br><span class="line">    mockServer.`<span class="keyword">when</span>`(</span><br><span class="line">        HttpRequest.request()</span><br><span class="line">            .withMethod(<span class="string">&quot;GET&quot;</span>)</span><br><span class="line">            .withPath(<span class="string">&quot;/exchange-rate&quot;</span>)</span><br><span class="line">            .withPathParameters(</span><br><span class="line">                listOf(</span><br><span class="line">                    Parameter.param(<span class="string">&quot;targetDate&quot;</span>, <span class="string">&quot;2022-02-02&quot;</span>),</span><br><span class="line">                    Parameter.param(<span class="string">&quot;currencyForm&quot;</span>, <span class="string">&quot;USD&quot;</span>),</span><br><span class="line">                    Parameter.param(<span class="string">&quot;currencyTo&quot;</span>, <span class="string">&quot;KRW&quot;</span>)</span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">    ).respond(</span><br><span class="line">        HttpResponse.response()</span><br><span class="line">            .withBody(responseBody)</span><br><span class="line">            .withStatusCode(<span class="number">200</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line">    <span class="keyword">val</span> orderNumber = orderService.order(<span class="number">1L</span>, LocalDate.of(<span class="number">2022</span>, <span class="number">2</span>, <span class="number">2</span>), <span class="number">100.</span>toBigDecimal())</span><br><span class="line"></span><br><span class="line">    <span class="comment">//then</span></span><br><span class="line">    <span class="keyword">val</span> findOrder = orderQueryService.findOrderNumber(orderNumber)</span><br><span class="line">    then(findOrder.amount).isEqualByComparingTo(<span class="number">140000.</span>toBigDecimal())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>로컬 환경에 Mock Server를 띄워 Given 절에 미리 요청&#x2F;응답을 정의한 것으로 동작하게 합니다.</p>
+<h2 id="문제점"><a href="#문제점" class="headerlink" title="문제점"></a>문제점</h2><h3 id="다양한-케이스에한-커버리지"><a href="#다양한-케이스에한-커버리지" class="headerlink" title="다양한 케이스에한 커버리지"></a>다양한 케이스에한 커버리지</h3><p>물론 위처럼 정말 간단한 코드는 위 형식처럼 작성하는 것이 적절한 해결법이 될 수 있다고 생각합니다. 하지만 로직이 복잡하여 다양한 케이스에 대한 커버리지를 확보하기 위해서는 어려움이 있습니다. <code>20220202</code> 기준일 이외의 테스트 시 Given 절에 해당하는 요청&#x2F;응답을 미리 정의해야 합니다. 1개의 객체를 처리하는 것은 어렵지 않으나 여러 객체를 처리하기 위해서는 어려움이 있습니다. 그리고 <code>getExchangeRate()</code> 메서드를 사용하는 모든 구간에서 동일하게 Mocking을 진행해야 합니다.</p>
+<h3 id="테스트의-관심사"><a href="#테스트의-관심사" class="headerlink" title="테스트의 관심사"></a>테스트의 관심사</h3><p><code>order()</code>메서드의 주 관심사는 주문을 객체를 환율 정보를 기반으로 영속화하는 것입니다. 그렇다는 것은 <code>order()</code> 테스트하는 관점도 해당 관점에서 진행해야 한다고 생각합니다. <strong>즉 HTTP 통신의 관심사는 아니라고 생각하며 테스트 코드는 해당 관심사에 맞는 테스트를 진행해야 한다고 생각합니다.</strong></p>
+<h2 id="해결-방법-Interface"><a href="#해결-방법-Interface" class="headerlink" title="해결 방법 Interface"></a>해결 방법 Interface</h2><p>결과적으로 다양한 케이스를 커버하기 위해서는 실제 Mock 서버로 커버하는 것은 비효율적이고 무엇보다 중요한 것은 <strong>order라는 관점에서 실제 외부 HTTP 통신이 큰 관심사가 아니라고 생각합니다.</strong> 그렇다면 Mocking을 진행한다면 HTTP 통신에 대한 Mocking을 하는 것보다 객체 자체를 Mocking 하는 것이 더 좋다고 생각합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/tesing/demo/images/http-mock.png"></p>
+<p>Interface를 두고 실제 HTTP 통신을 하는 실제 구현체는 ExchangeRateClientImpl에서 진행하고, 테스트 코드 또는 일부 환경에서 구현체는 ExchangeRateClientMock을 사용하게 합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AppConfiguration</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile(<span class="string">&quot;production | sandbox&quot;</span>)</span> <span class="comment">// 특정 환경에서만 등록 하는 경우</span></span><br><span class="line"><span class="comment">//    @Profile(&quot;!test&quot;) // 특정 환경만 제외하는 경우</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">exchangeRateClient</span><span class="params">()</span></span> = ExchangeRateClientImpl()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">ExchangeRateClient</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getExchangeRate</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        targetDate: <span class="type">LocalDate</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyForm: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyTo: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span>: ExchangeRateResponse</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ExchangeRateClientImpl</span> : <span class="type">ExchangeRateClient</span> &#123;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getExchangeRate</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        targetDate: <span class="type">LocalDate</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyForm: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyTo: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span> =</span><br><span class="line">        ...</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@Configuration</code>을 통해서 Bean으로 등록할 실제 구현 객체를 작성합니다. 이때 <code>@Profile</code>을 통해서 특정 환경에서만 등록시킬지, 특정 환경에서만 제외할지 프로젝트에 특성에 맞게 조절하면 됩니다. 다음으로는 테스트에서 사용할 Mock 구현체로 테스트에서만 사용하는 것이라고 하면 test scope에 위치 시켜 실제 동작하는 코드 환경과 분리시키는 것이 바람직합니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">└── src</span><br><span class="line">    ├── main</span><br><span class="line">    │   ├── kotlin</span><br><span class="line">    │   │   └── com</span><br><span class="line">    │   │       └── example</span><br><span class="line">    │   │           └── demo</span><br><span class="line">    │   │               └── ExchangeRateClientImpl.kt</span><br><span class="line">    │   └── resources</span><br><span class="line">    │       └── application.yml</span><br><span class="line">    └── test</span><br><span class="line">        └── kotlin</span><br><span class="line">            └── com</span><br><span class="line">                └── example</span><br><span class="line">                    └── demo</span><br><span class="line">                        └── ExchangeRateClientMock.kt</span><br></pre></td></tr></table></figure>
+<p>위 경로처럼 test scope에서 ExchangeRateClientMock 객체를 위치 시켜 <strong>테스트 환경 외에는 해당 객체에 접근 못하도록 합니다.</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@TestConfiguration</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TestSupport</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile(<span class="string">&quot;test&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">exchangeRateClient</span><span class="params">()</span></span> = ExchangeRateClientMock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ExchangeRateClientMock</span> : <span class="type">ExchangeRateClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getExchangeRate</span><span class="params">(targetDate: <span class="type">LocalDate</span>, currencyForm: <span class="type">String</span>, currencyTo: <span class="type">String</span>)</span></span>: ExchangeRateResponse &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">when</span> (targetDate) &#123;</span><br><span class="line">            LocalDate.of(<span class="number">2022</span>, <span class="number">2</span>, <span class="number">2</span>) -&gt; ExchangeRateResponse(<span class="number">12000.12</span>.toBigDecimal())</span><br><span class="line">            LocalDate.of(<span class="number">2022</span>, <span class="number">2</span>, <span class="number">3</span>) -&gt; ExchangeRateResponse(<span class="number">13000.12</span>.toBigDecimal())</span><br><span class="line">            LocalDate.of(<span class="number">2022</span>, <span class="number">2</span>, <span class="number">4</span>) -&gt; ExchangeRateResponse(<span class="number">14000.12</span>.toBigDecimal())</span><br><span class="line">            <span class="keyword">else</span> -&gt; ExchangeRateResponse(<span class="number">15000.12</span>.toBigDecimal())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>테스트 환경에서 사용할 설정 클래스인 <code>@TestConfiguration</code> 객체를 만들고 테스트 환경에서만 Bean이 등록 가능하도록 설정합니다. 그리고 실제 Mocking의 Given 절에 해당하는 코드를 작성합니다. 즉 20220202 날짜의 경우 USD &gt; KRW 환율이 12000으로 내려오게 설정합니다. order에 관심사는 해날 날짜에 환율 정보 기반으로 주문 금액이 정상적으로 영속화의 여부이기 때문에 미리 정의된 환율 정보 기반으로 정상적으로 금액이 잘 되었는지 검증하는 Then 절에 해당하는 테스트 코드를 작성합니다. Mock 구현체를 test 스코프에 위치 시켰지만 일반 main 위치 시키는 경우도 있습니다. 예를 사용해야 하는 외부 인프라가 특정 환경을 갖추지 못하는 경우, 외부 호출 경우 비용이 추가적으로 발생하는 경우 등등 이런 경우에서는 main 클래스에 위치 시키고 해당 환경에서 Mock 객체를 동작 시키는 것도 가능합니다. 물론 Mockito와 같은 테스트 도구를 이용하면 위와 같은 비슷한 방법으로 테스트가 가능합니다. 하지만 몇 가지 문제점들과 실제 객체를 Mockg 하는 방법이 더 효율적이라고 생각하여 위에서 설명한 방법으로 외부 인프라스트럭처 테스트를 진행합니다.</p>
+<ol>
+<li>특정 환경에서 다양한 이유로 해당 외부 인프라스트럭처를 이용하지 못하는 경우 Mock 객체로 갈아 끼우는 게 편리하다.</li>
+<li>Mockito를 사용하면 단위 테스트 개념으로 실제 order가 영속화되었고 그 영속 화가 끝난 이후 데이터를 조회하여 실제로 원하는 형식으로 들어갔는지 테스트까지 어려우며, 내부 인프라에 대한 테스트가 또 필요 한 경우 거의 비슷한 테스트를 또 진행해야 합니다.</li>
+<li><code>@Mockbean</code>을 사용하는 경우 스프링 빈 컨텍스트가 n 번 올라가기 때문에 속도적인 측면에서 많은 손해가 발생한다.</li>
+<li>외부 인프라를 의존하는 코드들에 모든 테스트에 Mockito와 같은 Given 절을 작성해야 합니다. 이는 HTTP Server를 Mocking 테스트와 동일하게 발생합니다.</li>
+<li>다양한 케이스에 대해서 애플리케이션 로직으로 처리가 가능합니다. ExchangeRateClientMock 객체의 getExchangeRate 메서드는 정해진 날짜 외에는 <code>15000.12</code>이 응답하게 했습니다. 이처럼 다양한 케이스에 대해서 추가적으로 애플리케이션 단에서 직관적으로 추가 및 변경이 가능합니다.</li>
+</ol>
+<p>이러한 이유들로 저는 Mockito와 같은 테스트 도구를 사용하지 않고 실제 Mock 객체를 직접 정의하여 사용합니다.</p>
+<h2 id="그렇다면-Mocking은-불필요한-것일까"><a href="#그렇다면-Mocking은-불필요한-것일까" class="headerlink" title="그렇다면 Mocking은 불필요한 것일까?"></a>그렇다면 Mocking은 불필요한 것일까?</h2><p>그렇다고 HTTP Server를 Mocking 하여 테스트하는 것은 의미가 없다고 할 수는 없습니다. 결국 중요한 것은 테스트의 관심사입니다. order 입장에서는 해당 행위가 큰 관심사가 아닐 수 있겠지만 <code>getExchangeRate()</code>메서드에서는 중요한 관점입니다. <strong>즉 해당 테스트의 중요 관심사라면 Mocking 하여 테스트하는 것이 바람직합니다.</strong> <code>getExchangeRate()</code> 관심사는 요청&#x2F;응답입니다. 즉 요청한 HTTP 파라미터들이 미리 정의된 값으로 나갔고 해당 요청에 따른 응답이 오면 그 응답을 적절하게 deserialize 하여 자신을 호출한 객체로 넘겨 줄 수 있는 지입니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `환율 정보 HTTP 통신 테스트`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//given</span></span><br><span class="line">    <span class="keyword">val</span> responseBody = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                &#123;</span></span><br><span class="line"><span class="string">                  &quot;amount&quot;: &quot;140000&quot;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">            &quot;&quot;&quot;</span>.trimIndent()</span><br><span class="line">    </span><br><span class="line">    mockServer.`<span class="keyword">when</span>`(</span><br><span class="line">        HttpRequest.request()</span><br><span class="line">            .withMethod(<span class="string">&quot;GET&quot;</span>)</span><br><span class="line">            .withPath(<span class="string">&quot;/exchange-rate&quot;</span>)</span><br><span class="line">            .withPathParameters(</span><br><span class="line">                listOf(</span><br><span class="line">                    Parameter.param(<span class="string">&quot;targetDate&quot;</span>, <span class="string">&quot;2022-02-02&quot;</span>),</span><br><span class="line">                    Parameter.param(<span class="string">&quot;currencyForm&quot;</span>, <span class="string">&quot;USD&quot;</span>),</span><br><span class="line">                    Parameter.param(<span class="string">&quot;currencyTo&quot;</span>, <span class="string">&quot;KRW&quot;</span>)</span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">    ).respond(</span><br><span class="line">        HttpResponse.response()</span><br><span class="line">            .withBody(responseBody)</span><br><span class="line">            .withStatusCode(<span class="number">200</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">//when</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> clientImpl = ExchangeRateClientImpl()</span><br><span class="line">    clientImpl.getExchangeRate(</span><br><span class="line">        targetDate = LocalDate.of(<span class="number">2022</span>, <span class="number">2</span>, <span class="number">2</span>),</span><br><span class="line">        currencyForm = <span class="string">&quot;USD&quot;</span>,</span><br><span class="line">        currencyTo = <span class="string">&quot;KRW&quot;</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이러한 관심사에 맞게 Givin 절에서 요청과 응답을 미리 정의하고 <code>getExchangeRate()</code> 메서드를 호출하면 Json 응답을 deserialize 하여 객체로 전달이 잘 되는지에 대한 관심사에 대해서 테스트 코드를 작성합니다. 외부 인프라에 대한 테스트도 마찬가지로 책임과 역할을 명확하게 구분하고 분리해야 한다고 생각합니다. <strong>그렇지 않으면 특정 객체에 책임이 과중되고 결국 전체적인 설계 디자인이 좋지 않게 됩니다. 이러한 현상(냄새)를 가장 빠르게 눈치챌 수 있는 게 테스트 코드라고 생각합니다.</strong> 테스트 코드를 작성하다 보면 너무 많은 의존성이 필요 해지고 내가 검증하려는 관심사 외에도 다른 관심사에도 관여하게 되는 경우 문제가 있다고 빠른 피드백을 줄 수 있습니다. 저는 이것이 테스트 코드의 아주 큰 장점 중에 하나라고 생각합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getExchangeRate</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        targetDate: <span class="type">LocalDate</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyForm: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        currencyTo: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>: ExchangeRateResponse &#123;</span><br><span class="line">    <span class="keyword">val</span> response = <span class="string">&quot;http://localhost:8080/exchange-rate&quot;</span></span><br><span class="line">        .httpGet(</span><br><span class="line">            parameters = listOf(</span><br><span class="line">                <span class="string">&quot;targetDate&quot;</span> to targetDate,</span><br><span class="line">                <span class="string">&quot;currencyForm&quot;</span> to currencyForm,</span><br><span class="line">                <span class="string">&quot;currencyTo&quot;</span> to currencyTo</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">        .response()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (response.second.statusCode / <span class="number">100</span> != <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="comment">// HTTP Status Code 2xx 아닌 경우는 어떻게 </span></span><br><span class="line">        <span class="keyword">throw</span> IllegalStateException(<span class="string">&quot;HTTP Status Code: <span class="subst">$&#123;response.second.statusCode&#125;</span> &quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line">        .first.responseObject&lt;ExchangeRateResponse&gt;(objectMapper)</span><br><span class="line">        .third.<span class="keyword">get</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>getExchangeRate()</code> 메서드에서 2xx 응답이 아닌 경우 예외를 발생시키는 코드를 추가했다고 가정하면 해당 메서드를 사용하는 오류가 발생해도 다음 로직을 이어 가야 하는 경우 try catch 묶는 해당 코드에서 예외 처리를 리팩토링 해야 합니다. 이러한 현상도 결국 역할과 책임이 과중 됐다고 생각합니다. <code>getExchangeRate()</code> 메서드는 HTTP 통신으로 요청&#x2F;응답에 대한 역할과 책임을 갖고 그 부분만 충실하게 하면 됩니다. 예외 처리에 대한 특히 비즈니스 로직에 의한 핸들링은 관여하지 않는 것이 좋은 설계라고 생각합니다.</p>
+<h3 id="책임-역활-분리"><a href="#책임-역활-분리" class="headerlink" title="책임, 역활 분리"></a>책임, 역활 분리</h3><p><a target="_blank" rel="noopener" href="https://cheese10yun.github.io/httpclient/">HTTP Client 책임 분리하기</a>에서 포스팅한 적 있듯 내부, 외부 인프라스트럭처는 추상화 단계를 가지며 그 단계에서 본인의 역할과 책임에 대해서 성실하게 다 하는 것이 좋다고 생각합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/msa-error-response/docs/http-client-layar.png"></p>
+<p>JPA를 사용하는 것으로 예를 들면 JpaRepository 영역은 ExchangeRateClient과 동일한 영역이라고 생각합니다. 특정 키값으로 조회하여 없는 경우 같은 비즈니스 영역의 책임을 JpaRepository에서 진행하지 않고 우리 비즈니스 로직을 풀어내는 서비스 영역에서 진행하는 것과 마찬가지로 HTTP 외부 통신도 동일하게 해당 요청&#x2F;응답에 관한 부분만 책임을 부여하고 그 외의 영역에서는 다른 서비스 객체를 만들고 그 객체에서 핸들링하는 것이 좋다고 생각합니다. 결과적으로 테스트 커버리지를 넓혀 다양한 케이스에 대한 테스트 코드를 작성하기 위해서는 객체 간에 역할 책임을 명확하게 구분하고 본인의 영역에 대해서는 충실하게 수행하는 코드가 동반되어야 가능하다고 생각합니다.</p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>해당 테스트 방법이 대부분의 환경에서 적절한 대안이 될 수 있다고는 생각하지 않습니다. 그래도 제가 경험한 환경에서는 외부 인프라스트럭처에 대한 테스트에 대한 코드를 작성할 때는 하고자 하는 테스트의 중요 관심사가 아닌 경우 불필요한 Mocking에 많은 코드를 작성하는 것이 효율적이지 못하다고 생각했습니다. 그리고 무엇보다 중요하는 것은 어떤 계층을 어떻게 바라보고 어떻게 테스트해야 할 것인지에 대한 팀 내부 차원의 합의된 부분이 먼저 선행되어야 한다고 생각합니다. 다양한 테스트 기법을 공부하는 것도 좋지만 프로젝트로 일을 진행하고 있다면 팀 내에서 토론하여 최소한의 합의를 먼저 구하고 테스트에 대한 기법을 적용하는 것이 더 좋을 거 같습니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Guide/" rel="tag">Guide</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Test/" rel="tag">Test</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/10/16/test-bandwidth/"
+                    data-tooltip="테스트 대역폭 늘리기"
+                    aria-label="이전: 테스트 대역폭 늘리기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/09/26/data-grip/"
+                    data-tooltip="DataGrip 살펴 보기"
+                    aria-label="다음: DataGrip 살펴 보기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/10/16/test-bandwidth/"
+                    data-tooltip="테스트 대역폭 늘리기"
+                    aria-label="이전: 테스트 대역폭 늘리기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/09/26/data-grip/"
+                    data-tooltip="DataGrip 살펴 보기"
+                    aria-label="다음: DataGrip 살펴 보기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2022/10/10/external-infrastructure-testing/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Elasticsearch APM 기본설정 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Elasticsearch은 모니터링 시스템으로 APM을 지원해 주고 있습니다. Spring 기반 웹서버에서 편리하게 구성할 수 있게 Elastic APM Agent를 제공하고 있습니다. 해당 포스팅에서는 스프링 기반의 웹서버를 Elasticsearch, Kibana를 이용해서 APM 연결하는 내용입니다. APM의 자세한 내용은 다음 포스팅에서 진행해보겠습니다.\nELK 구성123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114version: &#x27;3.2&#x27;services:    es01:        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1        container_name: es01        environment:            - node.name=es01            - cluster.name=es-docker-cluster            - discovery.seed_hosts=es02,es03            - cluster.initial_master_nodes=es01,es02,es03            - bootstrap.memory_lock=true            - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;        ulimits:            memlock:                soft: -1                hard: -1        volumes:            - ./volume/data01:/usr/share/elasticsearch/data        ports:            - 9200:9200        networks:            - elastic    es02:        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1        container_name: es02        environment:            - node.name=es02            - cluster.name=es-docker-cluster            - discovery.seed_hosts=es01,es03            - cluster.initial_master_nodes=es01,es02,es03            - bootstrap.memory_lock=true            - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;        ulimits:            memlock:                soft: -1                hard: -1        volumes:            - ./volume/data02:/usr/share/elasticsearch/data        ports:            - 9201:9201        networks:            - elastic    es03:        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1        container_name: es03        environment:            - node.name=es03            - cluster.name=es-docker-cluster            - discovery.seed_hosts=es01,es02            - cluster.initial_master_nodes=es01,es02,es03            - bootstrap.memory_lock=true            - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;        ulimits:            memlock:                soft: -1                hard: -1        volumes:            - ./volume/data03:/usr/share/elasticsearch/data        ports:            - 9202:9202        networks:            - elastic    kib01:        image: docker.elastic.co/kibana/kibana:7.5.1        container_name: kib01        ports:            - 5601:5601        environment:            ELASTICSEARCH_URL: http://es01:9200            ELASTICSEARCH_HOSTS: http://es01:9200        networks:            - elastic    logstash:        image: docker.elastic.co/logstash/logstash:7.5.1        container_name: logstash        command: logstash -f /usr/share/logstash/pipeline/logstash.conf        volumes:            -   type: bind                source: ./logstash/config/logstash.yml                target: /usr/share/logstash/config/logstash.yml                read_only: true            -   type: bind                source: ./logstash/pipeline                target: /usr/share/logstash/pipeline                read_only: true        environment:            LS_JAVA_OPTS: &quot;-Xmx256m -Xms256m&quot;        ports:            - 5044:5044        networks:            - elastic        depends_on:            - es01            - es02            - es03            - kib01volumes:    data01:        driver: local    data02:        driver: local    data03:        driver: local    logstash:        driver: localnetworks:    elastic:        driver: bridge\n\nes01, es02, es03각 클러스터링 해서 설정했고, 키바나 설정과, 로그스테이시 설정을 진행했습니다. 해당 구성은 Install Elasticsearch with Docker의 기반으로 로그스테이시 설정을 추가했습니다. 이번 포스팅에서는 사용 안 하지만 이후 포스팅에 다룰 예정이라 추가했습니다. 로그스테이시 사용하지 않는다면 해당 부분을 주석해서 사용해도 됩니다.\n1$ docmer-compose up -d\n위 명령어로 도커를 실행합니다.\nAPM 설정APM Server 설정\n\nAPM으로 이동합니다\n\n\n\nSetup Instructions 버튼을 클릭합니다.\n\n\n\n위 가이드 그대로 진행합니다.\n\n12345678# 해당 파일 다운curl -L -O https://artifacts.elastic.co/downloads/apm-server/apm-server-7.5.1-darwin-x86_64.tar.gz# 압축 해제tar xzvf apm-server-7.5.1-darwin-x86_64.tar.gz# apm-server로 이동cd apm-server-7.5.1-darwin-x86_64/\n\napm-server.yml 설정 파일을 아래처럼 수정합니다.\n1234567#-------------------------- Elasticsearch output --------------------------output.elasticsearch:  # Array of hosts to connect to.  # Scheme and port can be left out and will be set to the default (`http` and `9200`).  # In case you specify and additional path, the scheme is required: `http://localhost:9200/path`.  # IPv6 addresses should always be defined as: `https://[2001:db8::1]:9200`.  hosts: [&quot;localhost:9200&quot;] # localhost:9200 으로 hosts 지정 \n\nAgent 설정\n\nAgent 설정도 동일하게 해당 가이드 그대로 진행합니다.\nMaven Central으로 이동해서 해당 언어에 맞는 Agent를 설치합니다. 해당 서버는 스프링 기반으로 동작하기 때문에 Java로 진행하겠습니다.\nCheck agent status 버튼을 눌러서 위에서 설정한 APM 서버가 제대로 동작 중인지 확인할 수 있습니다.\n오른쪽 최하단 Launch APM 버튼을 클릭해서 종료합니다. 해당 설정으로 다른 무언가를 생성하지 않고 필요한 APM Server, APM Agent를 설정하는 것이 목적입니다.\n\nAgent 실행123456java -javaagent:/path/to/elastic-apm-agent-&lt;version&gt;.jar \\     -Delastic.apm.service_name=my-application \\     -Delastic.apm.server_url=http://localhost:8200 \\     -Delastic.apm.secret_token= \\     -Delastic.apm.application_packages=org.example \\     -jar my-application.jar\n모니터링 대상 서버 구동시 해당 Agent를 같이 실행하기만 하면 됩니다. 저는 인텔리제이 환경에서 진행하기 때문에 jar를 직접 실행하지 않고 아래처럼 진행했습니다.\n\n1234java -javaagent:/절대 경로/elastic-apm-agent-1.24.0.jar \\     -Delastic.apm.service_name=order-service \\    -Delastic.apm.server_url=http://localhost:8200 \\    -Delastic.apm.application_packages=com.service.order\n\n\nservice_name: APM 대상의 서버 이름\nserver_url: 위에서 설정한 APM 서버 주소\napplication_packages: 애플리케이션 패키지 주소\nsecret_token: 설정은 사용하지 않아 제거\n\n키바나 APM\n\n위에 설정한 APM 서버 확인\n\nTransactions\n\n해당 애플리케이션 트랜잭션 정보를 출력합니다. 보다 자세히 보고 싶으면 해당 트랜잭션을 클릭해서 자세한 내용을 확인할 수 있습니다.\n\n\n\n해당 트랜잭션 내용을 살펴볼 수 있으며, HTTP 요청&#x2F;응답에 대한 자세한 내용도 확인 가능합니다.\n\n\n\n해당 쿼리 문의 상세한 내용도 확인할 수 있습니다.\n\nErrors\n\n해당 서버의 Error를 보여줍니다.\n발생한 Error를 클릭하면 해당 오류의 더 많은 정보를 확인할 수 있습니다.\n\n\n\n오류가 발생한 트랜잭션을 클릭하면 트래잭션 탭으로 이동되며, 해당 이슈의 원인을 파악을 도와줍니다.\n\nJVMs\n현재 시스템 리소스에 대한 내용을 확인할 수 있습니다.\n","dateCreated":"2021-07-18T18:03:17+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2021-07-18T18:03:17+09:00","description":"Elasticsearch은 모니터링 시스템으로 APM을 지원해 주고 있습니다. Spring 기반 웹서버에서 편리하게 구성할 수 있게 Elastic APM Agent를 제공하고 있습니다. 해당 포스팅에서는 스프링 기반의 웹서버를 Elasticsearch, Kibana를 이용해서 APM 연결하는 내용입니다. APM의 자세한 내용은 다음 포스팅에서 진행해보겠습니다.","headline":"Elasticsearch APM 기본설정","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2021/07/18/elk-apm-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2021/07/18/elk-apm-1/","keywords":"ELK, Monitoring, APM"}</script>
+    <meta name="description" content="Elasticsearch은 모니터링 시스템으로 APM을 지원해 주고 있습니다. Spring 기반 웹서버에서 편리하게 구성할 수 있게 Elastic APM Agent를 제공하고 있습니다. 해당 포스팅에서는 스프링 기반의 웹서버를 Elasticsearch, Kibana를 이용해서 APM 연결하는 내용입니다. APM의 자세한 내용은 다음 포스팅에서 진행해보겠습니">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Elasticsearch APM 기본설정">
+<meta property="og:url" content="http://localhost:4000/2021/07/18/elk-apm-1/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Elasticsearch은 모니터링 시스템으로 APM을 지원해 주고 있습니다. Spring 기반 웹서버에서 편리하게 구성할 수 있게 Elastic APM Agent를 제공하고 있습니다. 해당 포스팅에서는 스프링 기반의 웹서버를 Elasticsearch, Kibana를 이용해서 APM 연결하는 내용입니다. APM의 자세한 내용은 다음 포스팅에서 진행해보겠습니">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-10.png">
+<meta property="article:published_time" content="2021-07-18T09:03:17.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.985Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="ELK">
+<meta property="article:tag" content="Monitoring">
+<meta property="article:tag" content="APM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-1.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Elasticsearch APM 기본설정
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2021-07-18T18:03:17+09:00">
+	
+		    2021/07/18
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Elasticsearch은 모니터링 시스템으로 APM을 지원해 주고 있습니다. Spring 기반 웹서버에서 편리하게 구성할 수 있게 Elastic APM Agent를 제공하고 있습니다. 해당 포스팅에서는 스프링 기반의 웹서버를 Elasticsearch, Kibana를 이용해서 APM 연결하는 내용입니다. APM의 자세한 내용은 다음 포스팅에서 진행해보겠습니다.</p>
+<h2 id="ELK-구성"><a href="#ELK-구성" class="headerlink" title="ELK 구성"></a>ELK 구성</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">    <span class="attr">es01:</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.5.1</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">es01</span></span><br><span class="line">        <span class="attr">environment:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">node.name=es01</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.name=es-docker-cluster</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">discovery.seed_hosts=es02,es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.initial_master_nodes=es01,es02,es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</span></span><br><span class="line">        <span class="attr">ulimits:</span></span><br><span class="line">            <span class="attr">memlock:</span></span><br><span class="line">                <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">                <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">./volume/data01:/usr/share/elasticsearch/data</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="number">9200</span><span class="string">:9200</span></span><br><span class="line">        <span class="attr">networks:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">es02:</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.5.1</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">es02</span></span><br><span class="line">        <span class="attr">environment:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">node.name=es02</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.name=es-docker-cluster</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">discovery.seed_hosts=es01,es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.initial_master_nodes=es01,es02,es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</span></span><br><span class="line">        <span class="attr">ulimits:</span></span><br><span class="line">            <span class="attr">memlock:</span></span><br><span class="line">                <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">                <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">./volume/data02:/usr/share/elasticsearch/data</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="number">9201</span><span class="string">:9201</span></span><br><span class="line">        <span class="attr">networks:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">es03:</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:7.5.1</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">es03</span></span><br><span class="line">        <span class="attr">environment:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">node.name=es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.name=es-docker-cluster</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">discovery.seed_hosts=es01,es02</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">cluster.initial_master_nodes=es01,es02,es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</span></span><br><span class="line">        <span class="attr">ulimits:</span></span><br><span class="line">            <span class="attr">memlock:</span></span><br><span class="line">                <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">                <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">./volume/data03:/usr/share/elasticsearch/data</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="number">9202</span><span class="string">:9202</span></span><br><span class="line">        <span class="attr">networks:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">kib01:</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.elastic.co/kibana/kibana:7.5.1</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">kib01</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="number">5601</span><span class="string">:5601</span></span><br><span class="line">        <span class="attr">environment:</span></span><br><span class="line">            <span class="attr">ELASTICSEARCH_URL:</span> <span class="string">http://es01:9200</span></span><br><span class="line">            <span class="attr">ELASTICSEARCH_HOSTS:</span> <span class="string">http://es01:9200</span></span><br><span class="line">        <span class="attr">networks:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">logstash:</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.elastic.co/logstash/logstash:7.5.1</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">logstash</span></span><br><span class="line">        <span class="attr">command:</span> <span class="string">logstash</span> <span class="string">-f</span> <span class="string">/usr/share/logstash/pipeline/logstash.conf</span></span><br><span class="line">        <span class="attr">volumes:</span></span><br><span class="line">            <span class="bullet">-</span>   <span class="attr">type:</span> <span class="string">bind</span></span><br><span class="line">                <span class="attr">source:</span> <span class="string">./logstash/config/logstash.yml</span></span><br><span class="line">                <span class="attr">target:</span> <span class="string">/usr/share/logstash/config/logstash.yml</span></span><br><span class="line">                <span class="attr">read_only:</span> <span class="literal">true</span></span><br><span class="line">            <span class="bullet">-</span>   <span class="attr">type:</span> <span class="string">bind</span></span><br><span class="line">                <span class="attr">source:</span> <span class="string">./logstash/pipeline</span></span><br><span class="line">                <span class="attr">target:</span> <span class="string">/usr/share/logstash/pipeline</span></span><br><span class="line">                <span class="attr">read_only:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">environment:</span></span><br><span class="line">            <span class="attr">LS_JAVA_OPTS:</span> <span class="string">&quot;-Xmx256m -Xms256m&quot;</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="number">5044</span><span class="string">:5044</span></span><br><span class="line">        <span class="attr">networks:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line">        <span class="attr">depends_on:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">es01</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">es02</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">es03</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">kib01</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">    <span class="attr">data01:</span></span><br><span class="line">        <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">    <span class="attr">data02:</span></span><br><span class="line">        <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">    <span class="attr">data03:</span></span><br><span class="line">        <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">    <span class="attr">logstash:</span></span><br><span class="line">        <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">    <span class="attr">elastic:</span></span><br><span class="line">        <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<p>es01, es02, es03각 클러스터링 해서 설정했고, 키바나 설정과, 로그스테이시 설정을 진행했습니다. 해당 구성은 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html">Install Elasticsearch with Docker</a>의 기반으로 로그스테이시 설정을 추가했습니다. 이번 포스팅에서는 사용 안 하지만 이후 포스팅에 다룰 예정이라 추가했습니다. 로그스테이시 사용하지 않는다면 해당 부분을 주석해서 사용해도 됩니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docmer-compose up -d</span><br></pre></td></tr></table></figure>
+<p>위 명령어로 도커를 실행합니다.</p>
+<h2 id="APM-설정"><a href="#APM-설정" class="headerlink" title="APM 설정"></a>APM 설정</h2><h3 id="APM-Server-설정"><a href="#APM-Server-설정" class="headerlink" title="APM Server 설정"></a>APM Server 설정</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-1.png"></p>
+<ul>
+<li>APM으로 이동합니다</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-2.png"></p>
+<ul>
+<li><code>Setup Instructions</code> 버튼을 클릭합니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-3.png"></p>
+<ul>
+<li>위 가이드 그대로 진행합니다.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 해당 파일 다운</span><br><span class="line">curl -L -O https://artifacts.elastic.co/downloads/apm-server/apm-server-7.5.1-darwin-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"># 압축 해제</span><br><span class="line">tar xzvf apm-server-7.5.1-darwin-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"># apm-server로 이동</span><br><span class="line">cd apm-server-7.5.1-darwin-x86_64/</span><br></pre></td></tr></table></figure>
+
+<p><code>apm-server.yml</code> 설정 파일을 아래처럼 수정합니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-------------------------- Elasticsearch output --------------------------</span></span><br><span class="line"><span class="attr">output.elasticsearch:</span></span><br><span class="line">  <span class="comment"># Array of hosts to connect to.</span></span><br><span class="line">  <span class="comment"># Scheme and port can be left out and will be set to the default (`http` and `9200`).</span></span><br><span class="line">  <span class="comment"># In case you specify and additional path, the scheme is required: `http://localhost:9200/path`.</span></span><br><span class="line">  <span class="comment"># IPv6 addresses should always be defined as: `https://[2001:db8::1]:9200`.</span></span><br><span class="line">  <span class="attr">hosts:</span> [<span class="string">&quot;localhost:9200&quot;</span>] <span class="comment"># localhost:9200 으로 hosts 지정 </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Agent-설정"><a href="#Agent-설정" class="headerlink" title="Agent 설정"></a>Agent 설정</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-4.png"></p>
+<ul>
+<li>Agent 설정도 동일하게 해당 가이드 그대로 진행합니다.</li>
+<li><a target="_blank" rel="noopener" href="https://search.maven.org/artifact/co.elastic.apm/elastic-apm-agent/1.24.0/jar">Maven Central</a>으로 이동해서 해당 언어에 맞는 Agent를 설치합니다. 해당 서버는 스프링 기반으로 동작하기 때문에 Java로 진행하겠습니다.</li>
+<li><code>Check agent status</code> 버튼을 눌러서 위에서 설정한 APM 서버가 제대로 동작 중인지 확인할 수 있습니다.</li>
+<li>오른쪽 최하단 <code>Launch APM</code> 버튼을 클릭해서 종료합니다. 해당 설정으로 다른 무언가를 생성하지 않고 필요한 APM Server, APM Agent를 설정하는 것이 목적입니다.</li>
+</ul>
+<h2 id="Agent-실행"><a href="#Agent-실행" class="headerlink" title="Agent 실행"></a>Agent 실행</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java -javaagent:/path/to/elastic-apm-agent-&lt;version&gt;.jar \</span><br><span class="line">     -Delastic.apm.service_name=my-application \</span><br><span class="line">     -Delastic.apm.server_url=http://localhost:8200 \</span><br><span class="line">     -Delastic.apm.secret_token= \</span><br><span class="line">     -Delastic.apm.application_packages=org.example \</span><br><span class="line">     -jar my-application.jar</span><br></pre></td></tr></table></figure>
+<p>모니터링 대상 서버 구동시 해당 Agent를 같이 실행하기만 하면 됩니다. 저는 인텔리제이 환경에서 진행하기 때문에 jar를 직접 실행하지 않고 아래처럼 진행했습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-5.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">java -javaagent:/절대 경로/elastic-apm-agent-1.24.0.jar \ </span><br><span class="line">    -Delastic.apm.service_name=order-service \</span><br><span class="line">    -Delastic.apm.server_url=http://localhost:8200 \</span><br><span class="line">    -Delastic.apm.application_packages=com.service.order</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>service_name</code>: APM 대상의 서버 이름</li>
+<li><code>server_url</code>: 위에서 설정한 APM 서버 주소</li>
+<li><code>application_packages</code>: 애플리케이션 패키지 주소</li>
+<li><code>secret_token</code>: 설정은 사용하지 않아 제거</li>
+</ul>
+<h2 id="키바나-APM"><a href="#키바나-APM" class="headerlink" title="키바나 APM"></a>키바나 APM</h2><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-6.png"></p>
+<ul>
+<li>위에 설정한 APM 서버 확인</li>
+</ul>
+<h3 id="Transactions"><a href="#Transactions" class="headerlink" title="Transactions"></a>Transactions</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-7.png"></p>
+<ul>
+<li>해당 애플리케이션 트랜잭션 정보를 출력합니다. 보다 자세히 보고 싶으면 해당 트랜잭션을 클릭해서 자세한 내용을 확인할 수 있습니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-8.png"></p>
+<ul>
+<li>해당 트랜잭션 내용을 살펴볼 수 있으며, HTTP 요청&#x2F;응답에 대한 자세한 내용도 확인 가능합니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-9.png"></p>
+<ul>
+<li>해당 쿼리 문의 상세한 내용도 확인할 수 있습니다.</li>
+</ul>
+<h3 id="Errors"><a href="#Errors" class="headerlink" title="Errors"></a>Errors</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-11.png"></p>
+<ul>
+<li>해당 서버의 Error를 보여줍니다.</li>
+<li>발생한 Error를 클릭하면 해당 오류의 더 많은 정보를 확인할 수 있습니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-12.png"></p>
+<ul>
+<li>오류가 발생한 트랜잭션을 클릭하면 트래잭션 탭으로 이동되며, 해당 이슈의 원인을 파악을 도와줍니다.</li>
+</ul>
+<h3 id="JVMs"><a href="#JVMs" class="headerlink" title="JVMs"></a>JVMs</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-msa/docs/images/apm-1-10.png"></p>
+<p>현재 시스템 리소스에 대한 내용을 확인할 수 있습니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/APM/" rel="tag">APM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ELK/" rel="tag">ELK</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Monitoring/" rel="tag">Monitoring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/07/30/spring-config-server/"
+                    data-tooltip="Spring Cloud Config Server 정리"
+                    aria-label="이전: Spring Cloud Config Server 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/07/15/redis-getting-started/"
+                    data-tooltip="Redis Getting Started"
+                    aria-label="다음: Redis Getting Started"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/07/30/spring-config-server/"
+                    data-tooltip="Spring Cloud Config Server 정리"
+                    aria-label="이전: Spring Cloud Config Server 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2021/07/15/redis-getting-started/"
+                    data-tooltip="Redis Getting Started"
+                    aria-label="다음: Redis Getting Started"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2021/07/18/elk-apm-1/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/07/18/elk-apm-1/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/07/18/elk-apm-1/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2021/07/18/elk-apm-1/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

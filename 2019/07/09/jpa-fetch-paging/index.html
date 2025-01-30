@@ -1,0 +1,660 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>JPA Fetch Join 적용시 limit 동작하지 않는 이슈 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"결론부터 말씀드리면 Pagealge + Fetct Join을 이용해서 페이징 처리 시 특정 조건의 경우 limit이 발생하지 않아 테이블 FULL Scan 진행해서 애플리케이션 단에서 limit을 조정하는 경우가 있습니다. 성능에 막대한 영향을 주기 때문에 조심해야 합니다.\n조건\n주문 1 : 제품 N OneToMany 관계에 대해서 Pageagle 객체를 이용한 fetch join 사용 시 문제가 발생합니다. 아래는 연관관계의 코드입니다.\nlimit 확인12345678910111213141516171819202122232425262728@Entity@Table(name = &quot;orders&quot;)public class Order &#123;  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)  private long id;  @Column(name = &quot;orderer&quot;, nullable = false)  private String orderer;  @OneToMany(mappedBy = &quot;order&quot;, cascade = CascadeType.ALL)  private List&lt;Product&gt; products = new ArrayList&lt;&gt;();&#125;@Entity@Table(name = &quot;product&quot;)public class Product &#123;  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)  private long id;  @Column(name = &quot;name&quot;, nullable = false)  private String name;  @ManyToOne  @JoinColumn(name = &quot;order_id&quot;, nullable = false)  private Order order;&#125;\n\nPageable 객체를 이용한 fetch join 쿼리 입니다.\n12345678910public interface OrderRepository extends JpaRepository&lt;Order, Long&gt; &#123;  @Query(      value = &quot;select  o from Order o &quot;          + &quot;inner join fetch o.products &quot;,      countQuery = &quot;select count(o) from Order o&quot;  )  Page&lt;Order&gt; findByPageWithProducts(Pageable pageable);&#125;\n\nfindByPageWithProducts 메서드에 대한 SQL입니다.\nlimit 키워드가 없는 것을 확인할 수 있습니다. 그렇기 때문에 orde 전체를 Full Scan 한 이후에 Pageable size 만큼 애플리케이션 단에서 조절하는 것으로 보입니다.\n그렇다면 JpaRepository에서 제공해주는 findAll + Pageable을 이용한 방식에서는 어떻게 동작하는지 확인해 보겠습니다.\n1234@GetMappingpublic Page&lt;Order&gt; getOrderAll(Pageable pageable) &#123;    return orderRepository.findAll(pageable);&#125;\n\nlimit이 정상적으로 동작하는 것을 확인할 수 있습니다. 하지만 N + 1 fetch join 이 제거해서 n +1 문제가 발생하는 합니다.\nfetch join을 제거한 쿼리도 limit이 동작하는지 확인해 보겠습니다.\n12345@Query(    value = &quot;select  o from Order o &quot;,    countQuery = &quot;select count(o) from Order o&quot;)Page&lt;Order&gt; findByPageWithProducts(Pageable pageable);\n\nJpaRepository에서 제공해주는 이외의 메서드에서도 limit이 제대로 동작합니다.\nlimit이 결정되는 시점\nPagedExecution에서 doExecute 메서드 동작시 orders select 쿼리가 출력되는 것을 보아 저 시점에서 limit 여부가 결정되는 포인트인 거 같습니다. N + 1 문제를 해결하면서 limit이 동작하게 하는 방법은 아직 못 찾았습니다.\n결론Full Scan 해서 애플리케이션 레벨에서 해당 작업을 진행하는 것보다 N + 1 문제가 발생하더라도 fetch join을 제거하는 것이 현재로서는 그나마 적당한 방법인 거 같습니다.\n","dateCreated":"2019-07-09T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2019-07-09T00:00:00+09:00","description":"결론부터 말씀드리면 Pagealge + Fetct Join을 이용해서 페이징 처리 시 특정 조건의 경우 limit이 발생하지 않아 테이블 FULL Scan 진행해서 애플리케이션 단에서 limit을 조정하는 경우가 있습니다. 성능에 막대한 영향을 주기 때문에 조심해야 합니다.","headline":"JPA Fetch Join 적용시 limit 동작하지 않는 이슈","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/07/09/jpa-fetch-paging/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/07/09/jpa-fetch-paging/","keywords":"JPA, ORM"}</script>
+    <meta name="description" content="결론부터 말씀드리면 Pagealge + Fetct Join을 이용해서 페이징 처리 시 특정 조건의 경우 limit이 발생하지 않아 테이블 FULL Scan 진행해서 애플리케이션 단에서 limit을 조정하는 경우가 있습니다. 성능에 막대한 영향을 주기 때문에 조심해야 합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JPA Fetch Join 적용시 limit 동작하지 않는 이슈">
+<meta property="og:url" content="http://localhost:4000/2019/07/09/jpa-fetch-paging/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="결론부터 말씀드리면 Pagealge + Fetct Join을 이용해서 페이징 처리 시 특정 조건의 경우 limit이 발생하지 않아 테이블 FULL Scan 진행해서 애플리케이션 단에서 limit을 조정하는 경우가 있습니다. 성능에 막대한 영향을 주기 때문에 조심해야 합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/table.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/fetch-join-sql.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limit-query.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limt2.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limit-point.png">
+<meta property="article:published_time" content="2019-07-08T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.996Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/table.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            JPA Fetch Join 적용시 limit 동작하지 않는 이슈
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-07-09T00:00:00+09:00">
+	
+		    2019/07/09
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>결론부터 말씀드리면 Pagealge + Fetct Join을 이용해서 페이징 처리 시 특정 조건의 경우 limit이 발생하지 않아 <strong>테이블 FULL Scan 진행해서 애플리케이션 단에서 limit을 조정하는 경우가 있습니다.</strong> 성능에 막대한 영향을 주기 때문에 조심해야 합니다.</p>
+<h2 id="조건"><a href="#조건" class="headerlink" title="조건"></a>조건</h2><p><img src="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/table.png"></p>
+<p>주문 1 : 제품 N OneToMany 관계에 대해서 Pageagle 객체를 이용한 fetch join 사용 시 문제가 발생합니다. 아래는 연관관계의 코드입니다.</p>
+<h2 id="limit-확인"><a href="#limit-확인" class="headerlink" title="limit 확인"></a>limit 확인</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;orders&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Id</span> <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> id;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Column(name = &quot;orderer&quot;, nullable = false)</span></span><br><span class="line">  <span class="keyword">private</span> String orderer;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@OneToMany(mappedBy = &quot;order&quot;, cascade = CascadeType.ALL)</span></span><br><span class="line">  <span class="keyword">private</span> List&lt;Product&gt; products = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;product&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Product</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Id</span> <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> id;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Column(name = &quot;name&quot;, nullable = false)</span></span><br><span class="line">  <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@ManyToOne</span></span><br><span class="line">  <span class="meta">@JoinColumn(name = &quot;order_id&quot;, nullable = false)</span></span><br><span class="line">  <span class="keyword">private</span> Order order;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Pageable 객체를 이용한 fetch join 쿼리 입니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">OrderRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;Order, Long&gt; &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Query(</span></span><br><span class="line"><span class="meta">      value = &quot;select  o from Order o &quot;</span></span><br><span class="line"><span class="meta">          + &quot;inner join fetch o.products &quot;,</span></span><br><span class="line"><span class="meta">      countQuery = &quot;select count(o) from Order o&quot;</span></span><br><span class="line"><span class="meta">  )</span></span><br><span class="line">  Page&lt;Order&gt; <span class="title function_">findByPageWithProducts</span><span class="params">(Pageable pageable)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>findByPageWithProducts 메서드에 대한 SQL입니다.<br><img src="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/fetch-join-sql.png"></p>
+<p><strong>limit 키워드가 없는 것을 확인할 수 있습니다. 그렇기 때문에 orde 전체를 Full Scan 한 이후에 Pageable size 만큼 애플리케이션 단에서 조절하는 것으로 보입니다.</strong></p>
+<p>그렇다면 JpaRepository에서 제공해주는 findAll + Pageable을 이용한 방식에서는 어떻게 동작하는지 확인해 보겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="keyword">public</span> Page&lt;Order&gt; <span class="title function_">getOrderAll</span><span class="params">(Pageable pageable)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> orderRepository.findAll(pageable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limit-query.png"></p>
+<p>limit이 정상적으로 동작하는 것을 확인할 수 있습니다. 하지만 N + 1 fetch join 이 제거해서 n +1 문제가 발생하는 합니다.</p>
+<p>fetch join을 제거한 쿼리도 limit이 동작하는지 확인해 보겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Query(</span></span><br><span class="line"><span class="meta">    value = &quot;select  o from Order o &quot;,</span></span><br><span class="line"><span class="meta">    countQuery = &quot;select count(o) from Order o&quot;</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line">Page&lt;Order&gt; <span class="title function_">findByPageWithProducts</span><span class="params">(Pageable pageable)</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limt2.png"></p>
+<p>JpaRepository에서 제공해주는 이외의 메서드에서도 limit이 제대로 동작합니다.</p>
+<h2 id="limit이-결정되는-시점"><a href="#limit이-결정되는-시점" class="headerlink" title="limit이 결정되는 시점"></a>limit이 결정되는 시점</h2><p><img src="https://github.com/cheese10yun/blog-sample/raw/master/jpa-fetch-join/images/limit-point.png"></p>
+<p>PagedExecution에서 doExecute 메서드 동작시 orders select 쿼리가 출력되는 것을 보아 저 시점에서 limit 여부가 결정되는 포인트인 거 같습니다. N + 1 문제를 해결하면서 limit이 동작하게 하는 방법은 아직 못 찾았습니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>Full Scan 해서 애플리케이션 레벨에서 해당 작업을 진행하는 것보다 N + 1 문제가 발생하더라도 fetch join을 제거하는 것이 현재로서는 그나마 적당한 방법인 거 같습니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/07/21/spring-about-test/"
+                    data-tooltip="테스트 코드 작성에 대한 나름의 고찰"
+                    aria-label="이전: 테스트 코드 작성에 대한 나름의 고찰"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/07/04/spring-actuator/"
+                    data-tooltip="Spring Actuator 기초 설정"
+                    aria-label="다음: Spring Actuator 기초 설정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/07/21/spring-about-test/"
+                    data-tooltip="테스트 코드 작성에 대한 나름의 고찰"
+                    aria-label="이전: 테스트 코드 작성에 대한 나름의 고찰"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/07/04/spring-actuator/"
+                    data-tooltip="Spring Actuator 기초 설정"
+                    aria-label="다음: Spring Actuator 기초 설정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2019/07/09/jpa-fetch-paging/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,782 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다. 특히, “Redis는 싱글 스레드로 동작하기 때문에 여러 개의 커넥션을 사용해도 동시성을 처리할 수 없을 텐데, 이런 커넥션 풀이 무슨 의미가 있을까?“라는 생각을 할 수 있습니다.\nRedis 클라이언트에서 커넥션 풀을 사용하는 이유는 서버의 동작 방식과 클라이언트 애플리케이션에서의 요구사항이 다르기 때문입니다. Redis는 서버 레벨에서 요청을 순차적으로 처리하지만, 클라이언트 애플리케이션은 동시성과 성능을 최적화하기 위해 비동기 및 넌블로킹 I&#x2F;O를 지원하는 Lettuce와 같은 클라이언트를 통해 여러 요청을 효과적으로 관리합니다. Lettuce는 이러한 특성을 활용해 적은 수의 커넥션으로도 높은 효율을 발휘할 수 있도록 설계되었습니다.\n이번 글에서는 Hikari Connection Pool과 비교하며 Lettuce 커넥션 풀이 애플리케이션 성능에 미치는 영향을 실제 사례를 통해 구체적으로 살펴보겠습니다.\nJDBC Hikari Connection Pool의 동작 방식Redis Lettuce 커넥션 풀의 역할을 이해하기 위해, 먼저 전통적인 데이터베이스 커넥션 풀의 대표적인 예인 JDBC Hikari Connection Pool을 살펴보겠습니다.\n\n전통적인 Hikari Connection Pool에서는 애플리케이션이 주문 정보를 조회하기 위해 커넥션 풀에서 하나의 커넥션을 가져옵니다. 아래 그림에서 볼 수 있듯이, idleConnections가 10개라면, 그 중 하나의 커넥션을 가져와 activeConnections로 전환하게 됩니다. 이 경우 idleConnections는 9개로 줄고, activeConnections는 1개가 됩니다. 전체 totalConnections는 변하지 않고 유지됩니다.\n\n만약 요청이 많이 들어와 응답이 지연되고 있는 경우를 생각해 봅시다. 아래 그림처럼 maximum-pool-size가 10개인 상황에서, 모든 10개의 커넥션이 activeConnections로 전환되어 사용 중이라면, 추가적인 요청은 threadsAwaitingConnection으로 들어가 대기하게 됩니다. 즉, 사용 가능한 커넥션이 없기 때문에 요청 스레드는 커넥션이 반환될 때까지 기다려야 합니다.\n\n이와 같이 전통적인 커넥션 풀의 개념에서는, 요청 스레드마다 활성화된 커넥션을 사용하며, 해당 스레드가 작업을 끝내기 전까지는 커넥션을 점유하게 됩니다. 이는 데이터베이스의 동시 연결 수와 처리 능력을 효과적으로 관리할 수 있는 방법이지만, 커넥션이 사용 중일 때 대기하는 요청들이 발생할 수 있다는 단점이 있습니다.\n이제 이러한 전통적인 커넥션 풀과 비교하여, Redis Lettuce Connection Pool이 어떻게 다른 방식으로 동작하는지에 대해 알아보겠습니다.\nRedis Lettuce Connection Pool의 동작 방식Redis Lettuce Connection Pool의 동작 방식을 이해하기 위해, Redis 조회와 MySQL 조회가 함께 사용되는 시나리오를 살펴보겠습니다.\n\n위의 시나리오에서 애플리케이션은 먼저 Redis에서 쿠폰 정보를 조회한 후, MySQL에서 주문 정보를 조회합니다. Redis 쿠폰 조회는 10ms 만에 응답이 오지만, 이후 이어지는 MySQL 조회는 2,500ms가 걸립니다. 이 상황에서 Redis Lettuce 커넥션 풀이 어떻게 동작하는지를 이해하는 것이 중요합니다.\nRedis에 쿠폰 조회 요청을 보내면, 10ms 내에 쿠폰 정보가 응답됩니다. 여기서 Lettuce 커넥션 풀이 1개만 있다고 가정해 보겠습니다. 만약 이 상황이 전통적인 커넥션 풀 구조였다면, MySQL 데이터 조회(2,500ms)가 완료되기 전까지 하나뿐인 Redis 커넥션이 블록되어 Redis에 대한 추가적인 요청을 처리할 수 없었을 것입니다. 이는 Redis 서버가 이미 응답을 완료했음에도 불구하고, 애플리케이션 측에서 더 이상 Redis에 대한 요청을 처리할 수 없게 된다는 문제를 야기합니다.\n그러나 Redis Lettuce의 경우 비동기적으로 동작할 수 있습니다. Redis 서버에서 응답을 내린 후 해당 커넥션이 즉시 반환된다면, MySQL 조회가 진행 중이더라도 Redis에 대한 새로운 요청을 처리할 수 있게 됩니다. 이는 Redis 서버가 싱글 스레드로 동작하더라도 Lettuce 클라이언트 측에서는 추가적인 요청을 계속해서 보낼 수 있는 가능성을 열어줍니다. 그렇다면 실제로 Redis Lettuce가 이러한 방식으로 동작하는지, 아니면 다른 방식으로 동작하는지 코드를 통해 더 자세히 살펴보겠습니다.\nRedis Lettuce와 Hikari 동작 비교를 위한 코드1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556@RestController@RequestMappingclass MemberController(    private val redisConnectionPoolSample: RedisConnectionPoolSample,) &#123;    @GetMapping(&quot;/api/redis&quot;)    fun getRedis(@RequestParam(&quot;id&quot;) id: String) = redisConnectionPoolSample.getRedis(id)    @GetMapping(&quot;/api/mysql&quot;)    fun getMySql(@RequestParam(&quot;id&quot;) id: Long) = redisConnectionPoolSample.getMySql(id)    @GetMapping(&quot;/api/composite&quot;)    fun getRedis2(@RequestParam(&quot;id&quot;) id: String) = redisConnectionPoolSample.getComposite(id)&#125;@Serviceclass RedisConnectionPoolSample(    private val couponRepository: CouponRepository,    private val orderRepository: OrderRepository) &#123;    fun getRedis(id: String): Coupon? &#123;        return couponRepository.findByIdOrNull(id)    &#125;    fun getMySql(id: Long): Order? &#123;        printHikariConnection()        return orderRepository.findByIdOrNull(id)    &#125;    fun getComposite(id: String): Pair&lt;Coupon?, Order?&gt; &#123;        val coupon = couponRepository.findByIdOrNull(id)        val order = orderRepository.findByIdOrNull(id.toLong())        Thread.sleep(2500) // 2.5초 대기        printHikariConnection()        return Pair(coupon, order)    &#125;    private fun printHikariConnection() &#123;        val targetDataSource = dataSource.unwrap(HikariDataSource::class.java)        val hikariDataSource = targetDataSource as HikariDataSource        val hikariPoolMXBean = hikariDataSource.hikariPoolMXBean        val hikariConfigMXBean = hikariDataSource.hikariConfigMXBean        val log = buildString &#123;            append(&quot;totalConnections: $&#123;hikariPoolMXBean.totalConnections&#125;, &quot;)            append(&quot;activeConnections: $&#123;hikariPoolMXBean.activeConnections&#125;, &quot;)            append(&quot;idleConnections: $&#123;hikariPoolMXBean.idleConnections&#125;, &quot;)            append(&quot;threadsAwaitingConnection: $&#123;hikariPoolMXBean.threadsAwaitingConnection&#125;&quot;)        &#125;        println(log)    &#125;&#125;\n\n위의 코드에서 /api/redis는 단순히 Redis에서 쿠폰 정보를 조회하는 API입니다. /api/mysql은 MySQL에서 주문 정보를 조회하는 API이며, /api/composite는 Redis 조회 후 MySQL 조회를 수행하고 2.5초 동안 대기한 후 응답을 반환하는 API입니다.\n특히 /api/composite는 Redis에서 쿠폰을 조회한 후 MySQL 조회를 수행하며, 이때 Thread.sleep(2500)으로 인해 2.5초 동안 대기하게 됩니다. 이 상황에서 Lettuce의 커넥션 풀이 어떻게 동작하는지 살펴볼 수 있습니다.\n시나리오별 Hikari와 Lettuce의 차이점이 섹션에서는 Hikari와 Lettuce의 동작 방식을 서로 비교하면서 각 시나리오에서 어떤 차이점이 발생하는지에 대해 구체적으로 살펴보겠습니다. 이를 통해 각 커넥션 풀이 어떤 차이점을 갖고 있는지 명확히 이해할 수 있습니다.\n시나리오: getComposite 호출 이후 getMySql 호출Hikari 설정은 maximum-pool-size=1, minimum-idle=1로 구성되어 있으며, getComposite 호출 시 사용 가능한 단 하나의 커넥션을 사용하여 작업이 진행됩니다. 이번 테스트의 목적은 /api/composite 호출 이후 getMySql 호출의 응답 속도를 확인하는 것입니다. 만약 Hikari Connection Pool이 블로킹 방식으로 동작한다면 getComposite 호출 중 MySQL 조회 요청으로 점유된 커넥션이 반환되지 않아 getMySql 요청은 대기 상태에 놓이고 응답 시간이 지연될 것입니다. 반대로 MySQL 조회 요청이 빠르게 완료되거나, 추가적인 idle 커넥션이 있다면 getMySql 요청은 지연 없이 처리될 수 있습니다.\n이 상태에서 getMySql 호출을 시도하면, 사용 가능한 idle 커넥션이 없기 때문에 getComposite 호출이 끝난 후 반환된 커넥션을 사용해야 합니다. 이로 인해 threadsAwaitingConnection 상태에서 대기하게 되고, 지연이 발생합니다. 이후 threadsAwaitingConnection에서 대기하던 요청이 activeConnections로 전환되면, getMySql 호출에서 해당 커넥션을 사용할 수 있게 됩니다.\n테스트 결과\n/api/mysql 단독 호출 시:\n12# Connection totalConnections: 1, activeConnections: 1, idleConnections: 0, threadsAwaitingConnection: 0# HTTP 응답 Response code: 200; Time: 24ms (24 ms); Content length: 64 bytes (64 B)\n\n/api/composite 호출 이후 바로 /api/mysql를 호출한 경우:\n12# Connection totalConnections: 1, activeConnections: 1, idleConnections: 0, threadsAwaitingConnection: 1# HTTP 응답 Response code: 200; Time: 1112ms (1 s 112 ms); Content length: 64 bytes (64 B)\n\n테스트 결과, /api/composite 호출 이후 getMySql 요청은 대기 상태에 놓이며, MySQL 조회 작업이 완료되어 커넥션이 반환된 이후에 처리되는 것을 확인할 수 있었습니다. 이는 Hikari Connection Pool이 동기적이며, 사용 중인 커넥션이 반환될 때까지 대기 상태에 놓이는 블로킹 방식으로 동작하기 때문입니다.\n동작 흐름\nHikari Connection Pool의 동작 방식은 아래와 같습니다.\n\ngetComposite 호출: Service는 MySQL A 조회를 요청하고, 사용 가능한 idle 커넥션을 가져옵니다. 이 요청은 2,500ms가 소요되며, 해당 커넥션은 점유된 상태로 유지됩니다.\ngetMySql 호출: Controller는 Service로 getMySql 호출을 보냅니다. 그러나 MySQL A 조회 요청이 아직 진행 중이므로 사용 가능한 커넥션이 없습니다. 이에 따라 요청은 threadsAwaitingConnection 상태로 대기하게 됩니다.\nMySQL A 응답 반환: MySQL A 조회 요청이 완료되면서 커넥션이 반환됩니다. 반환된 커넥션은 대기 중이던 getMySql의 MySQL B 조회 요청에서 다시 사용됩니다.\nMySQL B 조회 요청 및 응답: 반환된 커넥션을 사용해 MySQL B 조회 요청이 처리됩니다. B 조회는 지연 없이 완료되며, 응답이 반환됩니다.\n최종 응답 반환: getComposite와 getMySql 요청이 순차적으로 완료되며, 최종적으로 각각의 결과가 Controller로 반환됩니다.\n\n블로킹 방식의 한계이 시나리오에서 Hikari Connection Pool의 블로킹 특성으로 인해 다음과 같은 한계가 발생합니다. MySQL A 조회 요청이 완료되기 전까지 커넥션이 반환되지 않아 getMySql 호출이 대기 상태에 놓이고, 동시 요청 수가 증가하면 threadsAwaitingConnection 상태가 늘어나면서 대기 시간이 길어질 가능성이 있습니다. 반면, Redis Lettuce 커넥션 풀은 이러한 상황에서 다르게 동작할 수 있습니다. Lettuce가 스레드를 블록시키는 방식으로 작동한다면 비슷한 지연 문제가 발생하지만, 논블로킹 방식이라면 MySQL의 지연과 관계없이 추가적인 Redis 요청에 빠르게 응답할 수 있습니다.\n시나리오: getComposite 호출 이후 getRedis 호출Lettuce 설정은 max-active=1, max-idle=1, min-idle=1로 구성되어 있으며, getComposite 호출 시 사용 가능한 단 하나의 커넥션을 사용하여 작업이 진행됩니다. 이번 테스트의 목적은 /api/composite 호출 이후 getRedis 호출의 응답 속도를 확인하는 것입니다. 만약 Lettuce가 블록되는 방식으로 동작한다면 getComposite 호출 중 Redis 조회 요청으로 점유된 커넥션이 MySQL 작업이 끝날 때까지 반환되지 않아 getRedis 요청은 대기 상태에 놓이고 응답 시간이 지연될 것입니다. 반대로 Lettuce가 비동기적이며 블로킹되지 않는 방식으로 동작한다면 getComposite 호출 중에도 커넥션이 Redis 요청 응답 후 즉시 반환되므로, getRedis 요청이 지연 없이 처리될 것입니다.\n테스트 결과\n/api/composite 호출 이후 바로 /api/redis를 호출한 경우:1Response code: 200; Time: 8ms (8 ms); Content length: 56 bytes (56 B)\n/api/redis 단독 호출 시:1Response code: 200; Time: 6ms (6 ms); Content length: 56 bytes (56 B)\n\n테스트 결과, /api/composite 호출 중에도 /api/redis 요청은 지연 없이 빠르게 응답하는 것을 확인할 수 있었습니다. 이는 Lettuce가 비동기적으로 동작하며, 스레드를 블록하지 않음을 시사합니다.\n동작 흐름\n\ngetComposite 호출: Controller가 getComposite 요청을 보냅니다. Service는 먼저 Redis 조회를 수행하며, 이 작업은 10ms 만에 완료되고 커넥션은 즉시 반환됩니다. 이후 MySQL 조회를 시작하며, MySQL 조회 작업은 2,500ms가 소요됩니다.\ngetRedis 호출: MySQL 조회가 진행 중인 상태에서 Controller가 getRedis 요청을 보냅니다. Redis는 MySQL 작업과는 독립적으로 동작하므로, Redis 조회 요청은 지연 없이 처리됩니다. 반환된 Redis 커넥션이 즉시 재사용되어 getRedis 요청이 빠르게 완료됩니다.\ngetComposite 응답 반환: MySQL 작업이 완료되면 getComposite 응답이 반환됩니다.\ngetRedis 응답 반환: hRedis 조회 요청이 완료된 후 응답이 반환됩니다. Redis 작업이 MySQL 작업의 지연과 상관없이 즉시 처리되었기 때문에 빠른 응답 시간을 유지합니다.\n\n논블로킹의 장점테스트 결과를 통해 Lettuce가 비동기적이고 논블로킹 방식으로 동작한다는 것을 확인할 수 있었습니다. Redis 조회는 10ms 만에 응답을 완료하고 커넥션을 즉시 반환하므로, MySQL 작업이 진행 중이라도 Redis 커넥션이 점유된 상태로 남아있지 않습니다. 결과적으로, 추가적인 Redis 요청(getRedis)은 MySQL의 작업 지연과 관계없이 빠르게 처리됩니다.\n이는 MySQL의 Hikari Connection Pool이 스레드를 블록하여 대기 시간을 유발하는 방식과 대비됩니다. Hikari에서는 커넥션이 반환될 때까지 다른 요청이 대기 상태에 놓이지만, Lettuce는 커넥션 반환이 즉시 이루어져 이러한 지연 없이 요청을 처리할 수 있습니다.\nRedis의 비동기 I&#x2F;O와 Lettuce의 설계가 결합되어 높은 동시성 환경에서도 안정적인 성능을 유지할 수 있음을 보여주는 사례라 할 수 있습니다. 이러한 특성은 Redis와 같이 빠른 응답성을 요구하는 환경에서 Lettuce가 얼마나 효율적인지를 잘 보여줍니다.\nHikari와 Lettuce의 차이점 정리\n동작 방식의 차이:\nHikari Connection Pool은 전통적인 동기식 동작을 기반으로 하며, 스레드 블로킹이 발생합니다. MySQL 같은 관계형 데이터베이스와 함께 사용하는 경우, 데이터 조회 시 커넥션이 점유된 상태로 유지되므로 다른 요청들은 사용 가능한 커넥션이 없어 대기하게 됩니다.\nRedis Lettuce Connection Pool은 비동기 및 넌블로킹 I&#x2F;O를 지원하여, Redis 서버에서 응답을 받은 후에도 바로 커넥션을 반환할 수 있습니다. 이를 통해 커넥션 점유 시간이 짧아져 Redis에 대한 다른 요청들도 빠르게 처리될 수 있습니다.\n\n\n커넥션 풀의 활용도:\nHikari Connection Pool은 threadsAwaitingConnection을 관리하며, 커넥션 풀이 모두 사용 중일 경우 새 요청들은 대기하게 됩니다. 따라서 커넥션 풀 크기 설정이 성능에 큰 영향을 미칩니다.\nRedis Lettuce Connection Pool은 커넥션을 빠르게 반환하기 때문에, 커넥션 풀 크기를 크게 설정하지 않아도 효율적으로 동작할 수 있습니다. Redis의 비동기 처리 덕분에 서버의 응답이 빠르다면, 적은 수의 커넥션으로도 많은 요청을 처리할 수 있습니다.\n\n\n특정 상황에서의 블로킹 차이:\nHikari Connection Pool은 요청이 지연되면, 다른 커넥션이 점유되지 않는 한 대기 스레드가 계속 늘어날 수 있습니다. 이는 높은 동시성에서 성능 저하를 야기할 수 있습니다.\nRedis Lettuce는 비동기적이며, Redis 서버로부터 응답을 받은 후에는 커넥션을 빠르게 반환하므로, 서버 응답 시간이 Lettuce의 성능에 직접적인 영향을 미칩니다. 즉, Redis 명령어가 복잡하고 시간이 오래 걸리면(예: keys * 사용), 그 시간 동안 다른 요청들이 블록될 수 있습니다.\n\n\n블로킹&#x2F;넌블로킹의 영향:\nHikari의 경우 스레드 블로킹이 빈번히 발생하는 반면, Lettuce는 넌블로킹으로 추가적인 스레드 리소스를 사용하지 않고도 더 많은 요청을 처리할 수 있는 장점이 있습니다.\n이는 특히 IO 작업이 많은 환경에서 Lettuce가 더 효율적으로 동작하도록 만듭니다. 반면, Hikari는 동기적 처리로 인해 CPU 자원을 더 많이 사용하게 되며, 이는 고비용의 대기 시간이 발생할 가능성을 증가시킵니다.\n\n\n\nLettuce Connection Pool 설정과 의미Lettuce Connection Pool PropertiesSpring Data Redis에서는 application.yml 파일을 통해 Lettuce Connection Pool의 설정을 손쉽게 구성할 수 있습니다. 아래는 주요 프로퍼티와 그 설명입니다:\n12345678910spring:    redis:        lettuce:            pool:                max-active: 1                max-idle: 1                min-idle: 1                enabled: true                max-wait: 1000ms                time-between-eviction-runs: 1000ms\n\n\n\n\n설정 항목\n설명\n기본 값\n\n\n\nmax-active\nConnection Pool에서 사용할 수 있는 최대 커넥션 수로, 동시 연결 수를 제한합니다.\n8\n\n\nmax-idle\nConnection Pool에서 유지할 수 있는 최대 유휴 커넥션 수입니다. 이 값을 초과하는 유휴 커넥션은 폐기됩니다.\n8\n\n\nmin-idle\nConnection Pool에서 유지할 최소 유휴 커넥션 수입니다. 유휴 커넥션이 부족하면 새 커넥션을 생성합니다.\n0\n\n\nenabled\nLettuce Connection Pool 사용 여부를 설정합니다. true로 설정 시 Pool이 활성화됩니다.\nfalse\n\n\nmax-wait\n커넥션이 사용 중일 때 새로운 요청이 대기할 수 있는 최대 시간입니다. 설정된 시간이 초과되면 예외가 발생합니다.\n-1 (무제한 대기)\n\n\ntime-between-eviction-runs\n유휴 커넥션 검사 및 제거 작업의 주기를 설정합니다. (단위: 밀리초)\n-1 (검사하지 않음)\n\n\n이러한 설정은 Lettuce Connection Pool의 동작을 세부적으로 제어하며, 애플리케이션의 요구 사항에 맞게 성능과 리소스 사용량을 조정할 수 있습니다. 특히, max-active, min-idle, max-wait와 같은 설정은 TPS가 높은 환경이나 트래픽 변동이 큰 상황에서 애플리케이션의 안정성을 보장하는 데 중요한 역할을 합니다.\nLettuce Connection Pool의 개수가 갖는 의미Redis Lettuce Connection은 비동기 방식으로 동작하며, 요청을 처리한 후 커넥션을 즉시 반환하는 구조를 가지고 있습니다. 이는 적은 수의 커넥션으로도 높은 효율을 발휘할 수 있다는 점에서 큰 장점입니다. 하지만, Hikari와 같은 전통적인 동기 커넥션 풀처럼 미리 커넥션을 확보하여 동시성을 처리하는 방식은 아니기 때문에, “Lettuce Connection Pool의 개수가 많다고 해서 이점이 있을까?”라는 의문을 가질 수 있습니다.\n사실, Lettuce Connection Pool의 개수는 TPS가 높아지고 Redis 서버의 응답이 느려질 때 중요한 의미를 가집니다. 다음은 Lettuce Connection Pool의 개수가 많을 때 가지는 이점을 설명합니다.\n\nRedis 응답 지연 시 동시 요청 처리 가능:Redis 서버가 응답을 지연하는 경우, 요청이 커넥션을 점유하는 시간이 길어집니다. 이때 Connection Pool의 크기가 작다면 모든 커넥션이 점유된 상태에서 새로운 요청이 대기 상태로 전환될 가능성이 높습니다. 하지만 Connection Pool 크기가 충분히 크다면, 지연된 요청과 별개로 다른 요청을 처리할 여유를 확보할 수 있습니다. 이는 TPS가 몰리는 상황에서도 전체 시스템의 성능 저하를 방지합니다.\n\nBurst 트래픽에서의 안정성 확보:트래픽이 순간적으로 폭증하는 경우, Pool 크기가 충분히 크면 새로운 요청을 대기시키지 않고 처리할 수 있습니다. 이는 특히 Redis 응답 시간이 일관되지 않은 상황에서 더욱 중요한데, Pool 크기가 충분하지 않으면 요청 처리 시간이 예측 불가능하게 증가할 수 있습니다.\n\n멀티 인스턴스 활용 가능성:Redis는 싱글 스레드로 동작하지만, 애플리케이션 인스턴스가 여러 개일 경우 각 인스턴스에서 동시에 Redis에 접근합니다. Pool 크기가 충분히 크다면, 여러 인스턴스가 Redis와 병렬로 통신하면서도 효율적으로 커넥션을 재사용할 수 있습니다.\n\n비동기 요청 처리 속도 향상:Lettuce는 비동기적으로 여러 요청을 처리할 수 있지만, Pool 크기가 제한적이라면 커넥션 재사용의 병목이 발생할 수 있습니다. Pool 크기를 늘리면 이러한 병목을 완화하고, Redis 서버의 응답 속도에 따라 더 많은 요청을 처리할 수 있습니다.\n\n장시간 실행되는 명령어의 영향 완화:일부 Redis 명령어(예: zrange, keys)는 실행 시간이 길어질 수 있습니다. Pool 크기가 작다면 이런 명령이 다른 요청 처리에 직접적인 영향을 미치지만, 충분한 Pool 크기는 이런 상황에서도 다른 요청을 지연 없이 처리할 수 있도록 합니다.\n\n\nLettuce Connection Pool의 개수는 TPS와 Redis 서버의 응답 지연이 증가하는 상황에서 중요한 역할을 합니다. 비록 Lettuce가 비동기적이고 효율적인 구조를 가졌더라도, Pool 크기를 적절히 설정하지 않으면 요청 대기가 발생할 수 있습니다.\n따라서 Lettuce Connection Pool의 개수는 단순히 많은 요청을 처리하기 위한 것이 아니라, Redis 서버 응답 시간의 변동성, Burst 트래픽, 그리고 장시간 실행되는 명령어 처리와 같은 다양한 상황에 대비하기 위한 안정성을 제공한다고 볼 수 있습니다. Connection Pool 크기를 TPS와 트래픽 패턴에 맞게 조정하는 것이 Lettuce의 효율성을 극대화하는 핵심 전략입니다.\n결론논블로킹 방식이 항상 절대적으로 좋은 것은 아닙니다. Redis Lettuce와 Hikari Connection Pool은 서로 다른 특성과 장점을 가지고 있으며, 각 환경에 따라 적절히 선택해야 합니다.\nLettuce의 경우, Redis 서버로부터 응답을 받으면 커넥션을 즉시 반환하고 다음 요청을 처리할 준비를 합니다. 이는 커넥션 점유 시간이 짧아져 더 작은 풀 크기로 효율적인 요청 처리가 가능하다는 큰 장점이 있습니다. 하지만 Redis 서버 자체가 응답을 지연한다면, 다른 요청이 대기 상태에 놓이게 되어 성능 저하로 이어질 수 있습니다. 이러한 상황에서는 Lettuce의 비동기적 특성이 한계를 보일 수 있습니다.\n반면, Hikari Connection Pool은 유휴 커넥션이 있는 경우 한 요청이 오래 걸리더라도 다른 커넥션을 사용하여 추가적인 요청을 처리할 수 있습니다. 이는 Redis와 같은 싱글 스레드 구조가 아닌, 다중 커넥션을 사용하는 데이터베이스 환경에 잘 맞는 전략입니다. 그러나 Hikari는 요청 중 커넥션이 블록되는 방식으로 동작하기 때문에, 풀 크기가 제한적이거나 동시 요청이 많아지면 대기 시간이 길어질 가능성이 있습니다.\n이러한 차이는 Redis가 싱글 스레드로 모든 요청을 처리하도록 설계된 서버라는 점에서 기인합니다. Lettuce는 Redis 서버의 메커니즘과 잘 맞는 전략을 선택하여 구현되었으며, 비동기와 논블로킹을 통해 Redis의 성능 특성을 최대한 활용합니다. 이는 Hikari Connection Pool과는 다른 접근 방식으로, Redis 서버와의 높은 호환성을 유지하며 효율적인 자원 관리를 가능하게 합니다.\n소프트웨어 개발에서는 항상 트레이드오프가 존재합니다. 특정 기술이 모든 상황에서 우월하다고 말할 수는 없습니다. Lettuce와 Hikari의 차이는 각기 다른 환경에 적합한 도구를 제공하며, 사용자는 자신의 애플리케이션 요구사항에 따라 적합한 전략을 선택해야 합니다. 결국, 어떤 도구가 “좋다”라고 단정짓기보다는, 각 기술의 장단점을 이해하고 상황에 맞게 활용하는 것이 중요합니다.\n","dateCreated":"2024-11-17T16:13:12+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2024-11-17T16:13:12+09:00","description":"Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다.","headline":"Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2024/11/17/redis-lettuce-connection/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2024/11/17/redis-lettuce-connection/","keywords":"Redis"}</script>
+    <meta name="description" content="Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징">
+<meta property="og:url" content="http://localhost:4000/2024/11/17/redis-lettuce-connection/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-000.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/connection-pool-001.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/connection-pool-002.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-001.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-002.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-003.png">
+<meta property="article:published_time" content="2024-11-17T07:13:12.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.735Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-000.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2024-11-17T16:13:12+09:00">
+	
+		    2024/11/17
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 <strong>커넥션 풀의 필요성과 이점</strong>에 대해 의문을 가질 수 있습니다. 특히, “<strong>Redis는 싱글 스레드로 동작하기 때문에 여러 개의 커넥션을 사용해도 동시성을 처리할 수 없을 텐데, 이런 커넥션 풀이 무슨 의미가 있을까?</strong>“라는 생각을 할 수 있습니다.</p>
+<p>Redis 클라이언트에서 커넥션 풀을 사용하는 이유는 서버의 동작 방식과 클라이언트 애플리케이션에서의 요구사항이 다르기 때문입니다. Redis는 서버 레벨에서 요청을 순차적으로 처리하지만, 클라이언트 애플리케이션은 <strong>동시성과 성능을 최적화하기 위해 비동기 및 넌블로킹 I&#x2F;O를 지원하는 Lettuce</strong>와 같은 클라이언트를 통해 여러 요청을 효과적으로 관리합니다. Lettuce는 이러한 특성을 활용해 적은 수의 커넥션으로도 높은 효율을 발휘할 수 있도록 설계되었습니다.</p>
+<p>이번 글에서는 Hikari Connection Pool과 비교하며 Lettuce 커넥션 풀이 애플리케이션 성능에 미치는 영향을 실제 사례를 통해 구체적으로 살펴보겠습니다.</p>
+<h2 id="JDBC-Hikari-Connection-Pool의-동작-방식"><a href="#JDBC-Hikari-Connection-Pool의-동작-방식" class="headerlink" title="JDBC Hikari Connection Pool의 동작 방식"></a>JDBC Hikari Connection Pool의 동작 방식</h2><p>Redis Lettuce 커넥션 풀의 역할을 이해하기 위해, 먼저 전통적인 데이터베이스 커넥션 풀의 대표적인 예인 <strong>JDBC Hikari Connection Pool</strong>을 살펴보겠습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-000.png"></p>
+<p>전통적인 Hikari Connection Pool에서는 애플리케이션이 주문 정보를 조회하기 위해 커넥션 풀에서 하나의 커넥션을 가져옵니다. 아래 그림에서 볼 수 있듯이, <strong>idleConnections</strong>가 10개라면, 그 중 하나의 커넥션을 가져와 <strong>activeConnections</strong>로 전환하게 됩니다. 이 경우 <strong>idleConnections</strong>는 9개로 줄고, <strong>activeConnections</strong>는 1개가 됩니다. 전체 <strong>totalConnections</strong>는 변하지 않고 유지됩니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/connection-pool-001.png" alt="Hikari Connection Pool - Idle to Active"></p>
+<p>만약 요청이 많이 들어와 응답이 지연되고 있는 경우를 생각해 봅시다. 아래 그림처럼 <strong>maximum-pool-size</strong>가 10개인 상황에서, 모든 10개의 커넥션이 <strong>activeConnections</strong>로 전환되어 사용 중이라면, 추가적인 요청은 <strong>threadsAwaitingConnection</strong>으로 들어가 대기하게 됩니다. 즉, 사용 가능한 커넥션이 없기 때문에 요청 스레드는 커넥션이 반환될 때까지 기다려야 합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/connection-pool-002.png" alt="Hikari Connection Pool - Threads Awaiting Connection"></p>
+<p>이와 같이 전통적인 커넥션 풀의 개념에서는, <strong>요청 스레드마다 활성화된 커넥션을 사용</strong>하며, 해당 스레드가 작업을 끝내기 전까지는 <strong>커넥션을 점유</strong>하게 됩니다. 이는 데이터베이스의 동시 연결 수와 처리 능력을 효과적으로 관리할 수 있는 방법이지만, 커넥션이 사용 중일 때 대기하는 요청들이 발생할 수 있다는 단점이 있습니다.</p>
+<p>이제 이러한 전통적인 커넥션 풀과 비교하여, <strong>Redis Lettuce Connection Pool</strong>이 어떻게 다른 방식으로 동작하는지에 대해 알아보겠습니다.</p>
+<h2 id="Redis-Lettuce-Connection-Pool의-동작-방식"><a href="#Redis-Lettuce-Connection-Pool의-동작-방식" class="headerlink" title="Redis Lettuce Connection Pool의 동작 방식"></a>Redis Lettuce Connection Pool의 동작 방식</h2><p>Redis Lettuce Connection Pool의 동작 방식을 이해하기 위해, <strong>Redis 조회와 MySQL 조회가 함께 사용되는 시나리오</strong>를 살펴보겠습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-001.png"></p>
+<p>위의 시나리오에서 애플리케이션은 먼저 Redis에서 쿠폰 정보를 조회한 후, MySQL에서 주문 정보를 조회합니다. Redis 쿠폰 조회는 10ms 만에 응답이 오지만, 이후 이어지는 MySQL 조회는 2,500ms가 걸립니다. 이 상황에서 Redis Lettuce 커넥션 풀이 어떻게 동작하는지를 이해하는 것이 중요합니다.</p>
+<p>Redis에 쿠폰 조회 요청을 보내면, 10ms 내에 쿠폰 정보가 응답됩니다. 여기서 Lettuce 커넥션 풀이 1개만 있다고 가정해 보겠습니다. 만약 이 상황이 전통적인 커넥션 풀 구조였다면, MySQL 데이터 조회(2,500ms)가 완료되기 전까지 하나뿐인 Redis 커넥션이 블록되어 Redis에 대한 추가적인 요청을 처리할 수 없었을 것입니다. 이는 Redis 서버가 이미 응답을 완료했음에도 불구하고, 애플리케이션 측에서 더 이상 Redis에 대한 요청을 처리할 수 없게 된다는 문제를 야기합니다.</p>
+<p>그러나 Redis Lettuce의 경우 비동기적으로 동작할 수 있습니다. Redis 서버에서 응답을 내린 후 해당 커넥션이 즉시 반환된다면, MySQL 조회가 진행 중이더라도 Redis에 대한 새로운 요청을 처리할 수 있게 됩니다. 이는 Redis 서버가 싱글 스레드로 동작하더라도 Lettuce 클라이언트 측에서는 추가적인 요청을 계속해서 보낼 수 있는 가능성을 열어줍니다. 그렇다면 실제로 Redis Lettuce가 이러한 방식으로 동작하는지, 아니면 다른 방식으로 동작하는지 <strong>코드를 통해 더 자세히 살펴보겠습니다</strong>.</p>
+<h2 id="Redis-Lettuce와-Hikari-동작-비교를-위한-코드"><a href="#Redis-Lettuce와-Hikari-동작-비교를-위한-코드" class="headerlink" title="Redis Lettuce와 Hikari 동작 비교를 위한 코드"></a>Redis Lettuce와 Hikari 동작 비교를 위한 코드</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MemberController</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> redisConnectionPoolSample: RedisConnectionPoolSample,</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(<span class="string">&quot;/api/redis&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getRedis</span><span class="params">(<span class="meta">@RequestParam(<span class="string">&quot;id&quot;</span>)</span> id: <span class="type">String</span>)</span></span> = redisConnectionPoolSample.getRedis(id)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(<span class="string">&quot;/api/mysql&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getMySql</span><span class="params">(<span class="meta">@RequestParam(<span class="string">&quot;id&quot;</span>)</span> id: <span class="type">Long</span>)</span></span> = redisConnectionPoolSample.getMySql(id)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(<span class="string">&quot;/api/composite&quot;</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getRedis2</span><span class="params">(<span class="meta">@RequestParam(<span class="string">&quot;id&quot;</span>)</span> id: <span class="type">String</span>)</span></span> = redisConnectionPoolSample.getComposite(id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RedisConnectionPoolSample</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> couponRepository: CouponRepository,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> orderRepository: OrderRepository</span><br><span class="line"></span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getRedis</span><span class="params">(id: <span class="type">String</span>)</span></span>: Coupon? &#123;</span><br><span class="line">        <span class="keyword">return</span> couponRepository.findByIdOrNull(id)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getMySql</span><span class="params">(id: <span class="type">Long</span>)</span></span>: Order? &#123;</span><br><span class="line">        printHikariConnection()</span><br><span class="line">        <span class="keyword">return</span> orderRepository.findByIdOrNull(id)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getComposite</span><span class="params">(id: <span class="type">String</span>)</span></span>: Pair&lt;Coupon?, Order?&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> coupon = couponRepository.findByIdOrNull(id)</span><br><span class="line">        <span class="keyword">val</span> order = orderRepository.findByIdOrNull(id.toLong())</span><br><span class="line">        Thread.sleep(<span class="number">2500</span>) <span class="comment">// 2.5초 대기</span></span><br><span class="line">        printHikariConnection()</span><br><span class="line">        <span class="keyword">return</span> Pair(coupon, order)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">printHikariConnection</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> targetDataSource = dataSource.unwrap(HikariDataSource::<span class="keyword">class</span>.java)</span><br><span class="line">        <span class="keyword">val</span> hikariDataSource = targetDataSource <span class="keyword">as</span> HikariDataSource</span><br><span class="line">        <span class="keyword">val</span> hikariPoolMXBean = hikariDataSource.hikariPoolMXBean</span><br><span class="line">        <span class="keyword">val</span> hikariConfigMXBean = hikariDataSource.hikariConfigMXBean</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> log = buildString &#123;</span><br><span class="line">            append(<span class="string">&quot;totalConnections: <span class="subst">$&#123;hikariPoolMXBean.totalConnections&#125;</span>, &quot;</span>)</span><br><span class="line">            append(<span class="string">&quot;activeConnections: <span class="subst">$&#123;hikariPoolMXBean.activeConnections&#125;</span>, &quot;</span>)</span><br><span class="line">            append(<span class="string">&quot;idleConnections: <span class="subst">$&#123;hikariPoolMXBean.idleConnections&#125;</span>, &quot;</span>)</span><br><span class="line">            append(<span class="string">&quot;threadsAwaitingConnection: <span class="subst">$&#123;hikariPoolMXBean.threadsAwaitingConnection&#125;</span>&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        println(log)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위의 코드에서 <code>/api/redis</code>는 단순히 Redis에서 쿠폰 정보를 조회하는 API입니다. <code>/api/mysql</code>은 MySQL에서 주문 정보를 조회하는 API이며, <code>/api/composite</code>는 Redis 조회 후 MySQL 조회를 수행하고 2.5초 동안 대기한 후 응답을 반환하는 API입니다.</p>
+<p>특히 <code>/api/composite</code>는 Redis에서 쿠폰을 조회한 후 MySQL 조회를 수행하며, 이때 <code>Thread.sleep(2500)</code>으로 인해 2.5초 동안 대기하게 됩니다. 이 상황에서 Lettuce의 커넥션 풀이 어떻게 동작하는지 살펴볼 수 있습니다.</p>
+<h2 id="시나리오별-Hikari와-Lettuce의-차이점"><a href="#시나리오별-Hikari와-Lettuce의-차이점" class="headerlink" title="시나리오별 Hikari와 Lettuce의 차이점"></a>시나리오별 Hikari와 Lettuce의 차이점</h2><p>이 섹션에서는 Hikari와 Lettuce의 동작 방식을 서로 비교하면서 각 시나리오에서 어떤 차이점이 발생하는지에 대해 구체적으로 살펴보겠습니다. 이를 통해 각 커넥션 풀이 어떤 차이점을 갖고 있는지 명확히 이해할 수 있습니다.</p>
+<h3 id="시나리오-getComposite-호출-이후-getMySql-호출"><a href="#시나리오-getComposite-호출-이후-getMySql-호출" class="headerlink" title="시나리오: getComposite 호출 이후 getMySql 호출"></a>시나리오: getComposite 호출 이후 getMySql 호출</h3><p>Hikari 설정은 <code>maximum-pool-size=1</code>, <code>minimum-idle=1</code>로 구성되어 있으며, <code>getComposite</code> 호출 시 사용 가능한 단 하나의 커넥션을 사용하여 작업이 진행됩니다. 이번 테스트의 목적은 <strong><code>/api/composite</code> 호출 이후 <code>getMySql</code> 호출의 응답 속도를 확인</strong>하는 것입니다. 만약 Hikari Connection Pool이 블로킹 방식으로 동작한다면 <code>getComposite</code> 호출 중 MySQL 조회 요청으로 점유된 커넥션이 반환되지 않아 <code>getMySql</code> 요청은 대기 상태에 놓이고 응답 시간이 지연될 것입니다. 반대로 MySQL 조회 요청이 빠르게 완료되거나, 추가적인 idle 커넥션이 있다면 <code>getMySql</code> 요청은 지연 없이 처리될 수 있습니다.</p>
+<p>이 상태에서 <code>getMySql</code> 호출을 시도하면, 사용 가능한 <strong>idle 커넥션</strong>이 없기 때문에 <code>getComposite</code> 호출이 끝난 후 반환된 커넥션을 사용해야 합니다. 이로 인해 <strong>threadsAwaitingConnection</strong> 상태에서 대기하게 되고, 지연이 발생합니다. 이후 <strong>threadsAwaitingConnection</strong>에서 대기하던 요청이 <strong>activeConnections</strong>로 전환되면, <code>getMySql</code> 호출에서 해당 커넥션을 사용할 수 있게 됩니다.</p>
+<h4 id="테스트-결과"><a href="#테스트-결과" class="headerlink" title="테스트 결과"></a>테스트 결과</h4><ol>
+<li><p><code>/api/mysql</code> 단독 호출 시:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Connection totalConnections: 1, activeConnections: 1, idleConnections: 0, threadsAwaitingConnection: 0</span><br><span class="line"># HTTP 응답 Response code: 200; Time: 24ms (24 ms); Content length: 64 bytes (64 B)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>/api/composite</code> 호출 이후 바로 <code>/api/mysql</code>를 호출한 경우:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Connection totalConnections: 1, activeConnections: 1, idleConnections: 0, threadsAwaitingConnection: 1</span><br><span class="line"># HTTP 응답 Response code: 200; Time: 1112ms (1 s 112 ms); Content length: 64 bytes (64 B)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>테스트 결과, <code>/api/composite</code> 호출 이후 <code>getMySql</code> 요청은 대기 상태에 놓이며, MySQL 조회 작업이 완료되어 커넥션이 반환된 이후에 처리되는 것을 확인할 수 있었습니다. 이는 Hikari Connection Pool이 동기적이며, 사용 중인 커넥션이 반환될 때까지 대기 상태에 놓이는 블로킹 방식으로 동작하기 때문입니다.</p>
+<h4 id="동작-흐름"><a href="#동작-흐름" class="headerlink" title="동작 흐름"></a>동작 흐름</h4><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-002.png"></p>
+<p>Hikari Connection Pool의 동작 방식은 아래와 같습니다.</p>
+<ol>
+<li><strong><code>getComposite</code> 호출</strong>: <code>Service</code>는 MySQL A 조회를 요청하고, 사용 가능한 idle 커넥션을 가져옵니다. 이 요청은 2,500ms가 소요되며, 해당 커넥션은 점유된 상태로 유지됩니다.</li>
+<li><strong><code>getMySql</code> 호출</strong>: <code>Controller</code>는 <code>Service</code>로 <code>getMySql</code> 호출을 보냅니다. 그러나 MySQL A 조회 요청이 아직 진행 중이므로 사용 가능한 커넥션이 없습니다. 이에 따라 요청은 <strong>threadsAwaitingConnection</strong> 상태로 대기하게 됩니다.</li>
+<li><strong>MySQL A 응답 반환</strong>: MySQL A 조회 요청이 완료되면서 커넥션이 반환됩니다. 반환된 커넥션은 대기 중이던 <code>getMySql</code>의 MySQL B 조회 요청에서 다시 사용됩니다.</li>
+<li><strong>MySQL B 조회 요청 및 응답</strong>: 반환된 커넥션을 사용해 MySQL B 조회 요청이 처리됩니다. B 조회는 지연 없이 완료되며, 응답이 반환됩니다.</li>
+<li><strong>최종 응답 반환</strong>: <code>getComposite</code>와 <code>getMySql</code> 요청이 순차적으로 완료되며, 최종적으로 각각의 결과가 <code>Controller</code>로 반환됩니다.</li>
+</ol>
+<h4 id="블로킹-방식의-한계"><a href="#블로킹-방식의-한계" class="headerlink" title="블로킹 방식의 한계"></a>블로킹 방식의 한계</h4><p>이 시나리오에서 Hikari Connection Pool의 블로킹 특성으로 인해 다음과 같은 한계가 발생합니다. MySQL A 조회 요청이 완료되기 전까지 커넥션이 반환되지 않아 <code>getMySql</code> 호출이 대기 상태에 놓이고, 동시 요청 수가 증가하면 <strong>threadsAwaitingConnection</strong> 상태가 늘어나면서 대기 시간이 길어질 가능성이 있습니다. 반면, Redis Lettuce 커넥션 풀은 이러한 상황에서 다르게 동작할 수 있습니다. Lettuce가 스레드를 블록시키는 방식으로 작동한다면 비슷한 지연 문제가 발생하지만, 논블로킹 방식이라면 MySQL의 지연과 관계없이 추가적인 Redis 요청에 빠르게 응답할 수 있습니다.</p>
+<h3 id="시나리오-getComposite-호출-이후-getRedis-호출"><a href="#시나리오-getComposite-호출-이후-getRedis-호출" class="headerlink" title="시나리오: getComposite 호출 이후 getRedis 호출"></a>시나리오: getComposite 호출 이후 getRedis 호출</h3><p>Lettuce 설정은 <code>max-active=1</code>, <code>max-idle=1</code>, <code>min-idle=1</code>로 구성되어 있으며, <code>getComposite</code> 호출 시 사용 가능한 단 하나의 커넥션을 사용하여 작업이 진행됩니다. 이번 테스트의 목적은 <strong><code>/api/composite</code> 호출 이후 <code>getRedis</code> 호출의 응답 속도를 확인</strong>하는 것입니다. 만약 Lettuce가 블록되는 방식으로 동작한다면 <code>getComposite</code> 호출 중 Redis 조회 요청으로 점유된 커넥션이 MySQL 작업이 끝날 때까지 반환되지 않아 <code>getRedis</code> 요청은 대기 상태에 놓이고 응답 시간이 지연될 것입니다. 반대로 Lettuce가 비동기적이며 블로킹되지 않는 방식으로 동작한다면 <code>getComposite</code> 호출 중에도 커넥션이 Redis 요청 응답 후 즉시 반환되므로, <code>getRedis</code> 요청이 지연 없이 처리될 것입니다.</p>
+<h4 id="테스트-결과-1"><a href="#테스트-결과-1" class="headerlink" title="테스트 결과"></a>테스트 결과</h4><ol>
+<li><code>/api/composite</code> 호출 이후 바로 <code>/api/redis</code>를 호출한 경우:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Response code: 200; Time: 8ms (8 ms); Content length: 56 bytes (56 B)</span><br></pre></td></tr></table></figure></li>
+<li><code>/api/redis</code> 단독 호출 시:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Response code: 200; Time: 6ms (6 ms); Content length: 56 bytes (56 B)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>테스트 결과, <code>/api/composite</code> 호출 중에도 <code>/api/redis</code> 요청은 지연 없이 빠르게 응답하는 것을 확인할 수 있었습니다. 이는 Lettuce가 비동기적으로 동작하며, 스레드를 블록하지 않음을 시사합니다.</p>
+<h4 id="동작-흐름-1"><a href="#동작-흐름-1" class="headerlink" title="동작 흐름"></a>동작 흐름</h4><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/redis/docs/lettuce-003.png"></p>
+<ol>
+<li><strong><code>getComposite</code> 호출</strong>: <code>Controller</code>가 <code>getComposite</code> 요청을 보냅니다. <code>Service</code>는 먼저 Redis 조회를 수행하며, 이 작업은 10ms 만에 완료되고 커넥션은 즉시 반환됩니다. 이후 MySQL 조회를 시작하며, MySQL 조회 작업은 2,500ms가 소요됩니다.</li>
+<li><strong><code>getRedis</code> 호출</strong>: MySQL 조회가 진행 중인 상태에서 <code>Controller</code>가 <code>getRedis</code> 요청을 보냅니다. Redis는 MySQL 작업과는 독립적으로 동작하므로, Redis 조회 요청은 지연 없이 처리됩니다. 반환된 Redis 커넥션이 즉시 재사용되어 <code>getRedis</code> 요청이 빠르게 완료됩니다.</li>
+<li><strong><code>getComposite</code> 응답 반환</strong>: MySQL 작업이 완료되면 <code>getComposite</code> 응답이 반환됩니다.</li>
+<li><strong><code>getRedis</code> 응답 반환</strong>: hRedis 조회 요청이 완료된 후 응답이 반환됩니다. Redis 작업이 MySQL 작업의 지연과 상관없이 즉시 처리되었기 때문에 빠른 응답 시간을 유지합니다.</li>
+</ol>
+<h4 id="논블로킹의-장점"><a href="#논블로킹의-장점" class="headerlink" title="논블로킹의 장점"></a>논블로킹의 장점</h4><p>테스트 결과를 통해 Lettuce가 비동기적이고 논블로킹 방식으로 동작한다는 것을 확인할 수 있었습니다. Redis 조회는 10ms 만에 응답을 완료하고 커넥션을 즉시 반환하므로, MySQL 작업이 진행 중이라도 Redis 커넥션이 점유된 상태로 남아있지 않습니다. 결과적으로, 추가적인 Redis 요청(<code>getRedis</code>)은 MySQL의 작업 지연과 관계없이 빠르게 처리됩니다.</p>
+<p>이는 MySQL의 Hikari Connection Pool이 스레드를 블록하여 대기 시간을 유발하는 방식과 대비됩니다. Hikari에서는 커넥션이 반환될 때까지 다른 요청이 대기 상태에 놓이지만, Lettuce는 커넥션 반환이 즉시 이루어져 이러한 지연 없이 요청을 처리할 수 있습니다.</p>
+<p>Redis의 비동기 I&#x2F;O와 Lettuce의 설계가 결합되어 높은 동시성 환경에서도 안정적인 성능을 유지할 수 있음을 보여주는 사례라 할 수 있습니다. 이러한 특성은 Redis와 같이 빠른 응답성을 요구하는 환경에서 Lettuce가 얼마나 효율적인지를 잘 보여줍니다.</p>
+<h3 id="Hikari와-Lettuce의-차이점-정리"><a href="#Hikari와-Lettuce의-차이점-정리" class="headerlink" title="Hikari와 Lettuce의 차이점 정리"></a>Hikari와 Lettuce의 차이점 정리</h3><ol>
+<li><strong>동작 방식의 차이</strong>:<ul>
+<li>Hikari Connection Pool은 <strong>전통적인 동기식 동작</strong>을 기반으로 하며, 스레드 블로킹이 발생합니다. MySQL 같은 관계형 데이터베이스와 함께 사용하는 경우, 데이터 조회 시 커넥션이 점유된 상태로 유지되므로 다른 요청들은 사용 가능한 커넥션이 없어 대기하게 됩니다.</li>
+<li>Redis Lettuce Connection Pool은 <strong>비동기 및 넌블로킹 I&#x2F;O</strong>를 지원하여, Redis 서버에서 응답을 받은 후에도 바로 커넥션을 반환할 수 있습니다. 이를 통해 <strong>커넥션 점유 시간이 짧아져</strong> Redis에 대한 다른 요청들도 빠르게 처리될 수 있습니다.</li>
+</ul>
+</li>
+<li><strong>커넥션 풀의 활용도</strong>:<ul>
+<li>Hikari Connection Pool은 <strong>threadsAwaitingConnection</strong>을 관리하며, 커넥션 풀이 모두 사용 중일 경우 새 요청들은 대기하게 됩니다. 따라서 <strong>커넥션 풀 크기 설정</strong>이 성능에 큰 영향을 미칩니다.</li>
+<li>Redis Lettuce Connection Pool은 커넥션을 빠르게 반환하기 때문에, <strong>커넥션 풀 크기를 크게 설정하지 않아도 효율적으로 동작</strong>할 수 있습니다. Redis의 비동기 처리 덕분에 서버의 응답이 빠르다면, 적은 수의 커넥션으로도 많은 요청을 처리할 수 있습니다.</li>
+</ul>
+</li>
+<li><strong>특정 상황에서의 블로킹 차이</strong>:<ul>
+<li>Hikari Connection Pool은 요청이 지연되면, 다른 커넥션이 점유되지 않는 한 <strong>대기 스레드</strong>가 계속 늘어날 수 있습니다. 이는 높은 동시성에서 성능 저하를 야기할 수 있습니다.</li>
+<li>Redis Lettuce는 비동기적이며, Redis 서버로부터 응답을 받은 후에는 <strong>커넥션을 빠르게 반환</strong>하므로, <strong>서버 응답 시간</strong>이 Lettuce의 성능에 직접적인 영향을 미칩니다. 즉, Redis 명령어가 복잡하고 시간이 오래 걸리면(예: <code>keys *</code> 사용), 그 시간 동안 다른 요청들이 블록될 수 있습니다.</li>
+</ul>
+</li>
+<li><strong>블로킹&#x2F;넌블로킹의 영향</strong>:<ul>
+<li>Hikari의 경우 <strong>스레드 블로킹</strong>이 빈번히 발생하는 반면, Lettuce는 넌블로킹으로 <strong>추가적인 스레드 리소스를 사용하지 않고도</strong> 더 많은 요청을 처리할 수 있는 장점이 있습니다.</li>
+<li>이는 특히 <strong>IO 작업이 많은 환경</strong>에서 Lettuce가 더 효율적으로 동작하도록 만듭니다. 반면, Hikari는 <strong>동기적 처리</strong>로 인해 CPU 자원을 더 많이 사용하게 되며, 이는 고비용의 대기 시간이 발생할 가능성을 증가시킵니다.</li>
+</ul>
+</li>
+</ol>
+<h2 id="Lettuce-Connection-Pool-설정과-의미"><a href="#Lettuce-Connection-Pool-설정과-의미" class="headerlink" title="Lettuce Connection Pool 설정과 의미"></a>Lettuce Connection Pool 설정과 의미</h2><h3 id="Lettuce-Connection-Pool-Properties"><a href="#Lettuce-Connection-Pool-Properties" class="headerlink" title="Lettuce Connection Pool Properties"></a>Lettuce Connection Pool Properties</h3><p>Spring Data Redis에서는 <code>application.yml</code> 파일을 통해 Lettuce Connection Pool의 설정을 손쉽게 구성할 수 있습니다. 아래는 주요 프로퍼티와 그 설명입니다:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">        <span class="attr">lettuce:</span></span><br><span class="line">            <span class="attr">pool:</span></span><br><span class="line">                <span class="attr">max-active:</span> <span class="number">1</span></span><br><span class="line">                <span class="attr">max-idle:</span> <span class="number">1</span></span><br><span class="line">                <span class="attr">min-idle:</span> <span class="number">1</span></span><br><span class="line">                <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">                <span class="attr">max-wait:</span> <span class="string">1000ms</span></span><br><span class="line">                <span class="attr">time-between-eviction-runs:</span> <span class="string">1000ms</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>설정 항목</th>
+<th>설명</th>
+<th>기본 값</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>max-active</code></td>
+<td>Connection Pool에서 사용할 수 있는 최대 커넥션 수로, 동시 연결 수를 제한합니다.</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>max-idle</code></td>
+<td>Connection Pool에서 유지할 수 있는 최대 유휴 커넥션 수입니다. 이 값을 초과하는 유휴 커넥션은 폐기됩니다.</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>min-idle</code></td>
+<td>Connection Pool에서 유지할 최소 유휴 커넥션 수입니다. 유휴 커넥션이 부족하면 새 커넥션을 생성합니다.</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td>Lettuce Connection Pool 사용 여부를 설정합니다. <code>true</code>로 설정 시 Pool이 활성화됩니다.</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>max-wait</code></td>
+<td>커넥션이 사용 중일 때 새로운 요청이 대기할 수 있는 최대 시간입니다. 설정된 시간이 초과되면 예외가 발생합니다.</td>
+<td>-1 (무제한 대기)</td>
+</tr>
+<tr>
+<td><code>time-between-eviction-runs</code></td>
+<td>유휴 커넥션 검사 및 제거 작업의 주기를 설정합니다. (단위: 밀리초)</td>
+<td>-1 (검사하지 않음)</td>
+</tr>
+</tbody></table>
+<p>이러한 설정은 Lettuce Connection Pool의 동작을 세부적으로 제어하며, 애플리케이션의 요구 사항에 맞게 성능과 리소스 사용량을 조정할 수 있습니다. 특히, <code>max-active</code>, <code>min-idle</code>, <code>max-wait</code>와 같은 설정은 TPS가 높은 환경이나 트래픽 변동이 큰 상황에서 애플리케이션의 안정성을 보장하는 데 중요한 역할을 합니다.</p>
+<h3 id="Lettuce-Connection-Pool의-개수가-갖는-의미"><a href="#Lettuce-Connection-Pool의-개수가-갖는-의미" class="headerlink" title="Lettuce Connection Pool의 개수가 갖는 의미"></a>Lettuce Connection Pool의 개수가 갖는 의미</h3><p>Redis Lettuce Connection은 비동기 방식으로 동작하며, 요청을 처리한 후 커넥션을 즉시 반환하는 구조를 가지고 있습니다. 이는 적은 수의 커넥션으로도 높은 효율을 발휘할 수 있다는 점에서 큰 장점입니다. 하지만, Hikari와 같은 전통적인 동기 커넥션 풀처럼 미리 커넥션을 확보하여 동시성을 처리하는 방식은 아니기 때문에, “Lettuce Connection Pool의 개수가 많다고 해서 이점이 있을까?”라는 의문을 가질 수 있습니다.</p>
+<p>사실, Lettuce Connection Pool의 개수는 TPS가 높아지고 Redis 서버의 응답이 느려질 때 중요한 의미를 가집니다. 다음은 Lettuce Connection Pool의 개수가 많을 때 가지는 이점을 설명합니다.</p>
+<ol>
+<li><p><strong>Redis 응답 지연 시 동시 요청 처리 가능</strong>:<br>Redis 서버가 응답을 지연하는 경우, 요청이 커넥션을 점유하는 시간이 길어집니다. 이때 Connection Pool의 크기가 작다면 모든 커넥션이 점유된 상태에서 새로운 요청이 대기 상태로 전환될 가능성이 높습니다. 하지만 Connection Pool 크기가 충분히 크다면, 지연된 요청과 별개로 다른 요청을 처리할 여유를 확보할 수 있습니다. 이는 TPS가 몰리는 상황에서도 전체 시스템의 성능 저하를 방지합니다.</p>
+</li>
+<li><p><strong>Burst 트래픽에서의 안정성 확보</strong>:<br>트래픽이 순간적으로 폭증하는 경우, Pool 크기가 충분히 크면 새로운 요청을 대기시키지 않고 처리할 수 있습니다. 이는 특히 Redis 응답 시간이 일관되지 않은 상황에서 더욱 중요한데, Pool 크기가 충분하지 않으면 요청 처리 시간이 예측 불가능하게 증가할 수 있습니다.</p>
+</li>
+<li><p><strong>멀티 인스턴스 활용 가능성</strong>:<br>Redis는 싱글 스레드로 동작하지만, 애플리케이션 인스턴스가 여러 개일 경우 각 인스턴스에서 동시에 Redis에 접근합니다. Pool 크기가 충분히 크다면, 여러 인스턴스가 Redis와 병렬로 통신하면서도 효율적으로 커넥션을 재사용할 수 있습니다.</p>
+</li>
+<li><p><strong>비동기 요청 처리 속도 향상</strong>:<br>Lettuce는 비동기적으로 여러 요청을 처리할 수 있지만, Pool 크기가 제한적이라면 커넥션 재사용의 병목이 발생할 수 있습니다. Pool 크기를 늘리면 이러한 병목을 완화하고, Redis 서버의 응답 속도에 따라 더 많은 요청을 처리할 수 있습니다.</p>
+</li>
+<li><p><strong>장시간 실행되는 명령어의 영향 완화</strong>:<br>일부 Redis 명령어(예: <code>zrange</code>, <code>keys</code>)는 실행 시간이 길어질 수 있습니다. Pool 크기가 작다면 이런 명령이 다른 요청 처리에 직접적인 영향을 미치지만, 충분한 Pool 크기는 이런 상황에서도 다른 요청을 지연 없이 처리할 수 있도록 합니다.</p>
+</li>
+</ol>
+<p>Lettuce Connection Pool의 개수는 TPS와 Redis 서버의 응답 지연이 증가하는 상황에서 중요한 역할을 합니다. 비록 Lettuce가 비동기적이고 효율적인 구조를 가졌더라도, Pool 크기를 적절히 설정하지 않으면 요청 대기가 발생할 수 있습니다.</p>
+<p>따라서 Lettuce Connection Pool의 개수는 단순히 많은 요청을 처리하기 위한 것이 아니라, Redis 서버 응답 시간의 변동성, Burst 트래픽, 그리고 장시간 실행되는 명령어 처리와 같은 다양한 상황에 대비하기 위한 안정성을 제공한다고 볼 수 있습니다. Connection Pool 크기를 TPS와 트래픽 패턴에 맞게 조정하는 것이 Lettuce의 효율성을 극대화하는 핵심 전략입니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>논블로킹 방식이 항상 절대적으로 좋은 것은 아닙니다. Redis Lettuce와 Hikari Connection Pool은 서로 다른 특성과 장점을 가지고 있으며, 각 환경에 따라 적절히 선택해야 합니다.</p>
+<p>Lettuce의 경우, Redis 서버로부터 응답을 받으면 커넥션을 즉시 반환하고 다음 요청을 처리할 준비를 합니다. 이는 커넥션 점유 시간이 짧아져 더 작은 풀 크기로 효율적인 요청 처리가 가능하다는 큰 장점이 있습니다. 하지만 Redis 서버 자체가 응답을 지연한다면, 다른 요청이 대기 상태에 놓이게 되어 성능 저하로 이어질 수 있습니다. 이러한 상황에서는 Lettuce의 비동기적 특성이 한계를 보일 수 있습니다.</p>
+<p>반면, Hikari Connection Pool은 유휴 커넥션이 있는 경우 한 요청이 오래 걸리더라도 다른 커넥션을 사용하여 추가적인 요청을 처리할 수 있습니다. 이는 Redis와 같은 싱글 스레드 구조가 아닌, 다중 커넥션을 사용하는 데이터베이스 환경에 잘 맞는 전략입니다. 그러나 Hikari는 요청 중 커넥션이 블록되는 방식으로 동작하기 때문에, 풀 크기가 제한적이거나 동시 요청이 많아지면 대기 시간이 길어질 가능성이 있습니다.</p>
+<p>이러한 차이는 Redis가 싱글 스레드로 모든 요청을 처리하도록 설계된 서버라는 점에서 기인합니다. Lettuce는 Redis 서버의 메커니즘과 잘 맞는 전략을 선택하여 구현되었으며, 비동기와 논블로킹을 통해 Redis의 성능 특성을 최대한 활용합니다. 이는 Hikari Connection Pool과는 다른 접근 방식으로, Redis 서버와의 높은 호환성을 유지하며 효율적인 자원 관리를 가능하게 합니다.</p>
+<p>소프트웨어 개발에서는 항상 트레이드오프가 존재합니다. 특정 기술이 모든 상황에서 우월하다고 말할 수는 없습니다. Lettuce와 Hikari의 차이는 각기 다른 환경에 적합한 도구를 제공하며, 사용자는 자신의 애플리케이션 요구사항에 따라 적합한 전략을 선택해야 합니다. 결국, 어떤 도구가 “좋다”라고 단정짓기보다는, 각 기술의 장단점을 이해하고 상황에 맞게 활용하는 것이 중요합니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Redis/" rel="tag">Redis</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2025/01/18/spring-data-mongo-update-guide-1/"
+                    data-tooltip="Spring Data MongoDB에서의 Update 전략과 경험"
+                    aria-label="이전: Spring Data MongoDB에서의 Update 전략과 경험"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/11/16/mermaid/"
+                    data-tooltip="Mermaid 코드로 그리는 다이어그램"
+                    aria-label="다음: Mermaid 코드로 그리는 다이어그램"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2025/01/18/spring-data-mongo-update-guide-1/"
+                    data-tooltip="Spring Data MongoDB에서의 Update 전략과 경험"
+                    aria-label="이전: Spring Data MongoDB에서의 Update 전략과 경험"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/11/16/mermaid/"
+                    data-tooltip="Mermaid 코드로 그리는 다이어그램"
+                    aria-label="다음: Mermaid 코드로 그리는 다이어그램"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2024/11/17/redis-lettuce-connection/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

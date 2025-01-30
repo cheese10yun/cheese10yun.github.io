@@ -1,0 +1,686 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Sleuth 분산 환경 트래킹 With Fuel - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Cloud Sleuth는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다. Sleuth는 RestTemplate, Feign, WebClient와 같은 스프링 진형의 HTTP Client 모듈을 사용하는 경우 Sleuth 의존성을 추가하는 것으로도 설정이 자동적으로 동작하게 됩니다. 하지만 다른 HTTP Client 모듈을 사용한다면 해당 설정을 수동으로 진행 햐아 하는데요. 이번 포스팅에서는 코틀린 기반의 Fuel HTTP Client 모듈에 Sleuth를 연동하는 방법을 다루어보겠습니다.\nSleuth 적용 방법123456789dependencyManagement &#123;    imports &#123;        mavenBom(&quot;org.springframework.cloud:spring-cloud-dependencies:2021.0.2&quot;)    &#125;&#125;dependencies &#123;    implementation(&quot;org.springframework.cloud:spring-cloud-starter-sleuth&quot;)&#125;\n\nSleuth 의존성을 추가하는 것만으로도 logback 설정과 연계되어 애플리케이션 로그에 바로 적용이 됩니다.\n\n기본 설정은 [application name, Trance ID, Span ID] 형식으로 적용됩니다. Application name은 spring.application.name: xxx 설정값을 기준으로 지정됩니다. 로그 형식을 바꾸고 싶은 경우에는 loback 설정을 직접 하여 변경이 가능합니다.\nTrance ID &amp; Span ID\n\n\n이름\n설명\n\n\n\nTrace ID\n전체 Request의 고유한 값\n\n\nSpan ID\n전체 Request중 일부의 일부의 고유한 값\n\n\nParent Span ID\n이전 Request의 Span ID로 요청의 흐름을 파악을 위한 값\n\n\n\n\nAPI Gateway에서 Request를 받아 Trace ID, Span ID를 동일한 값으로 생성하며 Parent Span ID는 null으로 지정\nA Service에서는 Trace ID는 동일하게 설정, Span ID는 Request의 중 일부로 고유한 값을 설정, Parent Span ID는 이전 Request의 Span ID로 지정\nB Service에서는 Trace ID는 동일하게 설정, Span ID도 동일하게 유일한 값, Parent Span ID도 동일하게 이전 Request의 Span ID로 설정\n\nRequest의 전체 흐름을 Trace ID를 기준으로 트래킹 하며 Span ID로는 해당 Request의 속했던 서비스의 유니크하게 식별이 가능합니다. 또 Parent Span ID를 통해서 호출 간의 상관관계를 파악할 수 있게 됩니다.\nSleuth + FuelRestTemplate, Feign, WebClient처럼 스프링 진형의 HTTP Client를 사용하면 Sleuth 의존성을 추가하면 자동으로 Sleuth가 동작하게 되며 HTTP Header 정보에 Trace ID, Span ID, Parent Span ID를 자동으로 추가됩니다. 하지만 그 외에 HTTP Client 라이브러리를 사용한다면 해당 설정을 진행해야 합니다. 본 예제는 Kotlin 기반의 HTTP Client 라이브러리 Fuel를 기준으로 설명드리겠습니다.\n1234567891011121314151617181920212223242526@Configurationclass FuelConfiguration &#123;    @Bean    fun fuelManager(tracer: Tracer) =        FuelManager.instance.apply &#123;            this.timeoutReadInMillisecond = 120_000 // 2분 // 1            this.timeoutReadInMillisecond = 120_000 // 2분 // 2            this.addRequestInterceptor(tracingRequestInterceptor(tracer = tracer)) // 3            this.addRequestInterceptor(LogRequestInterceptor) // 4            this.addResponseInterceptor(LogResponseInterceptor) // 5        &#125;    // 6    private fun tracingRequestInterceptor(tracer: Tracer) = &#123; next: (Request) -&gt; Request -&gt;        &#123; request: Request -&gt;            val span = tracer.currentSpan() ?: tracer.nextSpan()            request.header(                &quot;x-b3-traceid&quot; to span.context().traceId(),                &quot;x-b3-spanid&quot; to tracer.nextSpan().context().spanId(),                &quot;x-b3-parentspanid&quot; to tracer.nextSpan().context().parentId().toString()            )            next(request)        &#125;    &#125;&#125;\n\n\nFuelManager을 통해서 설정을 진행합니다.\n(1),(2): Timeout 설정을 진행합니다. 기본 설정이 15s이기 때문에 조정이 필요하면 서비스에 맞데 설정을 진행합니다.\n(3): Header 객체에 x-b3-traceid, x-b3-spanid, x-b3-parentspanid의 값을 Tracer 객체 기반으로 설정합니다.\n(4)(5): Request, Response를 Logging 진행합니다.\n\n1234567891011121314@RestController@RequestMapping(&quot;/a-service&quot;)class AServiceApi(    private val tracer: Tracer) &#123;    @GetMapping    fun a() &#123;        &quot;http://localhost:8686/b-service&quot;            .httpGet()            .header(CONTENT_TYPE to &quot;application/json&quot;)            .response()    &#125;&#125;\n\nFuel을 기반으로 B Service를 호출합니다. Fuel은 매우 직관적으로 HTTP 통신을 진행할 수 있습니다. API Gateway -&gt; A Service -&gt; B Service를 호출하는 구조에서 A Service의 로그 정보는 아래와 같습니다.\n1234567891011121314151617181920212223242526# API Gateway2022-05-28 18:09:04.159  INFO [gateway-server,757d0493f099b94b,757d0493f099b94b] 11352 --- [ctor-http-nio-4] com.server.gateway.GlobalFilter          : =======API Gateway\\======...# A service Log2022-05-28 18:09:04.163  INFO [service-a,757d0493f099b94b,7fba8ecffbdbabcd] 9927 --- [nio-8787-exec-5] c.example.msaerrorresponse.AServiceApi   : =======a-service======--&gt; GET http://localhost:8686/b-serviceBody : (empty)Headers : (4)Content-Type : application/jsonx-b3-spanid : 4e8d66a6aa1c1ed6x-b3-parentspanid : 7fba8ecffbdbabcdx-b3-traceid : 757d0493f099b94b&lt;-- 200 http://localhost:8686/b-serviceResponse : Length : 0Body : (empty)Headers : (4)Connection : keep-aliveDate : Sat, 28 May 2022 09:09:04 GMTContent-Length : 0Keep-Alive : timeout=60# B service Log2022-05-28 18:09:04.165  INFO [service-b,757d0493f099b94b,4e8d66a6aa1c1ed6] 9989 --- [nio-8686-exec-3] c.example.msaerrorresponse.BServiceApi   : =======b-service======\n\n모든 Request는 Trace ID: 757d0493f099b94b으로 그룹화가 가능하며 각 서비스마다 Span ID마다 고유한 값으로 트래킹이 가능합니다. 또 Parent Span ID를 통해서 Request의 상관관계를 파악할 수 있습니다.\n\n이렇게 Slueth를 통해서 Request의 상관관계를 로깅을하면 해당 정보를 활용하여 시각화가 가능합니다. 해당 이미지는 Elastic Search APM를 사용했습니다.\n","dateCreated":"2022-05-28T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2022-05-28T00:00:00+09:00","description":"Spring Cloud Sleuth는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다.","headline":"Sleuth 분산 환경 트래킹 With Fuel","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2022/05/28/slueth-fuel/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2022/05/28/slueth-fuel/","keywords":"MSA"}</script>
+    <meta name="description" content="Spring Cloud Sleuth는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Sleuth 분산 환경 트래킹 With Fuel">
+<meta property="og:url" content="http://localhost:4000/2022/05/28/slueth-fuel/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Spring Cloud Sleuth는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/log.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/draw-MSA.drawio.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/apm-logging.png">
+<meta property="article:published_time" content="2022-05-27T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.790Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="MSA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/log.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Sleuth 분산 환경 트래킹 With Fuel
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-05-28T00:00:00+09:00">
+	
+		    2022/05/28
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><a target="_blank" rel="noopener" href="https://github.com/spring-cloud/spring-cloud-sleuth">Spring Cloud Sleuth</a>는 분산 환경에서 일련의 Request에 대한 상관관계를 표시하여 서비스 간 호출에 대한 추적을 지원해 주는 모듈입니다. Sleuth는 RestTemplate, Feign, WebClient와 같은 스프링 진형의 HTTP Client 모듈을 사용하는 경우 Sleuth 의존성을 추가하는 것으로도 설정이 자동적으로 동작하게 됩니다. 하지만 다른 HTTP Client 모듈을 사용한다면 해당 설정을 수동으로 진행 햐아 하는데요. 이번 포스팅에서는 코틀린 기반의 <a target="_blank" rel="noopener" href="https://github.com/kittinunf/fuel">Fuel</a> HTTP Client 모듈에 Sleuth를 연동하는 방법을 다루어보겠습니다.</p>
+<h2 id="Sleuth-적용-방법"><a href="#Sleuth-적용-방법" class="headerlink" title="Sleuth 적용 방법"></a>Sleuth 적용 방법</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dependencyManagement &#123;</span><br><span class="line">    imports &#123;</span><br><span class="line">        mavenBom(&quot;org.springframework.cloud:spring-cloud-dependencies:2021.0.2&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation(&quot;org.springframework.cloud:spring-cloud-starter-sleuth&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Sleuth 의존성을 추가하는 것만으로도 logback 설정과 연계되어 애플리케이션 로그에 바로 적용이 됩니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/log.png"></p>
+<p>기본 설정은 [application name, Trance ID, Span ID] 형식으로 적용됩니다. Application name은 <code>spring.application.name: xxx</code> 설정값을 기준으로 지정됩니다. 로그 형식을 바꾸고 싶은 경우에는 loback 설정을 직접 하여 변경이 가능합니다.</p>
+<h2 id="Trance-ID-Span-ID"><a href="#Trance-ID-Span-ID" class="headerlink" title="Trance ID &amp; Span ID"></a>Trance ID &amp; Span ID</h2><table>
+<thead>
+<tr>
+<th>이름</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trace ID</td>
+<td>전체 Request의 고유한 값</td>
+</tr>
+<tr>
+<td>Span ID</td>
+<td>전체 Request중 일부의 일부의 고유한 값</td>
+</tr>
+<tr>
+<td>Parent Span ID</td>
+<td>이전 Request의 Span ID로 요청의 흐름을 파악을 위한 값</td>
+</tr>
+</tbody></table>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/draw-MSA.drawio.png"></p>
+<ol>
+<li>API Gateway에서 Request를 받아 Trace ID, Span ID를 동일한 값으로 생성하며 Parent Span ID는 null으로 지정</li>
+<li>A Service에서는 Trace ID는 동일하게 설정, Span ID는 Request의 중 일부로 고유한 값을 설정, Parent Span ID는 이전 Request의 Span ID로 지정</li>
+<li>B Service에서는 Trace ID는 동일하게 설정, Span ID도 동일하게 유일한 값, Parent Span ID도 동일하게 이전 Request의 Span ID로 설정</li>
+</ol>
+<p>Request의 전체 흐름을 Trace ID를 기준으로 트래킹 하며 Span ID로는 해당 Request의 속했던 서비스의 유니크하게 식별이 가능합니다. 또 Parent Span ID를 통해서 호출 간의 상관관계를 파악할 수 있게 됩니다.</p>
+<h2 id="Sleuth-Fuel"><a href="#Sleuth-Fuel" class="headerlink" title="Sleuth + Fuel"></a>Sleuth + Fuel</h2><p>RestTemplate, Feign, WebClient처럼 스프링 진형의 HTTP Client를 사용하면 Sleuth 의존성을 추가하면 자동으로 Sleuth가 동작하게 되며 HTTP Header 정보에 Trace ID, Span ID, Parent Span ID를 자동으로 추가됩니다. 하지만 그 외에 HTTP Client 라이브러리를 사용한다면 해당 설정을 진행해야 합니다. 본 예제는 Kotlin 기반의 HTTP Client 라이브러리 <a target="_blank" rel="noopener" href="https://github.com/kittinunf/fuel">Fuel</a>를 기준으로 설명드리겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FuelConfiguration</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">fuelManager</span><span class="params">(tracer: <span class="type">Tracer</span>)</span></span> =</span><br><span class="line">        FuelManager.instance.apply &#123;</span><br><span class="line">            <span class="keyword">this</span>.timeoutReadInMillisecond = <span class="number">120_000</span> <span class="comment">// 2분 // 1</span></span><br><span class="line">            <span class="keyword">this</span>.timeoutReadInMillisecond = <span class="number">120_000</span> <span class="comment">// 2분 // 2</span></span><br><span class="line">            <span class="keyword">this</span>.addRequestInterceptor(tracingRequestInterceptor(tracer = tracer)) <span class="comment">// 3</span></span><br><span class="line">            <span class="keyword">this</span>.addRequestInterceptor(LogRequestInterceptor) <span class="comment">// 4</span></span><br><span class="line">            <span class="keyword">this</span>.addResponseInterceptor(LogResponseInterceptor) <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">tracingRequestInterceptor</span><span class="params">(tracer: <span class="type">Tracer</span>)</span></span> = &#123; next: (Request) -&gt; Request -&gt;</span><br><span class="line">        &#123; request: Request -&gt;</span><br><span class="line">            <span class="keyword">val</span> span = tracer.currentSpan() ?: tracer.nextSpan()</span><br><span class="line">            request.header(</span><br><span class="line">                <span class="string">&quot;x-b3-traceid&quot;</span> to span.context().traceId(),</span><br><span class="line">                <span class="string">&quot;x-b3-spanid&quot;</span> to tracer.nextSpan().context().spanId(),</span><br><span class="line">                <span class="string">&quot;x-b3-parentspanid&quot;</span> to tracer.nextSpan().context().parentId().toString()</span><br><span class="line">            )</span><br><span class="line">            next(request)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>FuelManager을 통해서 설정을 진행합니다.</li>
+<li>(1),(2): Timeout 설정을 진행합니다. 기본 설정이 15s이기 때문에 조정이 필요하면 서비스에 맞데 설정을 진행합니다.</li>
+<li>(3): Header 객체에 <code>x-b3-traceid</code>, <code>x-b3-spanid</code>, <code>x-b3-parentspanid</code>의 값을 Tracer 객체 기반으로 설정합니다.</li>
+<li>(4)(5): Request, Response를 Logging 진행합니다.</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(<span class="string">&quot;/a-service&quot;</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AServiceApi</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> tracer: Tracer</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">a</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="string">&quot;http://localhost:8686/b-service&quot;</span></span><br><span class="line">            .httpGet()</span><br><span class="line">            .header(CONTENT_TYPE to <span class="string">&quot;application/json&quot;</span>)</span><br><span class="line">            .response()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Fuel을 기반으로 B Service를 호출합니다. Fuel은 매우 직관적으로 HTTP 통신을 진행할 수 있습니다. API Gateway -&gt; A Service -&gt; B Service를 호출하는 구조에서 A Service의 로그 정보는 아래와 같습니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># API Gateway</span><br><span class="line">2022-05-28 18:09:04.159  INFO [gateway-server,757d0493f099b94b,757d0493f099b94b] 11352 --- [ctor-http-nio-4] com.server.gateway.GlobalFilter          : =======API Gateway\======</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"># A service Log</span><br><span class="line">2022-05-28 18:09:04.163  INFO [service-a,757d0493f099b94b,7fba8ecffbdbabcd] 9927 --- [nio-8787-exec-5] c.example.msaerrorresponse.AServiceApi   : =======a-service======</span><br><span class="line">--&gt; GET http://localhost:8686/b-service</span><br><span class="line">Body : (empty)</span><br><span class="line">Headers : (4)</span><br><span class="line">Content-Type : application/json</span><br><span class="line">x-b3-spanid : 4e8d66a6aa1c1ed6</span><br><span class="line">x-b3-parentspanid : 7fba8ecffbdbabcd</span><br><span class="line">x-b3-traceid : 757d0493f099b94b</span><br><span class="line"></span><br><span class="line">&lt;-- 200 http://localhost:8686/b-service</span><br><span class="line">Response : </span><br><span class="line">Length : 0</span><br><span class="line">Body : (empty)</span><br><span class="line">Headers : (4)</span><br><span class="line">Connection : keep-alive</span><br><span class="line">Date : Sat, 28 May 2022 09:09:04 GMT</span><br><span class="line">Content-Length : 0</span><br><span class="line">Keep-Alive : timeout=60</span><br><span class="line"></span><br><span class="line"># B service Log</span><br><span class="line">2022-05-28 18:09:04.165  INFO [service-b,757d0493f099b94b,4e8d66a6aa1c1ed6] 9989 --- [nio-8686-exec-3] c.example.msaerrorresponse.BServiceApi   : =======b-service======</span><br></pre></td></tr></table></figure>
+
+<p>모든 Request는 Trace ID: 757d0493f099b94b으로 그룹화가 가능하며 각 서비스마다 Span ID마다 고유한 값으로 트래킹이 가능합니다. 또 Parent Span ID를 통해서 Request의 상관관계를 파악할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/msa-error-response/docs/apm-logging.png"></p>
+<p>이렇게 Slueth를 통해서 Request의 상관관계를 로깅을하면 해당 정보를 활용하여 시각화가 가능합니다. 해당 이미지는 Elastic Search APM를 사용했습니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/MSA/" rel="tag">MSA</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/05/30/exposed-2/"
+                    data-tooltip="Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                    aria-label="이전: Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/04/30/spring-batch-http-page-item-reader/"
+                    data-tooltip="Spring Batch HTTP Page Item Reader"
+                    aria-label="다음: Spring Batch HTTP Page Item Reader"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/05/30/exposed-2/"
+                    data-tooltip="Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                    aria-label="이전: Kotlin 기반 경량 ORM Exposed 추가 정리 part 1"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2022/04/30/spring-batch-http-page-item-reader/"
+                    data-tooltip="Spring Batch HTTP Page Item Reader"
+                    aria-label="다음: Spring Batch HTTP Page Item Reader"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2022/05/28/slueth-fuel/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2022/05/28/slueth-fuel/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2022/05/28/slueth-fuel/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2022/05/28/slueth-fuel/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

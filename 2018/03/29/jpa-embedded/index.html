@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>JPA-Embedded - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Embedded TypeJPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.\nReceiver 클래스1234567891011121314151617@Entitypublic class Receiver &#123;    @Id    @GeneratedValue    private long id;    @Embedded    private Name name;    @Embedded    private Address address;    @Embedded    private PhoneNumber phoneNumber;    ...&#125;\n\n\nAddress, Name 새로운 타입을 직접 정의 했습니다.\n@Embedded 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n\nAddress 클래스12345678910111213@Embeddablepublic class Address &#123;    @Column(name = &quot;city&quot;)    private String city;    @Column(name = &quot;street&quot;)    private String street;    @Column(name = &quot;zip_code&quot;)    private String zipCode;&#125;\n\nEmbeddable 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n엔티티 객체와 거의 비슷합니다.\n\nReceiver 클래스12345678910@Entitypublic class Sender &#123;    ...    @Embedded    private Name name;    @Embedded    private Address address;    ...&#125;\n\nReceiver클래스에서 직접 정의한 Address를 쉽게 사용할 수 있습니다.\n\nName 클래스123456789101112@Embeddablepublic class Name &#123;    @Column(name = &quot;first_name&quot;)    private String first;    @Column(name = &quot;last_name&quot;)    private String last;    public String getFullName() &#123;        return this.first + this.last;&#125;\n\n클래로로 정의하면 다양한 부수적인 효과를 적용 시킬 수 있습니다.\n정말 간단한 예로 getFullName() 메소드로 full name을 얻을 수 있습니다. 해당 모델에 맞는 다양한 함수를 정의 할 수 있습니다.\n\n@AttributeOverride 재정의123456789101112@Entitypublic class Sender &#123;    ...    @Embedded    @AttributeOverrides(&#123;            @AttributeOverride(name = &quot;city&quot;, column = @Column(name = &quot;sender_city&quot;)),            @AttributeOverride(name = &quot;street&quot;, column = @Column(name = &quot;sender_street&quot;)),            @AttributeOverride(name = &quot;zip_code&quot;, column = @Column(name = &quot;sender_zip_code&quot;))    &#125;)    private Address address;    ...&#125;\n\n임베디드 타입에 정의한 매핑정보를 재정의 하려면 @AttributeOverride를 사용하면 됩니다.\n해당 칼럼은 sender_city, sender_street, sender_zip_code 으로 생성됩니다.\n\n","dateCreated":"2018-03-29T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2018-03-29T00:00:00+09:00","description":"JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.","headline":"JPA-Embedded","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/03/29/jpa-embedded/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/03/29/jpa-embedded/","keywords":"JPA, ORM"}</script>
+    <meta name="description" content="JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JPA-Embedded">
+<meta property="og:url" content="http://localhost:4000/2018/03/29/jpa-embedded/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:published_time" content="2018-03-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:04:19.636Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            JPA-Embedded
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-03-29T00:00:00+09:00">
+	
+		    2018/03/29
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="Embedded-Type"><a href="#Embedded-Type" class="headerlink" title="Embedded Type"></a>Embedded Type</h2><p><strong>JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.</strong></p>
+<h2 id="Receiver-클래스"><a href="#Receiver-클래스" class="headerlink" title="Receiver 클래스"></a>Receiver 클래스</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Receiver</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">long</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Name name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> PhoneNumber phoneNumber;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>Address</code>, <code>Name</code> 새로운 타입을 직접 정의 했습니다.</li>
+<li><code>@Embedded</code> 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.</li>
+</ul>
+<h2 id="Address-클래스"><a href="#Address-클래스" class="headerlink" title="Address 클래스"></a>Address 클래스</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Embeddable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Address</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;city&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String city;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;street&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String street;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;zip_code&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String zipCode;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Embeddable</code> 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.</li>
+<li>엔티티 객체와 거의 비슷합니다.</li>
+</ul>
+<h2 id="Receiver-클래스-1"><a href="#Receiver-클래스-1" class="headerlink" title="Receiver 클래스"></a>Receiver 클래스</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sender</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Name name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Receiver</code>클래스에서 직접 정의한 <code>Address</code>를 쉽게 사용할 수 있습니다.</li>
+</ul>
+<h2 id="Name-클래스"><a href="#Name-클래스" class="headerlink" title="Name 클래스"></a>Name 클래스</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Embeddable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Name</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;first_name&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String first;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column(name = &quot;last_name&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String last;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getFullName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.first + <span class="built_in">this</span>.last;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>클래로로 정의하면 다양한 부수적인 효과를 적용 시킬 수 있습니다.</li>
+<li>정말 간단한 예로 <code>getFullName()</code> 메소드로 full name을 얻을 수 있습니다. 해당 모델에 맞는 다양한 함수를 정의 할 수 있습니다.</li>
+</ul>
+<h2 id="AttributeOverride-재정의"><a href="#AttributeOverride-재정의" class="headerlink" title="@AttributeOverride 재정의"></a>@AttributeOverride 재정의</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sender</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Embedded</span></span><br><span class="line">    <span class="meta">@AttributeOverrides(&#123;</span></span><br><span class="line"><span class="meta">            @AttributeOverride(name = &quot;city&quot;, column = @Column(name = &quot;sender_city&quot;)),</span></span><br><span class="line"><span class="meta">            @AttributeOverride(name = &quot;street&quot;, column = @Column(name = &quot;sender_street&quot;)),</span></span><br><span class="line"><span class="meta">            @AttributeOverride(name = &quot;zip_code&quot;, column = @Column(name = &quot;sender_zip_code&quot;))</span></span><br><span class="line"><span class="meta">    &#125;)</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>임베디드 타입에 정의한 매핑정보를 재정의 하려면 <code>@AttributeOverride</code>를 사용하면 됩니다.</li>
+<li>해당 칼럼은 <code>sender_city</code>, <code>sender_street</code>, <code>sender_zip_code</code> 으로 생성됩니다.</li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/spring-oop-bank-api/"
+                    data-tooltip="Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기"
+                    aria-label="이전: Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/24/spring-notificaion-oop/"
+                    data-tooltip="Spring OOP 프로그래밍 예제(1) - 배송 완료 알림"
+                    aria-label="다음: Spring OOP 프로그래밍 예제(1) - 배송 완료 알림"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/spring-oop-bank-api/"
+                    data-tooltip="Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기"
+                    aria-label="이전: Spring OOP 프로그래밍 예제(2) - 은행 API를 통한 환율 계산기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/24/spring-notificaion-oop/"
+                    data-tooltip="Spring OOP 프로그래밍 예제(1) - 배송 완료 알림"
+                    aria-label="다음: Spring OOP 프로그래밍 예제(1) - 배송 완료 알림"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

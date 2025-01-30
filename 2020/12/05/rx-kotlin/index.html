@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Rx Kotlin 이용해서 성능 개선 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다.\n시나리오가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.\n\n주문을 시스템 내부 API를 호출해서 진행한다.\n내부 API 시스템 성공 여부에 따라 status를 지정한다.\n\nCodeEntity12345678910111213141516171819202122@Entity@Table(name = &quot;orders&quot;)class Order(    @Enumerated(EnumType.STRING)    @Column(name = &quot;status&quot;, nullable = false)    var status: OrderStatus) &#123;    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    var id: Long? = null    override fun toString(): String &#123;        return &quot;Order(status=$status, id=$id)&quot;    &#125;   &#125;enum class OrderStatus &#123;    READY,    COMPLETED,    FAILED&#125;\n엔티티 코드는 간단합니다. id, status를 가지고 있습니다.\n12345678910111213class OrderHttpClient &#123;    /**     * 외부 IO 작업을 진행합니다. block은 100 ms, 80% 성공한다     */    fun doSomething(orderId: Long): Boolean &#123;        runBlocking &#123;            delay(100)        &#125;        val random = Random.nextInt(0, 10)        return 8 &gt; random    &#125;&#125;\nHTTP 통신을 하는 Client 코드입니다. 성공과 실패를 리턴하는 간단한 코드입니다. 해당 코드를 호출하면 100ms 블록이 걸리게 설정했습니다.\nTest단일 스레드123456789101112131415161718@Testfun `단일 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(1_000) // READY Status Order를 데이터베이스에 저장함    stopWatch.start()    orders        .forEach &#123;            val result = sampleApi.doSomething(it.id!!)            when &#123;                result -&gt; it.status = OrderStatus.COMPLETED                else -&gt; it.status = OrderStatus.FAILED            &#125;        &#125;    stopWatch.stop()    println(stopWatch.totalTimeSeconds)&#125;\n단일 스레드에서 5,000의 api를 호출하여 그 결과에 따라서 데이터베이스 상태를 업데이트하는 코드입니다.\n멀티 스레드12345678910111213141516171819202122232425262728293031323334@Testfun `멀티 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(5_000) // (1)    stopWatch.start()    orders        .toFlowable() //(2)        .parallel() //(3)        .runOn(Schedulers.io()) //(4)        .map &#123;            println(&quot;Mapping orderId :$&#123;it.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)            val result = sampleApi.doSomething(it.id!!)             Pair(result, it)        &#125;        .sequential() //(5)        .subscribe(            &#123;                println(&quot;Received orderId :$&#123;it.second.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)                when &#123;                    it.first -&gt; it.second.status = OrderStatus.COMPLETED                    else -&gt; it.second.status = OrderStatus.FAILED                &#125;            &#125;,            &#123;                it.printStackTrace()            &#125;,            &#123;                stopWatch.stop()                println(stopWatch.totalTimeSeconds)            &#125;        )    runBlocking &#123; delay(5_000) &#125; //(6)&#125;\n\n(1): order 데이터를 준비합니다.\n(2): Back Pressure 기능을 제공하는 Flowable으로 생성 생성\n(3): CPU 수와 동일하게 ParallelFlowable을 생성할 수 있게 해줍니다.\n(4): ParallelFlowable의 병렬 처리 수준만큼 Scheduler.createWorker를 호출해서 스레드를 생성합니다. Buffer size는 기본 설정 128개와 동일합니다.\n(5): 각 ParallelFlowable의 값을 병합 작업을 진행합니다.\n(6): 해당 작업이 모두 테스트 스레드 Test worker에서 실행되지 않기 때문에 block을 진행합니다.\n\nparallel\ntoFlowable() 메서드로 Flowable 처리를 진행했던 것을 parallel 처리하기 위해서 parallel() 메서드를 사용합니다. 해당 레일은 자체적으로 병렬로 실행되지 않으며 각 레일이 병렬로 실행하려면 runOn()메서드의 호출이 필요합니다. 이때 Schedulers.io()를 사용합니다. Schedulers.io()는 I/O 관련 작업을 수행할 수 있는 무제한의 워커 스레드를 생성하는 스레드를 제공한다. 해당 테스트 환경은 12 코어기 때문에 12 스레드를 사용하게 됩니다.\nsequential\nparallel메서 여러 레일을 생성하는 것을 다시 단일 스퀀스로 병합하기 위해서 사용합니다.\n123456789101112131415...Mapping orderId :15 RxCachedThreadScheduler-3Mapping orderId :18 RxCachedThreadScheduler-6Mapping orderId :22 RxCachedThreadScheduler-10Received orderId :8 RxCachedThreadScheduler-8Mapping orderId :16 RxCachedThreadScheduler-4Received orderId :1 RxCachedThreadScheduler-8Mapping orderId :23 RxCachedThreadScheduler-11Received orderId :2 RxCachedThreadScheduler-8Received orderId :3 RxCachedThreadScheduler-8Received orderId :4 RxCachedThreadScheduler-8Mapping orderId :14 RxCachedThreadScheduler-2Received orderId :5 RxCachedThreadScheduler-8Mapping orderId :24 RxCachedThreadScheduler-12...\nMapping, Received 스레드를 확인 1~12 스레드를 모두 사용하는 것을 확인할 수 있습니다. 해당 스레드는 모두 메인 스레드인 Test worker에서 진행되지 않습니다.\n비교\n\n\n데이터 개수\n스레드\n소요 시간\n\n\n\n5,000\n단일스레드\n8m 58s\n\n\n5,000\n12 스레드\n43s\n\n\n실행 환경의 CPU Core 수에 따라서 결과는 많이 달라집니다.\n","dateCreated":"2020-12-05T23:05:25+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2020-12-05T23:05:25+09:00","description":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.","headline":"Rx Kotlin 이용해서 성능 개선","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/12/05/rx-kotlin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2020/12/05/rx-kotlin/","keywords":"Kotlin"}</script>
+    <meta name="description" content="Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Rx Kotlin 이용해서 성능 개선">
+<meta property="og:url" content="http://localhost:4000/2020/12/05/rx-kotlin/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/flowable.parallel.png">
+<meta property="og:image" content="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/parallelflowable.sequential.png">
+<meta property="article:published_time" content="2020-12-05T14:05:25.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.906Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/flowable.parallel.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Rx Kotlin 이용해서 성능 개선
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-05T23:05:25+09:00">
+	
+		    2020/12/05
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다.</p>
+<h2 id="시나리오"><a href="#시나리오" class="headerlink" title="시나리오"></a>시나리오</h2><p>가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.</p>
+<ol>
+<li>주문을 시스템 내부 API를 호출해서 진행한다.</li>
+<li>내부 API 시스템 성공 여부에 따라 status를 지정한다.</li>
+</ol>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = <span class="string">&quot;orders&quot;</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Order</span>(</span><br><span class="line">    <span class="meta">@Enumerated(EnumType.STRING)</span></span><br><span class="line">    <span class="meta">@Column(name = <span class="string">&quot;status&quot;</span>, nullable = false)</span></span><br><span class="line">    <span class="keyword">var</span> status: OrderStatus</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">    <span class="keyword">var</span> id: <span class="built_in">Long</span>? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">toString</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Order(status=<span class="variable">$status</span>, id=<span class="variable">$id</span>)&quot;</span></span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> <span class="keyword">class</span> <span class="title class_">OrderStatus</span> &#123;</span><br><span class="line">    READY,</span><br><span class="line">    COMPLETED,</span><br><span class="line">    FAILED</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>엔티티 코드는 간단합니다. id, status를 가지고 있습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderHttpClient</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 외부 IO 작업을 진행합니다. block은 100 ms, 80% 성공한다</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">(orderId: <span class="type">Long</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        runBlocking &#123;</span><br><span class="line">            delay(<span class="number">100</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">val</span> random = Random.nextInt(<span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">8</span> &gt; random</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HTTP 통신을 하는 Client 코드입니다. 성공과 실패를 리턴하는 간단한 코드입니다. 해당 코드를 호출하면 <code>100ms</code> 블록이 걸리게 설정했습니다.</p>
+<h2 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h2><h3 id="단일-스레드"><a href="#단일-스레드" class="headerlink" title="단일 스레드"></a>단일 스레드</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `단일 스레드 작업`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">    <span class="keyword">val</span> orders = givenOrders(<span class="number">1_000</span>) <span class="comment">// READY Status Order를 데이터베이스에 저장함</span></span><br><span class="line">    stopWatch.start()</span><br><span class="line"></span><br><span class="line">    orders</span><br><span class="line">        .forEach &#123;</span><br><span class="line">            <span class="keyword">val</span> result = sampleApi.doSomething(it.id!!)</span><br><span class="line">            <span class="keyword">when</span> &#123;</span><br><span class="line">                result -&gt; it.status = OrderStatus.COMPLETED</span><br><span class="line">                <span class="keyword">else</span> -&gt; it.status = OrderStatus.FAILED</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    stopWatch.stop()</span><br><span class="line">    println(stopWatch.totalTimeSeconds)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>단일 스레드에서 5,000의 api를 호출하여 그 결과에 따라서 데이터베이스 상태를 업데이트하는 코드입니다.</p>
+<h3 id="멀티-스레드"><a href="#멀티-스레드" class="headerlink" title="멀티 스레드"></a>멀티 스레드</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `멀티 스레드 작업`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">    <span class="keyword">val</span> orders = givenOrders(<span class="number">5_000</span>) <span class="comment">// (1)</span></span><br><span class="line">    stopWatch.start()</span><br><span class="line"></span><br><span class="line">    orders</span><br><span class="line">        .toFlowable() <span class="comment">//(2)</span></span><br><span class="line">        .parallel() <span class="comment">//(3)</span></span><br><span class="line">        .runOn(Schedulers.io()) <span class="comment">//(4)</span></span><br><span class="line">        .map &#123;</span><br><span class="line">            println(<span class="string">&quot;Mapping orderId :<span class="subst">$&#123;it.id&#125;</span> <span class="subst">$&#123;Thread.currentThread().name&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="keyword">val</span> result = sampleApi.doSomething(it.id!!) </span><br><span class="line">            Pair(result, it)</span><br><span class="line">        &#125;</span><br><span class="line">        .sequential() <span class="comment">//(5)</span></span><br><span class="line">        .subscribe(</span><br><span class="line">            &#123;</span><br><span class="line">                println(<span class="string">&quot;Received orderId :<span class="subst">$&#123;it.second.id&#125;</span> <span class="subst">$&#123;Thread.currentThread().name&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">when</span> &#123;</span><br><span class="line">                    it.first -&gt; it.second.status = OrderStatus.COMPLETED</span><br><span class="line">                    <span class="keyword">else</span> -&gt; it.second.status = OrderStatus.FAILED</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                it.printStackTrace()</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                stopWatch.stop()</span><br><span class="line">                println(stopWatch.totalTimeSeconds)</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    runBlocking &#123; delay(<span class="number">5_000</span>) &#125; <span class="comment">//(6)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1): order 데이터를 준비합니다.</li>
+<li>(2): Back Pressure 기능을 제공하는 Flowable으로 생성 생성</li>
+<li>(3): CPU 수와 동일하게 ParallelFlowable을 생성할 수 있게 해줍니다.</li>
+<li>(4): ParallelFlowable의 병렬 처리 수준만큼 Scheduler.createWorker를 호출해서 스레드를 생성합니다. Buffer size는 기본 설정 128개와 동일합니다.</li>
+<li>(5): 각 ParallelFlowable의 값을 병합 작업을 진행합니다.</li>
+<li>(6): 해당 작업이 모두 테스트 스레드 <code>Test worker</code>에서 실행되지 않기 때문에 block을 진행합니다.</li>
+</ul>
+<h4 id="parallel"><a href="#parallel" class="headerlink" title="parallel"></a>parallel</h4><p><img src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/flowable.parallel.png"></p>
+<p><code>toFlowable()</code> 메서드로 Flowable 처리를 진행했던 것을 parallel 처리하기 위해서 <code>parallel()</code> 메서드를 사용합니다. 해당 레일은 자체적으로 병렬로 실행되지 않으며 각 레일이 병렬로 실행하려면 <code>runOn()</code>메서드의 호출이 필요합니다. 이때 <code>Schedulers.io()</code>를 사용합니다. <code>Schedulers.io()</code>는 <code>I/O</code> 관련 작업을 수행할 수 있는 무제한의 워커 스레드를 생성하는 스레드를 제공한다. 해당 테스트 환경은 12 코어기 때문에 12 스레드를 사용하게 됩니다.</p>
+<h4 id="sequential"><a href="#sequential" class="headerlink" title="sequential"></a>sequential</h4><p><img src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/parallelflowable.sequential.png"></p>
+<p><code>parallel</code>메서 여러 레일을 생성하는 것을 다시 단일 스퀀스로 병합하기 위해서 사용합니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Mapping orderId :15 RxCachedThreadScheduler-3</span><br><span class="line">Mapping orderId :18 RxCachedThreadScheduler-6</span><br><span class="line">Mapping orderId :22 RxCachedThreadScheduler-10</span><br><span class="line">Received orderId :8 RxCachedThreadScheduler-8</span><br><span class="line">Mapping orderId :16 RxCachedThreadScheduler-4</span><br><span class="line">Received orderId :1 RxCachedThreadScheduler-8</span><br><span class="line">Mapping orderId :23 RxCachedThreadScheduler-11</span><br><span class="line">Received orderId :2 RxCachedThreadScheduler-8</span><br><span class="line">Received orderId :3 RxCachedThreadScheduler-8</span><br><span class="line">Received orderId :4 RxCachedThreadScheduler-8</span><br><span class="line">Mapping orderId :14 RxCachedThreadScheduler-2</span><br><span class="line">Received orderId :5 RxCachedThreadScheduler-8</span><br><span class="line">Mapping orderId :24 RxCachedThreadScheduler-12</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>Mapping</code>, <code>Received</code> 스레드를 확인 1~12 스레드를 모두 사용하는 것을 확인할 수 있습니다. 해당 스레드는 모두 메인 스레드인 <code>Test worker</code>에서 진행되지 않습니다.</p>
+<h2 id="비교"><a href="#비교" class="headerlink" title="비교"></a>비교</h2><table>
+<thead>
+<tr>
+<th>데이터 개수</th>
+<th>스레드</th>
+<th>소요 시간</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5,000</td>
+<td>단일스레드</td>
+<td>8m 58s</td>
+</tr>
+<tr>
+<td>5,000</td>
+<td>12 스레드</td>
+<td>43s</td>
+</tr>
+</tbody></table>
+<p>실행 환경의 CPU Core 수에 따라서 결과는 많이 달라집니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/19/spring-batch-writer-csv/"
+                    data-tooltip="Spring Batch CSV Reader &amp; Writer"
+                    aria-label="이전: Spring Batch CSV Reader &amp; Writer"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/10/jpa-where/"
+                    data-tooltip="JPA @Where 사용법"
+                    aria-label="다음: JPA @Where 사용법"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/12/19/spring-batch-writer-csv/"
+                    data-tooltip="Spring Batch CSV Reader &amp; Writer"
+                    aria-label="이전: Spring Batch CSV Reader &amp; Writer"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/10/10/jpa-where/"
+                    data-tooltip="JPA @Where 사용법"
+                    aria-label="다음: JPA @Where 사용법"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

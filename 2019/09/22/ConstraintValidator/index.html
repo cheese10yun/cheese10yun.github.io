@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>ConstraintValidator을 이용해서 효과적인 검증 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n코드는 Github에 공개 되어있습니다.\n\n스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 @NotNull, @NotEmpty, @Email과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.\n예를 들어 주문에 대한 결제 정보를 받는 경우 카드 결제 시에는 카드 정보, 무통장 결제에는 계좌 정보를 입력받아야 합니다. 해당 요청을 JSON으로 표현하면 아래와 같습니다.\n무통장 결제12345678910111213141516&#123;  &quot;price&quot;: 100.00,  &quot;payment&quot;: &#123;    &quot;paymentMethod&quot;: &quot;BANK_TRANSFER&quot;,    &quot;account&quot;: &#123;      &quot;number&quot;: &quot;110-202034-2234&quot;,      &quot;bankCode&quot;: &quot;2003&quot;,      &quot;holder&quot; : &quot;홍길동&quot;    &#125;  &#125;,  &quot;address&quot;: &#123;    &quot;city&quot;: &quot;NOWON-GU&quot;,    &quot;state&quot;: &quot;SEOUL&quot;,    &quot;zipCode&quot;: &quot;09876?&quot;  &#125;&#125;\n\n카드 결제12345678910111213141516&#123;  &quot;price&quot;: 100.00,  &quot;payment&quot;: &#123;    &quot;paymentMethod&quot;: &quot;CARD&quot;,    &quot;card&quot;: &#123;      &quot;number&quot;: &quot;25523-22394&quot;,      &quot;brand&quot;: &quot;323&quot;,      &quot;csv&quot; : &quot;삼성카드&quot;    &#125;  &#125;,  &quot;address&quot;: &#123;    &quot;city&quot;: &quot;NOWON-GU&quot;,    &quot;state&quot;: &quot;SEOUL&quot;,    &quot;zipCode&quot;: &quot;09876?&quot;  &#125;&#125;\n\n위 JSON 같이 account, card 값은 paymentMethod에 따라 선택적으로 필수 값이 변경되니 단순하게 @NotNull, @NotEmpty 어노테이션으로 검증하기가 어렵습니다. 이러한 경우 ConstraintValidator을 직접 구현해야 합니다.\nConstraintValidator의 장점ConstraintValidator을 직접 구현하지 않고도 다양한 방법으로 해당 Validation을 진행할 수 있지만 ConstraintValidator 기반으로 검증하는 게 다음과 같은 장점이 있다고 생각합니다.\n일관성 있는 Validation 처리 방법검증을 진행하는 방법과 시점이 매우 다양하다 보니 많은 개발자들이 만들어가는 프로젝트인 경우에 전체적인 코드의 통일성이 떨어지게 됩니다. Validation을 사용하면 검증 방법과, 검증 시점(어느 레이어에서 진행되는지)을 통일성 있게 가져갈 수 있습니다.\n12345678910111213@PostMapping    public OrderSheetRequest order(@RequestBody @Valid final OrderSheetRequest dto) &#123;        if (dto.getPayment().getPaymentMethod() == PaymentMethod.BANK_TRANSFER)) &#123;            // 계좌정보가 제대로 넘어 왔는지 검증        &#125;                if((dto.getPayment().getPaymentMethod() == PaymentMethod.CARD))&#123;            // 카드 정보 제대로 넘어 왔는지 검증        &#125;                return dto;    &#125;\n위와 같은 식으로 Controller 코드에서 검증을 진행하는 것도 방법이지만 이렇게 되면 다른 컨트롤러에서 위와 같은 중복 코드가 발생할 수 있고 이러한 중복 코드로 코드의 응집력이 떨어지게 되면 변경이 발생했을 때 해당 코드를 찾아가서 직접 수정해야 합니다. 직접 수정하는 것이 큰 리소스가 들지 않더라도 이는 실수하기 좋은 환경입니다.\n이러한 컨트롤러에서의 중복 코드를 제거하기 위해서는 컨트롤러 진입 직전 Interceptor에서 검증하는 것이 바람직합니다. ConstraintValidator 기반으로 유효성 검증을 진행하면 검증 시점의(Interceptor에서 진행) 통일성을 갖습니다.\n일관성 있는 ErrorResponse스프링 가이드 - 통일된 Error Response 객체에서 이야기했듯이 ErrorReponse는 항상 동일한 포맷으로 응답해야 합니다. ConstraintValidator을 사용해서 @Valid을 기반으로 검증을 하면 MethodArgumentNotValidException이 발생하고 이 예외를 @ControllerAdvice로 모든 예외를 핸들링에서 정리한 것처럼 통일성 있는 ErrorResponse 포맷으로 처리할 수 있습니다.\n12345678910111213141516171819POST http://127.0.0.1:8080/orderContent-Type: application/json&#123;  &quot;price&quot;: 100.00,  &quot;payment&quot;: &#123;    &quot;paymentMethod&quot;: &quot;BANK_TRANSFER&quot;,    &quot;account&quot;: &#123;      &quot;holder&quot;: &quot;&quot;,      &quot;number&quot;: &quot;&quot;,      &quot;bankCode&quot;: &quot;&quot;    &#125;  &#125;,  &quot;address&quot;: &#123;    &quot;city&quot;: &quot;NOWON-GU&quot;,    &quot;state&quot;: &quot;SEOUL&quot;,    &quot;zipCode&quot;: &quot;09876?&quot;  &#125;&#125;\n\n위와 같이 요청을 보냈을 경우 아래처럼 Error Response를 갖습니다.\n1234567891011121314151617181920212223&#123;  &quot;message&quot;: &quot;입력값이 올바르지 않습니다.&quot;,  &quot;status&quot;: 400,  &quot;errors&quot;: [    &#123;      &quot;field&quot;: &quot;payment.account.bankCode&quot;,      &quot;value&quot;: &quot;&quot;,      &quot;reason&quot;: &quot;은행코드는 필수입니다.&quot;    &#125;,    &#123;      &quot;field&quot;: &quot;payment.account.number&quot;,      &quot;value&quot;: &quot;&quot;,      &quot;reason&quot;: &quot;계좌번호는 필수값입니다.&quot;    &#125;,    &#123;      &quot;field&quot;: &quot;payment.account.holder&quot;,      &quot;value&quot;: &quot;&quot;,      &quot;reason&quot;: &quot;계좌주는 값은 필수 입니다.&quot;    &#125;  ],  &quot;code&quot;: &quot;C001&quot;,  &quot;timestamp&quot;: &quot;2019-09-21T23:21:26.006&quot;&#125;\n\nConstraintValidator를 통해서 errors 배열로 올바르지 않은 필드에 대해서 리스트로 내려줌으로써 더 구체적인 에러를 응답하게할 수 있습니다. \nConstraintValidator 사용법Annotation 생성12345678910111213@Documented@Constraint(validatedBy = OrderSheetFormValidator.class)@Target(&#123;ElementType.TYPE&#125;)@Retention(RetentionPolicy.RUNTIME)public @interface OrderSheetForm &#123;    String message() default &quot;Order sheet form is invalid&quot;;    Class&lt;?&gt;[] groups() default &#123;&#125;;    Class&lt;? extends Payload&gt;[] payload() default &#123;&#125;;&#125;\n\n검증 로직이 있는 OrderSheetFormValidator 생성123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051public class OrderSheetFormValidator implements ConstraintValidator&lt;OrderSheetForm, OrderSheetRequest&gt; &#123; // (1)    @Override    public void initialize(OrderSheetForm constraintAnnotation) &#123;    &#125;    @Override    public boolean isValid(OrderSheetRequest value, ConstraintValidatorContext context) &#123;        int invalidCount = 0; // (2)        if (value.getPayment().hasPaymentInfo()) &#123;            addConstraintViolation(context, &quot;카드 정보 혹은 계좌정보는 필수입니다.&quot;, &quot;payment&quot;); // (3)            invalidCount += 1;        &#125;        if (value.getPayment().getPaymentMethod() == PaymentMethod.CARD) &#123;            final Card card = value.getPayment().getCard();            if (card == null) &#123;                addConstraintViolation(context, &quot;카드 필수입니다.&quot;, &quot;payment&quot;, &quot;card&quot;);            &#125; else &#123;                if (StringUtils.isEmpty(card.getBrand())) &#123;                    addConstraintViolation(context, &quot;카드 브렌드는 필수입니다.&quot;, &quot;payment&quot;, &quot;card&quot;, &quot;brand&quot;);                    invalidCount += 1;                &#125;                if (StringUtils.isEmpty(card.getCsv())) &#123;                    addConstraintViolation(context, &quot;CSV 값은 필수 입니다.&quot;, &quot;payment&quot;, &quot;card&quot;, &quot;csv&quot;);                    invalidCount += 1;                &#125;                if (StringUtils.isEmpty(card.getNumber())) &#123;                    addConstraintViolation(context, &quot;카드 번호는 필수 입니다.&quot;, &quot;payment&quot;, &quot;card&quot;, &quot;number&quot;);                    invalidCount += 1;                &#125;            &#125;        &#125;        ...        return invalidCount == 0; // (6)    &#125;    private void addConstraintViolation(ConstraintValidatorContext context, String errorMessage,        String firstNode, String secondNode, String thirdNode) &#123;        context.disableDefaultConstraintViolation(); // (4)        context.buildConstraintViolationWithTemplate(errorMessage) // (5)            .addPropertyNode(firstNode)            .addPropertyNode(secondNode)            .addPropertyNode(thirdNode)            .addConstraintViolation();    &#125;&#125;\n\n\n(1) ConstraintValidator&lt;OrderSheetForm, OrderSheetRequest&gt;를 상속받습니다. OrderSheetForm 작성한 위에서 생성한 어노테이션, OrderSheetRequest는 @RequestBody으로 받는 객체입니다.\n(2) invalidCount는 검증이 실패할 때마다 증가할 카운트 변수입니다.\n(3) addConstraintViolation 메서드를 통해서 에러 메시지와 검증한 node key 값을 넘겨줍니다. 해당 node는 ErrorResponse의 errors[].field에 바인딩 됩니다.\n(4) 해당 메서드로 @OrderSheetForm의 default &quot;Order sheet form is invalid&quot;; 값을 disable 시킵니다. \n(5) 해당 메서드로 검증에 대한 Violation 을 추가합니다.\n(6) invalidCount == 0 아닌 경우에는 false\n\nOrderSheetRequest12345678910111213141516171819202122232425262728293031323334@NoArgsConstructor(access = AccessLevel.PRIVATE)@Getter@OrderSheetForm // (1)public class OrderSheetRequest &#123;    @Min(1)    private BigDecimal price;    @NotNull    @Valid // (2)    private Payment payment;    @NotNull    @Valid    private Address address;    @NoArgsConstructor(access = AccessLevel.PRIVATE)    @Getter    @ToString // (3)    public static class Payment &#123;        @NotNull        private PaymentMethod paymentMethod;        private Account account;        private Card card;        @JsonIgnore        public boolean hasPaymentInfo() &#123;            return account != null &amp;&amp; card != null;        &#125;    &#125;    ...&#125;\n\n\n(1) @OrderSheetForm을 추가해서 OrderSheetFormValidator가 동작하게 합니다.\n(2) @Valid을 추가해서 각 클래스의 JSR-303 기반 어노테이션이 동작하게 합니다. @Valid이 없는 경우 payment.PaymentMethod의 @NotNull 동작하지 않습니다.\n(3) Error[].value 값이 객체인 경우에 해당 객체의 정보를 출력하기 위해서 @ToString을 추가합니다.\n\nContoller123456789@RestController@RequestMapping(&quot;/order&quot;)public class OrderApi &#123;    @PostMapping    public OrderSheetRequest order(@RequestBody @Valid final OrderSheetRequest dto) &#123;        return dto;    &#125;&#125;\n\n@Valid 어노테이션으로 검증을 진행합니다.\n\n","dateCreated":"2019-09-22T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2019-09-22T00:00:00+09:00","description":"스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 @NotNull, @NotEmpty, @Email과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.","headline":"ConstraintValidator을 이용해서 효과적인 검증","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/09/22/ConstraintValidator/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/09/22/ConstraintValidator/","keywords":"Guide"}</script>
+    <meta name="description" content="스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 @NotNull, @NotEmpty, @Email과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="ConstraintValidator을 이용해서 효과적인 검증">
+<meta property="og:url" content="http://localhost:4000/2019/09/22/ConstraintValidator/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 @NotNull, @NotEmpty, @Email과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:published_time" content="2019-09-21T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.954Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Guide">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            ConstraintValidator을 이용해서 효과적인 검증
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-22T00:00:00+09:00">
+	
+		    2019/09/22
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/cheese10yun/blog-sample/tree/master/custom-validation">코드는 Github</a>에 공개 되어있습니다.</p>
+</blockquote>
+<p>스프링에서는 JSR 303 기반 어노테이션 기반으로 일관성 있는 Validation을 진행할 수 있습니다. 하지만 <code>@NotNull</code>, <code>@NotEmpty</code>, <code>@Email</code>과 같은 검증은 가능하지만 비즈니스적에 맞는 Validation은 별도로 진행해야 합니다.</p>
+<p>예를 들어 주문에 대한 결제 정보를 받는 경우 카드 결제 시에는 카드 정보, 무통장 결제에는 계좌 정보를 입력받아야 합니다. 해당 요청을 JSON으로 표현하면 아래와 같습니다.</p>
+<h2 id="무통장-결제"><a href="#무통장-결제" class="headerlink" title="무통장 결제"></a>무통장 결제</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">100.00</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payment&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;paymentMethod&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BANK_TRANSFER&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;account&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="string">&quot;110-202034-2234&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bankCode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2003&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;holder&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;홍길동&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;NOWON-GU&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SEOUL&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zipCode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;09876?&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="카드-결제"><a href="#카드-결제" class="headerlink" title="카드 결제"></a>카드 결제</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">100.00</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payment&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;paymentMethod&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CARD&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;card&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;number&quot;</span><span class="punctuation">:</span> <span class="string">&quot;25523-22394&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;brand&quot;</span><span class="punctuation">:</span> <span class="string">&quot;323&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;csv&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;삼성카드&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;NOWON-GU&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SEOUL&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;zipCode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;09876?&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>위 JSON 같이 <code>account</code>, <code>card</code> 값은 <code>paymentMethod</code>에 따라 선택적으로 필수 값이 변경되니 단순하게 <code>@NotNull</code>, <code>@NotEmpty</code> 어노테이션으로 검증하기가 어렵습니다. 이러한 경우 ConstraintValidator을 직접 구현해야 합니다.</p>
+<h2 id="ConstraintValidator의-장점"><a href="#ConstraintValidator의-장점" class="headerlink" title="ConstraintValidator의 장점"></a>ConstraintValidator의 장점</h2><p>ConstraintValidator을 직접 구현하지 않고도 다양한 방법으로 해당 Validation을 진행할 수 있지만 ConstraintValidator 기반으로 검증하는 게 다음과 같은 장점이 있다고 생각합니다.</p>
+<h3 id="일관성-있는-Validation-처리-방법"><a href="#일관성-있는-Validation-처리-방법" class="headerlink" title="일관성 있는 Validation 처리 방법"></a>일관성 있는 Validation 처리 방법</h3><p>검증을 진행하는 방법과 시점이 매우 다양하다 보니 많은 개발자들이 만들어가는 프로젝트인 경우에 전체적인 코드의 통일성이 떨어지게 됩니다. Validation을 사용하면 검증 방법과, 검증 시점(어느 레이어에서 진행되는지)을 통일성 있게 가져갈 수 있습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> OrderSheetRequest <span class="title function_">order</span><span class="params">(<span class="meta">@RequestBody</span> <span class="meta">@Valid</span> <span class="keyword">final</span> OrderSheetRequest dto)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (dto.getPayment().getPaymentMethod() == PaymentMethod.BANK_TRANSFER)) &#123;</span><br><span class="line">            <span class="comment">// 계좌정보가 제대로 넘어 왔는지 검증</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>((dto.getPayment().getPaymentMethod() == PaymentMethod.CARD))&#123;</span><br><span class="line">            <span class="comment">// 카드 정보 제대로 넘어 왔는지 검증</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> dto;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>위와 같은 식으로 Controller 코드에서 검증을 진행하는 것도 방법이지만 이렇게 되면 다른 컨트롤러에서 위와 같은 중복 코드가 발생할 수 있고 이러한 중복 코드로 코드의 응집력이 떨어지게 되면 변경이 발생했을 때 해당 코드를 찾아가서 직접 수정해야 합니다. 직접 수정하는 것이 큰 리소스가 들지 않더라도 이는 실수하기 좋은 환경입니다.</p>
+<p>이러한 컨트롤러에서의 중복 코드를 제거하기 위해서는 <strong>컨트롤러 진입 직전 Interceptor에서 검증하는 것이 바람직합니다.</strong> <code>ConstraintValidator</code> 기반으로 유효성 검증을 진행하면 검증 시점의(Interceptor에서 진행) 통일성을 갖습니다.</p>
+<h3 id="일관성-있는-ErrorResponse"><a href="#일관성-있는-ErrorResponse" class="headerlink" title="일관성 있는 ErrorResponse"></a>일관성 있는 ErrorResponse</h3><p><a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-guide/blob/master/docs/exception-guide.md#%ED%86%B5%EC%9D%BC%EB%90%9C-error-response-%EA%B0%9D%EC%B2%B4">스프링 가이드 - 통일된 Error Response 객체</a>에서 이야기했듯이 ErrorReponse는 항상 동일한 포맷으로 응답해야 합니다. <code>ConstraintValidator</code>을 사용해서 <code>@Valid</code>을 기반으로 검증을 하면 <code>MethodArgumentNotValidException</code>이 발생하고 이 예외를 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-guide/blob/master/docs/exception-guide.md#controlleradvice%EB%A1%9C-%EB%AA%A8%EB%93%A0-%EC%98%88%EC%99%B8%EB%A5%BC-%ED%95%B8%EB%93%A4%EB%A7%81">@ControllerAdvice로 모든 예외를 핸들링</a>에서 정리한 것처럼 통일성 있는 ErrorResponse 포맷으로 처리할 수 있습니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">POST http://127.0.0.1:8080/order</span><br><span class="line">Content-Type: application/json</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;price&quot;: 100.00,</span><br><span class="line">  &quot;payment&quot;: &#123;</span><br><span class="line">    &quot;paymentMethod&quot;: &quot;BANK_TRANSFER&quot;,</span><br><span class="line">    &quot;account&quot;: &#123;</span><br><span class="line">      &quot;holder&quot;: &quot;&quot;,</span><br><span class="line">      &quot;number&quot;: &quot;&quot;,</span><br><span class="line">      &quot;bankCode&quot;: &quot;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;address&quot;: &#123;</span><br><span class="line">    &quot;city&quot;: &quot;NOWON-GU&quot;,</span><br><span class="line">    &quot;state&quot;: &quot;SEOUL&quot;,</span><br><span class="line">    &quot;zipCode&quot;: &quot;09876?&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위와 같이 요청을 보냈을 경우 아래처럼 Error Response를 갖습니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;입력값이 올바르지 않습니다.&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="number">400</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;errors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;payment.account.bankCode&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;은행코드는 필수입니다.&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;payment.account.number&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;계좌번호는 필수값입니다.&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;payment.account.holder&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;계좌주는 값은 필수 입니다.&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;C001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2019-09-21T23:21:26.006&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>ConstraintValidator</code>를 통해서 errors 배열로 올바르지 않은 필드에 대해서 리스트로 내려줌으로써 더 구체적인 에러를 응답하게할 수 있습니다. </p>
+<h2 id="ConstraintValidator-사용법"><a href="#ConstraintValidator-사용법" class="headerlink" title="ConstraintValidator 사용법"></a>ConstraintValidator 사용법</h2><h3 id="Annotation-생성"><a href="#Annotation-생성" class="headerlink" title="Annotation 생성"></a>Annotation 생성</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Constraint(validatedBy = OrderSheetFormValidator.class)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> OrderSheetForm &#123;</span><br><span class="line"></span><br><span class="line">    String <span class="title function_">message</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;Order sheet form is invalid&quot;</span>;</span><br><span class="line"></span><br><span class="line">    Class&lt;?&gt;[] groups() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">Payload</span>&gt;[] payload() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="검증-로직이-있는-OrderSheetFormValidator-생성"><a href="#검증-로직이-있는-OrderSheetFormValidator-생성" class="headerlink" title="검증 로직이 있는 OrderSheetFormValidator 생성"></a>검증 로직이 있는 OrderSheetFormValidator 생성</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderSheetFormValidator</span> <span class="keyword">implements</span> <span class="title class_">ConstraintValidator</span>&lt;OrderSheetForm, OrderSheetRequest&gt; &#123; <span class="comment">// (1)</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">initialize</span><span class="params">(OrderSheetForm constraintAnnotation)</span> &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isValid</span><span class="params">(OrderSheetRequest value, ConstraintValidatorContext context)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">invalidCount</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">// (2)</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (value.getPayment().hasPaymentInfo()) &#123;</span><br><span class="line">            addConstraintViolation(context, <span class="string">&quot;카드 정보 혹은 계좌정보는 필수입니다.&quot;</span>, <span class="string">&quot;payment&quot;</span>); <span class="comment">// (3)</span></span><br><span class="line">            invalidCount += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (value.getPayment().getPaymentMethod() == PaymentMethod.CARD) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">Card</span> <span class="variable">card</span> <span class="operator">=</span> value.getPayment().getCard();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (card == <span class="literal">null</span>) &#123;</span><br><span class="line">                addConstraintViolation(context, <span class="string">&quot;카드 필수입니다.&quot;</span>, <span class="string">&quot;payment&quot;</span>, <span class="string">&quot;card&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (StringUtils.isEmpty(card.getBrand())) &#123;</span><br><span class="line">                    addConstraintViolation(context, <span class="string">&quot;카드 브렌드는 필수입니다.&quot;</span>, <span class="string">&quot;payment&quot;</span>, <span class="string">&quot;card&quot;</span>, <span class="string">&quot;brand&quot;</span>);</span><br><span class="line">                    invalidCount += <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (StringUtils.isEmpty(card.getCsv())) &#123;</span><br><span class="line">                    addConstraintViolation(context, <span class="string">&quot;CSV 값은 필수 입니다.&quot;</span>, <span class="string">&quot;payment&quot;</span>, <span class="string">&quot;card&quot;</span>, <span class="string">&quot;csv&quot;</span>);</span><br><span class="line">                    invalidCount += <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (StringUtils.isEmpty(card.getNumber())) &#123;</span><br><span class="line">                    addConstraintViolation(context, <span class="string">&quot;카드 번호는 필수 입니다.&quot;</span>, <span class="string">&quot;payment&quot;</span>, <span class="string">&quot;card&quot;</span>, <span class="string">&quot;number&quot;</span>);</span><br><span class="line">                    invalidCount += <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> invalidCount == <span class="number">0</span>; <span class="comment">// (6)</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">addConstraintViolation</span><span class="params">(ConstraintValidatorContext context, String errorMessage,</span></span><br><span class="line"><span class="params">        String firstNode, String secondNode, String thirdNode)</span> &#123;</span><br><span class="line">        context.disableDefaultConstraintViolation(); <span class="comment">// (4)</span></span><br><span class="line">        context.buildConstraintViolationWithTemplate(errorMessage) <span class="comment">// (5)</span></span><br><span class="line">            .addPropertyNode(firstNode)</span><br><span class="line">            .addPropertyNode(secondNode)</span><br><span class="line">            .addPropertyNode(thirdNode)</span><br><span class="line">            .addConstraintViolation();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>(1) ConstraintValidator&lt;OrderSheetForm, OrderSheetRequest&gt;를 상속받습니다. <code>OrderSheetForm</code> 작성한 위에서 생성한 어노테이션, <code>OrderSheetRequest</code>는 <code>@RequestBody</code>으로 받는 객체입니다.</li>
+<li>(2) <code>invalidCount</code>는 검증이 실패할 때마다 증가할 카운트 변수입니다.</li>
+<li>(3) <code>addConstraintViolation</code> 메서드를 통해서 에러 메시지와 검증한 node key 값을 넘겨줍니다. 해당 node는 ErrorResponse의 <code>errors[].field</code>에 바인딩 됩니다.</li>
+<li>(4) 해당 메서드로 <code>@OrderSheetForm</code>의 <code>default &quot;Order sheet form is invalid&quot;;</code> 값을 disable 시킵니다. </li>
+<li>(5) 해당 메서드로 검증에 대한 Violation 을 추가합니다.</li>
+<li>(6) <code>invalidCount == 0</code> 아닌 경우에는 <code>false</code></li>
+</ul>
+<h3 id="OrderSheetRequest"><a href="#OrderSheetRequest" class="headerlink" title="OrderSheetRequest"></a>OrderSheetRequest</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NoArgsConstructor(access = AccessLevel.PRIVATE)</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@OrderSheetForm</span> <span class="comment">// (1)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderSheetRequest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Min(1)</span></span><br><span class="line">    <span class="keyword">private</span> BigDecimal price;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="meta">@Valid</span> <span class="comment">// (2)</span></span><br><span class="line">    <span class="keyword">private</span> Payment payment;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="meta">@Valid</span></span><br><span class="line">    <span class="keyword">private</span> Address address;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NoArgsConstructor(access = AccessLevel.PRIVATE)</span></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@ToString</span> <span class="comment">// (3)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Payment</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@NotNull</span></span><br><span class="line">        <span class="keyword">private</span> PaymentMethod paymentMethod;</span><br><span class="line">        <span class="keyword">private</span> Account account;</span><br><span class="line">        <span class="keyword">private</span> Card card;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@JsonIgnore</span></span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasPaymentInfo</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> account != <span class="literal">null</span> &amp;&amp; card != <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>(1) <code>@OrderSheetForm</code>을 추가해서 <code>OrderSheetFormValidator</code>가 동작하게 합니다.</li>
+<li>(2) <code>@Valid</code>을 추가해서 각 클래스의 <code>JSR-303</code> 기반 어노테이션이 동작하게 합니다. <code>@Valid</code>이 없는 경우 payment.PaymentMethod의 <code>@NotNull</code> 동작하지 않습니다.</li>
+<li>(3) Error[].value 값이 객체인 경우에 해당 객체의 정보를 출력하기 위해서 <code>@ToString</code>을 추가합니다.</li>
+</ul>
+<h3 id="Contoller"><a href="#Contoller" class="headerlink" title="Contoller"></a>Contoller</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/order&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApi</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="keyword">public</span> OrderSheetRequest <span class="title function_">order</span><span class="params">(<span class="meta">@RequestBody</span> <span class="meta">@Valid</span> <span class="keyword">final</span> OrderSheetRequest dto)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> dto;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>@Valid</code> 어노테이션으로 검증을 진행합니다.</li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Guide/" rel="tag">Guide</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/10/13/mysql-explian/"
+                    data-tooltip="Mysql Explain"
+                    aria-label="이전: Mysql Explain"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/31/utterances/"
+                    data-tooltip="Utterances 적용하기"
+                    aria-label="다음: Utterances 적용하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/10/13/mysql-explian/"
+                    data-tooltip="Mysql Explain"
+                    aria-label="이전: Mysql Explain"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/31/utterances/"
+                    data-tooltip="Utterances 적용하기"
+                    aria-label="다음: Utterances 적용하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2019/09/22/ConstraintValidator/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

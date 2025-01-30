@@ -1,0 +1,650 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Locust 성능 테스트 도구 소개 Part 2 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"이 글을 읽기 전에, Locust 성능 테스트 도구 소개를 먼저 확인해 보시는 것이 좋습니다. 이를 통해 Locust의 기본적인 사용법과 개념을 이해하신 후, 본 글에서 다루는 보다 심화된 사용 방법과 전략에 쉽게 접근하실 수 있습니다.  \non_start 및 on_stop 메서드123456class OrderApiTest(HttpUser):    def on_start(self):        self.client.post(&quot;/login&quot;)        def on_stop(self):        self.client.post(&quot;/logout&quot;)\n\non_start와 on_stop 메서드는 사용자의 세션 시작과 종료 시 특정 작업을 실행하는 데 사용됩니다. 로그인과 로그아웃 외에도, 사용자가 시나리오를 시작하기 전에 필요한 데이터를 세팅하거나, 시나리오 종료 후 사용한 리소스를 정리하는 데 사용할 수 있습니다. 예를 들어, 시나리오 시작 시 특정 API를 호출하여 필요한 설정을 하거나, 시나리오가 끝난 후 생성된 데이터를 삭제하는 등의 작업이 있을 수 있습니다. 이러한 메서드를 통해 테스트의 사전 준비와 후처리를 자동화할 수 있습니다. on_start는 사용자가 시작될 때 호출되며, on_stop은 사용자가 종료될 때 호출됩니다. 강제로 loucst를 종료하면 on_stop 메서드가 호출되지 않습니다.\n@task를 이용한 API 요청 비율 조정1234567891011121314151617181920212223class Advance(HttpUser):    ...    @task(3)    def getOrder(self):        ...        self.client.get(            &quot;/api/v1/orders&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/orders&quot;        )    @task(1)    def getShop(self):        ...        self.client.get(            &quot;/api/v1/shops&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/shops&quot;        )\n\n\n@task 데코레이터는 Locust에서 작업의 실행 빈도나 우선순위를 지정하는 데 사용됩니다. 숫자를 인자로 제공함으로써, 특정 작업이 다른 작업들에 비해 상대적으로 얼마나 자주 실행될지 결정할 수 있습니다. 예를 들어, @task(3)은 해당 작업이 같은 TaskSet 내 다른 @task(1) 작업보다 세 배 더 많이 실행됨을 의미합니다. 이를 통해 실제 사용자 행동을 더 잘 모방한 부하 테스트 시나리오를 구성할 수 있습니다.\n순차적 TaskSets로 워크플로우 시뮬레이션123456789101112131415161718192021222324252627class OrderTaskSet(TaskSet):    @task    def getOrder(self):        ...        self.client.get(            &quot;/api/v1/orders&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/orders&quot;        )    @task    def getShop(self):        ...        self.client.get(            &quot;/api/v1/shops&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/shops&quot;        )class OrderTask(HttpUser):    wait_time = constant_pacing(2)  # 최소 10초 간격으로 작업 실행이 보장되도록 대기 시간 설정    host = &quot;http://localhost:8080&quot;  # 테스트 대상 호스트 주소 지정    tasks = [OrderTaskSet]\n\n순차적 TaskSets를 사용하는 워크플로우 시뮬레이션은 사용자가 실제 애플리케이션을 사용할 때의 행동 순서를 모방하는 데 사용됩니다. 이 방식에서는 TaskSet 클래스 내에서 각각의 @task 함수가 사용자의 다음 동작을 시뮬레이션합니다. 이 예제에서는 OrderTaskSet 내의 getOrder와 getShop이 동일한 비율로 실행되며, 사용자는 이 두 작업 사이를 순차적으로, 또는 랜덤으로 전환하면서 진행할 수 있습니다. constant_pacing 설정을 통해 각 작업 사이의 실행 간격을 조절함으로써, 실제 사용자 경험에 더 가까운 테스트 환경을 구성할 수 있습니다. 자세한 내용은 Locust 공식 문서를 참조하세요.\n공식 문서는 정확한 비율의 작업 호출을 달성하기 위해 루프와 제어문 사용을 권장합니다. @task를 이용한 간단한 호출 비율 조정은 대략적인 작업 순서에 적합하지만, 정확한 작업 순서가 필요한 경우, 공식 문서의 권장 사항을 따르는 것이 더 바람직합니다.\n맞춤형 부하 형태 시뮬레이션12345678910111213141516171819202122232425262728293031323334353637383940class Advance(HttpUser):    wait_time = constant(1)  # 모든 요청 사이에 3초의 고정된 대기 시간 설정    host = &quot;http://localhost:8080&quot;  # 테스트 대상 호스트 주소 지정    @task    def getOrder(self):        ...        self.client.get(            &quot;/api/v1/orders&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/orders&quot;        )    @task    def getShop(self):        ...        self.client.get(            &quot;/api/v1/shops&quot;,            headers = &#123; &quot;Content-Type&quot;: &quot;application/json&quot; &#125;,            params = params,            name = &quot;/api/v1/shops&quot;        )# 사용자 정의 부하 모양을 정의하는 LoadTestShape 클래스class CustomShape(LoadTestShape):    time_limit = 600  # 부하 테스트의 총 시간 한계 설정    spawn_rate = 20  # 초당 새로운 사용자를 생성하는 속도 설정    def tick(self):        run_time = self.get_run_time()  # 현재 실행 시간 가져오기        if run_time &lt; self.time_limit:            # 실행 시간에 따라 사용자 수 증가            user_count = run_time // 10            return (user_count, self.spawn_rate)        return None  # 시간 한계를 넘으면 테스트 종료\n\n위 코드는 Locust를 사용한 사용자 정의 부하 테스트 시나리오를 설정하는 예시입니다. 테스트 시작부터 시간이 600초(10분)에 이르기까지 실행 시간에 따라 사용자 수를 점진적으로 증가시킵니다. tick 함수는 현재 실행 시간을 기반으로 사용자 수를 결정하고, 실행 시간이 10초마다 사용자 수를 1명씩 증가시키는 로직을 포함하고 있습니다. 시간 한계에 도달하면, 즉 실행 시간이 600초를 초과하면, 테스트는 자동으로 종료됩니다. 이를 통해 초기 단계에서는 부하가 점점 증가하다가 설정된 시간이 지나면 테스트가 종료되는 시나리오를 구현할 수 있습니다.\n정리사용자 세션 시작과 종료에 필요한 동작을 자동화하는 on_start와 on_stop 메서드, 다양한 API 요청의 실행 비율을 조절하는 @task, 실제 사용자 워크플로우 시뮬레이션에 유용한 순차적 TaskSets, 그리고 테스트 동안 사용자 부하를 동적으로 조절할 수 있는 맞춤형 부하 형태 CustomShape에 대해 설명합니다. 이 방법들은 Locust를 활용하여 보다 실제적이고 유연한 성능 테스트를 구현하는 데 도움을 줍니다.\n","dateCreated":"2024-04-07T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2024-04-07T00:00:00+09:00","description":"이 글을 읽기 전에, Locust 성능 테스트 도구 소개를 먼저 확인해 보시는 것이 좋습니다. 이를 통해 Locust의 기본적인 사용법과 개념을 이해하신 후, 본 글에서 다루는 보다 심화된 사용 방법과 전략에 쉽게 접근하실 수 있습니다.","headline":"Locust 성능 테스트 도구 소개 Part 2","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2024/04/07/locust-part-2/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2024/04/07/locust-part-2/","keywords":"Performance"}</script>
+    <meta name="description" content="이 글을 읽기 전에, Locust 성능 테스트 도구 소개를 먼저 확인해 보시는 것이 좋습니다. 이를 통해 Locust의 기본적인 사용법과 개념을 이해하신 후, 본 글에서 다루는 보다 심화된 사용 방법과 전략에 쉽게 접근하실 수 있습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Locust 성능 테스트 도구 소개 Part 2">
+<meta property="og:url" content="http://localhost:4000/2024/04/07/locust-part-2/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="이 글을 읽기 전에, Locust 성능 테스트 도구 소개를 먼저 확인해 보시는 것이 좋습니다. 이를 통해 Locust의 기본적인 사용법과 개념을 이해하신 후, 본 글에서 다루는 보다 심화된 사용 방법과 전략에 쉽게 접근하실 수 있습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/locust/imag/locust-1-1.png">
+<meta property="article:published_time" content="2024-04-06T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.939Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Performance">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/locust/imag/locust-1-1.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Locust 성능 테스트 도구 소개 Part 2
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2024-04-07T00:00:00+09:00">
+	
+		    2024/04/07
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>이 글을 읽기 전에, <a target="_blank" rel="noopener" href="https://cheese10yun.github.io/locust-part-1/">Locust 성능 테스트 도구 소개</a>를 먼저 확인해 보시는 것이 좋습니다. 이를 통해 Locust의 기본적인 사용법과 개념을 이해하신 후, 본 글에서 다루는 보다 심화된 사용 방법과 전략에 쉽게 접근하실 수 있습니다.  </p>
+<h2 id="on-start-및-on-stop-메서드"><a href="#on-start-및-on-stop-메서드" class="headerlink" title="on_start 및 on_stop 메서드"></a>on_start 및 on_stop 메서드</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderApiTest</span>(<span class="title class_ inherited__">HttpUser</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">on_start</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.client.post(<span class="string">&quot;/login&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">on_stop</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.client.post(<span class="string">&quot;/logout&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>on_start</code>와 <code>on_stop</code> 메서드는 사용자의 세션 시작과 종료 시 특정 작업을 실행하는 데 사용됩니다. 로그인과 로그아웃 외에도, 사용자가 시나리오를 시작하기 전에 필요한 데이터를 세팅하거나, 시나리오 종료 후 사용한 리소스를 정리하는 데 사용할 수 있습니다. 예를 들어, 시나리오 시작 시 특정 API를 호출하여 필요한 설정을 하거나, 시나리오가 끝난 후 생성된 데이터를 삭제하는 등의 작업이 있을 수 있습니다. 이러한 메서드를 통해 테스트의 사전 준비와 후처리를 자동화할 수 있습니다. <code>on_start</code>는 사용자가 시작될 때 호출되며, <code>on_stop</code>은 사용자가 종료될 때 호출됩니다. 강제로 loucst를 종료하면 <code>on_stop</code> 메서드가 호출되지 않습니다.</p>
+<h2 id="task를-이용한-API-요청-비율-조정"><a href="#task를-이용한-API-요청-비율-조정" class="headerlink" title="@task를 이용한 API 요청 비율 조정"></a>@task를 이용한 API 요청 비율 조정</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Advance</span>(<span class="title class_ inherited__">HttpUser</span>):</span><br><span class="line">    ...</span><br><span class="line"><span class="meta">    @task(<span class="params"><span class="number">3</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getOrder</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/orders&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/orders&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="meta">    @task(<span class="params"><span class="number">1</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getShop</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/shops&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/shops&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/locust/imag/locust-1-1.png"></p>
+<p><code>@task</code> 데코레이터는 Locust에서 작업의 실행 빈도나 우선순위를 지정하는 데 사용됩니다. 숫자를 인자로 제공함으로써, 특정 작업이 다른 작업들에 비해 상대적으로 얼마나 자주 실행될지 결정할 수 있습니다. 예를 들어, <code>@task(3)</code>은 해당 작업이 같은 TaskSet 내 다른 <code>@task(1)</code> 작업보다 세 배 더 많이 실행됨을 의미합니다. 이를 통해 실제 사용자 행동을 더 잘 모방한 부하 테스트 시나리오를 구성할 수 있습니다.</p>
+<h2 id="순차적-TaskSets로-워크플로우-시뮬레이션"><a href="#순차적-TaskSets로-워크플로우-시뮬레이션" class="headerlink" title="순차적 TaskSets로 워크플로우 시뮬레이션"></a>순차적 TaskSets로 워크플로우 시뮬레이션</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderTaskSet</span>(<span class="title class_ inherited__">TaskSet</span>):</span><br><span class="line"></span><br><span class="line"><span class="meta">    @task</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getOrder</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/orders&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/orders&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="meta">    @task</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getShop</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/shops&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/shops&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">OrderTask</span>(<span class="title class_ inherited__">HttpUser</span>):</span><br><span class="line">    wait_time = constant_pacing(<span class="number">2</span>)  <span class="comment"># 최소 10초 간격으로 작업 실행이 보장되도록 대기 시간 설정</span></span><br><span class="line">    host = <span class="string">&quot;http://localhost:8080&quot;</span>  <span class="comment"># 테스트 대상 호스트 주소 지정</span></span><br><span class="line"></span><br><span class="line">    tasks = [OrderTaskSet]</span><br></pre></td></tr></table></figure>
+
+<p>순차적 TaskSets를 사용하는 워크플로우 시뮬레이션은 사용자가 실제 애플리케이션을 사용할 때의 행동 순서를 모방하는 데 사용됩니다. 이 방식에서는 TaskSet 클래스 내에서 각각의 <code>@task</code> 함수가 사용자의 다음 동작을 시뮬레이션합니다. 이 예제에서는 <code>OrderTaskSet</code> 내의 <code>getOrder</code>와 <code>getShop</code>이 동일한 비율로 실행되며, 사용자는 이 두 작업 사이를 순차적으로, 또는 랜덤으로 전환하면서 진행할 수 있습니다. <code>constant_pacing</code> 설정을 통해 각 작업 사이의 실행 간격을 조절함으로써, 실제 사용자 경험에 더 가까운 테스트 환경을 구성할 수 있습니다. 자세한 내용은 <a target="_blank" rel="noopener" href="https://docs.locust.io/en/stable/tasksets.html#tasksets">Locust 공식 문서</a>를 참조하세요.</p>
+<p>공식 문서는 정확한 비율의 작업 호출을 달성하기 위해 루프와 제어문 사용을 권장합니다. <code>@task</code>를 이용한 간단한 호출 비율 조정은 대략적인 작업 순서에 적합하지만, 정확한 작업 순서가 필요한 경우, 공식 문서의 권장 사항을 따르는 것이 더 바람직합니다.</p>
+<h2 id="맞춤형-부하-형태-시뮬레이션"><a href="#맞춤형-부하-형태-시뮬레이션" class="headerlink" title="맞춤형 부하 형태 시뮬레이션"></a>맞춤형 부하 형태 시뮬레이션</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Advance</span>(<span class="title class_ inherited__">HttpUser</span>):</span><br><span class="line">    wait_time = constant(<span class="number">1</span>)  <span class="comment"># 모든 요청 사이에 3초의 고정된 대기 시간 설정</span></span><br><span class="line">    host = <span class="string">&quot;http://localhost:8080&quot;</span>  <span class="comment"># 테스트 대상 호스트 주소 지정</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @task</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getOrder</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/orders&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/orders&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="meta">    @task</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getShop</span>(<span class="params">self</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="variable language_">self</span>.client.get(</span><br><span class="line">            <span class="string">&quot;/api/v1/shops&quot;</span>,</span><br><span class="line">            headers = &#123; <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/json&quot;</span> &#125;,</span><br><span class="line">            params = params,</span><br><span class="line">            name = <span class="string">&quot;/api/v1/shops&quot;</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 사용자 정의 부하 모양을 정의하는 LoadTestShape 클래스</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CustomShape</span>(<span class="title class_ inherited__">LoadTestShape</span>):</span><br><span class="line">    time_limit = <span class="number">600</span>  <span class="comment"># 부하 테스트의 총 시간 한계 설정</span></span><br><span class="line">    spawn_rate = <span class="number">20</span>  <span class="comment"># 초당 새로운 사용자를 생성하는 속도 설정</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">tick</span>(<span class="params">self</span>):</span><br><span class="line">        run_time = <span class="variable language_">self</span>.get_run_time()  <span class="comment"># 현재 실행 시간 가져오기</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> run_time &lt; <span class="variable language_">self</span>.time_limit:</span><br><span class="line">            <span class="comment"># 실행 시간에 따라 사용자 수 증가</span></span><br><span class="line">            user_count = run_time // <span class="number">10</span></span><br><span class="line">            <span class="keyword">return</span> (user_count, <span class="variable language_">self</span>.spawn_rate)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>  <span class="comment"># 시간 한계를 넘으면 테스트 종료</span></span><br></pre></td></tr></table></figure>
+
+<p>위 코드는 Locust를 사용한 사용자 정의 부하 테스트 시나리오를 설정하는 예시입니다. 테스트 시작부터 시간이 600초(10분)에 이르기까지 실행 시간에 따라 사용자 수를 점진적으로 증가시킵니다. <code>tick</code> 함수는 현재 실행 시간을 기반으로 사용자 수를 결정하고, 실행 시간이 10초마다 사용자 수를 1명씩 증가시키는 로직을 포함하고 있습니다. 시간 한계에 도달하면, 즉 실행 시간이 600초를 초과하면, 테스트는 자동으로 종료됩니다. 이를 통해 초기 단계에서는 부하가 점점 증가하다가 설정된 시간이 지나면 테스트가 종료되는 시나리오를 구현할 수 있습니다.</p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>사용자 세션 시작과 종료에 필요한 동작을 자동화하는 <code>on_start</code>와 <code>on_stop</code> 메서드, 다양한 API 요청의 실행 비율을 조절하는 <code>@task</code>, 실제 사용자 워크플로우 시뮬레이션에 유용한 순차적 <code>TaskSets</code>, 그리고 테스트 동안 사용자 부하를 동적으로 조절할 수 있는 맞춤형 부하 형태 <code>CustomShape</code>에 대해 설명합니다. 이 방법들은 Locust를 활용하여 보다 실제적이고 유연한 성능 테스트를 구현하는 데 도움을 줍니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Performance/" rel="tag">Performance</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/05/06/kotlin-pattern/"
+                    data-tooltip="Kotlin 자주 사용하는 패턴 정리"
+                    aria-label="이전: Kotlin 자주 사용하는 패턴 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/03/31/locust-part-1/"
+                    data-tooltip="Locust 성능 테스트 도구 소개 Part 1"
+                    aria-label="다음: Locust 성능 테스트 도구 소개 Part 1"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/05/06/kotlin-pattern/"
+                    data-tooltip="Kotlin 자주 사용하는 패턴 정리"
+                    aria-label="이전: Kotlin 자주 사용하는 패턴 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2024/03/31/locust-part-1/"
+                    data-tooltip="Locust 성능 테스트 도구 소개 Part 1"
+                    aria-label="다음: Locust 성능 테스트 도구 소개 Part 1"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2024/04/07/locust-part-2/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2024/04/07/locust-part-2/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2024/04/07/locust-part-2/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://localhost:4000/2024/04/07/locust-part-2/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>
