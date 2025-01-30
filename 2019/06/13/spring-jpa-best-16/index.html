@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.\n12345678910public interface AccountRepository extends JpaRepository&lt;Account, Long&gt; &#123;  boolean existsByEmail(Email email);  boolean exsistByxxx(...)  long countByEmail(Email email);  long countByxxx(...)&#125;\n유사한 쿼리가 필요해지면 쿼리 메서드를 지속적으로 추가해야 하는 단점이 있습니다. 이런 경우에 QuerydslPredicateExecutor를 사용하면 매우 효과적입니다.\nQuerydslPredicateExecutor123456789public interface QuerydslPredicateExecutor&lt;T&gt; &#123;  ....  long count(Predicate predicate);              boolean exists(Predicate predicate);        &#125;\n\nQuerydslPredicateExecutor 코드의 일부입니다. Predicate를 매개변수로 받고 있기 때문에 Predicate를 통해서 새로운 쿼리를 만들수 있습니다.\nAccountRepository 적용하기12345public interface AccountRepository extends JpaRepository&lt;Account, Long&gt;, AccountSupportRepository,    QuerydslPredicateExecutor&lt;Account&gt; &#123;        ...&#125;\nAccountSupportRepository는 step-15: Querydsl를 이용해서 Repository 확장하기(1) 에서 추가한 코드이고 QuerydslPredicateExecutor&lt;Account&gt; 코드만 추가하면 완료 됩니다.\nQuerydslPredicateExecutor 사용하기\nAccountRepository는 QuerydslPredicateExecutor를 구현하고 있음으로 별다른 코드 없이 우리는 AccountRepository를 통해서 QuerydslPredicateExecutor의 메서드를 사용할 수 있습니다. 이것은 우리가 AccountRepository가 아무 메서드가 없어도 JpaRepository에 있는 findById, findAll 같은 메서드를 사용할 수 있는 이유와 동일합니다. \nTest Code12345678910111213141516171819202122232425262728293031323334353637383940414243444546@DataJpaTest@RunWith(SpringRunner.class)public class AccountRepositoryTest &#123;  @Autowired  private AccountRepository accountRepository;  private final QAccount qAccount = QAccount.account;  @Test  public void predicate_test_001() &#123;    //given    final Predicate predicate = qAccount.email.eq(Email.of(&quot;test001@test.com&quot;));    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isTrue();  &#125;  @Test  public void predicate_test_002() &#123;    //given    final Predicate predicate = qAccount.firstName.eq(&quot;test&quot;);    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isFalse();  &#125;  @Test  public void predicate_test_003() &#123;    //given    final Predicate predicate = qAccount.email.value.like(&quot;test%&quot;);    //when    final long count = accountRepository.count(predicate);    //then    assertThat(count).isGreaterThan(1);  &#125;&#125;\nPredicate 객체 생성을 통해서 쿼리 메서드 코드 추가 없이 다양한 쿼리들을 쉽게 만들 수 있습니다.\n\npredicate_test_001 테스트 코드에 대한 실제 쿼리 내용입니다. 해당 쿼리가 어떻게 출력되는지 직접 눈으로 확인하는 습관을 갖는 것이 좋습니다.\n결론조회용 쿼리를 만드는 것은 실제 현업에서 많은 업무 비중을 차지하다 보니 작업자들은 다양한 조회 전용 구현체들을 우후죽순처럼 만들게 됩니다. 이렇게 되면 중복 코드가 많이 발생하게 되고, 구현체가 늘어나는 만큼 의존 관계도 자연스레 높아지게 됩니다.\n이러한 문제를 위와 같이 객체지향 관점으로 풀어내어 AccountRepository 인터페이스를 통해서 DAO가 제공되고 세부 구현들을 숨길 수 있게 설계하는 것이 바람직하다고 생각합니다. \n단순하게 JPA를 잘 활용하는 것보다 위에서 언급한 내용을 조금 더 깊게 생각해보는 것이 이 포스팅에 취지입니다.\n","dateCreated":"2019-06-13T01:30:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-06-13T01:30:00+09:00","description":"JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.","headline":"Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/06/13/spring-jpa-best-16/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/06/13/spring-jpa-best-16/","keywords":"Guide, JPA, ORM, Spring, Querydsl"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.\n12345678910public interface AccountRepository extends JpaRepository&lt;Account, Long&gt; &#123;  boolean existsByEmail(Email email);  boolean exsistByxxx(...)  long countByEmail(Email email);  long countByxxx(...)&#125;\n유사한 쿼리가 필요해지면 쿼리 메서드를 지속적으로 추가해야 하는 단점이 있습니다. 이런 경우에 QuerydslPredicateExecutor를 사용하면 매우 효과적입니다.\nQuerydslPredicateExecutor123456789public interface QuerydslPredicateExecutor&lt;T&gt; &#123;  ....  long count(Predicate predicate);              boolean exists(Predicate predicate);        &#125;\n\nQuerydslPredicateExecutor 코드의 일부입니다. Predicate를 매개변수로 받고 있기 때문에 Predicate를 통해서 새로운 쿼리를 만들수 있습니다.\nAccountRepository 적용하기12345public interface AccountRepository extends JpaRepository&lt;Account, Long&gt;, AccountSupportRepository,    QuerydslPredicateExecutor&lt;Account&gt; &#123;        ...&#125;\nAccountSupportRepository는 step-15: Querydsl를 이용해서 Repository 확장하기(1) 에서 추가한 코드이고 QuerydslPredicateExecutor&lt;Account&gt; 코드만 추가하면 완료 됩니다.\nQuerydslPredicateExecutor 사용하기\nAccountRepository는 QuerydslPredicateExecutor를 구현하고 있음으로 별다른 코드 없이 우리는 AccountRepository를 통해서 QuerydslPredicateExecutor의 메서드를 사용할 수 있습니다. 이것은 우리가 AccountRepository가 아무 메서드가 없어도 JpaRepository에 있는 findById, findAll 같은 메서드를 사용할 수 있는 이유와 동일합니다. \nTest Code12345678910111213141516171819202122232425262728293031323334353637383940414243444546@DataJpaTest@RunWith(SpringRunner.class)public class AccountRepositoryTest &#123;  @Autowired  private AccountRepository accountRepository;  private final QAccount qAccount = QAccount.account;  @Test  public void predicate_test_001() &#123;    //given    final Predicate predicate = qAccount.email.eq(Email.of(&quot;test001@test.com&quot;));    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isTrue();  &#125;  @Test  public void predicate_test_002() &#123;    //given    final Predicate predicate = qAccount.firstName.eq(&quot;test&quot;);    //when    final boolean exists = accountRepository.exists(predicate);    //then    assertThat(exists).isFalse();  &#125;  @Test  public void predicate_test_003() &#123;    //given    final Predicate predicate = qAccount.email.value.like(&quot;test%&quot;);    //when    final long count = accountRepository.count(predicate);    //then    assertThat(count).isGreaterThan(1);  &#125;&#125;\nPredicate 객체 생성을 통해서 쿼리 메서드 코드 추가 없이 다양한 쿼리들을 쉽게 만들 수 있습니다.\n\npredicate_test_001 테스트 코드에 대한 실제 쿼리 내용입니다. 해당 쿼리가 어떻게 출력되는지 직접 눈으로 확인하는 습관을 갖는 것이 좋습니다.\n결론조회용 쿼리를 만드는 것은 실제 현업에서 많은 업무 비중을 차지하다 보니 작업자들은 다양한 조회 전용 구현체들을 우후죽순처럼 만들게 됩니다. 이렇게 되면 중복 코드가 많이 발생하게 되고, 구현체가 늘어나는 만큼 의존 관계도 자연스레 높아지게 됩니다.\n이러한 문제를 위와 같이 객체지향 관점으로 풀어내어 AccountRepository 인터페이스를 통해서 DAO가 제공되고 세부 구현들을 숨길 수 있게 설계하는 것이 바람직하다고 생각합니다. \n단순하게 JPA를 잘 활용하는 것보다 위에서 언급한 내용을 조금 더 깊게 생각해보는 것이 이 포스팅에 취지입니다.\n","dateCreated":"2019-06-13T01:30:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-06-13T01:30:00+09:00","description":"JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.","headline":"Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/","keywords":"Guide, JPA, ORM, Spring, Querydsl"}</script>
     <meta name="description" content="JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring-JPA Best Practices step-16 - Querydsl를 이용해서 Repository 확장하기 (2)">
-<meta property="og:url" content="http://localhost:4000/2019/06/13/spring-jpa-best-16/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="JpaRepository의 쿼리 메서드를 통해서 간단한 쿼리들을 아래 예제 처럼 쉽게 만들수 있습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -42,7 +42,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -372,7 +372,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -385,7 +385,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -398,7 +398,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -500,7 +500,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -513,7 +513,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -526,7 +526,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -560,7 +560,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -573,7 +573,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -586,7 +586,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2019/06/13/spring-jpa-best-16/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/06/13/spring-jpa-best-16/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Boot HTTPS 적용하기스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.\n키스토어 생성123456789101112131415161718keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000키 저장소 비밀번호 입력:새 비밀번호 다시 입력:이름과 성을 입력하십시오.  [Unknown]:  test조직 단위 이름을 입력하십시오.  [Unknown]:  test조직 이름을 입력하십시오.  [Unknown]:  test구/군/시 이름을 입력하십시오?  [Unknown]:  test시/도 이름을 입력하십시오.  [Unknown]:  test이 조직의 두 자리 국가 코드를 입력하십시오.  [Unknown]:  01CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?  [아니오]:  y\n\nproperties 설정YML123456server:  ssl:    key-store: keystore.p12    key-store-password: cheese    keyStoreType: PKCS12    keyAlias: tomcat\n\n\nProperties1234server.ssl.key-store: keystore.p12server.ssl.key-store-password: cheeseserver.ssl.keyStoreType: PKCS12server.ssl.keyAlias: tomcat\n\nhttps 요청\n\n\n스프링 부트 참고\n\n","dateCreated":"2018-09-10T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-09-10T00:00:00+09:00","description":"스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.","headline":"Spring Boot HTTPS 적용 하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/09/10/spring-https/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/09/10/spring-https/","keywords":"Spring, Network"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Boot HTTPS 적용하기스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.\n키스토어 생성123456789101112131415161718keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000키 저장소 비밀번호 입력:새 비밀번호 다시 입력:이름과 성을 입력하십시오.  [Unknown]:  test조직 단위 이름을 입력하십시오.  [Unknown]:  test조직 이름을 입력하십시오.  [Unknown]:  test구/군/시 이름을 입력하십시오?  [Unknown]:  test시/도 이름을 입력하십시오.  [Unknown]:  test이 조직의 두 자리 국가 코드를 입력하십시오.  [Unknown]:  01CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?  [아니오]:  y\n\nproperties 설정YML123456server:  ssl:    key-store: keystore.p12    key-store-password: cheese    keyStoreType: PKCS12    keyAlias: tomcat\n\n\nProperties1234server.ssl.key-store: keystore.p12server.ssl.key-store-password: cheeseserver.ssl.keyStoreType: PKCS12server.ssl.keyAlias: tomcat\n\nhttps 요청\n\n\n스프링 부트 참고\n\n","dateCreated":"2018-09-10T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-09-10T00:00:00+09:00","description":"스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.","headline":"Spring Boot HTTPS 적용 하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/09/10/spring-https/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/09/10/spring-https/","keywords":"Spring, Network"}</script>
     <meta name="description" content="스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring Boot HTTPS 적용 하기">
-<meta property="og:url" content="http://localhost:4000/2018/09/10/spring-https/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/09/10/spring-https/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -39,7 +39,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -362,7 +362,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -375,7 +375,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -388,7 +388,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -490,7 +490,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -503,7 +503,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -516,7 +516,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/09/10/spring-https/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/09/10/spring-https/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -550,7 +550,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/09/10/spring-https/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/09/10/spring-https/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -563,7 +563,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/09/10/spring-https/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/09/10/spring-https/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -576,7 +576,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/09/10/spring-https/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/09/10/spring-https/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

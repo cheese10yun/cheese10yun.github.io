@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Deserialization Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드는 Github를 참고해주세요\n\n@JsonCreator\nJSON key 와 멤버 필드의 이름이 일치하지 않을 경우 사용합니다.\n\n1234&#123;  &quot;id&quot;:1,  &quot;theName&quot;:&quot;My bean&quot;&#125;\n\n12345678910111213public static class BeanWithCreator &#123;    public int id;    public String name;    @JsonCreator    public BeanWithCreator(            @JsonProperty(&quot;id&quot;) int id,            @JsonProperty(&quot;theName&quot;) String name    ) &#123;        this.id = id;        this.name = name;    &#125;&#125;\n\n@JacksonInject\nJSON 데이터가 아닌 값을 주입하는데 사용됩니다.\n\n123&#123;  &quot;name&quot;: &quot;My bean&quot;&#125;\n\n123456public static class BeanWithInject &#123;    @JacksonInject    public int id;    public String name;&#125;\n\n@JsonAnySetter\nMap을 이용해서 유연성있게 Deserialization 합니다.\n\n12345&#123;  &quot;name&quot;: &quot;My bean&quot;,  &quot;attr2&quot;: &quot;val2&quot;,  &quot;attr1&quot;: &quot;val1&quot;&#125;\n\n1234567891011121314151617181920212223public static class ExtendableBean &#123;    public String name;    private Map&lt;String, String&gt; properties = new HashMap&lt;&gt;();    @JsonAnySetter    public void setProperties(String key, String value) &#123;        properties.put(key, value);    &#125;    public String getName() &#123;        return name;    &#125;    public void setName(String name) &#123;        this.name = name;    &#125;    public Map&lt;String, String&gt; getProperties() &#123;        return properties;    &#125;&#125;\n\n@JsonSetter\n객체와 맴버필드와 일치하지 않을 경우 유용하게 사용할 수 있습니다.\n\n1234&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;My bean&quot;å&#125;\n12345678910111213public static class MyBean &#123;    public int id;    private String name;    @JsonSetter(&quot;name&quot;)    public void setTheName(String name) &#123;        this.name = name;    &#125;    public String getTheName() &#123;        return this.name;    &#125;&#125;","dateCreated":"2018-06-01T00:00:00+09:00","dateModified":"2025-01-31T04:44:52+09:00","datePublished":"2018-06-01T00:00:00+09:00","description":"Jackson 어노테이션 사용법(2)","headline":"Jackson 어노테이션 사용법(2)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/06/01/jackson-annotation-02/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/06/01/jackson-annotation-02/","keywords":"Jackson"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Deserialization Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드는 Github를 참고해주세요\n\n@JsonCreator\nJSON key 와 멤버 필드의 이름이 일치하지 않을 경우 사용합니다.\n\n1234&#123;  &quot;id&quot;:1,  &quot;theName&quot;:&quot;My bean&quot;&#125;\n\n12345678910111213public static class BeanWithCreator &#123;    public int id;    public String name;    @JsonCreator    public BeanWithCreator(            @JsonProperty(&quot;id&quot;) int id,            @JsonProperty(&quot;theName&quot;) String name    ) &#123;        this.id = id;        this.name = name;    &#125;&#125;\n\n@JacksonInject\nJSON 데이터가 아닌 값을 주입하는데 사용됩니다.\n\n123&#123;  &quot;name&quot;: &quot;My bean&quot;&#125;\n\n123456public static class BeanWithInject &#123;    @JacksonInject    public int id;    public String name;&#125;\n\n@JsonAnySetter\nMap을 이용해서 유연성있게 Deserialization 합니다.\n\n12345&#123;  &quot;name&quot;: &quot;My bean&quot;,  &quot;attr2&quot;: &quot;val2&quot;,  &quot;attr1&quot;: &quot;val1&quot;&#125;\n\n1234567891011121314151617181920212223public static class ExtendableBean &#123;    public String name;    private Map&lt;String, String&gt; properties = new HashMap&lt;&gt;();    @JsonAnySetter    public void setProperties(String key, String value) &#123;        properties.put(key, value);    &#125;    public String getName() &#123;        return name;    &#125;    public void setName(String name) &#123;        this.name = name;    &#125;    public Map&lt;String, String&gt; getProperties() &#123;        return properties;    &#125;&#125;\n\n@JsonSetter\n객체와 맴버필드와 일치하지 않을 경우 유용하게 사용할 수 있습니다.\n\n1234&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;My bean&quot;å&#125;\n12345678910111213public static class MyBean &#123;    public int id;    private String name;    @JsonSetter(&quot;name&quot;)    public void setTheName(String name) &#123;        this.name = name;    &#125;    public String getTheName() &#123;        return this.name;    &#125;&#125;","dateCreated":"2018-06-01T00:00:00+09:00","dateModified":"2025-01-31T04:44:52+09:00","datePublished":"2018-06-01T00:00:00+09:00","description":"Jackson 어노테이션 사용법(2)","headline":"Jackson 어노테이션 사용법(2)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/","keywords":"Jackson"}</script>
     <meta name="description" content="Jackson 어노테이션 사용법(2)">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jackson 어노테이션 사용법(2)">
-<meta property="og:url" content="http://localhost:4000/2018/06/01/jackson-annotation-02/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Jackson 어노테이션 사용법(2)">
 <meta property="og:locale" content="ko_KR">
@@ -35,7 +35,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -375,7 +375,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -388,7 +388,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -401,7 +401,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -503,7 +503,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -516,7 +516,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -529,7 +529,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -563,7 +563,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -576,7 +576,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -589,7 +589,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/06/01/jackson-annotation-02/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/01/jackson-annotation-02/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

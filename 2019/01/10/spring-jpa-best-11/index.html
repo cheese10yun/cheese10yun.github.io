@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nproperties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.\n\n\n\nenvironment\n설명\n파일명\n\n\n\nlocal\n로컬 개발환경\napplication-local.yml\n\n\ndev\n개발환경\napplication-dev.yml\n\n\nprod\n운영\napplication-prod.yml\n\n\n위 처럼 환경이 분리되었을 경우를 기준으로 설명드리겠습니다.\n\n\n\n\napplication.yml12server:  port: 8080\n\n모든 환경에서 공통으로 사용할 정보들을 작성합니다.\n모든 환경에서 사용할 것을 공통으로 사용하기 때문에 코드의 중복과 변경에 이점이 있습니다.\n본 예제에서는 port만 공통으로 설정했습니다.\n\napplication-{env}.yml1234567891011121314151617181920212223user:  email: &quot;yun@test&quot;  nickname: &quot;nickname&quot;  age: 28  auth: false  amount: 101spring:  jpa:    database: h2    hibernate:      ddl-auto: create-drop    show-sql: true  datasource:    data: classpath:init.sql # 시작할때 실행시킬 script  jackson:    serialization:      WRITE_DATES_AS_TIMESTAMPS: falselogging:  level:    ROOT: info\n\n각 개발환경에 맞는 properties 설정을 정의합니다.\n대표적으로 데이터베이스 정보, 외부 설정 정보 등이 있습니다.\napplication.yml 에서 정의한 server.port 8080 값이 자동으로 설정됩니다.\n\nenv 설정 방법application.yml에서 설정하는 방법123456spring:  profiles:    active: localserver:  port: 8080\n\nprofiles.active 속성에 원하는 정보 env를 작성합니다.\n\nIntelliJ에서 설정 하는 방법\nIntelliJ에서는 외부에서 넘겨 받는 인자로 다양한 환경 설정을 제공해줍니다. 가장 대표적인 방법으로 VM options, Active profiles 설정이 있습니다. 아래의 방법중 하나를 선택하면 됩니다.\n\nVM options에 -Dspring.profiles.active=&#123;env&#125; 추가합니다.\nActive profiles: &#123;env&#125;\n\n우선순위외부 환경 설정에 대한 우선순위는 Spring-Boot Document에 표시되어 있습니다. 실제 배포시에는 우선순위를 반드시 고려해야합니다. \nenv 구동123456spring:  profiles:    active: localserver:  port: 8080\napplication.yml으로 설정해서 스프링을 구동시켜보겠습니다.\n\napplication.yml에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.\n","dateCreated":"2019-01-10T00:50:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-01-10T00:50:00+09:00","description":"properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.","headline":"Spring-Jpa Best Practices step-11 - Properties environment 설정하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/01/10/spring-jpa-best-11/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/01/10/spring-jpa-best-11/","keywords":"Guide, JPA, ORM, Spring"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nproperties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.\n\n\n\nenvironment\n설명\n파일명\n\n\n\nlocal\n로컬 개발환경\napplication-local.yml\n\n\ndev\n개발환경\napplication-dev.yml\n\n\nprod\n운영\napplication-prod.yml\n\n\n위 처럼 환경이 분리되었을 경우를 기준으로 설명드리겠습니다.\n\n\n\n\napplication.yml12server:  port: 8080\n\n모든 환경에서 공통으로 사용할 정보들을 작성합니다.\n모든 환경에서 사용할 것을 공통으로 사용하기 때문에 코드의 중복과 변경에 이점이 있습니다.\n본 예제에서는 port만 공통으로 설정했습니다.\n\napplication-{env}.yml1234567891011121314151617181920212223user:  email: &quot;yun@test&quot;  nickname: &quot;nickname&quot;  age: 28  auth: false  amount: 101spring:  jpa:    database: h2    hibernate:      ddl-auto: create-drop    show-sql: true  datasource:    data: classpath:init.sql # 시작할때 실행시킬 script  jackson:    serialization:      WRITE_DATES_AS_TIMESTAMPS: falselogging:  level:    ROOT: info\n\n각 개발환경에 맞는 properties 설정을 정의합니다.\n대표적으로 데이터베이스 정보, 외부 설정 정보 등이 있습니다.\napplication.yml 에서 정의한 server.port 8080 값이 자동으로 설정됩니다.\n\nenv 설정 방법application.yml에서 설정하는 방법123456spring:  profiles:    active: localserver:  port: 8080\n\nprofiles.active 속성에 원하는 정보 env를 작성합니다.\n\nIntelliJ에서 설정 하는 방법\nIntelliJ에서는 외부에서 넘겨 받는 인자로 다양한 환경 설정을 제공해줍니다. 가장 대표적인 방법으로 VM options, Active profiles 설정이 있습니다. 아래의 방법중 하나를 선택하면 됩니다.\n\nVM options에 -Dspring.profiles.active=&#123;env&#125; 추가합니다.\nActive profiles: &#123;env&#125;\n\n우선순위외부 환경 설정에 대한 우선순위는 Spring-Boot Document에 표시되어 있습니다. 실제 배포시에는 우선순위를 반드시 고려해야합니다. \nenv 구동123456spring:  profiles:    active: localserver:  port: 8080\napplication.yml으로 설정해서 스프링을 구동시켜보겠습니다.\n\napplication.yml에서 설정한 local 환경설정이 동작하는 것을 확인할 수 있습니다.\n","dateCreated":"2019-01-10T00:50:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-01-10T00:50:00+09:00","description":"properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.","headline":"Spring-Jpa Best Practices step-11 - Properties environment 설정하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/","keywords":"Guide, JPA, ORM, Spring"}</script>
     <meta name="description" content="properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring-Jpa Best Practices step-11 - Properties environment 설정하기">
-<meta property="og:url" content="http://localhost:4000/2019/01/10/spring-jpa-best-11/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="properties.yml 설정 파일을 이용해서 environment를 편리하게 설정하는 방법을 소개해드리겠습니다. 설정 정보는 애플리케이션 코드와 분리돼서 관리되고 각 환경에 따라 달라지(DB 정보, 외부 서비스 정보 등등)는 정보들은 각 properties 파일에서 관리되는 것이 좋습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -41,7 +41,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -411,7 +411,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -424,7 +424,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -437,7 +437,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -539,7 +539,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -552,7 +552,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -565,7 +565,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -599,7 +599,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -612,7 +612,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -625,7 +625,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2019/01/10/spring-jpa-best-11/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/01/10/spring-jpa-best-11/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

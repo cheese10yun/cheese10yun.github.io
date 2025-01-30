@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Property Inclusion Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\n@JsonIgnoreProperties\n무시할 속성이나 속성 목록을 표시하는 데 사용됩니다\n\n12345@JsonIgnoreProperties(&#123;&quot;id&quot;&#125;)public static class BeanWithIgnore &#123;    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnore\n필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.\n\n12345public static class BeanWithIgnore &#123;    @JsonIgnore    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnoreType\n주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다\n\n12345678910public static class User &#123;public int id;public Name name;    @JsonIgnoreType    public static class Name &#123;        public String firstName;        public String lastName;    &#125;&#125;\n123&#123;  &quot;id&quot;: 1&#125;\n\n@JsonInclude\n어노테이션 속성을 제외 하는 데 사용 됩니다\n\n123456@JsonInclude(JsonInclude.Include.NON_NULL)@AllArgsConstructorpublic static class MyBean &#123;    public int id;    public String name;&#125;\n1234//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.&#123;  &quot;id&quot;: 1&#125;\n\n@JsonAutoDetect12345@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)public static class PrivateBean &#123;    private int id;    private String name;&#125;\n\n12345// Visibility.ANY 경우 표시&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;yun&quot;&#125;\n","dateCreated":"2018-06-13T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-13T00:00:00+09:00","description":"Jackson 어노테이션 사용법(3)","headline":"Jackson 어노테이션 사용법(3)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/06/13/jackson-annotation-03/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/06/13/jackson-annotation-03/","keywords":"Jackson"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Property Inclusion Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\n@JsonIgnoreProperties\n무시할 속성이나 속성 목록을 표시하는 데 사용됩니다\n\n12345@JsonIgnoreProperties(&#123;&quot;id&quot;&#125;)public static class BeanWithIgnore &#123;    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnore\n필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.\n\n12345public static class BeanWithIgnore &#123;    @JsonIgnore    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnoreType\n주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다\n\n12345678910public static class User &#123;public int id;public Name name;    @JsonIgnoreType    public static class Name &#123;        public String firstName;        public String lastName;    &#125;&#125;\n123&#123;  &quot;id&quot;: 1&#125;\n\n@JsonInclude\n어노테이션 속성을 제외 하는 데 사용 됩니다\n\n123456@JsonInclude(JsonInclude.Include.NON_NULL)@AllArgsConstructorpublic static class MyBean &#123;    public int id;    public String name;&#125;\n1234//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.&#123;  &quot;id&quot;: 1&#125;\n\n@JsonAutoDetect12345@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)public static class PrivateBean &#123;    private int id;    private String name;&#125;\n\n12345// Visibility.ANY 경우 표시&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;yun&quot;&#125;\n","dateCreated":"2018-06-13T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-13T00:00:00+09:00","description":"Jackson 어노테이션 사용법(3)","headline":"Jackson 어노테이션 사용법(3)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/","keywords":"Jackson"}</script>
     <meta name="description" content="Jackson 어노테이션 사용법(3)">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jackson 어노테이션 사용법(3)">
-<meta property="og:url" content="http://localhost:4000/2018/06/13/jackson-annotation-03/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Jackson 어노테이션 사용법(3)">
 <meta property="og:locale" content="ko_KR">
@@ -35,7 +35,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -379,7 +379,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -392,7 +392,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -405,7 +405,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -507,7 +507,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -520,7 +520,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -533,7 +533,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -567,7 +567,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -580,7 +580,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -593,7 +593,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/06/13/jackson-annotation-03/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/13/jackson-annotation-03/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Embedded TypeJPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.\nReceiver 클래스1234567891011121314151617@Entitypublic class Receiver &#123;    @Id    @GeneratedValue    private long id;    @Embedded    private Name name;    @Embedded    private Address address;    @Embedded    private PhoneNumber phoneNumber;    ...&#125;\n\n\nAddress, Name 새로운 타입을 직접 정의 했습니다.\n@Embedded 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n\nAddress 클래스12345678910111213@Embeddablepublic class Address &#123;    @Column(name = &quot;city&quot;)    private String city;    @Column(name = &quot;street&quot;)    private String street;    @Column(name = &quot;zip_code&quot;)    private String zipCode;&#125;\n\nEmbeddable 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n엔티티 객체와 거의 비슷합니다.\n\nReceiver 클래스12345678910@Entitypublic class Sender &#123;    ...    @Embedded    private Name name;    @Embedded    private Address address;    ...&#125;\n\nReceiver클래스에서 직접 정의한 Address를 쉽게 사용할 수 있습니다.\n\nName 클래스123456789101112@Embeddablepublic class Name &#123;    @Column(name = &quot;first_name&quot;)    private String first;    @Column(name = &quot;last_name&quot;)    private String last;    public String getFullName() &#123;        return this.first + this.last;&#125;\n\n클래로로 정의하면 다양한 부수적인 효과를 적용 시킬 수 있습니다.\n정말 간단한 예로 getFullName() 메소드로 full name을 얻을 수 있습니다. 해당 모델에 맞는 다양한 함수를 정의 할 수 있습니다.\n\n@AttributeOverride 재정의123456789101112@Entitypublic class Sender &#123;    ...    @Embedded    @AttributeOverrides(&#123;            @AttributeOverride(name = &quot;city&quot;, column = @Column(name = &quot;sender_city&quot;)),            @AttributeOverride(name = &quot;street&quot;, column = @Column(name = &quot;sender_street&quot;)),            @AttributeOverride(name = &quot;zip_code&quot;, column = @Column(name = &quot;sender_zip_code&quot;))    &#125;)    private Address address;    ...&#125;\n\n임베디드 타입에 정의한 매핑정보를 재정의 하려면 @AttributeOverride를 사용하면 됩니다.\n해당 칼럼은 sender_city, sender_street, sender_zip_code 으로 생성됩니다.\n\n","dateCreated":"2018-03-29T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2018-03-29T00:00:00+09:00","description":"JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.","headline":"JPA-Embedded","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/03/29/jpa-embedded/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/03/29/jpa-embedded/","keywords":"JPA, ORM"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Embedded TypeJPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.\nReceiver 클래스1234567891011121314151617@Entitypublic class Receiver &#123;    @Id    @GeneratedValue    private long id;    @Embedded    private Name name;    @Embedded    private Address address;    @Embedded    private PhoneNumber phoneNumber;    ...&#125;\n\n\nAddress, Name 새로운 타입을 직접 정의 했습니다.\n@Embedded 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n\nAddress 클래스12345678910111213@Embeddablepublic class Address &#123;    @Column(name = &quot;city&quot;)    private String city;    @Column(name = &quot;street&quot;)    private String street;    @Column(name = &quot;zip_code&quot;)    private String zipCode;&#125;\n\nEmbeddable 어노테이션을 통해서 값 타입을 사용한다고 명시 했습니다.\n엔티티 객체와 거의 비슷합니다.\n\nReceiver 클래스12345678910@Entitypublic class Sender &#123;    ...    @Embedded    private Name name;    @Embedded    private Address address;    ...&#125;\n\nReceiver클래스에서 직접 정의한 Address를 쉽게 사용할 수 있습니다.\n\nName 클래스123456789101112@Embeddablepublic class Name &#123;    @Column(name = &quot;first_name&quot;)    private String first;    @Column(name = &quot;last_name&quot;)    private String last;    public String getFullName() &#123;        return this.first + this.last;&#125;\n\n클래로로 정의하면 다양한 부수적인 효과를 적용 시킬 수 있습니다.\n정말 간단한 예로 getFullName() 메소드로 full name을 얻을 수 있습니다. 해당 모델에 맞는 다양한 함수를 정의 할 수 있습니다.\n\n@AttributeOverride 재정의123456789101112@Entitypublic class Sender &#123;    ...    @Embedded    @AttributeOverrides(&#123;            @AttributeOverride(name = &quot;city&quot;, column = @Column(name = &quot;sender_city&quot;)),            @AttributeOverride(name = &quot;street&quot;, column = @Column(name = &quot;sender_street&quot;)),            @AttributeOverride(name = &quot;zip_code&quot;, column = @Column(name = &quot;sender_zip_code&quot;))    &#125;)    private Address address;    ...&#125;\n\n임베디드 타입에 정의한 매핑정보를 재정의 하려면 @AttributeOverride를 사용하면 됩니다.\n해당 칼럼은 sender_city, sender_street, sender_zip_code 으로 생성됩니다.\n\n","dateCreated":"2018-03-29T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2018-03-29T00:00:00+09:00","description":"JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.","headline":"JPA-Embedded","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/03/29/jpa-embedded/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/03/29/jpa-embedded/","keywords":"JPA, ORM"}</script>
     <meta name="description" content="JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JPA-Embedded">
-<meta property="og:url" content="http://localhost:4000/2018/03/29/jpa-embedded/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/03/29/jpa-embedded/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="JPA에서는 새로운 값 타입을 직접 정의해서 사용 할 수 있습니다. 배송 관련 서비스에서 발송인(Sender), 수취인(Receiver)가 있을 경우 중복적으로 주소에 관련 칼럼들이 요구 됩니다. 이러한 중복적인 칼럼들을 자료형으로 규합해서 훨씬더 객체지향적으로 풀어 나갈 수 있을 거같습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -36,7 +36,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -372,7 +372,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -385,7 +385,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -398,7 +398,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -500,7 +500,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -513,7 +513,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -526,7 +526,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -560,7 +560,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -573,7 +573,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -586,7 +586,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/03/29/jpa-embedded/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/29/jpa-embedded/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

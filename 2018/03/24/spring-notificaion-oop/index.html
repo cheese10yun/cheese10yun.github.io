@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.\n예제 코드blog-sample \n요구사항\n배송이 완료 됬을 경우 사용자가 등록한 알림을 받는다.\n알림에는 SMS, Kakao, Email 이 있다\n알람은 지속적으로 추가 될 가능 성이 높아 보인다.\n\nDelivery Domain1234567891011121314151617public class Delivery &#123;    ...    @OneToMany(fetch = FetchType.LAZY)    @JoinColumn(name = &quot;transfer_id&quot;)    private List&lt;DeliveryNotificationType&gt; deliveryNotificationTypes = new ArrayList&lt;&gt;();    @OneToOne(targetEntity = Sender.class)    @Column(name = &quot;sender_id&quot;)    private Sender sender;    @OneToOne(targetEntity = Receiver.class)    @Column(name = &quot;receiver_id&quot;)    private Receiver receiver;    ...&#125;\n\nDelivery는 Sender(발송인), Receiver(수신자)와 연관관계를 맺는다.\nDelivery는 배송이 안료되면 수신자에게 보낼 알림 타입의 리스트 DeliveryNotificationType와 연관관계를 맺는다\n\nDeliveryNotificationSender Interface123public interface DeliveryNotificationSender &#123;    void send(DeliveryMessageDto.Message dto);&#125;\n\n배송 노티를 보내는 인터페이스\ndto 클래스로 유연하게 받을 수 있게 처리\n\nDeliveryKakaoNotificationSender 구현 클래스123456789@Componentpublic class DeliveryKakaoNotificationSender implements DeliveryNotificationSender &#123;    ...    @Override    public void send(DeliveryMessageDto.Message dto) &#123;        kakaoNotificaionSender.create(buildKaKaoNotificationDto(dto));    &#125;    ...&#125;\n\n배송 관련 카카오 메시지를 담당하는 클래스\nDeliveryNotificationSender 인터페이스를 implements 해서 자신이 send 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.\nKakaoNotificaionSender 클래스를 이용해서 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.\n테이블에 insert 되고 그 데이터 기반으로 카카오에서 메시지를 전송해 준다.\n\nDeliverySmsNotificationSender 구현 클래스12345678910@Componentpublic class DeliverySmsNotificationSender implements DeliveryNotificationSender &#123;    ...    @Override    public void send(DeliveryMessageDto.Message dto) &#123;        smsNotificationSender.sendSMS(buildSmsMessageDto(dto));    &#125;    ...&#125;\n\n배송 관련 카카오 메시지를 담당하는 클래스이다.\nDeliveryNotificationSender 인터페이스를 implements 해서 자신이 send 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.\nSmsNotificationSender 클래스를 이용해서 메시지를 보내고 있어 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.\n해당 업체 API 호출을 통해서 문자전송이 진행된다. 카카오 메시지 전송과는 다르다. 하지만 DeliveryNotificationSender 인터페이스를 통해서  send라는 동일한 책임을 갖게 된다.\n\nDeliveryNotificationSenderManager123456789101112131415public class DeliveryNotificationSenderManager &#123;    ...    public void sendMessage(Delivery delivery) &#123;        final List&lt;DeliveryNotificationType&gt; notifications = delivery.getDeliveryNotificationTypes();        if (!notifications.isEmpty())            for (DeliveryNotificationType type : notifications)                getInstanceByType(type).send(buildMessage(delivery));    &#125;    private DeliveryNotificationSender getInstanceByType(DeliveryNotificationType type) &#123;        return deliveryNotificationSenderFactory.getInstanceByType(type.getType());    &#125;    ...&#125;\n\n사용자가 등록한 알림을 전송\ngetInstanceByType 팩토리 메소드를 통해서 해당 타입에 맞는 인스턴스가 의존성 주입\ntype이 SMS 일 경우 DeliverySmsNotificationSender 인스턴스 주입\nDeliverySmsNotificationSender 인스턴스 send(SMS 전송) 메서드 실행\n\n\n컴파일 단계에서는 알림을 보내는 것이 DeliveryNotificationSender 인터페이스를 바라보지만 런타임 단계에서는 그것이 역전되 IoC 발생\n\nSOLID아직 배워가는 단계라 많이 부족 하지만 나름대로 SOLD 원측에 의해서 정리 해보겠습니다.\nSRP : 단일 책임 원칙\n객체는 오직 하나의 변경의 이유만을 갖게되 었습니다. 배송 관련 카카오 전송시 세부 메시지 형태나, 포함될 정보가 달라질 경우 DeliveryKakaoNotificationSender 클래스만 변경 하면됩니다.\n다른 곳에서 다른형태로 카카오 메시지를 전송하고 있는 로직에 영향을 미치지 않습니다.\n\nOCP : 개방-폐쇄 원칙\n확장에는 열려 있습니다.\n새로운 배송 라인 알림이 추가 된다고 하면 DeliveryNotificationSender 인터페이스를 implements 하여 send 메서드만 세부 구현 하면됩니다.\nIoC를 이용해서 send 메서드를 다형성으로 해결하지 않았다면 알림이 추가 될때 마다 if 으로 무슨 알림이면 무슨 send를 실행 하라는 반복 적인 코드들이 나오게 됩니다.\nif은 직관적으로 이해하기 편하 코드지만 유지보수하기는 어렵습니다. 만약 10개 알림이 있고 11번째 알림을 추가 한다고 가정했을 때 앞에 작성된 if문들을 이해하고 또 11 번째 if문을 추가해야 합니다. 코드는 작성하는 시간보다 읽히는 시간이 더 많습니다.\n\n\n변경에는 닫혀 있습니다.\n새로운 배송 알림이 추가 되더라도 기존 코드의 변경은 거의 없습니다. 팩토리 메소드에 새로운 배송 알림을 담당하는 인스턴스를 추가 하기만 하면 됩니다.\n위에서 언급했듯이 새로운 배송 알림이 추가되면 해당 코드에 가서 if을 통한 send 메시지를 작성할 필요가 없습니다.\n\n\n\nLSP : 리스코프 치환 원칙\n서브 타입은 언제나 슈퍼타입을 교체 할 수 있어야 한다.\n구현 클래스들은 모두 DeliveryNotificationSender인터페이스의 send 메서드를 구현 하고 있어 교체가 가능합니다.\n\nISP : 인터페이스 분리 원칙\n하위 클래스들에서 사용하지 않은 의존성을 가지고 있지 않고 있습니다.\n\nDIP : 의존성 역전 원칙\nDeliveryNotificationSenderManager 클래스에서 팩토리 메소드를 통해서  DeliveryNotificationSender의 새부 인스턴스를 각 타입에 맞게 변경 해주고 있습니다.\n\n","dateCreated":"2018-03-24T00:00:00+09:00","dateModified":"2025-01-31T04:13:06+09:00","datePublished":"2018-03-24T00:00:00+09:00","description":"해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.","headline":"Spring OOP 프로그래밍 예제(1) - 배송 완료 알림","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/03/24/spring-notificaion-oop/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/03/24/spring-notificaion-oop/","keywords":"Spring, OOP"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.\n예제 코드blog-sample \n요구사항\n배송이 완료 됬을 경우 사용자가 등록한 알림을 받는다.\n알림에는 SMS, Kakao, Email 이 있다\n알람은 지속적으로 추가 될 가능 성이 높아 보인다.\n\nDelivery Domain1234567891011121314151617public class Delivery &#123;    ...    @OneToMany(fetch = FetchType.LAZY)    @JoinColumn(name = &quot;transfer_id&quot;)    private List&lt;DeliveryNotificationType&gt; deliveryNotificationTypes = new ArrayList&lt;&gt;();    @OneToOne(targetEntity = Sender.class)    @Column(name = &quot;sender_id&quot;)    private Sender sender;    @OneToOne(targetEntity = Receiver.class)    @Column(name = &quot;receiver_id&quot;)    private Receiver receiver;    ...&#125;\n\nDelivery는 Sender(발송인), Receiver(수신자)와 연관관계를 맺는다.\nDelivery는 배송이 안료되면 수신자에게 보낼 알림 타입의 리스트 DeliveryNotificationType와 연관관계를 맺는다\n\nDeliveryNotificationSender Interface123public interface DeliveryNotificationSender &#123;    void send(DeliveryMessageDto.Message dto);&#125;\n\n배송 노티를 보내는 인터페이스\ndto 클래스로 유연하게 받을 수 있게 처리\n\nDeliveryKakaoNotificationSender 구현 클래스123456789@Componentpublic class DeliveryKakaoNotificationSender implements DeliveryNotificationSender &#123;    ...    @Override    public void send(DeliveryMessageDto.Message dto) &#123;        kakaoNotificaionSender.create(buildKaKaoNotificationDto(dto));    &#125;    ...&#125;\n\n배송 관련 카카오 메시지를 담당하는 클래스\nDeliveryNotificationSender 인터페이스를 implements 해서 자신이 send 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.\nKakaoNotificaionSender 클래스를 이용해서 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.\n테이블에 insert 되고 그 데이터 기반으로 카카오에서 메시지를 전송해 준다.\n\nDeliverySmsNotificationSender 구현 클래스12345678910@Componentpublic class DeliverySmsNotificationSender implements DeliveryNotificationSender &#123;    ...    @Override    public void send(DeliveryMessageDto.Message dto) &#123;        smsNotificationSender.sendSMS(buildSmsMessageDto(dto));    &#125;    ...&#125;\n\n배송 관련 카카오 메시지를 담당하는 클래스이다.\nDeliveryNotificationSender 인터페이스를 implements 해서 자신이 send 메서드를 구현 해야하는 책임을 명확하게 알 수 있다.\nSmsNotificationSender 클래스를 이용해서 메시지를 보내고 있어 실제 구체적으로 어떻게 보내지는지 모르더라도 상관 없다.\n해당 업체 API 호출을 통해서 문자전송이 진행된다. 카카오 메시지 전송과는 다르다. 하지만 DeliveryNotificationSender 인터페이스를 통해서  send라는 동일한 책임을 갖게 된다.\n\nDeliveryNotificationSenderManager123456789101112131415public class DeliveryNotificationSenderManager &#123;    ...    public void sendMessage(Delivery delivery) &#123;        final List&lt;DeliveryNotificationType&gt; notifications = delivery.getDeliveryNotificationTypes();        if (!notifications.isEmpty())            for (DeliveryNotificationType type : notifications)                getInstanceByType(type).send(buildMessage(delivery));    &#125;    private DeliveryNotificationSender getInstanceByType(DeliveryNotificationType type) &#123;        return deliveryNotificationSenderFactory.getInstanceByType(type.getType());    &#125;    ...&#125;\n\n사용자가 등록한 알림을 전송\ngetInstanceByType 팩토리 메소드를 통해서 해당 타입에 맞는 인스턴스가 의존성 주입\ntype이 SMS 일 경우 DeliverySmsNotificationSender 인스턴스 주입\nDeliverySmsNotificationSender 인스턴스 send(SMS 전송) 메서드 실행\n\n\n컴파일 단계에서는 알림을 보내는 것이 DeliveryNotificationSender 인터페이스를 바라보지만 런타임 단계에서는 그것이 역전되 IoC 발생\n\nSOLID아직 배워가는 단계라 많이 부족 하지만 나름대로 SOLD 원측에 의해서 정리 해보겠습니다.\nSRP : 단일 책임 원칙\n객체는 오직 하나의 변경의 이유만을 갖게되 었습니다. 배송 관련 카카오 전송시 세부 메시지 형태나, 포함될 정보가 달라질 경우 DeliveryKakaoNotificationSender 클래스만 변경 하면됩니다.\n다른 곳에서 다른형태로 카카오 메시지를 전송하고 있는 로직에 영향을 미치지 않습니다.\n\nOCP : 개방-폐쇄 원칙\n확장에는 열려 있습니다.\n새로운 배송 라인 알림이 추가 된다고 하면 DeliveryNotificationSender 인터페이스를 implements 하여 send 메서드만 세부 구현 하면됩니다.\nIoC를 이용해서 send 메서드를 다형성으로 해결하지 않았다면 알림이 추가 될때 마다 if 으로 무슨 알림이면 무슨 send를 실행 하라는 반복 적인 코드들이 나오게 됩니다.\nif은 직관적으로 이해하기 편하 코드지만 유지보수하기는 어렵습니다. 만약 10개 알림이 있고 11번째 알림을 추가 한다고 가정했을 때 앞에 작성된 if문들을 이해하고 또 11 번째 if문을 추가해야 합니다. 코드는 작성하는 시간보다 읽히는 시간이 더 많습니다.\n\n\n변경에는 닫혀 있습니다.\n새로운 배송 알림이 추가 되더라도 기존 코드의 변경은 거의 없습니다. 팩토리 메소드에 새로운 배송 알림을 담당하는 인스턴스를 추가 하기만 하면 됩니다.\n위에서 언급했듯이 새로운 배송 알림이 추가되면 해당 코드에 가서 if을 통한 send 메시지를 작성할 필요가 없습니다.\n\n\n\nLSP : 리스코프 치환 원칙\n서브 타입은 언제나 슈퍼타입을 교체 할 수 있어야 한다.\n구현 클래스들은 모두 DeliveryNotificationSender인터페이스의 send 메서드를 구현 하고 있어 교체가 가능합니다.\n\nISP : 인터페이스 분리 원칙\n하위 클래스들에서 사용하지 않은 의존성을 가지고 있지 않고 있습니다.\n\nDIP : 의존성 역전 원칙\nDeliveryNotificationSenderManager 클래스에서 팩토리 메소드를 통해서  DeliveryNotificationSender의 새부 인스턴스를 각 타입에 맞게 변경 해주고 있습니다.\n\n","dateCreated":"2018-03-24T00:00:00+09:00","dateModified":"2025-01-31T04:13:06+09:00","datePublished":"2018-03-24T00:00:00+09:00","description":"해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.","headline":"Spring OOP 프로그래밍 예제(1) - 배송 완료 알림","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/","keywords":"Spring, OOP"}</script>
     <meta name="description" content="해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring OOP 프로그래밍 예제(1) - 배송 완료 알림">
-<meta property="og:url" content="http://localhost:4000/2018/03/24/spring-notificaion-oop/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="해당 요구사항에 맞는 객체지향 프로그래밍을 진행하고 해당 코드를 SOLD 원칙에 맞게 제 나름대로 해석 해보았습니다. 아직 배우는 단계라 너무 부족합니다. 지적 사항을 댓글로 남겨주시면 정말로 감사하겠습니다. 위사진은 해당 셈플코드의 간략한 클래스 다이어그램 입니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -418,7 +418,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -431,7 +431,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -444,7 +444,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -546,7 +546,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -559,7 +559,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -572,7 +572,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -606,7 +606,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -619,7 +619,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -632,7 +632,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/03/24/spring-notificaion-oop/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/03/24/spring-notificaion-oop/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

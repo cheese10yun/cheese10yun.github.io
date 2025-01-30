@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Utterances 소개Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.\nUtterances의 장점\n\nGitHub Issue 기반이기 때문에 블로그 플랫폼을 이전해도 기존 Comment을 그대로 가져갈 수 있음\n개발 블로그 라면 Github 계정으로 댓글을 작성할 수 있기 때문에 사용성이 용이함\n뭔가 있어 보임, 유명한 블로그는 이거 쓰는 거 같음\n\nUtterances 적용하기Utterances는 정말 간단하게 적용할 수 있습니다. (https://utteranc.es) 으로 이동합니다.\n위 문서대로 진행하면 됩니다.\nrepo 설정은 owner/repo 형식 그대로  cheese10yun/blog-comment 처럼 사용하면 됩니다.\nBlog Post ↔️ Issue Mapping 설정은 자신의 블로그 플랫폼에 맞게 설정합니다.\n\n최종적으로 Copy을 누르면\n1234567&lt;script src=&quot;https://utteranc.es/client.js&quot;        repo=&quot;cheese10yun/blog-comment&quot;        issue-term=&quot;pathname&quot;        theme=&quot;github-light&quot;        crossorigin=&quot;anonymous&quot;        async&gt;&lt;/script&gt;\n\n위 같은 코드가 복사되는 것을 확인할 수 있습니다. 이제 사용 중인 블로그 플랫폼에 해당 코드를 적용하면 됩니다. 저는 Hexo Blog을 사용하고 있어 Hexo 기준으로 설명드리겠습니다.\nHexo에 Utterances 적용123456# _config.ymlutterances:  enable: true  repo: cheese10yun/blog-comment  issue_term: title  theme: github-light\n위에서 생성된 코드의 값들을 설정 파일로 분리 시켰습니다. 이제 설정값 기반으로 컴포넌트를 만들면 됩니다\n123456789101112# /themes/beantech/layout/comment.ejs&lt;!--  utteranc comment --&gt;&lt;% if (config.utterances.enable == true) &#123; %&gt;&lt;script src=&quot;https://utteranc.es/client.js&quot;        repo=&quot;&lt;%= config.utterances.repo %&gt;&quot;        issue-term=&quot;&lt;%= config.utterances.issue_term %&gt;&quot;        label=&quot;Comment&quot;        theme=&quot;&lt;%= config.utterances.theme %&gt;&quot;        crossorigin=&quot;anonymous&quot;        async&gt;&lt;/script&gt;&lt;% &#125; %&gt;\n\nComment 컴포넌트를 만들었으면 Post Layout에 Comment 컴포넌트를 추가하겠습니다.\n1234# /themes/beantech/layout/post.ejs...&lt;!-- Comment --&gt;&lt;%- partial(&#x27;comment&#x27;) %&gt;\n\npost.ejs에 위의 코드를 입력합니다.\n1hexo server --watch --draft\nhexo를 실행하면\n적용된것을 확인 확인할 수있습니다.\n","dateCreated":"2019-08-31T00:00:00+09:00","dateModified":"2025-01-31T04:49:46+09:00","datePublished":"2019-08-31T00:00:00+09:00","description":"Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.","headline":"Utterances 적용하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/08/31/utterances/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/08/31/utterances/"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Utterances 소개Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.\nUtterances의 장점\n\nGitHub Issue 기반이기 때문에 블로그 플랫폼을 이전해도 기존 Comment을 그대로 가져갈 수 있음\n개발 블로그 라면 Github 계정으로 댓글을 작성할 수 있기 때문에 사용성이 용이함\n뭔가 있어 보임, 유명한 블로그는 이거 쓰는 거 같음\n\nUtterances 적용하기Utterances는 정말 간단하게 적용할 수 있습니다. (https://utteranc.es) 으로 이동합니다.\n위 문서대로 진행하면 됩니다.\nrepo 설정은 owner/repo 형식 그대로  cheese10yun/blog-comment 처럼 사용하면 됩니다.\nBlog Post ↔️ Issue Mapping 설정은 자신의 블로그 플랫폼에 맞게 설정합니다.\n\n최종적으로 Copy을 누르면\n1234567&lt;script src=&quot;https://utteranc.es/client.js&quot;        repo=&quot;cheese10yun/blog-comment&quot;        issue-term=&quot;pathname&quot;        theme=&quot;github-light&quot;        crossorigin=&quot;anonymous&quot;        async&gt;&lt;/script&gt;\n\n위 같은 코드가 복사되는 것을 확인할 수 있습니다. 이제 사용 중인 블로그 플랫폼에 해당 코드를 적용하면 됩니다. 저는 Hexo Blog을 사용하고 있어 Hexo 기준으로 설명드리겠습니다.\nHexo에 Utterances 적용123456# _config.ymlutterances:  enable: true  repo: cheese10yun/blog-comment  issue_term: title  theme: github-light\n위에서 생성된 코드의 값들을 설정 파일로 분리 시켰습니다. 이제 설정값 기반으로 컴포넌트를 만들면 됩니다\n123456789101112# /themes/beantech/layout/comment.ejs&lt;!--  utteranc comment --&gt;&lt;% if (config.utterances.enable == true) &#123; %&gt;&lt;script src=&quot;https://utteranc.es/client.js&quot;        repo=&quot;&lt;%= config.utterances.repo %&gt;&quot;        issue-term=&quot;&lt;%= config.utterances.issue_term %&gt;&quot;        label=&quot;Comment&quot;        theme=&quot;&lt;%= config.utterances.theme %&gt;&quot;        crossorigin=&quot;anonymous&quot;        async&gt;&lt;/script&gt;&lt;% &#125; %&gt;\n\nComment 컴포넌트를 만들었으면 Post Layout에 Comment 컴포넌트를 추가하겠습니다.\n1234# /themes/beantech/layout/post.ejs...&lt;!-- Comment --&gt;&lt;%- partial(&#x27;comment&#x27;) %&gt;\n\npost.ejs에 위의 코드를 입력합니다.\n1hexo server --watch --draft\nhexo를 실행하면\n적용된것을 확인 확인할 수있습니다.\n","dateCreated":"2019-08-31T00:00:00+09:00","dateModified":"2025-01-31T04:49:46+09:00","datePublished":"2019-08-31T00:00:00+09:00","description":"Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.","headline":"Utterances 적용하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2019/08/31/utterances/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2019/08/31/utterances/"}</script>
     <meta name="description" content="Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Utterances 적용하기">
-<meta property="og:url" content="http://localhost:4000/2019/08/31/utterances/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2019/08/31/utterances/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Utterances는 GitHub Issue 기반으로 Comment를 작성할 수 있게 해줍니다.">
 <meta property="og:locale" content="ko_KR">
@@ -48,7 +48,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -378,7 +378,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -391,7 +391,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -404,7 +404,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -506,7 +506,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -519,7 +519,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -532,7 +532,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/08/31/utterances/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/08/31/utterances/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -566,7 +566,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/08/31/utterances/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/08/31/utterances/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -579,7 +579,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/08/31/utterances/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/08/31/utterances/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -592,7 +592,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2019/08/31/utterances/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/08/31/utterances/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

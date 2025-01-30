@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\n스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.\n아래에서 작성하는 어노테이션은 해당 이메일이 유니크한지 검증을 하고 유니크하지 않은 이메일일 경우 Bad Request를 응답하는 어노테이션 입니다.\n어노테이션 정의123456789101112@Documented@Constraint(validatedBy = EmailDuplicationValidator.class)@Target(&#123;ElementType.METHOD, ElementType.FIELD&#125;)@Retention(RetentionPolicy.RUNTIME)public @interface EmailUnique &#123;  String message() default &quot;Email is Duplication&quot;;  Class&lt;?&gt;[] groups() default &#123;&#125;;  Class&lt;? extends Payload&gt;[] payload() default &#123;&#125;;&#125;\n\n\nValidator 로직 작성12345678910111213141516171819202122232425@Component@RequiredArgsConstructorpublic class EmailDuplicationValidator implements ConstraintValidator&lt;EmailUnique, String&gt; &#123;  private final MemberRepository memberRepository;  @Override  public void initialize(EmailUnique emailUnique) &#123;  &#125;  @Override  public boolean isValid(String email, ConstraintValidatorContext cxt) &#123;    boolean isExistEmail = memberRepository.existsByEmail(email);    if (isExistEmail) &#123;      cxt.disableDefaultConstraintViolation();      cxt.buildConstraintViolationWithTemplate(          MessageFormat.format(&quot;Email &#123;0&#125; already exists!&quot;, email))          .addConstraintViolation();    &#125;    return !isExistEmail;  &#125;&#125;\n\n넘겨 받은 email이 존재하는지 조회하고 중복되느 값이면 예외 메시지를 추가하고 isValid(...) 메서드에서 false를 리턴합니다. \nTestAPI Code123456789101112131415161718public class SignUpRequest &#123;    @EmailUnique @Email    private String email;&#125;public class MemberApi &#123;  private final MemberRepository memberRepository;  @PostMapping  public Member create(@RequestBody @Valid final SignUpRequest dto) &#123;    return memberRepository.save(Member.builder()        .email(dto.getEmail())        .build());  &#125;&#125;\n\nTest Code1234567891011121314151617181920212223public class MemberApiTest &#123;  @Test  public void signUp_test_이메일이_중복된_경우() throws Exception &#123;    //given    final SignUpRequest dto = new SignUpRequest(&quot;yun@test.com&quot;);    //when    final ResultActions resultActions = requestSignUp(dto);    //then    resultActions        .andExpect(status().isBadRequest());  &#125;  private ResultActions requestSignUp(SignUpRequest dto) throws Exception &#123;    return mockMvc.perform(post(&quot;/members&quot;)        .contentType(MediaType.APPLICATION_JSON_UTF8)        .content(objectMapper.writeValueAsString(dto)))        .andDo(print());  &#125;&#125;\n\n\nResponse12345678910111213141516171819202122232425262728293031323334&#123;    &quot;timestamp&quot;: &quot;2019-03-19T17:11:26.919+0000&quot;,    &quot;status&quot;: 400,    &quot;error&quot;: &quot;Bad Request&quot;,    &quot;errors&quot;: [        &#123;            &quot;codes&quot;: [                &quot;EmailUnique.signUpRequest.email&quot;,                &quot;EmailUnique.email&quot;,                &quot;EmailUnique.java.lang.String&quot;,                &quot;EmailUnique&quot;            ],            &quot;arguments&quot;: [                &#123;                    &quot;codes&quot;: [                        &quot;signUpRequest.email&quot;,                        &quot;email&quot;                    ],                    &quot;arguments&quot;: null,                    &quot;defaultMessage&quot;: &quot;email&quot;,                    &quot;code&quot;: &quot;email&quot;                &#125;            ],            &quot;defaultMessage&quot;: &quot;Email yun@test.com already exists!&quot;,            &quot;objectName&quot;: &quot;signUpRequest&quot;,            &quot;field&quot;: &quot;email&quot;,            &quot;rejectedValue&quot;: &quot;yun@test.com&quot;,            &quot;bindingFailure&quot;: false,            &quot;code&quot;: &quot;EmailUnique&quot;        &#125;    ],    &quot;message&quot;: &quot;Validation failed for object=&#x27;signUpRequest&#x27;. Error count: 1&quot;,    &quot;path&quot;: &quot;/members&quot;&#125;\n\n테스트 코드를 실행해보면 EmailDuplicationValidator 로직이 정상 동작하는지 확인할 수 있습니다.\n","dateCreated":"2019-03-20T01:40:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-03-20T01:40:00+09:00","description":"스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.","headline":"Spring Custom Validate 어노테이션 만들기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/","keywords":"Guide, Spring"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\n스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.\n아래에서 작성하는 어노테이션은 해당 이메일이 유니크한지 검증을 하고 유니크하지 않은 이메일일 경우 Bad Request를 응답하는 어노테이션 입니다.\n어노테이션 정의123456789101112@Documented@Constraint(validatedBy = EmailDuplicationValidator.class)@Target(&#123;ElementType.METHOD, ElementType.FIELD&#125;)@Retention(RetentionPolicy.RUNTIME)public @interface EmailUnique &#123;  String message() default &quot;Email is Duplication&quot;;  Class&lt;?&gt;[] groups() default &#123;&#125;;  Class&lt;? extends Payload&gt;[] payload() default &#123;&#125;;&#125;\n\n\nValidator 로직 작성12345678910111213141516171819202122232425@Component@RequiredArgsConstructorpublic class EmailDuplicationValidator implements ConstraintValidator&lt;EmailUnique, String&gt; &#123;  private final MemberRepository memberRepository;  @Override  public void initialize(EmailUnique emailUnique) &#123;  &#125;  @Override  public boolean isValid(String email, ConstraintValidatorContext cxt) &#123;    boolean isExistEmail = memberRepository.existsByEmail(email);    if (isExistEmail) &#123;      cxt.disableDefaultConstraintViolation();      cxt.buildConstraintViolationWithTemplate(          MessageFormat.format(&quot;Email &#123;0&#125; already exists!&quot;, email))          .addConstraintViolation();    &#125;    return !isExistEmail;  &#125;&#125;\n\n넘겨 받은 email이 존재하는지 조회하고 중복되느 값이면 예외 메시지를 추가하고 isValid(...) 메서드에서 false를 리턴합니다. \nTestAPI Code123456789101112131415161718public class SignUpRequest &#123;    @EmailUnique @Email    private String email;&#125;public class MemberApi &#123;  private final MemberRepository memberRepository;  @PostMapping  public Member create(@RequestBody @Valid final SignUpRequest dto) &#123;    return memberRepository.save(Member.builder()        .email(dto.getEmail())        .build());  &#125;&#125;\n\nTest Code1234567891011121314151617181920212223public class MemberApiTest &#123;  @Test  public void signUp_test_이메일이_중복된_경우() throws Exception &#123;    //given    final SignUpRequest dto = new SignUpRequest(&quot;yun@test.com&quot;);    //when    final ResultActions resultActions = requestSignUp(dto);    //then    resultActions        .andExpect(status().isBadRequest());  &#125;  private ResultActions requestSignUp(SignUpRequest dto) throws Exception &#123;    return mockMvc.perform(post(&quot;/members&quot;)        .contentType(MediaType.APPLICATION_JSON_UTF8)        .content(objectMapper.writeValueAsString(dto)))        .andDo(print());  &#125;&#125;\n\n\nResponse12345678910111213141516171819202122232425262728293031323334&#123;    &quot;timestamp&quot;: &quot;2019-03-19T17:11:26.919+0000&quot;,    &quot;status&quot;: 400,    &quot;error&quot;: &quot;Bad Request&quot;,    &quot;errors&quot;: [        &#123;            &quot;codes&quot;: [                &quot;EmailUnique.signUpRequest.email&quot;,                &quot;EmailUnique.email&quot;,                &quot;EmailUnique.java.lang.String&quot;,                &quot;EmailUnique&quot;            ],            &quot;arguments&quot;: [                &#123;                    &quot;codes&quot;: [                        &quot;signUpRequest.email&quot;,                        &quot;email&quot;                    ],                    &quot;arguments&quot;: null,                    &quot;defaultMessage&quot;: &quot;email&quot;,                    &quot;code&quot;: &quot;email&quot;                &#125;            ],            &quot;defaultMessage&quot;: &quot;Email yun@test.com already exists!&quot;,            &quot;objectName&quot;: &quot;signUpRequest&quot;,            &quot;field&quot;: &quot;email&quot;,            &quot;rejectedValue&quot;: &quot;yun@test.com&quot;,            &quot;bindingFailure&quot;: false,            &quot;code&quot;: &quot;EmailUnique&quot;        &#125;    ],    &quot;message&quot;: &quot;Validation failed for object=&#x27;signUpRequest&#x27;. Error count: 1&quot;,    &quot;path&quot;: &quot;/members&quot;&#125;\n\n테스트 코드를 실행해보면 EmailDuplicationValidator 로직이 정상 동작하는지 확인할 수 있습니다.\n","dateCreated":"2019-03-20T01:40:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-03-20T01:40:00+09:00","description":"스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.","headline":"Spring Custom Validate 어노테이션 만들기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/","keywords":"Guide, Spring"}</script>
     <meta name="description" content="스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring Custom Validate 어노테이션 만들기">
-<meta property="og:url" content="http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="스프링은 컨트롤러에서 클라이언트에서 넘겨받은 값에 대한 검증을 JSR-303 기반으로 쉽고 강력하게 할 수 있습니다. 또 한 커스텀 한 어노테이션을 확장도 쉽게 구현할 수 있습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -36,7 +36,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -365,7 +365,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -378,7 +378,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -391,7 +391,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -493,7 +493,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -506,7 +506,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -519,7 +519,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -553,7 +553,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -566,7 +566,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -579,7 +579,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2019/03/20/spring-custom-valdate-annotation/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/03/20/spring-custom-valdate-annotation/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

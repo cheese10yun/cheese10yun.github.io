@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다.\n시나리오가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.\n\n주문을 시스템 내부 API를 호출해서 진행한다.\n내부 API 시스템 성공 여부에 따라 status를 지정한다.\n\nCodeEntity12345678910111213141516171819202122@Entity@Table(name = &quot;orders&quot;)class Order(    @Enumerated(EnumType.STRING)    @Column(name = &quot;status&quot;, nullable = false)    var status: OrderStatus) &#123;    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    var id: Long? = null    override fun toString(): String &#123;        return &quot;Order(status=$status, id=$id)&quot;    &#125;   &#125;enum class OrderStatus &#123;    READY,    COMPLETED,    FAILED&#125;\n엔티티 코드는 간단합니다. id, status를 가지고 있습니다.\n12345678910111213class OrderHttpClient &#123;    /**     * 외부 IO 작업을 진행합니다. block은 100 ms, 80% 성공한다     */    fun doSomething(orderId: Long): Boolean &#123;        runBlocking &#123;            delay(100)        &#125;        val random = Random.nextInt(0, 10)        return 8 &gt; random    &#125;&#125;\nHTTP 통신을 하는 Client 코드입니다. 성공과 실패를 리턴하는 간단한 코드입니다. 해당 코드를 호출하면 100ms 블록이 걸리게 설정했습니다.\nTest단일 스레드123456789101112131415161718@Testfun `단일 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(1_000) // READY Status Order를 데이터베이스에 저장함    stopWatch.start()    orders        .forEach &#123;            val result = sampleApi.doSomething(it.id!!)            when &#123;                result -&gt; it.status = OrderStatus.COMPLETED                else -&gt; it.status = OrderStatus.FAILED            &#125;        &#125;    stopWatch.stop()    println(stopWatch.totalTimeSeconds)&#125;\n단일 스레드에서 5,000의 api를 호출하여 그 결과에 따라서 데이터베이스 상태를 업데이트하는 코드입니다.\n멀티 스레드12345678910111213141516171819202122232425262728293031323334@Testfun `멀티 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(5_000) // (1)    stopWatch.start()    orders        .toFlowable() //(2)        .parallel() //(3)        .runOn(Schedulers.io()) //(4)        .map &#123;            println(&quot;Mapping orderId :$&#123;it.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)            val result = sampleApi.doSomething(it.id!!)             Pair(result, it)        &#125;        .sequential() //(5)        .subscribe(            &#123;                println(&quot;Received orderId :$&#123;it.second.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)                when &#123;                    it.first -&gt; it.second.status = OrderStatus.COMPLETED                    else -&gt; it.second.status = OrderStatus.FAILED                &#125;            &#125;,            &#123;                it.printStackTrace()            &#125;,            &#123;                stopWatch.stop()                println(stopWatch.totalTimeSeconds)            &#125;        )    runBlocking &#123; delay(5_000) &#125; //(6)&#125;\n\n(1): order 데이터를 준비합니다.\n(2): Back Pressure 기능을 제공하는 Flowable으로 생성 생성\n(3): CPU 수와 동일하게 ParallelFlowable을 생성할 수 있게 해줍니다.\n(4): ParallelFlowable의 병렬 처리 수준만큼 Scheduler.createWorker를 호출해서 스레드를 생성합니다. Buffer size는 기본 설정 128개와 동일합니다.\n(5): 각 ParallelFlowable의 값을 병합 작업을 진행합니다.\n(6): 해당 작업이 모두 테스트 스레드 Test worker에서 실행되지 않기 때문에 block을 진행합니다.\n\nparallel\ntoFlowable() 메서드로 Flowable 처리를 진행했던 것을 parallel 처리하기 위해서 parallel() 메서드를 사용합니다. 해당 레일은 자체적으로 병렬로 실행되지 않으며 각 레일이 병렬로 실행하려면 runOn()메서드의 호출이 필요합니다. 이때 Schedulers.io()를 사용합니다. Schedulers.io()는 I/O 관련 작업을 수행할 수 있는 무제한의 워커 스레드를 생성하는 스레드를 제공한다. 해당 테스트 환경은 12 코어기 때문에 12 스레드를 사용하게 됩니다.\nsequential\nparallel메서 여러 레일을 생성하는 것을 다시 단일 스퀀스로 병합하기 위해서 사용합니다.\n123456789101112131415...Mapping orderId :15 RxCachedThreadScheduler-3Mapping orderId :18 RxCachedThreadScheduler-6Mapping orderId :22 RxCachedThreadScheduler-10Received orderId :8 RxCachedThreadScheduler-8Mapping orderId :16 RxCachedThreadScheduler-4Received orderId :1 RxCachedThreadScheduler-8Mapping orderId :23 RxCachedThreadScheduler-11Received orderId :2 RxCachedThreadScheduler-8Received orderId :3 RxCachedThreadScheduler-8Received orderId :4 RxCachedThreadScheduler-8Mapping orderId :14 RxCachedThreadScheduler-2Received orderId :5 RxCachedThreadScheduler-8Mapping orderId :24 RxCachedThreadScheduler-12...\nMapping, Received 스레드를 확인 1~12 스레드를 모두 사용하는 것을 확인할 수 있습니다. 해당 스레드는 모두 메인 스레드인 Test worker에서 진행되지 않습니다.\n비교\n\n\n데이터 개수\n스레드\n소요 시간\n\n\n\n5,000\n단일스레드\n8m 58s\n\n\n5,000\n12 스레드\n43s\n\n\n실행 환경의 CPU Core 수에 따라서 결과는 많이 달라집니다.\n","dateCreated":"2020-12-05T23:05:25+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2020-12-05T23:05:25+09:00","description":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.","headline":"Rx Kotlin 이용해서 성능 개선","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/12/05/rx-kotlin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2020/12/05/rx-kotlin/","keywords":"Kotlin"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다.\n시나리오가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.\n\n주문을 시스템 내부 API를 호출해서 진행한다.\n내부 API 시스템 성공 여부에 따라 status를 지정한다.\n\nCodeEntity12345678910111213141516171819202122@Entity@Table(name = &quot;orders&quot;)class Order(    @Enumerated(EnumType.STRING)    @Column(name = &quot;status&quot;, nullable = false)    var status: OrderStatus) &#123;    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    var id: Long? = null    override fun toString(): String &#123;        return &quot;Order(status=$status, id=$id)&quot;    &#125;   &#125;enum class OrderStatus &#123;    READY,    COMPLETED,    FAILED&#125;\n엔티티 코드는 간단합니다. id, status를 가지고 있습니다.\n12345678910111213class OrderHttpClient &#123;    /**     * 외부 IO 작업을 진행합니다. block은 100 ms, 80% 성공한다     */    fun doSomething(orderId: Long): Boolean &#123;        runBlocking &#123;            delay(100)        &#125;        val random = Random.nextInt(0, 10)        return 8 &gt; random    &#125;&#125;\nHTTP 통신을 하는 Client 코드입니다. 성공과 실패를 리턴하는 간단한 코드입니다. 해당 코드를 호출하면 100ms 블록이 걸리게 설정했습니다.\nTest단일 스레드123456789101112131415161718@Testfun `단일 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(1_000) // READY Status Order를 데이터베이스에 저장함    stopWatch.start()    orders        .forEach &#123;            val result = sampleApi.doSomething(it.id!!)            when &#123;                result -&gt; it.status = OrderStatus.COMPLETED                else -&gt; it.status = OrderStatus.FAILED            &#125;        &#125;    stopWatch.stop()    println(stopWatch.totalTimeSeconds)&#125;\n단일 스레드에서 5,000의 api를 호출하여 그 결과에 따라서 데이터베이스 상태를 업데이트하는 코드입니다.\n멀티 스레드12345678910111213141516171819202122232425262728293031323334@Testfun `멀티 스레드 작업`() &#123;    val stopWatch = StopWatch()    val orders = givenOrders(5_000) // (1)    stopWatch.start()    orders        .toFlowable() //(2)        .parallel() //(3)        .runOn(Schedulers.io()) //(4)        .map &#123;            println(&quot;Mapping orderId :$&#123;it.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)            val result = sampleApi.doSomething(it.id!!)             Pair(result, it)        &#125;        .sequential() //(5)        .subscribe(            &#123;                println(&quot;Received orderId :$&#123;it.second.id&#125; $&#123;Thread.currentThread().name&#125;&quot;)                when &#123;                    it.first -&gt; it.second.status = OrderStatus.COMPLETED                    else -&gt; it.second.status = OrderStatus.FAILED                &#125;            &#125;,            &#123;                it.printStackTrace()            &#125;,            &#123;                stopWatch.stop()                println(stopWatch.totalTimeSeconds)            &#125;        )    runBlocking &#123; delay(5_000) &#125; //(6)&#125;\n\n(1): order 데이터를 준비합니다.\n(2): Back Pressure 기능을 제공하는 Flowable으로 생성 생성\n(3): CPU 수와 동일하게 ParallelFlowable을 생성할 수 있게 해줍니다.\n(4): ParallelFlowable의 병렬 처리 수준만큼 Scheduler.createWorker를 호출해서 스레드를 생성합니다. Buffer size는 기본 설정 128개와 동일합니다.\n(5): 각 ParallelFlowable의 값을 병합 작업을 진행합니다.\n(6): 해당 작업이 모두 테스트 스레드 Test worker에서 실행되지 않기 때문에 block을 진행합니다.\n\nparallel\ntoFlowable() 메서드로 Flowable 처리를 진행했던 것을 parallel 처리하기 위해서 parallel() 메서드를 사용합니다. 해당 레일은 자체적으로 병렬로 실행되지 않으며 각 레일이 병렬로 실행하려면 runOn()메서드의 호출이 필요합니다. 이때 Schedulers.io()를 사용합니다. Schedulers.io()는 I/O 관련 작업을 수행할 수 있는 무제한의 워커 스레드를 생성하는 스레드를 제공한다. 해당 테스트 환경은 12 코어기 때문에 12 스레드를 사용하게 됩니다.\nsequential\nparallel메서 여러 레일을 생성하는 것을 다시 단일 스퀀스로 병합하기 위해서 사용합니다.\n123456789101112131415...Mapping orderId :15 RxCachedThreadScheduler-3Mapping orderId :18 RxCachedThreadScheduler-6Mapping orderId :22 RxCachedThreadScheduler-10Received orderId :8 RxCachedThreadScheduler-8Mapping orderId :16 RxCachedThreadScheduler-4Received orderId :1 RxCachedThreadScheduler-8Mapping orderId :23 RxCachedThreadScheduler-11Received orderId :2 RxCachedThreadScheduler-8Received orderId :3 RxCachedThreadScheduler-8Received orderId :4 RxCachedThreadScheduler-8Mapping orderId :14 RxCachedThreadScheduler-2Received orderId :5 RxCachedThreadScheduler-8Mapping orderId :24 RxCachedThreadScheduler-12...\nMapping, Received 스레드를 확인 1~12 스레드를 모두 사용하는 것을 확인할 수 있습니다. 해당 스레드는 모두 메인 스레드인 Test worker에서 진행되지 않습니다.\n비교\n\n\n데이터 개수\n스레드\n소요 시간\n\n\n\n5,000\n단일스레드\n8m 58s\n\n\n5,000\n12 스레드\n43s\n\n\n실행 환경의 CPU Core 수에 따라서 결과는 많이 달라집니다.\n","dateCreated":"2020-12-05T23:05:25+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2020-12-05T23:05:25+09:00","description":"Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.","headline":"Rx Kotlin 이용해서 성능 개선","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2020/12/05/rx-kotlin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2020/12/05/rx-kotlin/","keywords":"Kotlin"}</script>
     <meta name="description" content="Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Rx Kotlin 이용해서 성능 개선">
-<meta property="og:url" content="http://localhost:4000/2020/12/05/rx-kotlin/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2020/12/05/rx-kotlin/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Rx Kotlin를 사용하면 스레드를 더 쉽게 사용할 수 있습니다. 가장 흔한 케이스로 외부 API를 호출하고 그 결과에 맞게 데이터베이스를 수정하는 방식입니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -395,7 +395,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -408,7 +408,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -421,7 +421,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -523,7 +523,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -536,7 +536,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -549,7 +549,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -583,7 +583,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -596,7 +596,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -609,7 +609,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2020/12/05/rx-kotlin/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/12/05/rx-kotlin/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

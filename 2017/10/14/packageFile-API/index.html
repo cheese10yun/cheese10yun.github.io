@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 구성package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다. \n\n기본 프로젝트 구성은 WebStorm 으로 Node 프로젝트를 생성한 구조 입니다.\npacakge.json 파일123456789&#123;  &quot;name&quot;: &quot;api-version&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;private&quot;: true,  &quot;scripts&quot;: &#123;    &quot;start&quot;: &quot;node ./bin/www&quot;  &#125;,  &quot;dependencies&quot;: &#123;&#125;&#125;\nnpm 의존성 모듈을 관리하는 pacakge.json 내용입니다. 해당 내용을 보시면 version 이라는 항목이 있습니다. 해당 프로젝트의 버전을 표시하는 정보이며 초기 설정은 0.0.0 입니다. 이 version 을 활용하여 URI path의 API 버전 설정을 진행하겠습니다.\napp.js프로젝트 구조에 따라 다소 차이가 있겠지만 각종 라운팅 설정 및 미들웨어 설정하는 .js 파일에서 설정을 진행하겠습니다.\n123const packageFile = require(&#x27;./package.json&#x27;);const API_VERSION = packageFile.version.split(&#x27;.&#x27;).shift();const BASE_URL = `/api/v$&#123;API_VERSION&#125;`;\n\n\npackageFile을 require 합니다.\nAPI_VERSION 변수에 package.json 파일의 version 정보 최상단 앞자리만 가져옵니다.\nBASE_URL 변수에 API 버전 정보를 할당합니다.\n\nmiddleware 적용기존 middleware12app.use(&#x27;/&#x27;, index);app.use(&#x27;/users&#x27;, users);\n\n변경 middleware12app.use(`$&#123;BASE_URL&#125;/`, index);app.use(`$&#123;BASE_URL&#125;/users`, users);\n\n위에서 만든 변수 BASE_URL를 활용해서 미들웨어 URL 을 변경합니다.\n\n\n\n정상적으로 작동합니다.\n\nAPI 버전 변경123456789&#123;  &quot;name&quot;: &quot;api-version&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;private&quot;: true,  &quot;scripts&quot;: &#123;    &quot;start&quot;: &quot;node ./bin/www&quot;  &#125;,  &quot;dependencies&quot;: &#123;&#125;&#125;\n\npackage.json 의 version 을 변경하면 BASE_URL 가 변경되어 URL 이 변경됩니다.\n\n마무리사실 평소에는 package.json version 정보를 전혀 사용하지 않다가 LoopBack 프레임워크에서 위와 같은 방법으로 API 버전 관리를 하는 것을 보고 포스팅을 해보았습니다. 다른 분들은 어떻게 API 버전 관리를 하는지는 잘 모르겠지만 꽤 직관적이며 쉽게 적용 가능한 부분이라고 생각이 듭니다.\n","dateCreated":"2017-10-14T01:31:24+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-10-14T01:31:24+09:00","description":"package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다.","headline":"Package.json 파일로 API 버전 설정","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/10/14/packageFile-API/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2017/10/14/packageFile-API/","keywords":"Node"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 구성package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다. \n\n기본 프로젝트 구성은 WebStorm 으로 Node 프로젝트를 생성한 구조 입니다.\npacakge.json 파일123456789&#123;  &quot;name&quot;: &quot;api-version&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;private&quot;: true,  &quot;scripts&quot;: &#123;    &quot;start&quot;: &quot;node ./bin/www&quot;  &#125;,  &quot;dependencies&quot;: &#123;&#125;&#125;\nnpm 의존성 모듈을 관리하는 pacakge.json 내용입니다. 해당 내용을 보시면 version 이라는 항목이 있습니다. 해당 프로젝트의 버전을 표시하는 정보이며 초기 설정은 0.0.0 입니다. 이 version 을 활용하여 URI path의 API 버전 설정을 진행하겠습니다.\napp.js프로젝트 구조에 따라 다소 차이가 있겠지만 각종 라운팅 설정 및 미들웨어 설정하는 .js 파일에서 설정을 진행하겠습니다.\n123const packageFile = require(&#x27;./package.json&#x27;);const API_VERSION = packageFile.version.split(&#x27;.&#x27;).shift();const BASE_URL = `/api/v$&#123;API_VERSION&#125;`;\n\n\npackageFile을 require 합니다.\nAPI_VERSION 변수에 package.json 파일의 version 정보 최상단 앞자리만 가져옵니다.\nBASE_URL 변수에 API 버전 정보를 할당합니다.\n\nmiddleware 적용기존 middleware12app.use(&#x27;/&#x27;, index);app.use(&#x27;/users&#x27;, users);\n\n변경 middleware12app.use(`$&#123;BASE_URL&#125;/`, index);app.use(`$&#123;BASE_URL&#125;/users`, users);\n\n위에서 만든 변수 BASE_URL를 활용해서 미들웨어 URL 을 변경합니다.\n\n\n\n정상적으로 작동합니다.\n\nAPI 버전 변경123456789&#123;  &quot;name&quot;: &quot;api-version&quot;,  &quot;version&quot;: &quot;1.0.0&quot;,  &quot;private&quot;: true,  &quot;scripts&quot;: &#123;    &quot;start&quot;: &quot;node ./bin/www&quot;  &#125;,  &quot;dependencies&quot;: &#123;&#125;&#125;\n\npackage.json 의 version 을 변경하면 BASE_URL 가 변경되어 URL 이 변경됩니다.\n\n마무리사실 평소에는 package.json version 정보를 전혀 사용하지 않다가 LoopBack 프레임워크에서 위와 같은 방법으로 API 버전 관리를 하는 것을 보고 포스팅을 해보았습니다. 다른 분들은 어떻게 API 버전 관리를 하는지는 잘 모르겠지만 꽤 직관적이며 쉽게 적용 가능한 부분이라고 생각이 듭니다.\n","dateCreated":"2017-10-14T01:31:24+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-10-14T01:31:24+09:00","description":"package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다.","headline":"Package.json 파일로 API 버전 설정","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2017/10/14/packageFile-API/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2017/10/14/packageFile-API/","keywords":"Node"}</script>
     <meta name="description" content="package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Package.json 파일로 API 버전 설정">
-<meta property="og:url" content="http://localhost:4000/2017/10/14/packageFile-API/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2017/10/14/packageFile-API/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="package.json 파일로 API URL을 설정하는 간단한 방법을 포스팅 해보겠습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -376,7 +376,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -389,7 +389,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -402,7 +402,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -504,7 +504,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -517,7 +517,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -530,7 +530,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/10/14/packageFile-API/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -564,7 +564,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/10/14/packageFile-API/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -577,7 +577,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/10/14/packageFile-API/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -590,7 +590,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2017/10/14/packageFile-API/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/10/14/packageFile-API/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

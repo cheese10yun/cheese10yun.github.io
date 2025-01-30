@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Polymorphic Type Handling Annotations,  General Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\nJackson Polymorphic Type Handling Annotations\nPolymorphic을 통한 직렬화, 비직렬화\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950@NoArgsConstructor(access = AccessLevel.PRIVATE)public static class Zoo &#123;    public Animal animal;    public Zoo(Animal animal) &#123;        this.animal = animal;    &#125;    @JsonTypeInfo(            use = JsonTypeInfo.Id.NAME,            include = JsonTypeInfo.As.PROPERTY,            property = &quot;type&quot;)    @JsonSubTypes(&#123;            @JsonSubTypes.Type(value = Dog.class, name = &quot;dog&quot;),            @JsonSubTypes.Type(value = Cat.class, name = &quot;cat&quot;)    &#125;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Animal &#123;        private String name;        public Animal(String name) &#123;            this.name = name;        &#125;    &#125;    @JsonTypeName(&quot;dog&quot;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Dog extends Animal &#123;        public double barkVolume;        public Dog(String name) &#123;            super(name);        &#125;    &#125;    @JsonTypeName(&quot;cat&quot;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Cat extends Animal &#123;        boolean likesCream;        public int lives;        public Cat(String name) &#123;            super(name);        &#125;    &#125;&#125;\n1234567891011121314&#123;    &quot;animal&quot;: &#123;        &quot;type&quot;: &quot;dog&quot;,        &quot;name&quot;: &quot;lacy&quot;,        &quot;barkVolume&quot;: 0    &#125;&#125;&#123;    &quot;animal&quot;:&#123;        &quot;name&quot;:&quot;lacy&quot;,        &quot;type&quot;:&quot;cat&quot;    &#125;&#125;\n\nJackson General Annotations@JsonFormat\n날짜 &#x2F; 시간 값을 직렬화 할 때 포멧팅을 지정합니다\n\n12345678910111213public static class Event &#123;    public String name;    @JsonFormat(            shape = JsonFormat.Shape.STRING,            pattern = &quot;dd-MM-yyyy hh:mm:ss&quot;)    public Date eventDate;    public Event(String name, Date date) &#123;        this.name = name;        this.eventDate = date;    &#125;&#125;\n12345678910//적용전&#123;  &quot;name&quot;:&quot;party&quot;,  &quot;eventDate&quot;:1419042600000&#125;//적용후&#123;  &quot;name&quot;: &quot;party&quot;,  &quot;eventDate&quot;: &quot;20-12-2014 02:30:00&quot;&#125;\n\n@JsonUnwrapped\n직렬화, 비 직렬화 될 때 언 래핑 &#x2F; 병합되어야 하는 값 을 정의하는 데 사용됩니다\n\n123456789101112131415161718192021public static class UnwrappedUser &#123;    public int id;    @JsonUnwrapped    public Name name;    public UnwrappedUser(int id, Name name) &#123;        this.id = id;        this.name = name;    &#125;    public static class Name &#123;        public String firstName;        public String lastName;        public Name(String firstName, String lastName) &#123;            this.firstName = firstName;            this.lastName = lastName;        &#125;    &#125;&#125;\n\n1234567891011121314//적용전&#123;  &quot;id&quot;: 1,  &quot;firstName&quot;: &quot;John&quot;,  &quot;lastName&quot;: &quot;Doe&quot;&#125;//적용후&#123;  &quot;id&quot;:1,  &quot;name&quot;:&#123;    &quot;firstName&quot;:&quot;John&quot;,    &quot;lastName&quot;:&quot;Doe&quot;  &#125;&#125;\n\n@JsonView\n속성이 serialization &#x2F; deserialization에 포함될 View 를 나타내는 데 사용됩니다.\n\n123456789101112131415161718192021222324public static class Views &#123;    public static class Public &#123;    &#125;    public static class Internal extends Public &#123;    &#125;&#125;public static class Item &#123;    @JsonView(Views.Public.class)    public int id;    @JsonView(Views.Public.class)    public String itemName;    @JsonView(Views.Internal.class)    public String ownerName;    public Item(int id, String itemName, String ownerName) &#123;        this.id = id;        this.itemName = itemName;        this.ownerName = ownerName;    &#125;&#125;\n1234567891011//적용전&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;,  &quot;ownerName&quot;:&quot;John&quot;&#125;//적용후&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;&#125;\n\n@JsonManagedReference, @JsonBackReference\n객체의  상위 &#x2F; 하위 관계를 처리 명시하고 무한 순함참조에러를 해결합니다.\n\n123456789101112131415161718192021222324252627282930public static class ItemWithRef &#123;    public int id;    public String itemName;    @JsonManagedReference    public UserWithRef owner;    public ItemWithRef(int id, String itemName, UserWithRef owner) &#123;        this.id = id;        this.itemName = itemName;        this.owner = owner;    &#125;&#125;public static class UserWithRef &#123;    public int id;    public String name;    @JsonBackReference    public List&lt;ItemWithRef&gt; itemWithRefs = new ArrayList&lt;&gt;();    public UserWithRef(int id, String name) &#123;        this.id = id;        this.name = name;    &#125;    public void addItem(ItemWithRef item) &#123;        itemWithRefs.add(item);    &#125;&#125;\n1234567891011//적용전// Infinite recursion (StackOverflowError)... 무한 순함참조 에러//적용후&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;,  &quot;owner&quot;:&#123;    &quot;id&quot;:1,    &quot;name&quot;:&quot;John&quot;  &#125;&#125;\n\n@JsonFilter\n직렬화시에 사용되는 필터를 지정합니다.\n\n12345678910@JsonFilter(&quot;myFilter&quot;)public static class BeanWithFilter &#123;    public int id;    public String name;    public BeanWithFilter(int id, String name) &#123;        this.id= id;        this.name = name;    &#125;&#125;\n123456789//적용전&#123;  &quot;id&quot;:1,  &quot;name&quot;:&quot;My bean&quot;&#125;//적용후&#123;  &quot;name&quot;:&quot;My bean&quot;&#125;","dateCreated":"2018-06-20T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-20T00:00:00+09:00","description":"Jackson 어노테이션 사용법(4)","headline":"Jackson 어노테이션 사용법(4)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/06/20/jackson-annotation-04/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/06/20/jackson-annotation-04/","keywords":"Jackson"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Polymorphic Type Handling Annotations,  General Annotations\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\nJackson Polymorphic Type Handling Annotations\nPolymorphic을 통한 직렬화, 비직렬화\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950@NoArgsConstructor(access = AccessLevel.PRIVATE)public static class Zoo &#123;    public Animal animal;    public Zoo(Animal animal) &#123;        this.animal = animal;    &#125;    @JsonTypeInfo(            use = JsonTypeInfo.Id.NAME,            include = JsonTypeInfo.As.PROPERTY,            property = &quot;type&quot;)    @JsonSubTypes(&#123;            @JsonSubTypes.Type(value = Dog.class, name = &quot;dog&quot;),            @JsonSubTypes.Type(value = Cat.class, name = &quot;cat&quot;)    &#125;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Animal &#123;        private String name;        public Animal(String name) &#123;            this.name = name;        &#125;    &#125;    @JsonTypeName(&quot;dog&quot;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Dog extends Animal &#123;        public double barkVolume;        public Dog(String name) &#123;            super(name);        &#125;    &#125;    @JsonTypeName(&quot;cat&quot;)    @Getter    @NoArgsConstructor(access = AccessLevel.PRIVATE)    public static class Cat extends Animal &#123;        boolean likesCream;        public int lives;        public Cat(String name) &#123;            super(name);        &#125;    &#125;&#125;\n1234567891011121314&#123;    &quot;animal&quot;: &#123;        &quot;type&quot;: &quot;dog&quot;,        &quot;name&quot;: &quot;lacy&quot;,        &quot;barkVolume&quot;: 0    &#125;&#125;&#123;    &quot;animal&quot;:&#123;        &quot;name&quot;:&quot;lacy&quot;,        &quot;type&quot;:&quot;cat&quot;    &#125;&#125;\n\nJackson General Annotations@JsonFormat\n날짜 &#x2F; 시간 값을 직렬화 할 때 포멧팅을 지정합니다\n\n12345678910111213public static class Event &#123;    public String name;    @JsonFormat(            shape = JsonFormat.Shape.STRING,            pattern = &quot;dd-MM-yyyy hh:mm:ss&quot;)    public Date eventDate;    public Event(String name, Date date) &#123;        this.name = name;        this.eventDate = date;    &#125;&#125;\n12345678910//적용전&#123;  &quot;name&quot;:&quot;party&quot;,  &quot;eventDate&quot;:1419042600000&#125;//적용후&#123;  &quot;name&quot;: &quot;party&quot;,  &quot;eventDate&quot;: &quot;20-12-2014 02:30:00&quot;&#125;\n\n@JsonUnwrapped\n직렬화, 비 직렬화 될 때 언 래핑 &#x2F; 병합되어야 하는 값 을 정의하는 데 사용됩니다\n\n123456789101112131415161718192021public static class UnwrappedUser &#123;    public int id;    @JsonUnwrapped    public Name name;    public UnwrappedUser(int id, Name name) &#123;        this.id = id;        this.name = name;    &#125;    public static class Name &#123;        public String firstName;        public String lastName;        public Name(String firstName, String lastName) &#123;            this.firstName = firstName;            this.lastName = lastName;        &#125;    &#125;&#125;\n\n1234567891011121314//적용전&#123;  &quot;id&quot;: 1,  &quot;firstName&quot;: &quot;John&quot;,  &quot;lastName&quot;: &quot;Doe&quot;&#125;//적용후&#123;  &quot;id&quot;:1,  &quot;name&quot;:&#123;    &quot;firstName&quot;:&quot;John&quot;,    &quot;lastName&quot;:&quot;Doe&quot;  &#125;&#125;\n\n@JsonView\n속성이 serialization &#x2F; deserialization에 포함될 View 를 나타내는 데 사용됩니다.\n\n123456789101112131415161718192021222324public static class Views &#123;    public static class Public &#123;    &#125;    public static class Internal extends Public &#123;    &#125;&#125;public static class Item &#123;    @JsonView(Views.Public.class)    public int id;    @JsonView(Views.Public.class)    public String itemName;    @JsonView(Views.Internal.class)    public String ownerName;    public Item(int id, String itemName, String ownerName) &#123;        this.id = id;        this.itemName = itemName;        this.ownerName = ownerName;    &#125;&#125;\n1234567891011//적용전&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;,  &quot;ownerName&quot;:&quot;John&quot;&#125;//적용후&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;&#125;\n\n@JsonManagedReference, @JsonBackReference\n객체의  상위 &#x2F; 하위 관계를 처리 명시하고 무한 순함참조에러를 해결합니다.\n\n123456789101112131415161718192021222324252627282930public static class ItemWithRef &#123;    public int id;    public String itemName;    @JsonManagedReference    public UserWithRef owner;    public ItemWithRef(int id, String itemName, UserWithRef owner) &#123;        this.id = id;        this.itemName = itemName;        this.owner = owner;    &#125;&#125;public static class UserWithRef &#123;    public int id;    public String name;    @JsonBackReference    public List&lt;ItemWithRef&gt; itemWithRefs = new ArrayList&lt;&gt;();    public UserWithRef(int id, String name) &#123;        this.id = id;        this.name = name;    &#125;    public void addItem(ItemWithRef item) &#123;        itemWithRefs.add(item);    &#125;&#125;\n1234567891011//적용전// Infinite recursion (StackOverflowError)... 무한 순함참조 에러//적용후&#123;  &quot;id&quot;:2,  &quot;itemName&quot;:&quot;book&quot;,  &quot;owner&quot;:&#123;    &quot;id&quot;:1,    &quot;name&quot;:&quot;John&quot;  &#125;&#125;\n\n@JsonFilter\n직렬화시에 사용되는 필터를 지정합니다.\n\n12345678910@JsonFilter(&quot;myFilter&quot;)public static class BeanWithFilter &#123;    public int id;    public String name;    public BeanWithFilter(int id, String name) &#123;        this.id= id;        this.name = name;    &#125;&#125;\n123456789//적용전&#123;  &quot;id&quot;:1,  &quot;name&quot;:&quot;My bean&quot;&#125;//적용후&#123;  &quot;name&quot;:&quot;My bean&quot;&#125;","dateCreated":"2018-06-20T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-20T00:00:00+09:00","description":"Jackson 어노테이션 사용법(4)","headline":"Jackson 어노테이션 사용법(4)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/","keywords":"Jackson"}</script>
     <meta name="description" content="Jackson 어노테이션 사용법(4)">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jackson 어노테이션 사용법(4)">
-<meta property="og:url" content="http://localhost:4000/2018/06/20/jackson-annotation-04/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Jackson 어노테이션 사용법(4)">
 <meta property="og:locale" content="ko_KR">
@@ -35,7 +35,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -385,7 +385,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -398,7 +398,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -411,7 +411,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -513,7 +513,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -526,7 +526,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -539,7 +539,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -573,7 +573,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -586,7 +586,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -599,7 +599,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/06/20/jackson-annotation-04/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/20/jackson-annotation-04/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

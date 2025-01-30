@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA N + 1 문제1234select o.* m.*from Order oleft outer join Member m on o.MEMBER_ID=m.MEMBER_IDwhere o.id =1\n\n실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.\n위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자\n\n12List&lt;Order&gt; orders = em.createQuery(&quot;select o from Order o&quot;, Order.class)\t.getResultList(); // 연과된 모든 엔티티를 조회한다.\n\n실행된 SQL은 다음과 같다.\n\n12345select * from Order // JPQL로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQL\nJPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다. 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.\n\nselect o from Order o  JPQL을 분석해서 select * from Order SQL을 생성한다.\n데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.\nOrder.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.\n연관된 Member를 영속성 컨텍스트에서 찾는다.\n만약 영속성 컨텍스트에 없으면 select * from member where id? SQL을 조회한 order 엔티티 수만큼 실행한다.\n\n","dateCreated":"2017-12-03T03:13:04+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-12-03T03:13:04+09:00","description":"JPA n+1 문제","headline":"JPA n+1 문제","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/12/03/n-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2017/12/03/n-1/","keywords":"JPA, ORM"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA N + 1 문제1234select o.* m.*from Order oleft outer join Member m on o.MEMBER_ID=m.MEMBER_IDwhere o.id =1\n\n실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.\n위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자\n\n12List&lt;Order&gt; orders = em.createQuery(&quot;select o from Order o&quot;, Order.class)\t.getResultList(); // 연과된 모든 엔티티를 조회한다.\n\n실행된 SQL은 다음과 같다.\n\n12345select * from Order // JPQL로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQL\nJPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다. 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.\n\nselect o from Order o  JPQL을 분석해서 select * from Order SQL을 생성한다.\n데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.\nOrder.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.\n연관된 Member를 영속성 컨텍스트에서 찾는다.\n만약 영속성 컨텍스트에 없으면 select * from member where id? SQL을 조회한 order 엔티티 수만큼 실행한다.\n\n","dateCreated":"2017-12-03T03:13:04+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-12-03T03:13:04+09:00","description":"JPA n+1 문제","headline":"JPA n+1 문제","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2017/12/03/n-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2017/12/03/n-1/","keywords":"JPA, ORM"}</script>
     <meta name="description" content="JPA n+1 문제">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JPA n+1 문제">
-<meta property="og:url" content="http://localhost:4000/2017/12/03/n-1/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2017/12/03/n-1/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="JPA n+1 문제">
 <meta property="og:locale" content="ko_KR">
@@ -36,7 +36,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -364,7 +364,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -377,7 +377,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -390,7 +390,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -492,7 +492,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -505,7 +505,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -518,7 +518,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/12/03/n-1/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/12/03/n-1/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -552,7 +552,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/12/03/n-1/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/12/03/n-1/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -565,7 +565,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/12/03/n-1/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/12/03/n-1/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -578,7 +578,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2017/12/03/n-1/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/12/03/n-1/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.\n공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.\nLoopback 특징\n정말 빠르게 REST API를 만들수 있습니다.\n기본적으로 API Document를 Swagger 만들어줍니다.\nCLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.\n다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.\n\nLoopback 설치\n기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.\n\n1$ npm install -g loopback-cli\n\nHello world 프로젝트 설정루프백의 기초적인 특징을 알아보겠습니다.\n123456789$ lb? 애플리케이션 이름은 무엇입니까? hello-world? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world  create hello-world/    info 작업 디렉토리를 hello-world(으)로 번경? 사용하려는 LoopBack 버전은 무엇입니까? 3.x (current)? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, including a single vanilla Message and a single remote method)\n\n터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.\n프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.\n버전은 3.x 최신 버전을 선택합니다.\n예상하는 애플리케이션 종류는  hello-world를 선택합니다.\n\nHello world 프로젝트 실행12$ cd hello-world/$ node .\n\n위에서 CLI로 생성한 프로젝트 디렉토리로 이동합니다.\nnode . 명령어로 프로젝트를 실행 합니다.\nhttp://0.0.0.0:3000/explorer로 이동합니다.\nAPI Document Swagger가 정상적으로 출력되면 아래 그림과 같습니다.\n\nAPI Document\n\nLoopback 기본 User모델을 기반으로 User API를 만들어 줍니다.\nUser API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.\n\nPOST &#x2F;Users (회원 가입)\n123456&#123;  &quot;realm&quot;: &quot;string&quot;,  &quot;username&quot;: &quot;loopback&quot;,  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\ndata에 JSON 타입으로 해당 데이터를 입력합니다.\n기본설정인 In-memory db에 저장됩니다.\n\nPOST &#x2F;Users&#x2F;login (로그인)\n1234&#123;  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\n\ncredentials 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.\n회원 정보가 일치할 경우 Response Body에 AccessToekn 정보를 넘겨 줍니다.\nAccessToekn.id의 값 KIjxd....을 오른쪽 상단 ToKen Set에 입력합니다.\nloopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.\nAccessToekn 모델 또한 Loopback의 기본 제공 모델중 하나입니다.\n\nGET &#x2F;Users&#x2F;{id} (해당 회원 조회)\n\nid 파라마터에 AccessToekn에서 발급 받은 userId를 입력합니다.\n자신의 정보를 조회할 수 있습니다.\n자신의 이외의 회원 정보를 조회할 경우 아래와 같은 StatusCode 401를 리턴 받습니다.\n\n1234567&#123;  &quot;error&quot;: &#123;    &quot;statusCode&quot;: 401,    &quot;name&quot;: &quot;Error&quot;,    &quot;message&quot;: &quot;권한 필수&quot;  &#125;&#125;\n\n결론루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.\n","dateCreated":"2017-05-05T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-05-05T00:00:00+09:00","description":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.","headline":"Loopback 시작하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/05/05/loopback-begin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2017/05/05/loopback-begin/","keywords":"Node, LoopBack"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.\n공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.\nLoopback 특징\n정말 빠르게 REST API를 만들수 있습니다.\n기본적으로 API Document를 Swagger 만들어줍니다.\nCLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.\n다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.\n\nLoopback 설치\n기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.\n\n1$ npm install -g loopback-cli\n\nHello world 프로젝트 설정루프백의 기초적인 특징을 알아보겠습니다.\n123456789$ lb? 애플리케이션 이름은 무엇입니까? hello-world? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world  create hello-world/    info 작업 디렉토리를 hello-world(으)로 번경? 사용하려는 LoopBack 버전은 무엇입니까? 3.x (current)? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, including a single vanilla Message and a single remote method)\n\n터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.\n프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.\n버전은 3.x 최신 버전을 선택합니다.\n예상하는 애플리케이션 종류는  hello-world를 선택합니다.\n\nHello world 프로젝트 실행12$ cd hello-world/$ node .\n\n위에서 CLI로 생성한 프로젝트 디렉토리로 이동합니다.\nnode . 명령어로 프로젝트를 실행 합니다.\nhttp://0.0.0.0:3000/explorer로 이동합니다.\nAPI Document Swagger가 정상적으로 출력되면 아래 그림과 같습니다.\n\nAPI Document\n\nLoopback 기본 User모델을 기반으로 User API를 만들어 줍니다.\nUser API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.\n\nPOST &#x2F;Users (회원 가입)\n123456&#123;  &quot;realm&quot;: &quot;string&quot;,  &quot;username&quot;: &quot;loopback&quot;,  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\ndata에 JSON 타입으로 해당 데이터를 입력합니다.\n기본설정인 In-memory db에 저장됩니다.\n\nPOST &#x2F;Users&#x2F;login (로그인)\n1234&#123;  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\n\ncredentials 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.\n회원 정보가 일치할 경우 Response Body에 AccessToekn 정보를 넘겨 줍니다.\nAccessToekn.id의 값 KIjxd....을 오른쪽 상단 ToKen Set에 입력합니다.\nloopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.\nAccessToekn 모델 또한 Loopback의 기본 제공 모델중 하나입니다.\n\nGET &#x2F;Users&#x2F;{id} (해당 회원 조회)\n\nid 파라마터에 AccessToekn에서 발급 받은 userId를 입력합니다.\n자신의 정보를 조회할 수 있습니다.\n자신의 이외의 회원 정보를 조회할 경우 아래와 같은 StatusCode 401를 리턴 받습니다.\n\n1234567&#123;  &quot;error&quot;: &#123;    &quot;statusCode&quot;: 401,    &quot;name&quot;: &quot;Error&quot;,    &quot;message&quot;: &quot;권한 필수&quot;  &#125;&#125;\n\n결론루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.\n","dateCreated":"2017-05-05T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-05-05T00:00:00+09:00","description":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.","headline":"Loopback 시작하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2017/05/05/loopback-begin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2017/05/05/loopback-begin/","keywords":"Node, LoopBack"}</script>
     <meta name="description" content="최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Loopback 시작하기">
-<meta property="og:url" content="http://localhost:4000/2017/05/05/loopback-begin/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2017/05/05/loopback-begin/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -41,7 +41,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -411,7 +411,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -424,7 +424,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -437,7 +437,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -539,7 +539,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -552,7 +552,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -565,7 +565,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/05/05/loopback-begin/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -599,7 +599,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/05/05/loopback-begin/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -612,7 +612,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/05/05/loopback-begin/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -625,7 +625,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2017/05/05/loopback-begin/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/05/05/loopback-begin/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

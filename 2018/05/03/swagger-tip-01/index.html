@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\nSwagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.\n123456789101112131415@Configuration@EnableSwagger2public class SwaggerConfig &#123;    @Bean    public Docket api() &#123;        return new Docket(DocumentationType.SWAGGER_2)                .select()                .apis(RequestHandlerSelectors.any())                .paths(PathSelectors.any())                .build()                .directModelSubstitute(Timestamp.class, Long.class);    &#125;&#125;\n\ndirectModelSubstitute 메소드는 다음과 같이 작용합니다. 변경하고 싶은 클래스, 변경되고자 하는 포멧팅 입니다.저같은 경우는 long 타입의 클래스로 날짜를 출력하니 directModelSubstitute(Timestamp.class, Long.class);를 적용했습니다.\n\n작업을 완료하시면 위 그림처럼 표시 됩니다.\n","dateCreated":"2018-05-03T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-05-03T00:00:00+09:00","description":"Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.","headline":"Swagger 날짜 포멧팅","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/05/03/swagger-tip-01/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/05/03/swagger-tip-01/","keywords":"Spring"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\nSwagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.\n123456789101112131415@Configuration@EnableSwagger2public class SwaggerConfig &#123;    @Bean    public Docket api() &#123;        return new Docket(DocumentationType.SWAGGER_2)                .select()                .apis(RequestHandlerSelectors.any())                .paths(PathSelectors.any())                .build()                .directModelSubstitute(Timestamp.class, Long.class);    &#125;&#125;\n\ndirectModelSubstitute 메소드는 다음과 같이 작용합니다. 변경하고 싶은 클래스, 변경되고자 하는 포멧팅 입니다.저같은 경우는 long 타입의 클래스로 날짜를 출력하니 directModelSubstitute(Timestamp.class, Long.class);를 적용했습니다.\n\n작업을 완료하시면 위 그림처럼 표시 됩니다.\n","dateCreated":"2018-05-03T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-05-03T00:00:00+09:00","description":"Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.","headline":"Swagger 날짜 포멧팅","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/05/03/swagger-tip-01/","keywords":"Spring"}</script>
     <meta name="description" content="Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Swagger 날짜 포멧팅">
-<meta property="og:url" content="http://localhost:4000/2018/05/03/swagger-tip-01/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/05/03/swagger-tip-01/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Swagger를 API 도큐먼트로 사용하고 계시다면 날짜 관련 model value는 지저분하게 출력 됩니다. 이 문제를 해결 하는 방법에 대해서 간단하게 포스팅 하겠습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -355,7 +355,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -368,7 +368,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -381,7 +381,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -483,7 +483,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -496,7 +496,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -509,7 +509,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -543,7 +543,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -556,7 +556,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -569,7 +569,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/05/03/swagger-tip-01/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/05/03/swagger-tip-01/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

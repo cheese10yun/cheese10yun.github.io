@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.Github클릭해서 전체 소스를 보시는 것을 권장합니다.\n작업순서\nformidable 모듈로 이미지 업로드 진행\nimagemin 모듈로 업로드된 이미지 최적화 진행\naws-sdk 모듈을로 최적화 작업이 완료된 이미지 S3에 업로드\n\n필수 패키지 설치12345npm install --save asyncnpm install --save aws-sdknpm install --save imageminnpm install --save imagemin-pngquantnpm install --save formidable\n\n\nUploadService.js 설명formidable 모듈을 이용한 이미지 업로드123456789101112131415Upload.formidable = (req, callback) =&gt; &#123;  let _fields;  form.parse(req, function (err, fields) &#123;    _fields = fields;  &#125;);  form.on(&#x27;error&#x27;, function (err) &#123;    callback(err, null, null);  &#125;);  form.on(&#x27;end&#x27;, function () &#123;    callback(null, this.openedFiles, _fields);  &#125;);&#125;;\n\n\nform.on(&#39;error&#39;) formidable 업로드 중 오류 발생시 callback으로 err 전달\nform.on(&#39;end&#39;) formidable 업로드가 오류 없이 완료되면 callback으로 파일정보와, 필드값 전달\n\nimagemin 모듈을 이용한 이미지 최적화12345678910111213Upload.optimize = (files, callback) =&gt; &#123;  async.each(files, (file, cb) =&gt; &#123;    imagemin([file.path], `$&#123;ROOT_PATH&#125;/temp/`, &#123;      plugins: [        imageminPngquant(&#123;quality: &#x27;0-80&#x27;, verbose: false, floyd: 1&#125;)      ]    &#125;).then(() =&gt; &#123;      cb();    &#125;)  &#125;, (err) =&gt; &#123;    callback(err)  &#125;);&#125;;\n\n\nasync.each으로 업로드할 파일의 개수만큼 이미지 최적화 적업 진행\nimagemin([최적화할 이미지 경로(배열 타입이여야함)], 최적화 이후 저장될 이미지 경로, 이미지 최적화 작업)\n위의 예제는 업로된 경로와 최적화가 이루어지는 경로가 동일하여 덮어쓰여 집니다.\n이미지 최적화 플러그인 imageminPngquant 사용\n\nimageminPngquant 플러그인123plugins: [\timageminPngquant(&#123;quality: &#x27;0-80&#x27;, verbose: false, floyd: 1&#125;)]\n\nfloyd 이미지 디더링 작업 사용 Type: boolean, Default: false\nquality 이미지 퀄리 지정 사용 Type: string 0~100 사용 가능\nverbose 불필효한 메타정보 제거 사용 Type: boolean, Default: false\nimageminPngquant 의 다양한 속성은 imageminPngquant 에서 확인 할 수 있습니다.\nimageminPngquant 플러그인 이외에도 다양한 플러그인을 사용해서 이미지에 대한 다양한 작업들을 진행할 수 있습니다.\n\n최적화 완료된 이미지 S3 업로드123456789101112Upload.s3 = (files, key, callback) =&gt; &#123;  async.each(files, (file, cb) =&gt; &#123;    params.Key = key + file.name;    params.Body = require(&#x27;fs&#x27;).createReadStream(file.path);    S3.upload(params, (err, result) =&gt; &#123;      cb(err, result);    &#125;);  &#125;, (err, result) =&gt; &#123;    callback(err, result);  &#125;);&#125;;\n\n\nasync.each으로 업로드할 파잇의 개수만큼 S3에 업로드 작업 진행\nfiles 업로드할 파일들의 정보\nparams.Key S3에 업로드 될 경로와 파일이름을 지정합니다.\nparams.Body 이미지 최적화 작업이 끝난 파일의 경로를 입력합니다.\nS3.upload(...) 실질적인 S3 이미지 업로드가 진행됩니다. cb(err, result)으로 에러가 발생하면 즉시 정지하고, 에러가 발생하지 않으면 파일의 개수만큼 업로드를 반복합니다.\nYun Blog Node AWS S3 업로드 자세한 설명은 참고\n\nrouter 에서 사용법1234567891011121314151617181920212223242526router.post(&#x27;/upload&#x27;, (req, res) =&gt; &#123;  const tasks = [    (callback) =&gt; &#123;      Upload.formidable(req, (err, files, fields) =&gt; &#123;        callback(err, files, fields);      &#125;);    &#125;,    (files, fields, callback) =&gt; &#123;      Upload.optimize(files, (err) =&gt; &#123;        callback(err, files, fields);      &#125;);    &#125;,    (files, fields, callback) =&gt; &#123;      Upload.s3(files, &#x27;channel/test/&#x27;, (err, result) =&gt; &#123;        callback(err, result)      &#125;);    &#125;  ];  async.waterfall(tasks, (err, result) =&gt; &#123;    if (!err) &#123;      res.json(&#123;success: true, msg: &#x27;업로드 성공&#x27;&#125;)    &#125; else &#123;      res.json(&#123;success: false, msg: &#x27;업로드 실패&#x27;&#125;)    &#125;  &#125;);&#125;);\n\ntasks 작업은 UploadService 모듈로 진행\n위에서 작성한 UploadService.js 모듈로 아래의 작업들이 진행됩니다.\nformidable 메소드로 이미지 업로드 진행\noptimize 메소드로 이미지 최적화 진행\ns3 메서드로 s3 업로드 진행\nasync.waterfall 으로 위 작업 순차 진행\n\n사이즈 비교\n\n\n원본\nimageOptim App\nimagemin\n\n\n\n10,645,070 byte\n8,499,904 byte\n2,858,674 byte\n\n\n473,459 byte\n282,029 byte\n177,423 byte\n\n\n421,698 byte\n258,743 byte\n189,266 byte\n\n\n382,774 byte\n232,684 byte\n182,071 byte\n\n\n467,184 byte\n282,368 byte\n164,739 byte\n\n\nimageOptim App은 맥에서 사용하는 이미지 최적화 툴입니다.\n\n이미지 사이즈(가로세로 크기)는 변경되지 않습니다.\nbit color 값은 8bit로 수정됩니다.\n이미지에 대한 지식이 없어 비포 에프터 사진을 첨부했습니다.\n\n원본 이미지\n최적화 이미지\n마무리최근에 이미지 S3 업로드시 이미지 최적화 해야 할 작업이 있어서 코드를 만들고 간단하게 정리해보았습니다. 아직 프로덕션에 사용하는 코드는 아니라서 그렇게 안전한 코드는 아닌점… 미리 말씀드립니다. 이 플러그인 외에도 이미지 크롭, 이미지 해상도 조정 등 다양한 플러그인들이 많아 좀 더 검색해보시고 적용하시면 보다 좋을 거 같습니다. 부디 도움이 조금이라도 되셨기를 바랍니다.\n","dateCreated":"2017-03-04T00:00:00+09:00","dateModified":"2025-01-31T03:33:31+09:00","datePublished":"2017-03-04T00:00:00+09:00","description":"AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.","headline":"AWS S3 업로드시 이미지 최적화","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/03/04/aws-s3-imgage/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2017/03/04/aws-s3-imgage/","keywords":"Node"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.Github클릭해서 전체 소스를 보시는 것을 권장합니다.\n작업순서\nformidable 모듈로 이미지 업로드 진행\nimagemin 모듈로 업로드된 이미지 최적화 진행\naws-sdk 모듈을로 최적화 작업이 완료된 이미지 S3에 업로드\n\n필수 패키지 설치12345npm install --save asyncnpm install --save aws-sdknpm install --save imageminnpm install --save imagemin-pngquantnpm install --save formidable\n\n\nUploadService.js 설명formidable 모듈을 이용한 이미지 업로드123456789101112131415Upload.formidable = (req, callback) =&gt; &#123;  let _fields;  form.parse(req, function (err, fields) &#123;    _fields = fields;  &#125;);  form.on(&#x27;error&#x27;, function (err) &#123;    callback(err, null, null);  &#125;);  form.on(&#x27;end&#x27;, function () &#123;    callback(null, this.openedFiles, _fields);  &#125;);&#125;;\n\n\nform.on(&#39;error&#39;) formidable 업로드 중 오류 발생시 callback으로 err 전달\nform.on(&#39;end&#39;) formidable 업로드가 오류 없이 완료되면 callback으로 파일정보와, 필드값 전달\n\nimagemin 모듈을 이용한 이미지 최적화12345678910111213Upload.optimize = (files, callback) =&gt; &#123;  async.each(files, (file, cb) =&gt; &#123;    imagemin([file.path], `$&#123;ROOT_PATH&#125;/temp/`, &#123;      plugins: [        imageminPngquant(&#123;quality: &#x27;0-80&#x27;, verbose: false, floyd: 1&#125;)      ]    &#125;).then(() =&gt; &#123;      cb();    &#125;)  &#125;, (err) =&gt; &#123;    callback(err)  &#125;);&#125;;\n\n\nasync.each으로 업로드할 파일의 개수만큼 이미지 최적화 적업 진행\nimagemin([최적화할 이미지 경로(배열 타입이여야함)], 최적화 이후 저장될 이미지 경로, 이미지 최적화 작업)\n위의 예제는 업로된 경로와 최적화가 이루어지는 경로가 동일하여 덮어쓰여 집니다.\n이미지 최적화 플러그인 imageminPngquant 사용\n\nimageminPngquant 플러그인123plugins: [\timageminPngquant(&#123;quality: &#x27;0-80&#x27;, verbose: false, floyd: 1&#125;)]\n\nfloyd 이미지 디더링 작업 사용 Type: boolean, Default: false\nquality 이미지 퀄리 지정 사용 Type: string 0~100 사용 가능\nverbose 불필효한 메타정보 제거 사용 Type: boolean, Default: false\nimageminPngquant 의 다양한 속성은 imageminPngquant 에서 확인 할 수 있습니다.\nimageminPngquant 플러그인 이외에도 다양한 플러그인을 사용해서 이미지에 대한 다양한 작업들을 진행할 수 있습니다.\n\n최적화 완료된 이미지 S3 업로드123456789101112Upload.s3 = (files, key, callback) =&gt; &#123;  async.each(files, (file, cb) =&gt; &#123;    params.Key = key + file.name;    params.Body = require(&#x27;fs&#x27;).createReadStream(file.path);    S3.upload(params, (err, result) =&gt; &#123;      cb(err, result);    &#125;);  &#125;, (err, result) =&gt; &#123;    callback(err, result);  &#125;);&#125;;\n\n\nasync.each으로 업로드할 파잇의 개수만큼 S3에 업로드 작업 진행\nfiles 업로드할 파일들의 정보\nparams.Key S3에 업로드 될 경로와 파일이름을 지정합니다.\nparams.Body 이미지 최적화 작업이 끝난 파일의 경로를 입력합니다.\nS3.upload(...) 실질적인 S3 이미지 업로드가 진행됩니다. cb(err, result)으로 에러가 발생하면 즉시 정지하고, 에러가 발생하지 않으면 파일의 개수만큼 업로드를 반복합니다.\nYun Blog Node AWS S3 업로드 자세한 설명은 참고\n\nrouter 에서 사용법1234567891011121314151617181920212223242526router.post(&#x27;/upload&#x27;, (req, res) =&gt; &#123;  const tasks = [    (callback) =&gt; &#123;      Upload.formidable(req, (err, files, fields) =&gt; &#123;        callback(err, files, fields);      &#125;);    &#125;,    (files, fields, callback) =&gt; &#123;      Upload.optimize(files, (err) =&gt; &#123;        callback(err, files, fields);      &#125;);    &#125;,    (files, fields, callback) =&gt; &#123;      Upload.s3(files, &#x27;channel/test/&#x27;, (err, result) =&gt; &#123;        callback(err, result)      &#125;);    &#125;  ];  async.waterfall(tasks, (err, result) =&gt; &#123;    if (!err) &#123;      res.json(&#123;success: true, msg: &#x27;업로드 성공&#x27;&#125;)    &#125; else &#123;      res.json(&#123;success: false, msg: &#x27;업로드 실패&#x27;&#125;)    &#125;  &#125;);&#125;);\n\ntasks 작업은 UploadService 모듈로 진행\n위에서 작성한 UploadService.js 모듈로 아래의 작업들이 진행됩니다.\nformidable 메소드로 이미지 업로드 진행\noptimize 메소드로 이미지 최적화 진행\ns3 메서드로 s3 업로드 진행\nasync.waterfall 으로 위 작업 순차 진행\n\n사이즈 비교\n\n\n원본\nimageOptim App\nimagemin\n\n\n\n10,645,070 byte\n8,499,904 byte\n2,858,674 byte\n\n\n473,459 byte\n282,029 byte\n177,423 byte\n\n\n421,698 byte\n258,743 byte\n189,266 byte\n\n\n382,774 byte\n232,684 byte\n182,071 byte\n\n\n467,184 byte\n282,368 byte\n164,739 byte\n\n\nimageOptim App은 맥에서 사용하는 이미지 최적화 툴입니다.\n\n이미지 사이즈(가로세로 크기)는 변경되지 않습니다.\nbit color 값은 8bit로 수정됩니다.\n이미지에 대한 지식이 없어 비포 에프터 사진을 첨부했습니다.\n\n원본 이미지\n최적화 이미지\n마무리최근에 이미지 S3 업로드시 이미지 최적화 해야 할 작업이 있어서 코드를 만들고 간단하게 정리해보았습니다. 아직 프로덕션에 사용하는 코드는 아니라서 그렇게 안전한 코드는 아닌점… 미리 말씀드립니다. 이 플러그인 외에도 이미지 크롭, 이미지 해상도 조정 등 다양한 플러그인들이 많아 좀 더 검색해보시고 적용하시면 보다 좋을 거 같습니다. 부디 도움이 조금이라도 되셨기를 바랍니다.\n","dateCreated":"2017-03-04T00:00:00+09:00","dateModified":"2025-01-31T03:33:31+09:00","datePublished":"2017-03-04T00:00:00+09:00","description":"AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.","headline":"AWS S3 업로드시 이미지 최적화","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/","keywords":"Node"}</script>
     <meta name="description" content="AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="AWS S3 업로드시 이미지 최적화">
-<meta property="og:url" content="http://localhost:4000/2017/03/04/aws-s3-imgage/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="AWS S3 이미지 업로드시 이미지 최적화를 진행하고 업로드하는 것이 브라우저에서의 속도가 크게 도움이 됩니다. formidable 업로드 , AWS-S3 업로드는 이 전 포스팅에서 한번 다뤘기 때문에 간단하게 설명하고 이미지 최적화 적업에 대해서 자세히 포스팅하겠습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -322,7 +322,7 @@
 <li><code>params.Key</code> S3에 업로드 될 경로와 파일이름을 지정합니다.</li>
 <li><code>params.Body</code> 이미지 최적화 작업이 끝난 파일의 경로를 입력합니다.</li>
 <li><code>S3.upload(...)</code> 실질적인 S3 이미지 업로드가 진행됩니다. <code>cb(err, result)</code>으로 에러가 발생하면 즉시 정지하고, 에러가 발생하지 않으면 파일의 개수만큼 업로드를 반복합니다.</li>
-<li><a target="_blank" rel="noopener" href="https://cheese10yun.github.io/Node-AWS-S3-Upload">Yun Blog Node AWS S3 업로드</a> 자세한 설명은 참고</li>
+<li><a href="https://cheese10yun.github.io/Node-AWS-S3-Upload">Yun Blog Node AWS S3 업로드</a> 자세한 설명은 참고</li>
 </ul>
 <h2 id="router-에서-사용법"><a href="#router-에서-사용법" class="headerlink" title="router 에서 사용법"></a>router 에서 사용법</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/upload&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> tasks = [</span><br><span class="line">    <span class="function">(<span class="params">callback</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title class_">Upload</span>.<span class="title function_">formidable</span>(req, <span class="function">(<span class="params">err, files, fields</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">callback</span>(err, files, fields);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function">(<span class="params">files, fields, callback</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title class_">Upload</span>.<span class="title function_">optimize</span>(files, <span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">callback</span>(err, files, fields);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="function">(<span class="params">files, fields, callback</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title class_">Upload</span>.<span class="title function_">s3</span>(files, <span class="string">&#x27;channel/test/&#x27;</span>, <span class="function">(<span class="params">err, result</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">callback</span>(err, result)</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  ];</span><br><span class="line">  <span class="keyword">async</span>.<span class="title function_">waterfall</span>(tasks, <span class="function">(<span class="params">err, result</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!err) &#123;</span><br><span class="line">      res.<span class="title function_">json</span>(&#123;<span class="attr">success</span>: <span class="literal">true</span>, <span class="attr">msg</span>: <span class="string">&#x27;업로드 성공&#x27;</span>&#125;)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      res.<span class="title function_">json</span>(&#123;<span class="attr">success</span>: <span class="literal">false</span>, <span class="attr">msg</span>: <span class="string">&#x27;업로드 실패&#x27;</span>&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
@@ -441,7 +441,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -454,7 +454,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -467,7 +467,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -569,7 +569,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -582,7 +582,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -595,7 +595,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -629,7 +629,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -642,7 +642,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -655,7 +655,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2017/03/04/aws-s3-imgage/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2017/03/04/aws-s3-imgage/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

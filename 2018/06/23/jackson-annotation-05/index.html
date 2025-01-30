@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Custom Jackson Annotation, Disable Jackson Annotation\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\nCustom Jackson Annotation\nAnnotation 직접 정리 할 수 있습니다.\n\n12345678910111213141516171819@CustomAnnotationpublic static class BeanWithCustomAnnotation &#123;    public int id;    public String name;    public Date dateCreated;    public BeanWithCustomAnnotation(int id, String name, Date dateCreated) &#123;        this.id = id;        this.name = name;        this.dateCreated = dateCreated;    &#125;&#125;@Retention(RetentionPolicy.RUNTIME)@JacksonAnnotationsInside@JsonInclude(JsonInclude.Include.NON_NULL)@JsonPropertyOrder(&#123;&quot;name&quot;, &quot;id&quot;, &quot;dateCreated&quot;&#125;)@interface CustomAnnotation &#123;&#125;\n1234567891011// 적용전&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;My bean&quot;,  &quot;dateCreated&quot;: null&#125;// 적용후, property order 변경, null 값 비 직렬화&#123;  &quot;name&quot;: &quot;My bean&quot;,  &quot;id&quot;: 1&#125;\n\nDisable Jackson Annotation\n모든 Jackson annotation 비활성화 하는 방법\n\n 123456789101112@JsonInclude(JsonInclude.Include.NON_NULL)@JsonPropertyOrder(&#123;&quot;name&quot;, &quot;id&quot;&#125;) public static class MyBean &#123;     public int id;     public String name;     public MyBean(int id, String name) &#123;         this.id = id;         this.name = name;     &#125; &#125;mapper.disable(MapperFeature.USE_ANNOTATIONS); // 모든 Jackson annotation 비활성화\n 12345678910// MapperFeature.USE_ANNOTATIONS 적용전&#123;    &quot;id&quot;:1,    &quot;name&quot;:null&#125;// MapperFeature.USE_ANNOTATIONS 적용후&#123;  &quot;id&quot;: 1&#125;","dateCreated":"2018-06-23T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-23T00:00:00+09:00","description":"Jackson 어노테이션 사용법(5)","headline":"Jackson 어노테이션 사용법(5)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2018/06/23/jackson-annotation-05/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2018/06/23/jackson-annotation-05/","keywords":"Jackson"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Custom Jackson Annotation, Disable Jackson Annotation\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\nCustom Jackson Annotation\nAnnotation 직접 정리 할 수 있습니다.\n\n12345678910111213141516171819@CustomAnnotationpublic static class BeanWithCustomAnnotation &#123;    public int id;    public String name;    public Date dateCreated;    public BeanWithCustomAnnotation(int id, String name, Date dateCreated) &#123;        this.id = id;        this.name = name;        this.dateCreated = dateCreated;    &#125;&#125;@Retention(RetentionPolicy.RUNTIME)@JacksonAnnotationsInside@JsonInclude(JsonInclude.Include.NON_NULL)@JsonPropertyOrder(&#123;&quot;name&quot;, &quot;id&quot;, &quot;dateCreated&quot;&#125;)@interface CustomAnnotation &#123;&#125;\n1234567891011// 적용전&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;My bean&quot;,  &quot;dateCreated&quot;: null&#125;// 적용후, property order 변경, null 값 비 직렬화&#123;  &quot;name&quot;: &quot;My bean&quot;,  &quot;id&quot;: 1&#125;\n\nDisable Jackson Annotation\n모든 Jackson annotation 비활성화 하는 방법\n\n 123456789101112@JsonInclude(JsonInclude.Include.NON_NULL)@JsonPropertyOrder(&#123;&quot;name&quot;, &quot;id&quot;&#125;) public static class MyBean &#123;     public int id;     public String name;     public MyBean(int id, String name) &#123;         this.id = id;         this.name = name;     &#125; &#125;mapper.disable(MapperFeature.USE_ANNOTATIONS); // 모든 Jackson annotation 비활성화\n 12345678910// MapperFeature.USE_ANNOTATIONS 적용전&#123;    &quot;id&quot;:1,    &quot;name&quot;:null&#125;// MapperFeature.USE_ANNOTATIONS 적용후&#123;  &quot;id&quot;: 1&#125;","dateCreated":"2018-06-23T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2018-06-23T00:00:00+09:00","description":"Jackson 어노테이션 사용법(5)","headline":"Jackson 어노테이션 사용법(5)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/","keywords":"Jackson"}</script>
     <meta name="description" content="Jackson 어노테이션 사용법(5)">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jackson 어노테이션 사용법(5)">
-<meta property="og:url" content="http://localhost:4000/2018/06/23/jackson-annotation-05/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Jackson 어노테이션 사용법(5)">
 <meta property="og:locale" content="ko_KR">
@@ -35,7 +35,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -360,7 +360,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -373,7 +373,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -386,7 +386,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -488,7 +488,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -501,7 +501,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -514,7 +514,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -548,7 +548,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -561,7 +561,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -574,7 +574,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2018/06/23/jackson-annotation-05/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2018/06/23/jackson-annotation-05/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

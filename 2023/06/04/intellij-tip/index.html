@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"TabTab Limit\n\nsettings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능\n여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천\n\n자주 사용하는 Tab 이동\n\n\n\nName\nHot Key\nDesc\n\n\n\nSplit Right\nfn + ctr +  ➡️\n현재 화면 오른 쪽으로 분활\n\n\nSplit Down\nfn + ctr +  ⬇️\n현재 화면 아래 쪽으로 분할\n\n\nGoto Next Splitter\nshift + cmd  ➡️\n현재 포커싱 화면애서 다음 Tab으로 이동\n\n\nGoto Previous Splitter\nshift + cmd  ⬅️\n현재 포커싱 화면애서 이전 다음 Tab으로 이동\n\n\n&lt;- Back\ncmd + [\n현재 Tab의 이전 Tab, tab limit 1 지정시 유용\n\n\n-&gt; Forword\ncmd + ]\n현재 Tab의 다음 Tab, tab limit 1 지정시 유용\n\n\nRecent Files\ncmd + e\n최근 Open 파일 리스트\n\n\nRecent Locations\nshift + cmd + e\n최근 Open 파일 커서 위치\n\n\nBookmarks 지정\ncmd + F3\n북마크 지정\n\n\nBookmarks\nF3\n지정한 북마크 리스트\n\n\nGo to file\nshift + cmd + o\n파일 열기\n\n\n간단 팁Find Action\n\n특정한 기능을 찾고 싶은 경우 단축키 shift + cmd + a Find Action으로 해당 기능을 찾을 수 있음\n대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash\n\nKey map\n\nKey map 통해서 Hot Key 조회 및 등록 가능\n키워드를 통해 검색 or 단축키를 통한 검색도 지원\n\nLive Template\n\n코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.\nsout, psvm 등이 여기에 해당합니다.\nss, tdd, jobc, jobcode, comment-formatter sf 등등을 커스텀 해서 사용\n\n등록 방법\n\nSettings -&gt; Live Templates\n\nformatter 코드 정렬 제외\n12345678910fun asd(): Unit &#123;    //@formatter:off    val a = 10        val b = 10 // 코드 정렬에서 제외        val c = 10        val d = 10    val e = 10    val f = 10    //@formatter:on&#125;\n\n특정한 이유로 코드 정렬을 제외하고 싶을 때 @formatter:off ~ @formatter:on을 활용하여 제외할 수 있다.\n\nGradle Task\n\nGradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.\nbuild.gradle.kts에 직접 작성한 TASK도 동작 가능\n\n문자열동일 문자열 ⌘ + ⌃ + g\n동일 위치열 ⌥ + drag or ⌥⌥\n복사 히스토리 command + shift + v\n활용 방법\n특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.\nPluginsString Manipulation PluginString Manipulation Plugin 플러그인은 문자열에 대한 다양한 기능을 제공합니다.\n\n\n특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.\n\n\n\nSwitch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.\n\nGrep Console\n출처 Grep Console\n\nGrep Console를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인\nKey Promoter X\n출처 Key Promoter X\n\nKey Promoter X는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인\nPresentation Assistant\nPresentation Assistant는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인\nKotlin Fill Class\n출처 Kotlin Fill Class\n\nKotlin Fill Class는 코틀린 생성자 네임드 파라미터 기반으로 생성을 도와주는 플러그인\nInspection Lens\n출처 Inspection Lens\n\nInspection Lens는 오류, 경고 및 기타 검사 하이라이트를 인라인으로 표시해 주는 플러그인\n플러그인 찾는 방법\n플러그인 검색을 /sortBy:downloads으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택\nHTTP Client\nHTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능\nHTTP Env\n1234567891011&#123;  &quot;local&quot;: &#123;    &quot;shop-service&quot;: &quot;http://localhost:8080&quot;  &#125;,  &quot;sandbox&quot;: &#123;    &quot;shop-service&quot;: &quot;http://snadbox-xxxx&quot;  &#125;,  &quot;beta&quot;: &#123;    &quot;shop-service&quot;: &quot;http://beta-xxxx&quot;  &#125;&#125;\n\nHTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.\nHTTP Curl Copy &amp; Paste\nCurl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.\n\n반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.\nQuery parameter 정리\nQuery parameter를 쉽게 정리할 수 있습니다.\nGitHub Code ReviewGitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.\n\nPullRequest를 확인합니다. Find Action 기능을 통해서 찾을 수 있고 CMD + 3 단축키로도 찾을 수 있습니다.\n\nPullRequest를 내용을 확인할 수 있습니다.\n\nDiff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.\n\n작성된 코멘트는 실제 Github에도 작성됩니다.\n\nIDEA에서 해당 PR을 Meger 할 수 있습니다.\n\nPull Request 항목들을 필터를 통해서 검색도 가능합니다.\n","dateCreated":"2023-06-04T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2023-06-04T00:00:00+09:00","description":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","headline":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/06/04/intellij-tip/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2023/06/04/intellij-tip/","keywords":"Jetbrains, IntelliJ"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"TabTab Limit\n\nsettings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능\n여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천\n\n자주 사용하는 Tab 이동\n\n\n\nName\nHot Key\nDesc\n\n\n\nSplit Right\nfn + ctr +  ➡️\n현재 화면 오른 쪽으로 분활\n\n\nSplit Down\nfn + ctr +  ⬇️\n현재 화면 아래 쪽으로 분할\n\n\nGoto Next Splitter\nshift + cmd  ➡️\n현재 포커싱 화면애서 다음 Tab으로 이동\n\n\nGoto Previous Splitter\nshift + cmd  ⬅️\n현재 포커싱 화면애서 이전 다음 Tab으로 이동\n\n\n&lt;- Back\ncmd + [\n현재 Tab의 이전 Tab, tab limit 1 지정시 유용\n\n\n-&gt; Forword\ncmd + ]\n현재 Tab의 다음 Tab, tab limit 1 지정시 유용\n\n\nRecent Files\ncmd + e\n최근 Open 파일 리스트\n\n\nRecent Locations\nshift + cmd + e\n최근 Open 파일 커서 위치\n\n\nBookmarks 지정\ncmd + F3\n북마크 지정\n\n\nBookmarks\nF3\n지정한 북마크 리스트\n\n\nGo to file\nshift + cmd + o\n파일 열기\n\n\n간단 팁Find Action\n\n특정한 기능을 찾고 싶은 경우 단축키 shift + cmd + a Find Action으로 해당 기능을 찾을 수 있음\n대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash\n\nKey map\n\nKey map 통해서 Hot Key 조회 및 등록 가능\n키워드를 통해 검색 or 단축키를 통한 검색도 지원\n\nLive Template\n\n코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.\nsout, psvm 등이 여기에 해당합니다.\nss, tdd, jobc, jobcode, comment-formatter sf 등등을 커스텀 해서 사용\n\n등록 방법\n\nSettings -&gt; Live Templates\n\nformatter 코드 정렬 제외\n12345678910fun asd(): Unit &#123;    //@formatter:off    val a = 10        val b = 10 // 코드 정렬에서 제외        val c = 10        val d = 10    val e = 10    val f = 10    //@formatter:on&#125;\n\n특정한 이유로 코드 정렬을 제외하고 싶을 때 @formatter:off ~ @formatter:on을 활용하여 제외할 수 있다.\n\nGradle Task\n\nGradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.\nbuild.gradle.kts에 직접 작성한 TASK도 동작 가능\n\n문자열동일 문자열 ⌘ + ⌃ + g\n동일 위치열 ⌥ + drag or ⌥⌥\n복사 히스토리 command + shift + v\n활용 방법\n특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.\nPluginsString Manipulation PluginString Manipulation Plugin 플러그인은 문자열에 대한 다양한 기능을 제공합니다.\n\n\n특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.\n\n\n\nSwitch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.\n\nGrep Console\n출처 Grep Console\n\nGrep Console를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인\nKey Promoter X\n출처 Key Promoter X\n\nKey Promoter X는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인\nPresentation Assistant\nPresentation Assistant는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인\nKotlin Fill Class\n출처 Kotlin Fill Class\n\nKotlin Fill Class는 코틀린 생성자 네임드 파라미터 기반으로 생성을 도와주는 플러그인\nInspection Lens\n출처 Inspection Lens\n\nInspection Lens는 오류, 경고 및 기타 검사 하이라이트를 인라인으로 표시해 주는 플러그인\n플러그인 찾는 방법\n플러그인 검색을 /sortBy:downloads으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택\nHTTP Client\nHTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능\nHTTP Env\n1234567891011&#123;  &quot;local&quot;: &#123;    &quot;shop-service&quot;: &quot;http://localhost:8080&quot;  &#125;,  &quot;sandbox&quot;: &#123;    &quot;shop-service&quot;: &quot;http://snadbox-xxxx&quot;  &#125;,  &quot;beta&quot;: &#123;    &quot;shop-service&quot;: &quot;http://beta-xxxx&quot;  &#125;&#125;\n\nHTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.\nHTTP Curl Copy &amp; Paste\nCurl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.\n\n반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.\nQuery parameter 정리\nQuery parameter를 쉽게 정리할 수 있습니다.\nGitHub Code ReviewGitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.\n\nPullRequest를 확인합니다. Find Action 기능을 통해서 찾을 수 있고 CMD + 3 단축키로도 찾을 수 있습니다.\n\nPullRequest를 내용을 확인할 수 있습니다.\n\nDiff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.\n\n작성된 코멘트는 실제 Github에도 작성됩니다.\n\nIDEA에서 해당 PR을 Meger 할 수 있습니다.\n\nPull Request 항목들을 필터를 통해서 검색도 가능합니다.\n","dateCreated":"2023-06-04T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2023-06-04T00:00:00+09:00","description":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","headline":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2023/06/04/intellij-tip/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2023/06/04/intellij-tip/","keywords":"Jetbrains, IntelliJ"}</script>
     <meta name="description" content="IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리">
-<meta property="og:url" content="http://localhost:4000/2023/06/04/intellij-tip/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2023/06/04/intellij-tip/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리">
 <meta property="og:locale" content="ko_KR">
@@ -69,7 +69,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -538,7 +538,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -551,7 +551,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -564,7 +564,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -666,7 +666,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -679,7 +679,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -692,7 +692,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2023/06/04/intellij-tip/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -726,7 +726,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2023/06/04/intellij-tip/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -739,7 +739,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2023/06/04/intellij-tip/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -752,7 +752,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2023/06/04/intellij-tip/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2023/06/04/intellij-tip/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

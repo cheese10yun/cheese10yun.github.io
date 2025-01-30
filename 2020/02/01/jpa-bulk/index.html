@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.\n코드123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657internal class BulkTest(        private val em: EntityManager) : SpringBootTestSupport() &#123;    val query = JPAQueryFactory(em)    @BeforeEach    internal fun setUp() &#123;        val teams = listOf(                Team(&quot;team_1&quot;),                Team(&quot;team_2&quot;),                Team(&quot;team_3&quot;),                Team(&quot;team_4&quot;),                Team(&quot;team_5&quot;),                Team(&quot;team_6&quot;),                Team(&quot;team_7&quot;),                Team(&quot;team_8&quot;),                Team(&quot;team_9&quot;),                Team(&quot;team_10&quot;)        )        for (team in teams) &#123;            em.persist(team)        &#125;    &#125;    @Test    internal fun `bulk test`() &#123;        // team 전체를 조회한다. team name은 team_x 이다.        val teams = query.selectFrom(qTeam).fetch()        for (team in teams) &#123;            println(&quot;before update team : $team&quot;)        &#125;        val ids = teams.map &#123; it.id!! &#125;        // team  name 전체를 none name으로 변경한다.         val updateCount = query.update(qTeam)                .set(qTeam.name, &quot;none name&quot;)                .where(qTeam.id.`in`(ids))                .execute()        println(&quot;update count : $updateCount&quot;)        for (team in teams) &#123;            println(&quot;after update team : $team&quot;)        &#125;        val newSelectTeams = query.selectFrom(qTeam).fetch()            for (team in newSelectTeams) &#123;            println(&quot;new select team : $team&quot;)        &#125;    &#125;&#125;\n\n코드는 간단합니다. team_1, team_2…team_10을 저장하고 query dsl update를 이용해서 team name을 none name으로 변경하는 것입니다. 그리고 변경 제대로 변경이 되었는지 확인하는 확인하는 반복문이 있습니다.\n\n로그를 보면 team name 1 ~ 10까지 제대로 출력되는 것을 확인할 수 있습니다.\n\nupdate query, update count가 정상적으로 출력됩니다. 이제 업데이트된 team을 확인하는 아래 코드의 로그를 확인해보겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n예상했던 none name이 아닌 이전 데이터가 출력 되는 것을 획인 할 수 있습니다. 그렇다면 새로 query dsl으로 조회 쿼리를 해보겠습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규로 조회한 데이터에서도 team name이 변경되지 않은 것을 확인할 수 있습니다. 왜 변경되지 않은 것일 까요?\nTeam 엔티티가 변경되지 않은 이유JPA 벌크성 작업은 영속성 컨텍스트와 무관업데이트 이후 아래 코드가 team name 변경 전 데이터인 이유를 설명드리겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n\n엔티티 수정 메커니즘\n엔티티의 변경사항을 을 데이터베이스에 반영하는 것을 변경 감지(dirty checking)이라고 합니다. JPA는 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두고. 플러시 시점에서 스냅샷과 엔티티를 비교해서 변경된 엔티티를 데이터베이스에 반영하게 됩니다. 즉 아래와 같은 절차를 진행하게 됩니다.\n\n트랜잭션을 커밋 하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.\n엔티티와 스냅샷을 비교해서 변경된 엔티티를 찾는다.\n변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.\n쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.\n데이터베이스 트랜잭션을 커밋 한다.\n\n벌크 수정 메커니즘하지만 벌크성 작업은 영속성 컨텍스트와 무관합니다. 벌크 연산은 영속성 컨텍스트를 통하지 않고 아래 그림처럼 데이터베이스에 직접 쿼리를 진행합니다.\n\n즉 영속성 컨텍스트와 무관하니 기존 영속성 컨텍스트에 존재하는 Team의 name들은 변경이 없는 것입니다.\n영속성 컨텍스트는 1차 캐시된 것이 우선이다.after update team를 조회했을 때는 영속성 컨텍스트와 무관했기 때문에 기존 데이터가 나왔지만 신규 조회를 한 아래 코드 왜 변경 전 name이 출력 되었을까요? 그 이유는 영속성 컨텍스트 저장 메커니즘에 있습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n영속성 컨텍스트 저장 메커니즘영속성 컨텍스트 1차 캐시 저장 메커니즘 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 \n\nfindById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. 반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 query 하여 결과를 가져옵니다. 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.\n\nJPQL을 호출하면 데이터베이스에 우선적으로 조회한다.\n조회한 값을 영속성 컨텍스트에 저장을 시도한다.\n저장을 시도할 때 해당 데이터가 이미 영속성 컨텍스트에 존재하는 경우(영속성 컨텍스트에서는 식별자 값으로 식별) 데이터베이스에서 조회한 신규 데이터를 버린다.\n\n즉 이미 영속성컨텍스트에 team들이 존재하기 때문에 신규 조회한 영속성 컨텍스트를 버리게 되는 것입니다. 영속성 컨텍스트에서는 ID를 기반으로 식별작을 합니다.\n해결 방법해결 방법은 간단합니다. 영속성 컨텍스트를 초기화(clear)을 하면 됩니다. 영속성 컨텍스트가 초기화됐기 때문에 신규 조회한 team 객체들이 모두 영속성 컨텍스트에 그대로 반영되게 됩니다. \n12345678...em.clear() // 영속성 컨텍스트를 초기화 한다.val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규 조회한 team name 제대로 변경된 것을 확인할 수 있습니다. \n참고\n자바 ORM 표준 JPA 프로그래밍\n\n","dateCreated":"2020-02-01T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2020-02-01T00:00:00+09:00","description":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.","headline":"JPA 벌크 작업 주의점","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2020/02/01/jpa-bulk/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2020/02/01/jpa-bulk/","keywords":"JPA, ORM, Performance"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.\n코드123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657internal class BulkTest(        private val em: EntityManager) : SpringBootTestSupport() &#123;    val query = JPAQueryFactory(em)    @BeforeEach    internal fun setUp() &#123;        val teams = listOf(                Team(&quot;team_1&quot;),                Team(&quot;team_2&quot;),                Team(&quot;team_3&quot;),                Team(&quot;team_4&quot;),                Team(&quot;team_5&quot;),                Team(&quot;team_6&quot;),                Team(&quot;team_7&quot;),                Team(&quot;team_8&quot;),                Team(&quot;team_9&quot;),                Team(&quot;team_10&quot;)        )        for (team in teams) &#123;            em.persist(team)        &#125;    &#125;    @Test    internal fun `bulk test`() &#123;        // team 전체를 조회한다. team name은 team_x 이다.        val teams = query.selectFrom(qTeam).fetch()        for (team in teams) &#123;            println(&quot;before update team : $team&quot;)        &#125;        val ids = teams.map &#123; it.id!! &#125;        // team  name 전체를 none name으로 변경한다.         val updateCount = query.update(qTeam)                .set(qTeam.name, &quot;none name&quot;)                .where(qTeam.id.`in`(ids))                .execute()        println(&quot;update count : $updateCount&quot;)        for (team in teams) &#123;            println(&quot;after update team : $team&quot;)        &#125;        val newSelectTeams = query.selectFrom(qTeam).fetch()            for (team in newSelectTeams) &#123;            println(&quot;new select team : $team&quot;)        &#125;    &#125;&#125;\n\n코드는 간단합니다. team_1, team_2…team_10을 저장하고 query dsl update를 이용해서 team name을 none name으로 변경하는 것입니다. 그리고 변경 제대로 변경이 되었는지 확인하는 확인하는 반복문이 있습니다.\n\n로그를 보면 team name 1 ~ 10까지 제대로 출력되는 것을 확인할 수 있습니다.\n\nupdate query, update count가 정상적으로 출력됩니다. 이제 업데이트된 team을 확인하는 아래 코드의 로그를 확인해보겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n예상했던 none name이 아닌 이전 데이터가 출력 되는 것을 획인 할 수 있습니다. 그렇다면 새로 query dsl으로 조회 쿼리를 해보겠습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규로 조회한 데이터에서도 team name이 변경되지 않은 것을 확인할 수 있습니다. 왜 변경되지 않은 것일 까요?\nTeam 엔티티가 변경되지 않은 이유JPA 벌크성 작업은 영속성 컨텍스트와 무관업데이트 이후 아래 코드가 team name 변경 전 데이터인 이유를 설명드리겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n\n엔티티 수정 메커니즘\n엔티티의 변경사항을 을 데이터베이스에 반영하는 것을 변경 감지(dirty checking)이라고 합니다. JPA는 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두고. 플러시 시점에서 스냅샷과 엔티티를 비교해서 변경된 엔티티를 데이터베이스에 반영하게 됩니다. 즉 아래와 같은 절차를 진행하게 됩니다.\n\n트랜잭션을 커밋 하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.\n엔티티와 스냅샷을 비교해서 변경된 엔티티를 찾는다.\n변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.\n쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.\n데이터베이스 트랜잭션을 커밋 한다.\n\n벌크 수정 메커니즘하지만 벌크성 작업은 영속성 컨텍스트와 무관합니다. 벌크 연산은 영속성 컨텍스트를 통하지 않고 아래 그림처럼 데이터베이스에 직접 쿼리를 진행합니다.\n\n즉 영속성 컨텍스트와 무관하니 기존 영속성 컨텍스트에 존재하는 Team의 name들은 변경이 없는 것입니다.\n영속성 컨텍스트는 1차 캐시된 것이 우선이다.after update team를 조회했을 때는 영속성 컨텍스트와 무관했기 때문에 기존 데이터가 나왔지만 신규 조회를 한 아래 코드 왜 변경 전 name이 출력 되었을까요? 그 이유는 영속성 컨텍스트 저장 메커니즘에 있습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n영속성 컨텍스트 저장 메커니즘영속성 컨텍스트 1차 캐시 저장 메커니즘 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 \n\nfindById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. 반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 query 하여 결과를 가져옵니다. 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.\n\nJPQL을 호출하면 데이터베이스에 우선적으로 조회한다.\n조회한 값을 영속성 컨텍스트에 저장을 시도한다.\n저장을 시도할 때 해당 데이터가 이미 영속성 컨텍스트에 존재하는 경우(영속성 컨텍스트에서는 식별자 값으로 식별) 데이터베이스에서 조회한 신규 데이터를 버린다.\n\n즉 이미 영속성컨텍스트에 team들이 존재하기 때문에 신규 조회한 영속성 컨텍스트를 버리게 되는 것입니다. 영속성 컨텍스트에서는 ID를 기반으로 식별작을 합니다.\n해결 방법해결 방법은 간단합니다. 영속성 컨텍스트를 초기화(clear)을 하면 됩니다. 영속성 컨텍스트가 초기화됐기 때문에 신규 조회한 team 객체들이 모두 영속성 컨텍스트에 그대로 반영되게 됩니다. \n12345678...em.clear() // 영속성 컨텍스트를 초기화 한다.val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규 조회한 team name 제대로 변경된 것을 확인할 수 있습니다. \n참고\n자바 ORM 표준 JPA 프로그래밍\n\n","dateCreated":"2020-02-01T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2020-02-01T00:00:00+09:00","description":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.","headline":"JPA 벌크 작업 주의점","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2020/02/01/jpa-bulk/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2020/02/01/jpa-bulk/","keywords":"JPA, ORM, Performance"}</script>
     <meta name="description" content="JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JPA 벌크 작업 주의점">
-<meta property="og:url" content="http://localhost:4000/2020/02/01/jpa-bulk/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2020/02/01/jpa-bulk/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -46,7 +46,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -322,7 +322,7 @@
 <h3 id="영속성-컨텍스트는-1차-캐시된-것이-우선이다"><a href="#영속성-컨텍스트는-1차-캐시된-것이-우선이다" class="headerlink" title="영속성 컨텍스트는 1차 캐시된 것이 우선이다."></a>영속성 컨텍스트는 1차 캐시된 것이 우선이다.</h3><p><code>after update team</code>를 조회했을 때는 영속성 컨텍스트와 무관했기 때문에 기존 데이터가 나왔지만 <strong>신규 조회를 한 아래 코드 왜 변경 전 name이 출력 되었을까요? 그 이유는 영속성 컨텍스트 저장 메커니즘에 있습니다.</strong></p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> newSelectTeams = query.selectFrom(qTeam).fetch()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> newSelectTeams) &#123;</span><br><span class="line">    println(<span class="string">&quot;new select team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="영속성-컨텍스트-저장-메커니즘"><a href="#영속성-컨텍스트-저장-메커니즘" class="headerlink" title="영속성 컨텍스트 저장 메커니즘"></a>영속성 컨텍스트 저장 메커니즘</h4><p><a target="_blank" rel="noopener" href="https://cheese10yun.github.io/jpa-persistent-context/">영속성 컨텍스트 1차 캐시 저장 메커니즘</a> 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 </p>
+<h4 id="영속성-컨텍스트-저장-메커니즘"><a href="#영속성-컨텍스트-저장-메커니즘" class="headerlink" title="영속성 컨텍스트 저장 메커니즘"></a>영속성 컨텍스트 저장 메커니즘</h4><p><a href="https://cheese10yun.github.io/jpa-persistent-context/">영속성 컨텍스트 1차 캐시 저장 메커니즘</a> 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 </p>
 <p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/query-result-.png"></p>
 <p>findById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. <strong>반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 query 하여 결과를 가져옵니다. 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.</strong></p>
 <ol>
@@ -403,7 +403,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -416,7 +416,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -429,7 +429,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -531,7 +531,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -544,7 +544,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -557,7 +557,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2020/02/01/jpa-bulk/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -591,7 +591,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2020/02/01/jpa-bulk/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -604,7 +604,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2020/02/01/jpa-bulk/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -617,7 +617,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2020/02/01/jpa-bulk/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2020/02/01/jpa-bulk/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

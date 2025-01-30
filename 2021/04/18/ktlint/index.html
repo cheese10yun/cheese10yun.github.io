@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.\nktlint-gradlejlleitschuh-ktlint-gradle 그레이들 플러그인 중에서 가장 많이 사용하는 jlleitschuh-ktlint-gradle으로 설정을 진행하겠습니다.\n1234plugins &#123;    id(&quot;org.jlleitschuh.gradle.ktlint&quot;) version &quot;10.0.0&quot;    id(&quot;org.jlleitschuh.gradle.ktlint-idea&quot;) version &quot;10.0.0&quot;&#125;\n\n.editorconfig 설정.editorconfig 파일을 기반으로 스타일 검사를 진행합니다. 자세한 내용은 EditorConfig에 설명되어 있습니다. .editorconfig 파일이 없는 경우 기본룰 Ktlint 버전에 따라서 Standard rules를 기본적으로 따르지만 버전이 변경이 되면 Standard rules로 변경이 될 수 있기 때문에 root 디렉터리에 .editorconfig파일을 설정하는 것을 권장합니다.\n123456789101112root = true[*]charset=utf-8end_of_line=lfindent_style=spaceindent_size=4insert_final_newline=truedisabled_rules=no-wildcard-imports,import-ordering,comment-spacing[*.&#123;kt,kts&#125;]insert_final_newline=false\n*.kt, *.kts 확장자 경우에만 insert_final_newline=false 옵션을 주었습니다.\nWith IntelliJktlintCheck1$ ./gradlew ktlintCheck  \n위 명령어를 통해서 스타일 검사를 진행할 수 있습니다.\n\nIntelliJ를 이용하면 편리하게 Gradle 자동완성을 통해서 실행할 수 있습니다.\n\n실행 결과를 보면 해당 규칙에 어긋난 코드 스타일에 대해서 명확하게 알려주고 있습니다.\nktlintFormat\nktlintFormat는 스타일에 맞지 않은 코드 전체를 스타일에 맞게 변경해 줍니다. 개인적으로는 모든 commit을 완료하고 마지막에 ktlintFormat를 통해서 diff를 반드시 확인하는 방식으로 사용하는 것을 권장합니다. 단순 스타일 변경이라고는 하지만 혹시 모르는 부분이 있을 수 있으며 자동으로 변경되는 부분은 꼭 눈으로 확인하는 게 더 좋다고 생각합니다.\nGit hook으로 설정1$ ./gradlew addKtlintCheckGitPreCommitHook\n\nGit hook 설정하고 코드 컨벤션이 맞지 않으면 예외가 발생합니다.\nIntelliJ에 적용1$ ./gradlew ktlintApplyToIdea\n\n참고\njlleitschuh-ktlint-gradle\nktlint로 Kotlin 공식 코딩 컨벤션 맞추기\n\n","dateCreated":"2021-04-18T13:14:24+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2021-04-18T13:14:24+09:00","description":"ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.","headline":"Ktlint 코드 스타일 검사","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2021/04/18/ktlint/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2021/04/18/ktlint/","keywords":"Kotlin"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.\nktlint-gradlejlleitschuh-ktlint-gradle 그레이들 플러그인 중에서 가장 많이 사용하는 jlleitschuh-ktlint-gradle으로 설정을 진행하겠습니다.\n1234plugins &#123;    id(&quot;org.jlleitschuh.gradle.ktlint&quot;) version &quot;10.0.0&quot;    id(&quot;org.jlleitschuh.gradle.ktlint-idea&quot;) version &quot;10.0.0&quot;&#125;\n\n.editorconfig 설정.editorconfig 파일을 기반으로 스타일 검사를 진행합니다. 자세한 내용은 EditorConfig에 설명되어 있습니다. .editorconfig 파일이 없는 경우 기본룰 Ktlint 버전에 따라서 Standard rules를 기본적으로 따르지만 버전이 변경이 되면 Standard rules로 변경이 될 수 있기 때문에 root 디렉터리에 .editorconfig파일을 설정하는 것을 권장합니다.\n123456789101112root = true[*]charset=utf-8end_of_line=lfindent_style=spaceindent_size=4insert_final_newline=truedisabled_rules=no-wildcard-imports,import-ordering,comment-spacing[*.&#123;kt,kts&#125;]insert_final_newline=false\n*.kt, *.kts 확장자 경우에만 insert_final_newline=false 옵션을 주었습니다.\nWith IntelliJktlintCheck1$ ./gradlew ktlintCheck  \n위 명령어를 통해서 스타일 검사를 진행할 수 있습니다.\n\nIntelliJ를 이용하면 편리하게 Gradle 자동완성을 통해서 실행할 수 있습니다.\n\n실행 결과를 보면 해당 규칙에 어긋난 코드 스타일에 대해서 명확하게 알려주고 있습니다.\nktlintFormat\nktlintFormat는 스타일에 맞지 않은 코드 전체를 스타일에 맞게 변경해 줍니다. 개인적으로는 모든 commit을 완료하고 마지막에 ktlintFormat를 통해서 diff를 반드시 확인하는 방식으로 사용하는 것을 권장합니다. 단순 스타일 변경이라고는 하지만 혹시 모르는 부분이 있을 수 있으며 자동으로 변경되는 부분은 꼭 눈으로 확인하는 게 더 좋다고 생각합니다.\nGit hook으로 설정1$ ./gradlew addKtlintCheckGitPreCommitHook\n\nGit hook 설정하고 코드 컨벤션이 맞지 않으면 예외가 발생합니다.\nIntelliJ에 적용1$ ./gradlew ktlintApplyToIdea\n\n참고\njlleitschuh-ktlint-gradle\nktlint로 Kotlin 공식 코딩 컨벤션 맞추기\n\n","dateCreated":"2021-04-18T13:14:24+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2021-04-18T13:14:24+09:00","description":"ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.","headline":"Ktlint 코드 스타일 검사","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2021/04/18/ktlint/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2021/04/18/ktlint/","keywords":"Kotlin"}</script>
     <meta name="description" content="ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Ktlint 코드 스타일 검사">
-<meta property="og:url" content="http://localhost:4000/2021/04/18/ktlint/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2021/04/18/ktlint/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="ktlint는 Kotlin의 공식 가이드 기반으로 코드 스타일을 검사해 주는 도구입니다. gradle plugin을 통해서 보다 쉽게 설정할 수 있는데 해당 부분에 대해서 포스팅하겠습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -40,7 +40,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -374,7 +374,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -387,7 +387,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -400,7 +400,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -502,7 +502,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -515,7 +515,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -528,7 +528,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2021/04/18/ktlint/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2021/04/18/ktlint/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -562,7 +562,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2021/04/18/ktlint/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2021/04/18/ktlint/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -575,7 +575,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2021/04/18/ktlint/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2021/04/18/ktlint/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -588,7 +588,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2021/04/18/ktlint/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2021/04/18/ktlint/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>

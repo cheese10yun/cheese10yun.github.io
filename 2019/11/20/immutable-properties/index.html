@@ -17,11 +17,11 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"해당 코드는 Github에 공개되어 있습니다.\nSpring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다. 해당 내용은 Properties 설정값 가져오기를 참조하시면 됩니다. 기존 Properties의 단점은 Mutable이라는 점입니다. 아래 예제 코드에서 설명드리겠습니다.\n기존 Mutable Properties 방법1234567891011121314@Configuration@ConfigurationProperties(prefix = &quot;user&quot;)@Validatedpublic class SampleProperties &#123;    @Email    private String email;    @NotEmpty    private String nickname;    private int age;    private boolean auth;    private double amount;    // getter, setter&#125;\n\n기존 방식은 위처럼 setter 기반으로 바인딩 되기 때문에 해당 Properties 설정은 언제든지 변경될 가능성이 있습니다. 이런 단점을 스프링 부트 2.2에서는 생성자 바인딩을 지원해서 해결했습니다.\nImmutable Properties 방법해당 예제는 Kotlin data class 기준으로 작성했습니다.\n1234567891011121314151617181920212223@ConstructorBinding@ConfigurationProperties(prefix = &quot;user&quot;)@Validateddata class UserProperties(        @field:Email        val email: String,        @field:NotEmpty        val nickname: String,        @field:Min(10)        val age: Int,        @field:NotNull        val auth: Boolean,        @field:Min(10)        val amount: Double,        @DateTimeFormat(pattern = &quot;yyyy-MM-dd&quot;)        @field:NotNull        val date: LocalDate)\n사용법은 간단합니다. @ConstructorBinding을 추가하고 data class으로 넘겨받을 값을 생성자로 지정합니다. 위처럼 작성하면 객체는 Immutable 상태가 됩니다. 스프링 부트 2.2.1 버전부터는 @ConfigurationProperties scanning 방식이 disabled 되면서 @EnableConfigurationProperties을 따로 지정해야 합니다. 자세한 내용은 여기를 참고하세요.\n1234567@SpringBootApplication@EnableConfigurationProperties(UserProperties::class)class KotlinJunit5Applicationfun main(args: Array&lt;String&gt;) &#123;    runApplication&lt;KotlinJunit5Application&gt;(*args)&#125;\n2.2.1 버전 부터는 @EnableConfigurationProperties으로 클래스를 지정해야합니다. @Validated 어노테이션으로 properteis에 대한 검증도 가능합니다.\n1234567user:  email: &quot;yuntest.com&quot;  nickname: &quot;&quot;  age: 9  auth: true  amount: 1  date: &quot;2019-10-10&quot; \n\n위 처럼 유효하지 않은 값들에 대해서 아래 화면처럼 검증할 수 있습니다.\n\n스프링 부트가 구동될 때 해당 값에 대한 유효성 검사를 어노테이션 기반으로 쉽게 검증할 수 있습니다. 해당 값이 유효하지 않은 경우 스프링이 구동되지 않기 때문에 장점이 있습니다.\n1234567user:  email: &quot;yun@test.com&quot;  nickname: &quot;yun&quot;  age: 28  auth: false  amount: 101  date: &quot;2019-10-10&quot;\n위 yml 처럼 유효한 값을 입력하면 정상적으로 동작하는 것을 확인할 수 있습니다.\n12345678@Componentclass AppRunner(private val userProperties: UserProperties) :ApplicationRunner&#123;    override fun run(args: ApplicationArguments?) &#123;        println(&quot;=====================&quot;)        println(userProperties.toString())        println(&quot;=====================&quot;)    &#125;&#125;\n값들이 유요한 경우 객체에 바인딩 되는 것을 학인할 수 있습니다.\n","dateCreated":"2019-11-20T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2019-11-20T00:00:00+09:00","description":"Spring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다.","headline":"스프링 Immutable으로 Properties 설정하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2019/11/20/immutable-properties/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"http://localhost:4000/2019/11/20/immutable-properties/","keywords":"Spring"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"해당 코드는 Github에 공개되어 있습니다.\nSpring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다. 해당 내용은 Properties 설정값 가져오기를 참조하시면 됩니다. 기존 Properties의 단점은 Mutable이라는 점입니다. 아래 예제 코드에서 설명드리겠습니다.\n기존 Mutable Properties 방법1234567891011121314@Configuration@ConfigurationProperties(prefix = &quot;user&quot;)@Validatedpublic class SampleProperties &#123;    @Email    private String email;    @NotEmpty    private String nickname;    private int age;    private boolean auth;    private double amount;    // getter, setter&#125;\n\n기존 방식은 위처럼 setter 기반으로 바인딩 되기 때문에 해당 Properties 설정은 언제든지 변경될 가능성이 있습니다. 이런 단점을 스프링 부트 2.2에서는 생성자 바인딩을 지원해서 해결했습니다.\nImmutable Properties 방법해당 예제는 Kotlin data class 기준으로 작성했습니다.\n1234567891011121314151617181920212223@ConstructorBinding@ConfigurationProperties(prefix = &quot;user&quot;)@Validateddata class UserProperties(        @field:Email        val email: String,        @field:NotEmpty        val nickname: String,        @field:Min(10)        val age: Int,        @field:NotNull        val auth: Boolean,        @field:Min(10)        val amount: Double,        @DateTimeFormat(pattern = &quot;yyyy-MM-dd&quot;)        @field:NotNull        val date: LocalDate)\n사용법은 간단합니다. @ConstructorBinding을 추가하고 data class으로 넘겨받을 값을 생성자로 지정합니다. 위처럼 작성하면 객체는 Immutable 상태가 됩니다. 스프링 부트 2.2.1 버전부터는 @ConfigurationProperties scanning 방식이 disabled 되면서 @EnableConfigurationProperties을 따로 지정해야 합니다. 자세한 내용은 여기를 참고하세요.\n1234567@SpringBootApplication@EnableConfigurationProperties(UserProperties::class)class KotlinJunit5Applicationfun main(args: Array&lt;String&gt;) &#123;    runApplication&lt;KotlinJunit5Application&gt;(*args)&#125;\n2.2.1 버전 부터는 @EnableConfigurationProperties으로 클래스를 지정해야합니다. @Validated 어노테이션으로 properteis에 대한 검증도 가능합니다.\n1234567user:  email: &quot;yuntest.com&quot;  nickname: &quot;&quot;  age: 9  auth: true  amount: 1  date: &quot;2019-10-10&quot; \n\n위 처럼 유효하지 않은 값들에 대해서 아래 화면처럼 검증할 수 있습니다.\n\n스프링 부트가 구동될 때 해당 값에 대한 유효성 검사를 어노테이션 기반으로 쉽게 검증할 수 있습니다. 해당 값이 유효하지 않은 경우 스프링이 구동되지 않기 때문에 장점이 있습니다.\n1234567user:  email: &quot;yun@test.com&quot;  nickname: &quot;yun&quot;  age: 28  auth: false  amount: 101  date: &quot;2019-10-10&quot;\n위 yml 처럼 유효한 값을 입력하면 정상적으로 동작하는 것을 확인할 수 있습니다.\n12345678@Componentclass AppRunner(private val userProperties: UserProperties) :ApplicationRunner&#123;    override fun run(args: ApplicationArguments?) &#123;        println(&quot;=====================&quot;)        println(userProperties.toString())        println(&quot;=====================&quot;)    &#125;&#125;\n값들이 유요한 경우 객체에 바인딩 되는 것을 학인할 수 있습니다.\n","dateCreated":"2019-11-20T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2019-11-20T00:00:00+09:00","description":"Spring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다.","headline":"스프링 Immutable으로 Properties 설정하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/2019/11/20/immutable-properties/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/2019/11/20/immutable-properties/","keywords":"Spring"}</script>
     <meta name="description" content="Spring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="스프링 Immutable으로 Properties 설정하기">
-<meta property="og:url" content="http://localhost:4000/2019/11/20/immutable-properties/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/2019/11/20/immutable-properties/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="Spring Boot 2.2 버전에서부터는 Immutable으로 Properties 설정을 할 수 있습니다. 커스텀 하게 설정한 값들은 Properties 객체로 관리하는 것이 좋습니다.">
 <meta property="og:locale" content="ko_KR">
@@ -38,7 +38,7 @@
         
     
     
-        <meta property="og:image" content="http://localhost:4000/assets/images/yun-icon.jpg"/>
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
     
     
     
@@ -367,7 +367,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -380,7 +380,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -393,7 +393,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -495,7 +495,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Facebook에 공유하기"
                     aria-label="Facebook에 공유하기"
                 >
@@ -508,7 +508,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Twitter에 공유하기"
                     aria-label="Twitter에 공유하기"
                 >
@@ -521,7 +521,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://localhost:4000/2019/11/20/immutable-properties/"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                     title="Google+에 공유하기"
                     aria-label="Google+에 공유하기"
                 >
@@ -555,7 +555,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/2019/11/20/immutable-properties/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                         aria-label="Facebook에 공유하기"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
@@ -568,7 +568,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://localhost:4000/2019/11/20/immutable-properties/"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
@@ -581,7 +581,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://localhost:4000/2019/11/20/immutable-properties/"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/2019/11/20/immutable-properties/"
                         aria-label="Google+에 공유하기"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
