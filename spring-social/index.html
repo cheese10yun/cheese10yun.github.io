@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring Social Part 1 Google, Facebook 간단한 소셜 인증 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"전체 코드는 Github를 확인해주세요.\n소셜 인증Spring Scurity OAuth2를 활용해서 Facebook, Google 계정 기반으로 정말 간단하게 인증 처리를 할 수 있습니다. 들어가기에 앞서 OAuth 2인증 방식 : Authorization Code Grant 반드시 기본적인 이해를 하시는것을 권장드립니다. 생활코딩에도 잘 정의되어있습니다.\nGoogle, Facebook App 생성 및 Https 설정을 하지 않았다면 step-00: gogole, facebook, https 설정을 참고하여 작업을 완료해주세요\n프로젝트 기본 설정maven1234567891011&lt;dependency&gt;    &lt;groupId&gt;org.springframework.security.oauth&lt;/groupId&gt;    &lt;artifactId&gt;spring-security-oauth2&lt;/artifactId&gt;    &lt;version&gt;2.3.3.RELEASE&lt;/version&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.springframework.security.oauth.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-security-oauth2-autoconfigure&lt;/artifactId&gt;    &lt;version&gt;2.0.0.RELEASE&lt;/version&gt;&lt;/dependency&gt;\n\n\napplication.yml123456789101112131415161718192021222324facebook:  client:    clientId: &lt;your-client-id&gt;    clientSecret: &lt;your-secret&gt;    accessTokenUri: https://graph.facebook.com/oauth/access_token    userAuthorizationUri: https://www.facebook.com/dialog/oauth    tokenName: oauth_token    authenticationScheme: query    clientAuthenticationScheme: form  resource:    userInfoUri: https://graph.facebook.com/megoogle :  client :    clientId : &lt;your-client&gt;    clientSecret: &lt;your-secret&gt;    accessTokenUri: https://www.googleapis.com/oauth2/v4/token    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth    clientAuthenticationScheme: form    scope:    - email    - profile  resource:    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo\n\n소셜 인증 구현12345678910111213141516class ClientResources &#123;    @NestedConfigurationProperty    private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();    @NestedConfigurationProperty    private ResourceServerProperties resource = new ResourceServerProperties();    public AuthorizationCodeResourceDetails getClient() &#123;        return client;    &#125;    public ResourceServerProperties getResource() &#123;        return resource;    &#125;&#125;\nClientResources 클래스를 생성합니다. 해당 클래스는 위에서 설정한 property 설정을 편리하게 사용할 수 있습니다.\n1234567891011121314151617@EnableWebSecurity@EnableOAuth2Clientpublic class SecurityConfig extends WebSecurityConfigurerAdapter &#123;  ....  @Bean    @ConfigurationProperties(&quot;facebook&quot;)    public ClientResources facebook() &#123;        return new ClientResources();    &#125;    @Bean    @ConfigurationProperties(&quot;google&quot;)    public ClientResources google() &#123;        return new ClientResources();    &#125;&#125;\nEnableWebSecurity, EnableOAuth2Client 어노테이션을 추가합니다. \n위에서 작성한 properties 들을 빈으로 등록해줍니다. ClientResources 클래스 덕분에 저렇게 쉽게 property 설정을 쉽게 설정할 수 있습니다.\n1234567891011121314151617181920public class SecurityConfig extends WebSecurityConfigurerAdapter &#123;  ...  @Override    protected void configure(HttpSecurity http) throws Exception &#123;        // @formatter:off\t\thttp.antMatcher(&quot;/**&quot;).authorizeRequests().antMatchers(&quot;/&quot;, &quot;/login**&quot;).permitAll().anyRequest()\t\t\t\t.authenticated().and().exceptionHandling()\t\t\t\t.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(&quot;/&quot;)).and()\t\t\t\t.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);\t\t// logout\t\thttp.logout()                .invalidateHttpSession(true)                .clearAuthentication(true)                .logoutRequestMatcher(new AntPathRequestMatcher(&quot;/logout&quot;))                    .logoutSuccessUrl(&quot;/&quot;)                .permitAll();\t\t// @formatter:on    &#125;&#125;\n\n스프링 시큐리티 코드입니다. 해당 설정은 어렵지 않으니 자세한 설명은 생략하겠습니다. 중요한 포인트는 addFilterBefore메서드로 ssoFilter 필터를 등록했습니다. 해당 필터는 아래에서 다루겠습니다.\n1234567891011public class SecurityConfig extends WebSecurityConfigurerAdapter &#123;  ...  @Bean      public FilterRegistrationBean oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) &#123;          FilterRegistrationBean registration = new FilterRegistrationBean();          registration.setFilter(filter);          registration.setOrder(-100);          return registration;      &#125;&#125;\n인증 요청에 따른 리다이렉션을 위한 빈을 등록합니다. 이때 setOrder 메서드로 Spring Security 필터 보다 우선순위를 낮게 설정합니다.\n123456789101112131415161718192021public class SecurityConfig extends WebSecurityConfigurerAdapter &#123;  ...  private Filter ssoFilter() &#123;        CompositeFilter filter = new CompositeFilter();        List&lt;Filter&gt; filters = new ArrayList&lt;&gt;();        filters.add(ssoFilter(google(), &quot;/login/google&quot;)); //  이전에 등록했던 OAuth 리다이렉트 URL         filters.add(ssoFilter(facebook(), &quot;/login/facebook&quot;));        filter.setFilters(filters);        return filter;    &#125;    private Filter ssoFilter(ClientResources client, String path) &#123;        OAuth2ClientAuthenticationProcessingFilter filter = new OAuth2ClientAuthenticationProcessingFilter(path);        OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);        filter.setRestTemplate(restTemplate);        UserInfoTokenServices tokenServices = new UserInfoTokenServices(client.getResource().getUserInfoUri(), client.getClient().getClientId());        tokenServices.setRestTemplate(restTemplate);        filter.setTokenServices(tokenServices);        return filter;    &#125;&#125;\n\n위에서 configure 등록했던 ssoFilter 설정 입니다. 위에서 등록했던 빈 google(), 이전에 등록했던 OAuth 리다이렉트 URL /login/google 기반으로 Filter를 생성합니다.\nOAuth2ClientAuthenticationProcessingFilter 필터는 인증 서버에서 OAuth2 액세스 토큰을 획득하고 인증 객체를 SecurityContext에로드하는 데 사용할 수 있는 OAuth2 클라이언트 필터입니다.\nsetRestTemplate 메스들을 통해서 OAuth2 인증 REST 요청을 만들 수 있는 RestTemplate 객체를 지정합니다.\n1234567@RestControllerpublic class Controller &#123;    @RequestMapping(value = &quot;/&quot;, method = RequestMethod.GET)    public Principal home(Principal principal) &#123;        return principal;    &#125;&#125;\n소셜 인증 이후 해당 컨트롤러로 이동하면 OAuth2ClientAuthenticationProcessingFilter 필터가 등록한  SecurityContextHolder 정보를 확인할 수 있습니다.\n소셜 인증Facebookhttps://localhost:8080/login/facebook 페이스북 로그인\nGooglehttps://localhost:8080/login/google 구글 로그인\n내부 코드별다른 설정 없이 Spring Scurity OAuth2 활용하면 어렵지 않게 소셜 기반으로 인증 처리를 구현할 수 있습니다. 가장 핵심적인 클래스 OAuth2ClientAuthenticationProcessingFilter 클래스를 살펴보겠습니다.\nattemptAuthentication 메서드\n소셜 인증을 시도하는 메서드로 위에서 등록했던 restTemplate 으로 Access Token 을 가져오고 해당 토큰 값으로 사용자 정보를 가져옵니다.\n위 그림은 break point를 찍은 화면으로 acctessToken에는 accessToken, socpe, expriation 가 있고 userAuthenication에는 소셜에서 받아온 회원정보가 있습니다. \nsuccessfulAuthentication 메서드\nattemptAuthentication 에서 인증이 성공되었다면 이후에 successfulAuthentication 메서드를 호출하게 됩니다. \n여기서 중요한 포인트는 authResut 값을 super.successfulAuthentication(request, response, chain, authResult); 메서드를 통해서 SecurityContextHolder에 저장되게 됩니다. 즉 소셜에서 받아온 정보 기반으로 인증 처리를 합니다.\n인증 정보\nhttps://localhost:8080/ 에서 해당 유저의 세션 정보를 확인 할 수 있습니다.\n","dateCreated":"2018-09-15T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-09-15T00:00:00+09:00","description":"Spring Social Part 1 Google, Facebook 간단한 소셜 인증","headline":"Spring Social Part 1 Google, Facebook 간단한 소셜 인증","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-social/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-social/","keywords":"Spring, OAuth2"}</script>
+    <meta name="description" content="Spring Social Part 1 Google, Facebook 간단한 소셜 인증">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Social Part 1 Google, Facebook 간단한 소셜 인증">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-social/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Spring Social Part 1 Google, Facebook 간단한 소셜 인증">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/facebook.png">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/google.png">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/attemptAuthentication.png">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/successfulAuthentication.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/spring-security-oauth2-social/master/assets/login-info.png">
+<meta property="article:published_time" content="2018-09-14T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.820Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="OAuth2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/facebook.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring Social Part 1 Google, Facebook 간단한 소셜 인증
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-09-15T00:00:00+09:00">
+	
+		    2018/09/15
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>전체 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-security-oauth2-social">Github</a>를 확인해주세요.</p>
+<h1 id="소셜-인증"><a href="#소셜-인증" class="headerlink" title="소셜 인증"></a>소셜 인증</h1><p>Spring Scurity OAuth2를 활용해서 Facebook, Google 계정 기반으로 정말 간단하게 인증 처리를 할 수 있습니다. 들어가기에 앞서 <a target="_blank" rel="noopener" href="https://github.com/minwan1/spring-security-oauth2-example/blob/master/docs/step-1%3Aoauth1%2Coauth2%EB%9E%80.md#%EC%9D%B8%EC%A6%9D-%EC%A2%85%EB%A5%98">OAuth 2인증 방식 : Authorization Code Grant</a> <strong>반드시 기본적인 이해를 하시는것을 권장드립니다.</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hm2r6LtUbk8&index=1&list=PLuHgQVnccGMA4guyznDlykFJh28_R08Q-">생활코딩</a>에도 잘 정의되어있습니다.</p>
+<p>Google, Facebook App 생성 및 Https 설정을 하지 않았다면 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-security-oauth2-social/blob/master/doc/step-00.md">step-00: gogole, facebook, https 설정</a>을 참고하여 작업을 완료해주세요</p>
+<h2 id="프로젝트-기본-설정"><a href="#프로젝트-기본-설정" class="headerlink" title="프로젝트 기본 설정"></a>프로젝트 기본 설정</h2><h3 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.security.oauth<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-security-oauth2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.3.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.security.oauth.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-security-oauth2-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="application-yml"><a href="#application-yml" class="headerlink" title="application.yml"></a>application.yml</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">facebook:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">clientId:</span> <span class="string">&lt;your-client-id&gt;</span></span><br><span class="line">    <span class="attr">clientSecret:</span> <span class="string">&lt;your-secret&gt;</span></span><br><span class="line">    <span class="attr">accessTokenUri:</span> <span class="string">https://graph.facebook.com/oauth/access_token</span></span><br><span class="line">    <span class="attr">userAuthorizationUri:</span> <span class="string">https://www.facebook.com/dialog/oauth</span></span><br><span class="line">    <span class="attr">tokenName:</span> <span class="string">oauth_token</span></span><br><span class="line">    <span class="attr">authenticationScheme:</span> <span class="string">query</span></span><br><span class="line">    <span class="attr">clientAuthenticationScheme:</span> <span class="string">form</span></span><br><span class="line">  <span class="attr">resource:</span></span><br><span class="line">    <span class="attr">userInfoUri:</span> <span class="string">https://graph.facebook.com/me</span></span><br><span class="line"></span><br><span class="line"><span class="attr">google :</span></span><br><span class="line">  <span class="attr">client :</span></span><br><span class="line">    <span class="attr">clientId :</span> <span class="string">&lt;your-client&gt;</span></span><br><span class="line">    <span class="attr">clientSecret:</span> <span class="string">&lt;your-secret&gt;</span></span><br><span class="line">    <span class="attr">accessTokenUri:</span> <span class="string">https://www.googleapis.com/oauth2/v4/token</span></span><br><span class="line">    <span class="attr">userAuthorizationUri:</span> <span class="string">https://accounts.google.com/o/oauth2/v2/auth</span></span><br><span class="line">    <span class="attr">clientAuthenticationScheme:</span> <span class="string">form</span></span><br><span class="line">    <span class="attr">scope:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">email</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">profile</span></span><br><span class="line">  <span class="attr">resource:</span></span><br><span class="line">    <span class="attr">userInfoUri:</span> <span class="string">https://www.googleapis.com/oauth2/v3/userinfo</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="소셜-인증-구현"><a href="#소셜-인증-구현" class="headerlink" title="소셜 인증 구현"></a>소셜 인증 구현</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ClientResources</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NestedConfigurationProperty</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">AuthorizationCodeResourceDetails</span> <span class="variable">client</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AuthorizationCodeResourceDetails</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NestedConfigurationProperty</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">ResourceServerProperties</span> <span class="variable">resource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceServerProperties</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> AuthorizationCodeResourceDetails <span class="title function_">getClient</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> client;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> ResourceServerProperties <span class="title function_">getResource</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> resource;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ClientResources 클래스를 생성합니다. 해당 클래스는 위에서 설정한 property 설정을 편리하게 사용할 수 있습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableWebSecurity</span></span><br><span class="line"><span class="meta">@EnableOAuth2Client</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">  ....</span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConfigurationProperties(&quot;facebook&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ClientResources <span class="title function_">facebook</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ClientResources</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConfigurationProperties(&quot;google&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ClientResources <span class="title function_">google</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ClientResources</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EnableWebSecurity, EnableOAuth2Client 어노테이션을 추가합니다. </p>
+<p>위에서 작성한 properties 들을 빈으로 등록해줍니다. ClientResources 클래스 덕분에 저렇게 쉽게 property 설정을 쉽게 설정할 수 있습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// @formatter:off</span></span><br><span class="line">		http.antMatcher(<span class="string">&quot;/**&quot;</span>).authorizeRequests().antMatchers(<span class="string">&quot;/&quot;</span>, <span class="string">&quot;/login**&quot;</span>).permitAll().anyRequest()</span><br><span class="line">				.authenticated().and().exceptionHandling()</span><br><span class="line">				.authenticationEntryPoint(<span class="keyword">new</span> <span class="title class_">LoginUrlAuthenticationEntryPoint</span>(<span class="string">&quot;/&quot;</span>)).and()</span><br><span class="line">				.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// logout</span></span><br><span class="line">		http.logout()</span><br><span class="line">                .invalidateHttpSession(<span class="literal">true</span>)</span><br><span class="line">                .clearAuthentication(<span class="literal">true</span>)</span><br><span class="line">                .logoutRequestMatcher(<span class="keyword">new</span> <span class="title class_">AntPathRequestMatcher</span>(<span class="string">&quot;/logout&quot;</span>))</span><br><span class="line">                    .logoutSuccessUrl(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">                .permitAll();</span><br><span class="line">		<span class="comment">// @formatter:on</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>스프링 시큐리티 코드입니다. 해당 설정은 어렵지 않으니 자세한 설명은 생략하겠습니다. 중요한 포인트는 addFilterBefore메서드로 ssoFilter 필터를 등록했습니다. 해당 필터는 아래에서 다루겠습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">      <span class="keyword">public</span> FilterRegistrationBean <span class="title function_">oauth2ClientFilterRegistration</span><span class="params">(OAuth2ClientContextFilter filter)</span> &#123;</span><br><span class="line">          <span class="type">FilterRegistrationBean</span> <span class="variable">registration</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FilterRegistrationBean</span>();</span><br><span class="line">          registration.setFilter(filter);</span><br><span class="line">          registration.setOrder(-<span class="number">100</span>);</span><br><span class="line">          <span class="keyword">return</span> registration;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>인증 요청에 따른 리다이렉션을 위한 빈을 등록합니다. 이때 setOrder 메서드로 Spring Security 필터 보다 우선순위를 낮게 설정합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> <span class="keyword">extends</span> <span class="title class_">WebSecurityConfigurerAdapter</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">private</span> Filter <span class="title function_">ssoFilter</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">CompositeFilter</span> <span class="variable">filter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CompositeFilter</span>();</span><br><span class="line">        List&lt;Filter&gt; filters = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        filters.add(ssoFilter(google(), <span class="string">&quot;/login/google&quot;</span>)); <span class="comment">//  이전에 등록했던 OAuth 리다이렉트 URL </span></span><br><span class="line">        filters.add(ssoFilter(facebook(), <span class="string">&quot;/login/facebook&quot;</span>));</span><br><span class="line">        filter.setFilters(filters);</span><br><span class="line">        <span class="keyword">return</span> filter;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Filter <span class="title function_">ssoFilter</span><span class="params">(ClientResources client, String path)</span> &#123;</span><br><span class="line">        <span class="type">OAuth2ClientAuthenticationProcessingFilter</span> <span class="variable">filter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OAuth2ClientAuthenticationProcessingFilter</span>(path);</span><br><span class="line">        <span class="type">OAuth2RestTemplate</span> <span class="variable">restTemplate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OAuth2RestTemplate</span>(client.getClient(), oauth2ClientContext);</span><br><span class="line">        filter.setRestTemplate(restTemplate);</span><br><span class="line">        <span class="type">UserInfoTokenServices</span> <span class="variable">tokenServices</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UserInfoTokenServices</span>(client.getResource().getUserInfoUri(), client.getClient().getClientId());</span><br><span class="line">        tokenServices.setRestTemplate(restTemplate);</span><br><span class="line">        filter.setTokenServices(tokenServices);</span><br><span class="line">        <span class="keyword">return</span> filter;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위에서 configure 등록했던 ssoFilter 설정 입니다. 위에서 등록했던 빈 google(), 이전에 등록했던 OAuth 리다이렉트 URL <code>/login/google</code> 기반으로 Filter를 생성합니다.</p>
+<p><strong>OAuth2ClientAuthenticationProcessingFilter 필터는 인증 서버에서 OAuth2 액세스 토큰을 획득하고 인증 객체를 SecurityContext에로드하는 데 사용할 수 있는 OAuth2 클라이언트 필터입니다.</strong></p>
+<p>setRestTemplate 메스들을 통해서 OAuth2 인증 REST 요청을 만들 수 있는 RestTemplate 객체를 지정합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Controller</span> &#123;</span><br><span class="line">    <span class="meta">@RequestMapping(value = &quot;/&quot;, method = RequestMethod.GET)</span></span><br><span class="line">    <span class="keyword">public</span> Principal <span class="title function_">home</span><span class="params">(Principal principal)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> principal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>소셜 인증 이후 해당 컨트롤러로 이동하면 OAuth2ClientAuthenticationProcessingFilter 필터가 등록한  SecurityContextHolder 정보를 확인할 수 있습니다.</p>
+<h2 id="소셜-인증-1"><a href="#소셜-인증-1" class="headerlink" title="소셜 인증"></a>소셜 인증</h2><h3 id="Facebook"><a href="#Facebook" class="headerlink" title="Facebook"></a>Facebook</h3><p><img src="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/facebook.png" alt="facebook"><br><a target="_blank" rel="noopener" href="https://localhost:8080/login/facebook">https://localhost:8080/login/facebook</a> 페이스북 로그인</p>
+<h3 id="Google"><a href="#Google" class="headerlink" title="Google"></a>Google</h3><p><img src="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/google.png" alt="google"><br><a target="_blank" rel="noopener" href="https://localhost:8080/login/google">https://localhost:8080/login/google</a> 구글 로그인</p>
+<h2 id="내부-코드"><a href="#내부-코드" class="headerlink" title="내부 코드"></a>내부 코드</h2><p>별다른 설정 없이 Spring Scurity OAuth2 활용하면 어렵지 않게 소셜 기반으로 인증 처리를 구현할 수 있습니다. 가장 핵심적인 클래스 OAuth2ClientAuthenticationProcessingFilter 클래스를 살펴보겠습니다.</p>
+<h3 id="attemptAuthentication-메서드"><a href="#attemptAuthentication-메서드" class="headerlink" title="attemptAuthentication 메서드"></a>attemptAuthentication 메서드</h3><p><img src="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/attemptAuthentication.png" alt="attemptAuthentication"></p>
+<p>소셜 인증을 시도하는 메서드로 위에서 등록했던 restTemplate 으로 Access Token 을 가져오고 해당 토큰 값으로 사용자 정보를 가져옵니다.</p>
+<p>위 그림은 break point를 찍은 화면으로 acctessToken에는 accessToken, socpe, expriation 가 있고 userAuthenication에는 소셜에서 받아온 회원정보가 있습니다. </p>
+<h3 id="successfulAuthentication-메서드"><a href="#successfulAuthentication-메서드" class="headerlink" title="successfulAuthentication 메서드"></a>successfulAuthentication 메서드</h3><p><img src="https://github.com/cheese10yun/spring-security-oauth2-social/raw/master/assets/successfulAuthentication.png" alt="successfulAuthentication"></p>
+<p>attemptAuthentication 에서 인증이 성공되었다면 이후에 successfulAuthentication 메서드를 호출하게 됩니다. </p>
+<p>여기서 중요한 포인트는 authResut 값을 <code>super.successfulAuthentication(request, response, chain, authResult);</code> 메서드를 통해서 SecurityContextHolder에 저장되게 됩니다. 즉 소셜에서 받아온 정보 기반으로 인증 처리를 합니다.</p>
+<h3 id="인증-정보"><a href="#인증-정보" class="headerlink" title="인증 정보"></a>인증 정보</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/spring-security-oauth2-social/master/assets/login-info.png" alt="login-info"></p>
+<p><a target="_blank" rel="noopener" href="https://localhost:8080/">https://localhost:8080/</a> 에서 해당 유저의 세션 정보를 확인 할 수 있습니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/OAuth2/" rel="tag">OAuth2</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-social-02/"
+                    data-tooltip="Spring Social Part 2 데이터베이스에 회원 정보 저장"
+                    aria-label="이전: Spring Social Part 2 데이터베이스에 회원 정보 저장"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-https/"
+                    data-tooltip="Spring Boot HTTPS 적용 하기"
+                    aria-label="다음: Spring Boot HTTPS 적용 하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-social/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-social/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-social/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-social-02/"
+                    data-tooltip="Spring Social Part 2 데이터베이스에 회원 정보 저장"
+                    aria-label="이전: Spring Social Part 2 데이터베이스에 회원 정보 저장"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-https/"
+                    data-tooltip="Spring Boot HTTPS 적용 하기"
+                    aria-label="다음: Spring Boot HTTPS 적용 하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-social/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-social/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-social/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-social/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-social/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-social/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

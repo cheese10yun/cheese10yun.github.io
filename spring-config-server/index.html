@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring Cloud Config Server 정리 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github에서 확인할 수 있습니다.\n\n\n스프링 Config Server는 각 애플리케이션에의 Config 설정을 중앙 서버에서 관리를 하는 서비스입니다. 중앙 저장소로 Github Repository뿐만 아니라 아래와 같은 저장소 환경을 제공해 주고 있습니다.\n\nGit(Github)\nJDBC\nREDIS\nAWS S3\n등등..\n\n본 포스팅은 Github Repository 저장소 기반으로 설명드리겠습니다. Github을 사용하고 계시다면 중앙 저장소로 Github Repository를 권장 드립니다.\nSpring Config Server를 이용하면 /actuator/refresh, /actuator/busrefresh를 통해서 서버를 재배포 없이 설정값을 변경할 수 \b있다는 점이 가장 큰 장점이라고 생각합니다.\nConfig Server 구성1234dependencies &#123;    implementation(&quot;org.springframework.cloud:spring-cloud-config-server&quot;)    implementation(org.springframework.boot:spring-boot-starter-actuator)&#125;\n\n1234567@SpringBootApplication@EnableConfigServer // Config Server를 활성화 하기 위해 추가class ConfigServerApplicationfun main(args: Array&lt;String&gt;) &#123;    runApplication&lt;ConfigServerApplication&gt;(*args)&#125;\n\n123456789101112131415server:    port: 8888spring:    application:        name: config-server        cloud:        config:            server:                encrypt.enabled: true                git:                    uri: Github Repositroy 주소 # ex https://github.com/cheese10yun/blog-sample                    username: username                    password: password\n\n빠르게 확인하기 위해서 user name, password 기반으로 동작 시킵니다. 만약 해당 Repository가 Public이라면 생략 가능합니다. Private 경우에는 password 방식, SSH Key 인증 방식이 있습니다. SSH Key 인증 방식은 아래에서 살펴보겠습니다. 그리고 가능하면 Config Server Repository에 설정을 두는 것보다 Config 설정만 관리하는 Repository를 하나 생성하고 그쪽에는 순수하게 Config 설정들만 관리하는 것이 코드와 설정 파일을 분리하는 좋은 방법이라고 생각합니다.\n12345678910111213# order-service.ymlmessage:    profile: &quot;default&quot;    server-name: &quot;Config Server&quot;# order-service-sandbox.ymlmessage:    profile: &quot;sandbox&quot;# order-service-production.ymlmessage:    profile: &quot;production&quot;\n\n&#123;application-name&#125;-&#123;evn&#125;.yml 형식으로 각 profile에 본인의 환경을 설정했습니다. msa-study-sample Repositroy에 저장되어 있습니다.\nHTTP 서비스에는 다음과 같은 형식의 리소스가 표현됩니다.\n12345/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]/&#123;application&#125;-&#123;profile&#125;.yml/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.yml/&#123;application&#125;-&#123;profile&#125;.properties/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.properties\n\nGithub Repository를 이용한다면 [/&#123;label&#125;]은 branch 명으로 생각하면 됩니다. 한번 Config Server를 통해서 구동해 테스트해보겠습니다.\n&#x2F;{application}&#x2F;{profile}[&#x2F;{label}] 조회123456789101112131415161718192021222324252627282930313233343536GET http://localhost:8888/order-service/local/masterHTTP/1.1 200 Content-Type: application/jsonTransfer-Encoding: chunkedDate: Thu, 29 Jul 2021 17:37:11 GMTKeep-Alive: timeout=60Connection: keep-alive&#123;  &quot;name&quot;: &quot;order-service&quot;,  &quot;profiles&quot;: [    &quot;local&quot;  ],  &quot;label&quot;: &quot;master&quot;,  &quot;version&quot;: &quot;93e0c93772d4c743eb888bcd9c14629eb1fa9551&quot;,  &quot;state&quot;: null,  &quot;propertySources&quot;: [    &#123;      &quot;name&quot;: &quot;git@github.com:cheese10yun/msa-study-sample.git/order-service-local.yml&quot;,      &quot;source&quot;: &#123;        &quot;message.profile&quot;: &quot;local&quot;      &#125;    &#125;,    &#123;      &quot;name&quot;: &quot;git@github.com:cheese10yun/msa-study-sample.git/order-service.yml&quot;,      &quot;source&quot;: &#123;        &quot;message.profile&quot;: &quot;default&quot;,        &quot;message.server-name&quot;: &quot;Config Server&quot;      &#125;    &#125;  ]&#125;Response code: 200; Time: 2957ms; Content length: 422 bytes\n\n/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]는 /order-service/local/master을 의미합니다. label은 Github Repository 저장소를 이용하는 경우 branch로 생각하면 됩니다.\nlocal 프로필을 조회했기 때문에 message.profile=local이 정상적으로 출력된 것을 확인할 수 있습니다. propertySources 객체가 배열로 default 프로필인 order-service.yml 값에 해당하는 message.profile=default 값도 같이 조회하는 것을 확인할 수 있습니다. 이는 특정 프로필에 없는 값은 기본 프로필의 값으로 대체되기 때문에 조회하는 것입니다. 만약 local 프로필에 없는 message.server-name=Config Server 값이 필요한 경우에는 default 값을 사용합니다.\n&#x2F;{application}-{profile}.yml 조회12345678910111213141516GET http://localhost:8888/order-service-local.ymlHTTP/1.1 200 Content-Type: text/plainContent-Length: 55Date: Thu, 29 Jul 2021 17:40:36 GMTKeep-Alive: timeout=60Connection: keep-alivemessage:  profile: local  server-name: Config ServerResponse code: 200; Time: 2335ms; Content length: 55 bytes\n\n/order-service-local.yml 조회를 진행하게 되면 본인 profile의 값, default 값을 출력하는 것을 확인할 수 있습니다. /&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.yml 조회도 동일한 응답을 받습니다.\n1234567891011121314GET http://localhost:8888/order-service-local.propertiesHTTP/1.1 200 Content-Type: text/plainContent-Length: 57Date: Thu, 29 Jul 2021 17:45:34 GMTKeep-Alive: timeout=60Connection: keep-alivemessage.profile: localmessage.server-name: Config ServerResponse code: 200; Time: 2430ms; Content length: 57 bytes\n\n/&#123;application&#125;-&#123;profile&#125;.properties, /&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.properties도 위와 비슷한 응답을 받지만 위 처럼 properteis의 형식 입니다.\nPrivate Repository SSH KeyPublic Repository는 누구나 접근 가능하니 상관없지만 Private Repository는 해강 Repository의 권한이 있는 사용자인지 확인해야 합니다. 대부분 실무 환경에서는 Private 환경이니 해당 Repository에 대한 검증이 필요합니다. password 방식은 password를 그대로 노출하니 SSH Key 방식을 선택하는 것이 바람직합니다.\nSSH Key 생성12ssh-keygen -m PEM -t rsa -b 4096 -f ~/config_server_deploy_key.rsa\n\nGithub SSH Key 등록\n\nSSH and GPG keys -&gt; New SSH Key으로 SSH Key의 공개키를 등록합니다\nyml 설정1234567891011spring:    cloud:        config:            server:                git:                    uri: git@github.com:cheese10yun/blog-sample.git                    ignoreLocalSshSettings: true                    private-key: |                        -----BEGIN RSA PRIVATE KEY-----                        ....                        -----END RSA PRIVATE KEY-----\nuri 설정을 반드시 SSH 주소로 입력해야 합니다. ignoreLocalSshSettings 설명은 아래 공식 레퍼런스를 확인해 주세요\n\nGit SSH configuration using properties\n For those cases, SSH configuration can be set by using Java properties. In order to activate property-based SSH configuration, the spring.cloud.config.server.git.ignoreLocalSshSettings property must be set to true, as shown in the following\n\n\nSSH 주소는 Github Code 버튼을 누르면 확인할 수 있습니다.\n정리Spring Config Server에 대해서 간단하게 알아봤습니다. 이후 포스팅에서는 각 애플리케이션(클라이언트)이 Config Server에 접속해서 설정값을 가져오는 방식, 배포 없이 Config 값을 변경하는 방법, 여러 서버가 구동 중인 경우 Kafka 기반으로 Broadcast 해서 Config 값 변경 전파하는 방식에 대해서 다뤄보겠습니다.\n참고\nSpring Cloud Config Reference\n\n","dateCreated":"2021-07-30T00:00:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2021-07-30T00:00:00+09:00","description":"스프링 Config Server는 각 애플리케이션에의 Config 설정을 중앙 서버에서 관리를 하는 서비스입니다. 중앙 저장소로 Github Repository뿐만 아니라 아래와 같은 저장소 환경을 제공해 주고 있습니다.","headline":"Spring Cloud Config Server 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-config-server/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-config-server/","keywords":"Spring, MSA"}</script>
+    <meta name="description" content="스프링 Config Server는 각 애플리케이션에의 Config 설정을 중앙 서버에서 관리를 하는 서비스입니다. 중앙 저장소로 Github Repository뿐만 아니라 아래와 같은 저장소 환경을 제공해 주고 있습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Cloud Config Server 정리">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-config-server/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="스프링 Config Server는 각 애플리케이션에의 Config 설정을 중앙 서버에서 관리를 하는 서비스입니다. 중앙 저장소로 Github Repository뿐만 아니라 아래와 같은 저장소 환경을 제공해 주고 있습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/config-server1.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh-1.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh-2.png">
+<meta property="article:published_time" content="2021-07-29T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.836Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="MSA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/config-server1.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring Cloud Config Server 정리
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2021-07-30T00:00:00+09:00">
+	
+		    2021/07/30
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p>해당 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/blog-sample/tree/master/spring-msa">Github</a>에서 확인할 수 있습니다.</p>
+</blockquote>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/config-server1.png"></p>
+<p>스프링 Config Server는 각 애플리케이션에의 Config 설정을 중앙 서버에서 관리를 하는 서비스입니다. 중앙 저장소로 Github Repository뿐만 아니라 아래와 같은 저장소 환경을 제공해 주고 있습니다.</p>
+<ul>
+<li>Git(Github)</li>
+<li>JDBC</li>
+<li>REDIS</li>
+<li>AWS S3</li>
+<li>등등..</li>
+</ul>
+<p>본 포스팅은 Github Repository 저장소 기반으로 설명드리겠습니다. Github을 사용하고 계시다면 중앙 저장소로 Github Repository를 권장 드립니다.</p>
+<p>Spring Config Server를 이용하면 <code>/actuator/refresh</code>, <code>/actuator/busrefresh</code>를 통해서 <strong>서버를 재배포 없이 설정값을 변경할 수 있다는 점이 가장 큰 장점이라고 생각합니다.</strong></p>
+<h2 id="Config-Server-구성"><a href="#Config-Server-구성" class="headerlink" title="Config Server 구성"></a>Config Server 구성</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(&quot;org.springframework.cloud:spring-cloud-config-server&quot;)</span><br><span class="line">    implementation(org.springframework.boot:spring-boot-starter-actuator)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigServer</span> <span class="comment">// Config Server를 활성화 하기 위해 추가</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ConfigServerApplication</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    runApplication&lt;ConfigServerApplication&gt;(*args)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8888</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">application:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">config-server</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">cloud:</span></span><br><span class="line">        <span class="attr">config:</span></span><br><span class="line">            <span class="attr">server:</span></span><br><span class="line">                <span class="attr">encrypt.enabled:</span> <span class="literal">true</span></span><br><span class="line">                <span class="attr">git:</span></span><br><span class="line">                    <span class="attr">uri:</span> <span class="string">Github</span> <span class="string">Repositroy</span> <span class="string">주소</span> <span class="comment"># ex https://github.com/cheese10yun/blog-sample</span></span><br><span class="line">                    <span class="attr">username:</span> <span class="string">username</span></span><br><span class="line">                    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
+
+<p>빠르게 확인하기 위해서 user name, password 기반으로 동작 시킵니다. 만약 해당 Repository가 Public이라면 생략 가능합니다. Private 경우에는 password 방식, SSH Key 인증 방식이 있습니다. SSH Key 인증 방식은 아래에서 살펴보겠습니다. 그리고 가능하면 Config Server Repository에 설정을 두는 것보다 Config 설정만 관리하는 Repository를 하나 생성하고 그쪽에는 순수하게 Config 설정들만 관리하는 것이 <strong>코드와 설정 파일을 분리하는 좋은 방법이라고 생각합니다.</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># order-service.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line">    <span class="attr">profile:</span> <span class="string">&quot;default&quot;</span></span><br><span class="line">    <span class="attr">server-name:</span> <span class="string">&quot;Config Server&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># order-service-sandbox.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line">    <span class="attr">profile:</span> <span class="string">&quot;sandbox&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># order-service-production.yml</span></span><br><span class="line"><span class="attr">message:</span></span><br><span class="line">    <span class="attr">profile:</span> <span class="string">&quot;production&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>&#123;application-name&#125;-&#123;evn&#125;.yml</code> 형식으로 각 profile에 본인의 환경을 설정했습니다. <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/msa-study-sample">msa-study-sample Repositroy</a>에 저장되어 있습니다.</p>
+<p>HTTP 서비스에는 다음과 같은 형식의 리소스가 표현됩니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]</span><br><span class="line">/&#123;application&#125;-&#123;profile&#125;.yml</span><br><span class="line">/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.yml</span><br><span class="line">/&#123;application&#125;-&#123;profile&#125;.properties</span><br><span class="line">/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.properties</span><br></pre></td></tr></table></figure>
+
+<p>Github Repository를 이용한다면 <code>[/&#123;label&#125;]</code>은 branch 명으로 생각하면 됩니다. 한번 Config Server를 통해서 구동해 테스트해보겠습니다.</p>
+<h3 id="application-profile-label-조회"><a href="#application-profile-label-조회" class="headerlink" title="&#x2F;{application}&#x2F;{profile}[&#x2F;{label}] 조회"></a>&#x2F;{application}&#x2F;{profile}[&#x2F;{label}] 조회</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8888/order-service/local/master</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: application/json</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Date: Thu, 29 Jul 2021 17:37:11 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;order-service&quot;,</span><br><span class="line">  &quot;profiles&quot;: [</span><br><span class="line">    &quot;local&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;label&quot;: &quot;master&quot;,</span><br><span class="line">  &quot;version&quot;: &quot;93e0c93772d4c743eb888bcd9c14629eb1fa9551&quot;,</span><br><span class="line">  &quot;state&quot;: null,</span><br><span class="line">  &quot;propertySources&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;name&quot;: &quot;git@github.com:cheese10yun/msa-study-sample.git/order-service-local.yml&quot;,</span><br><span class="line">      &quot;source&quot;: &#123;</span><br><span class="line">        &quot;message.profile&quot;: &quot;local&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;name&quot;: &quot;git@github.com:cheese10yun/msa-study-sample.git/order-service.yml&quot;,</span><br><span class="line">      &quot;source&quot;: &#123;</span><br><span class="line">        &quot;message.profile&quot;: &quot;default&quot;,</span><br><span class="line">        &quot;message.server-name&quot;: &quot;Config Server&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 2957ms; Content length: 422 bytes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]</code>는 <code>/order-service/local/master</code>을 의미합니다. label은 Github Repository 저장소를 이용하는 경우 branch로 생각하면 됩니다.</p>
+<p>local 프로필을 조회했기 때문에 <code>message.profile=local</code>이 정상적으로 출력된 것을 확인할 수 있습니다. <code>propertySources</code> 객체가 배열로 default 프로필인 <code>order-service.yml</code> 값에 해당하는 <code>message.profile=default</code> 값도 같이 조회하는 것을 확인할 수 있습니다. <strong>이는 특정 프로필에 없는 값은 기본 프로필의 값으로 대체되기 때문에 조회하는 것입니다. 만약 local 프로필에 없는 <code>message.server-name=Config Server</code> 값이 필요한 경우에는 default 값을 사용합니다.</strong></p>
+<h3 id="application-profile-yml-조회"><a href="#application-profile-yml-조회" class="headerlink" title="&#x2F;{application}-{profile}.yml 조회"></a>&#x2F;{application}-{profile}.yml 조회</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8888/order-service-local.yml</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain</span><br><span class="line">Content-Length: 55</span><br><span class="line">Date: Thu, 29 Jul 2021 17:40:36 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">message:</span><br><span class="line">  profile: local</span><br><span class="line">  server-name: Config Server</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 2335ms; Content length: 55 bytes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>/order-service-local.yml</code> 조회를 진행하게 되면 본인 profile의 값, default 값을 출력하는 것을 확인할 수 있습니다. <code>/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.yml</code> 조회도 동일한 응답을 받습니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:8888/order-service-local.properties</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 </span><br><span class="line">Content-Type: text/plain</span><br><span class="line">Content-Length: 57</span><br><span class="line">Date: Thu, 29 Jul 2021 17:45:34 GMT</span><br><span class="line">Keep-Alive: timeout=60</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">message.profile: local</span><br><span class="line">message.server-name: Config Server</span><br><span class="line"></span><br><span class="line">Response code: 200; Time: 2430ms; Content length: 57 bytes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>/&#123;application&#125;-&#123;profile&#125;.properties</code>, <code>/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.properties</code>도 위와 비슷한 응답을 받지만 위 처럼 <code>properteis</code>의 형식 입니다.</p>
+<h2 id="Private-Repository-SSH-Key"><a href="#Private-Repository-SSH-Key" class="headerlink" title="Private Repository SSH Key"></a>Private Repository SSH Key</h2><p>Public Repository는 누구나 접근 가능하니 상관없지만 Private Repository는 해강 Repository의 권한이 있는 사용자인지 확인해야 합니다. 대부분 실무 환경에서는 Private 환경이니 해당 Repository에 대한 검증이 필요합니다. password 방식은 password를 그대로 노출하니 SSH Key 방식을 선택하는 것이 바람직합니다.</p>
+<h3 id="SSH-Key-생성"><a href="#SSH-Key-생성" class="headerlink" title="SSH Key 생성"></a>SSH Key 생성</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -m PEM -t rsa -b 4096 -f ~/config_server_deploy_key.</span><br><span class="line">rsa</span><br></pre></td></tr></table></figure>
+
+<h3 id="Github-SSH-Key-등록"><a href="#Github-SSH-Key-등록" class="headerlink" title="Github SSH Key 등록"></a>Github SSH Key 등록</h3><p><img src="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh.png"></p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh-1.png"></p>
+<p><code>SSH and GPG keys</code> -&gt; <code>New SSH Key</code>으로 SSH Key의 공개키를 등록합니다</p>
+<h3 id="yml-설정"><a href="#yml-설정" class="headerlink" title="yml 설정"></a>yml 설정</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">cloud:</span></span><br><span class="line">        <span class="attr">config:</span></span><br><span class="line">            <span class="attr">server:</span></span><br><span class="line">                <span class="attr">git:</span></span><br><span class="line">                    <span class="attr">uri:</span> <span class="string">git@github.com:cheese10yun/blog-sample.git</span></span><br><span class="line">                    <span class="attr">ignoreLocalSshSettings:</span> <span class="literal">true</span></span><br><span class="line">                    <span class="attr">private-key:</span> <span class="string">|</span></span><br><span class="line"><span class="string">                        -----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">                        ....</span></span><br><span class="line"><span class="string">                        -----END RSA PRIVATE KEY-----</span></span><br></pre></td></tr></table></figure>
+<p><strong>uri 설정을 반드시 SSH 주소로 입력해야 합니다.</strong> ignoreLocalSshSettings 설명은 아래 공식 레퍼런스를 확인해 주세요</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.spring.io/spring-cloud-config/reference/html/#_git_ssh_configuration_using_properties">Git SSH configuration using properties</a></p>
+<p> For those cases, SSH configuration can be set by using Java properties. In order to activate property-based SSH configuration, the spring.cloud.config.server.git.ignoreLocalSshSettings property must be set to true, as shown in the following</p>
+</blockquote>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/spring-msa/docs/images/github-ssh-2.png"></p>
+<p>SSH 주소는 Github Code 버튼을 누르면 확인할 수 있습니다.</p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>Spring Config Server에 대해서 간단하게 알아봤습니다. 이후 포스팅에서는 각 애플리케이션(클라이언트)이 Config Server에 접속해서 설정값을 가져오는 방식, 배포 없이 Config 값을 변경하는 방법, 여러 서버가 구동 중인 경우 Kafka 기반으로 Broadcast 해서 Config 값 변경 전파하는 방식에 대해서 다뤄보겠습니다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://cloud.spring.io/spring-cloud-config/reference/html/">Spring Cloud Config Reference</a></li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/MSA/" rel="tag">MSA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-config-client/"
+                    data-tooltip="Spring Cloud Config &amp; Cloud Bus 정리"
+                    aria-label="이전: Spring Cloud Config &amp; Cloud Bus 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/elk-apm-1/"
+                    data-tooltip="Elasticsearch APM 기본설정"
+                    aria-label="다음: Elasticsearch APM 기본설정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-config-server/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-config-server/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-config-server/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-config-client/"
+                    data-tooltip="Spring Cloud Config &amp; Cloud Bus 정리"
+                    aria-label="이전: Spring Cloud Config &amp; Cloud Bus 정리"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/elk-apm-1/"
+                    data-tooltip="Elasticsearch APM 기본설정"
+                    aria-label="다음: Elasticsearch APM 기본설정"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-config-server/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-config-server/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-config-server/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-config-server/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-config-server/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-config-server/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>JPA 플러시 정리 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n자바 ORM 표준 JPA 프로그래밍을 보고 플러시 관련 내요을 정리한 정리한 내용 입니다.\n\n플러시 란?JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다. 보통 트랜잭션을 커밋하면 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화(등록, 수정, 삭제) 작업을 진행하게 됩니다.\n엔티티 등록12345678910111213EntityMaanger em  = emf.createEnttiyManager();ENtityTranscation transaction = em.getTransaction();// 엔티티 매니저는 데이터 변경 시 트랜잭션을 시작해야한다.transaction.begin();em.persist(memberA);em.persist(memberB);// 여기까지 Insert SQL을 데이터베이스에 보내지 않는다.// Commit을 하는 순간 데이터베이스에 Insert SQL을 보낸다transaction.commit();\n엔티티 매니저는 트랜잭션을 커밋하기 직전까지 데이터베이스에 엔티티를 저장하지 않고 내부 쿼리 저장소에 INSERT SQL을 모아둔다. 그리고 트랜잭션을 커밋할 때 모아둔 쿼리를 데이터베이스에 보내느데 이것을 트랜잭션을 지원하는 쓰기 지연 이라 한다.\n회원 A를 영속화 했다. 영속성 컨텍스트는 1차 캐시에 회원 엔티티를 저장하면서 동시에 회원 엔티티 정보로 등록 쿼리를 만든다. 그리고 만들어진 등록 쿼리를 쓰기 지연 SQL 저장소에 보관한다.\n다음으로 회원 B를 영속화했다. 마찬가지로 회원 엔티티 정보로 등록 쿼리를 생성해서 쓰지 지연 SQL 저장소에 보관한다. 현재 쓰기 지연 SQL저장소 에는 등록 쿼리가 2건이 저장되어 있다.\n\n마지막으로 트랜잭션을 커밋했다. 트랜잭션을 커밋하면 엔티티 매니저는 우선 영속성 컨텍스트를 플러시한다. 플러시는 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화하는 작업인데 이때 등록, 수정, 삭제한 엔티티를 데이터베이스에 반영한다.\n즉, 쓰기 지연 SQL 저장소에 모인 쿼리를 데이터베이스에 보낸다. 이렇게 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화한 후에 실제 데이터베이스 트랜잭션을 커밋한다.(flush가 먼저 동작하고 (데이터베이스에 동기화한 후에) 실제 데이터베이스 트랜잭션을 커밋한다.)\n트랜잭션을 지원하는 쓰기 지연이 가능한 이유1234567begin(); // 트랜잭션 시작save(A);save(B);save(C);commit(); // 트랜잭션 커밋\n\n데이터를 저장하는 즉시 등록 쿼리를 데이터베이스에 보낸다. 예제에서 save() 메서드를 호출할 때 마다 즉시 데이터베이스에 등록 쿼리를 보낸다. 그리고 마지막에 트랜잭션을 커밋한다.\n데이터를 저장하면 등록 쿼리를 데이터베이스에 보내지 않고 메모리에 모아 둔다. 그리고 트랜잭션을 커밋할 때 모아둔 등록 쿼리를 데이터베이스에 보낸다.\n\n트랜잭션을 지원하는 쓰지 지연과 성능 최적화트랜잭션을 지원하는 쓰지 이연과 JDBC 배치1234567insert(member1); // INSERT INTO ...insert(member2); // INSERT INTO ...insert(member3); // INSERT INTO ...insert(member4); // INSERT INTO ...insert(member5); // INSERT INTO ...commit();\n네트워크 호출 한번은 단순한 메소드를 수만 번 호출하는 것보다 더 큰 비용이 든다. 이 코드는 5번의 INSERT SQL과 1번의 커밋으로 총 6번 데이터 베이스와 통신한다. 이것을 최적화하라면 5번의 INSERT SQL을 모아서 한 번에 데이터베이스로 보내면 된다. JDBC가 제공하는 SQL 배치 기능을 사용하면 SQL을 모아서 데이터베이스에 한 번에 보낼 수 있다. 하지만 이 기능을 사용하라면 많은 코드를 수정해야한다. JPA는 플러시 기능이 있이므로 SQL 배치 기능을 효과적으로 사용할 수 있다.\nhibernate.jdbc.batch_size 속성의 값을 50으로 주면 최대 50건씩 모아서 SQL 배치를 실행한다. 하지만 SQL 배치는 같은 SQL일 때만 유효하다. 중간에 다른 처리가 들어가면 SQL 배치를 다시 시작한다.\n1234567em.persist(new Member()); // 1em.persist(new Member()); // 2em.persist(new Member()); // 3em.persist(new Member()); // 4em.persist(new Orders()); // 1-1, 다른 SQL이 추가 되었기 때문에  SQL 배치를 다시 시작 해야 한다em.persist(new Member()); // 1em.persist(new Member()); // 2\n1,2,3,4를 모아서 하나의 SQL 배치를 실행하고 1-1를 한 번 실행하고 1,2을 모아서 실행한다. 따라서 총 3번의 SQL 배치를 실행한다.\n모든 경우에 사용할 수 있는 것은 아니다. 엔티티가 영속 상태가 되려면 식별자가 꼭 필요하다. 그런데 IDENTITY 식별자 생성 전략은 엔티티를 데이터베이스에 저장해야 식별자를 구할 수 있으므로 em.persist()를 호출하는 즉시 INSERT SQL이 데이터베이스에 전달된다. 따라서 쓰지 지연을 활용한 성능 최적화를 할 수가 없다.\n트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성트랜잭션을 지원하는 쓰기 지연의 가장큰 장점은 데이터베이스 테이블 로우에 락이 걸리는 시간을 최소한다는 것이다. 이 기능은 트랜잭션을 커밋해서 영속성 컨텍스트를 플러시하기 전까지는 데이터베이스에 데이터를 등록, 수정, 삭제 하지 않는다. 따라서 커밋 전까지 데이터베이스 로우에 락을 걸지 않는다.\n1234update(memberA); // UPDATE SQL Member A비즈니스로직A(); // UPDATE SQL ...비즈니스로직B(); // UPDATE SQL ...commit();\nJPQL를 사용하지 않고 SQL 직접다루면 update(memberA)를 호출할 때 UPDATE SQL을 실행하면 데이터베이스 테이블 로우에 락을 건다. 이 락은 비즈니스 로직A(), 비즈니스 로직B()를 모두 수행하고 commit()을 호출할 때까지 유지된다. 트랜잭션 격리 수준에 따라 다르지만 보통 많이 사용하는 커밋된 읽기 Read Committed 격리 수준이나 그 이상에는 데이터베이스에 현재 수정 중인 데이터(로우)를 수정하려는 다른 트랜잭션은 락이 풀릴 때까지 대기한다.\nJPA는 커밋을 해야 플러시를 호출하고 데이터베이스에 수정 쿼리를 보낸다. 예제에서 commit()을 호출할 때 UPDATE SQL을 실행하고 바로 데이터베이스 트랜잭션을 커밋한다. 쿼리를 보내고 보내고 바로 트랜잭션을 커밋하므로 결과적으로 데이터베이스에 락이 걸리는 시간을 최소화 한다. 이는 동시에 더 많은 트래잭션을 처리할 수 있다는 장점이 된다.\n엔티티 수정변경 감지123456789101112131415EntityMaanger em  = emf.createEnttiyManager();ENtityTranscation transaction = em.getTransaction();transaction.begin(); // 트랜잭션 시작// 영성속 텐티티 조회Member memberA = em.find(Member.class, &quot;memberA&quot;);// 영속성 엔티티 데이터 수정memberA.setUsername(&quot;hi&quot;);memberA.setAge(10);//em.update(member) 이런 코드가 있어야하지 않을까?transaction.commit(); // 트랜잭션 커밋\n엔티티의 변경사항을 데이터베이스에 자동으로 반영하는 기능을 변경 감지(dirty checking) 이라 한다.JPA는 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두는데 이것을 스냅샷이리고 한다. 그리고 플러시 시점에서 스냡샵과 엔티티를 비교해서 변경된 엔티티를 찾는다.\n\n트랜잭션을 커밋하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.\n엔티티와 스냅샵을 비교해서 변경된 엔티티를 찾는다.\n변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.\n쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.\n데이터베이스 트랜잭션을 커밋한다.\n\n읽기 전용 트랜잭션스프링 프레임워크를 사용하면 트랜잭션을 읽기 전용 모드로 설정할 수 있다. @Transactional(readOnly = true) 옵션을 주면 스프링 프레임워크가 하이버네이트 세션의 플러시 모드를 MANUAL로 설정한다 그렇게되면 강제로 플러시를 호출하지 않은 한 플러시가 일어나지 않는다. 따라서 트랜잭션을 커밋해도 영속성 컨텍스트 플러시하지 않는다. 영속성 컨텍스트를 플러시하지 않으니 엔티티의 등록, 수정, 삭제는 당연히 동작하지 않는다. 플러시 할 때 일어나는 스냅샷비교와 같은 무거운 로직을 수행하지 않으므로 성능에 향상된다.\n변경 감지는 영속성 컨텍스타 관리하는 영속 상태의 엔티티에만 적용된다. 비영속, 준영속처럼 영속성 컨텍스트의 관리를받지 못하는 엔티티는 값을 변경해도 데이터베이스에 반영되지 않는다.\n엔티티 삭제12Member meberA = em.find(Member.class, &quot;memberA&quot;); // 삭제할 대상 엔티티 조회em.remove(memberA); // 엔티티 삭제\n엔티티를 삭제하려면 먼저 삭제 대상 엔티티를 조회해야한다. em.remove()에 삭제 대상 엔티티를 넘겨주면 엔티티를 삭제한다. 물론 엔티티를 즉시 삭제하는 것이 아니라 엔티티 등록과 비슷하게 삭제 쿼리를 쓰기 지연 데이터베이스에 삭제 쿼리를 전달한다.\n영속성 컨텍스트를 플러시 하는 3 가지 방법플러시는 영속성 컨텍스의 변경 내용을 데이터베이스에 반영한다. 플러시를 실행하면 구체적으로 다음과 같은 일이 일어난다\n\n변경 감자기 동작해서 영속성 컨텍스트에 있는 모든 엔티티를 스냅샷과 비교 해서 수정된 엔티티를 찾는다. 수정 엔티티는 수정 쿼리를 만들어 쓰기 지연 SQL 등록한다.\n쓰기 지연 SQL 의 저장소의 쿼리를 데이터베이스에 전송한다. (등록, 수정, 삭제 쿼리)\n\n영속성 컨텍스트를 플러시 하는 방법은 3가지다.\n\nem.flush()를 직접 호출한다.\nJPQL 쿼리 실행 시 플러시가 자동 호출된다. \n트랜잭션 커밋 시 플러시가 자동 호출된다.\n\n플러시를 직접 호출하는 경우엔티티 매니저의 flush() 메서드를 직접 호출해서 영속성 컨텍스트를 강제로 플러시 한다. 테스트나 다른 프레임워크와 JPA 함께 사용할 때는 제외하고 거의 사용하지 않는다.\n트랜잭션 커밋 시 플러시가 자동 호출데이터베이스에 변경 내용을 SQL로 전달하지 않고 트랜잭션만 커밋하면 어떤 데이터도 데이터베이스에 반영되지 않는다. 따라서 트랜잭션을 커밋하기 전에 꼭 플러시를 호출해서 영속성 컨텍스트의 변경 내용을 데이터베이스에 반영해야 한다. JPA는 이런 문제를 예방하기 위해서 트랜잭션 커밋할 때 플러시를 자동으로 호출한다.\nJPQL 쿼리 실행시 플러시 자동 호출1234567891011121314151617@Testinternal fun `JPQL 쿼리 실행시 플러시 자동 호출`() &#123;    val teamA = Team(&quot;teamA&quot;)    val teamB = Team(&quot;teamB&quot;)    em.persist(teamA)    em.persist(teamB)    val teams = query.select(qTeam)            .from(qTeam)            .fetch()    for (team in teams) &#123;        println(&quot;team : $team&quot;)    &#125;&#125;\nJPQL이나 QueryDSL 같은 객체지향 쿼리를 호출할 플러시가 실행된다.\n\nteamA, teamB를 영속성 컨텍스트에 저장한다.\nQueryDSL으로 Team 전체를 조회 한다.\nQueryDSL 쿼리 시점에 teamA, teamB 플러시를 이르켜 데이터베이스에 commit하지 않았다면 QueryDsl으로 조회한 값은 없을 것이다.\n\n이런 결과가 나오기 때문에 쿼리를 실행하기 직전에 영속성 컨텍스트를 플러시해서 변경 내용을 데이터베이스에 반영해야 한다. JPA는 이런 문제를 예방하기 위해서 JPQL을 실행할 때도 플러시르 자동 호출한다. 참고로 식별자를 기준으로 조회하는 find() 메서드는 호출되지 않는다.\n참고\n자바 ORM 표준 JPA 프로그래밍\n\n","dateCreated":"2020-01-29T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2020-01-29T00:00:00+09:00","description":"JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다.","headline":"JPA 플러시 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/jpa-flush/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/jpa-flush/","keywords":"JPA, ORM"}</script>
+    <meta name="description" content="JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JPA 플러시 정리">
+<meta property="og:url" content="https://cheese10yun.github.io/jpa-flush/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-2.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-3.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-persistent-dirty-checking.png">
+<meta property="article:published_time" content="2020-01-28T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.921Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            JPA 플러시 정리
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-01-29T00:00:00+09:00">
+	
+		    2020/01/29
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p><a target="_blank" rel="noopener" href="http://acornpub.co.kr/book/jpa-programmig">자바 ORM 표준 JPA 프로그래밍</a>을 보고 플러시 관련 내요을 정리한 정리한 내용 입니다.</p>
+</blockquote>
+<h2 id="플러시-란"><a href="#플러시-란" class="headerlink" title="플러시 란?"></a>플러시 란?</h2><p>JPA는 엔티티를 영속성 컨텍스트에서 관리합니다. 영속성 컨텍스트에 있는 내용을 데이터베이스에 반영하는 것을 플러시라고 합니다. 보통 트랜잭션을 커밋하면 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화(등록, 수정, 삭제) 작업을 진행하게 됩니다.</p>
+<h2 id="엔티티-등록"><a href="#엔티티-등록" class="headerlink" title="엔티티 등록"></a>엔티티 등록</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">EntityMaanger</span> <span class="variable">em</span>  <span class="operator">=</span> emf.createEnttiyManager();</span><br><span class="line"><span class="type">ENtityTranscation</span> <span class="variable">transaction</span> <span class="operator">=</span> em.getTransaction();</span><br><span class="line"><span class="comment">// 엔티티 매니저는 데이터 변경 시 트랜잭션을 시작해야한다.</span></span><br><span class="line"></span><br><span class="line">transaction.begin();</span><br><span class="line"></span><br><span class="line">em.persist(memberA);</span><br><span class="line">em.persist(memberB);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 여기까지 Insert SQL을 데이터베이스에 보내지 않는다.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Commit을 하는 순간 데이터베이스에 Insert SQL을 보낸다</span></span><br><span class="line">transaction.commit();</span><br></pre></td></tr></table></figure>
+<p>엔티티 <strong>매니저는 트랜잭션을 커밋하기 직전까지 데이터베이스에 엔티티를 저장하지 않고 내부 쿼리 저장소에 INSERT SQL을 모아둔다.</strong> 그리고 트랜잭션을 커밋할 때 모아둔 쿼리를 데이터베이스에 보내느데 이것을 <strong>트랜잭션을 지원하는 쓰기 지연</strong> 이라 한다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent.png"><br>회원 A를 영속화 했다. 영속성 컨텍스트는 1차 캐시에 회원 엔티티를 저장하면서 동시에 회원 엔티티 정보로 등록 쿼리를 만든다. 그리고 만들어진 등록 쿼리를 쓰기 지연 SQL 저장소에 보관한다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-2.png"><br>다음으로 회원 B를 영속화했다. 마찬가지로 회원 엔티티 정보로 등록 쿼리를 생성해서 쓰지 지연 SQL 저장소에 보관한다. 현재 쓰기 지연 SQL저장소 에는 등록 쿼리가 2건이 저장되어 있다.</p>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-insert-persistent-3.png"></p>
+<p>마지막으로 트랜잭션을 커밋했다. <strong>트랜잭션을 커밋하면 엔티티 매니저는 우선 영속성 컨텍스트를 플러시한다. 플러시는 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화하는 작업인데 이때 등록, 수정, 삭제한 엔티티를 데이터베이스에 반영한다.</strong></p>
+<p>즉, 쓰기 지연 SQL 저장소에 모인 쿼리를 데이터베이스에 보낸다. 이렇게 영속성 컨텍스트의 변경 내용을 데이터베이스에 동기화한 후에 실제 데이터베이스 트랜잭션을 커밋한다.<br>(flush가 먼저 동작하고 (데이터베이스에 동기화한 후에) 실제 데이터베이스 트랜잭션을 커밋한다.)</p>
+<h3 id="트랜잭션을-지원하는-쓰기-지연이-가능한-이유"><a href="#트랜잭션을-지원하는-쓰기-지연이-가능한-이유" class="headerlink" title="트랜잭션을 지원하는 쓰기 지연이 가능한 이유"></a>트랜잭션을 지원하는 쓰기 지연이 가능한 이유</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">begin(); <span class="comment">// 트랜잭션 시작</span></span><br><span class="line"></span><br><span class="line">save(A);</span><br><span class="line">save(B);</span><br><span class="line">save(C);</span><br><span class="line"></span><br><span class="line">commit(); <span class="comment">// 트랜잭션 커밋</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>데이터를 저장하는 즉시 등록 쿼리를 데이터베이스에 보낸다. 예제에서 save() 메서드를 호출할 때 마다 즉시 데이터베이스에 등록 쿼리를 보낸다. 그리고 마지막에 트랜잭션을 커밋한다.</li>
+<li>데이터를 저장하면 등록 쿼리를 <strong>데이터베이스에 보내지 않고 메모리에 모아 둔다.</strong> 그리고 <strong>트랜잭션을 커밋할 때 모아둔 등록 쿼리를 데이터베이스에 보낸다.</strong></li>
+</ol>
+<h3 id="트랜잭션을-지원하는-쓰지-지연과-성능-최적화"><a href="#트랜잭션을-지원하는-쓰지-지연과-성능-최적화" class="headerlink" title="트랜잭션을 지원하는 쓰지 지연과 성능 최적화"></a>트랜잭션을 지원하는 쓰지 지연과 성능 최적화</h3><h4 id="트랜잭션을-지원하는-쓰지-이연과-JDBC-배치"><a href="#트랜잭션을-지원하는-쓰지-이연과-JDBC-배치" class="headerlink" title="트랜잭션을 지원하는 쓰지 이연과 JDBC 배치"></a>트랜잭션을 지원하는 쓰지 이연과 JDBC 배치</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">insert(member1); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member2); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member3); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member4); <span class="comment">// INSERT INTO ...</span></span><br><span class="line">insert(member5); <span class="comment">// INSERT INTO ...</span></span><br><span class="line"></span><br><span class="line">commit();</span><br></pre></td></tr></table></figure>
+<p><strong>네트워크 호출 한번은 단순한 메소드를 수만 번 호출하는 것보다 더 큰 비용이 든다.</strong> 이 코드는 5번의 INSERT SQL과 1번의 커밋으로 총 6번 데이터 베이스와 통신한다. 이것을 최적화하라면 5번의 INSERT SQL을 모아서 한 번에 데이터베이스로 보내면 된다. <strong>JDBC가 제공하는 SQL 배치 기능을 사용하면 SQL을 모아서 데이터베이스에 한 번에 보낼 수 있다.</strong> 하지만 이 기능을 사용하라면 많은 코드를 수정해야한다. <strong>JPA는 플러시 기능이 있이므로 SQL 배치 기능을 효과적으로 사용할 수 있다.</strong></p>
+<p><strong><code>hibernate.jdbc.batch_size</code> 속성의 값을 50으로 주면 최대 50건씩 모아서 SQL 배치를 실행한다. 하지만 SQL 배치는 같은 SQL일 때만 유효하다. 중간에 다른 처리가 들어가면 SQL 배치를 다시 시작한다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 2</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 3</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 4</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Orders</span>()); <span class="comment">// 1-1, 다른 SQL이 추가 되었기 때문에  SQL 배치를 다시 시작 해야 한다</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 1</span></span><br><span class="line">em.persist(<span class="keyword">new</span> <span class="title class_">Member</span>()); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>1,2,3,4를 모아서 하나의 SQL 배치를 실행하고 1-1를 한 번 실행하고 1,2을 모아서 실행한다. 따라서 총 3번의 SQL 배치를 실행한다.</p>
+<p>모든 경우에 사용할 수 있는 것은 아니다. 엔티티가 영속 상태가 되려면 식별자가 꼭 필요하다. <strong>그런데 IDENTITY 식별자 생성 전략은 엔티티를 데이터베이스에 저장해야 식별자를 구할 수 있으므로 em.persist()를 호출하는 즉시 INSERT SQL이 데이터베이스에 전달된다. 따라서 쓰지 지연을 활용한 성능 최적화를 할 수가 없다.</strong></p>
+<h4 id="트랜잭션을-지원하는-쓰기-지연과-애플리케이션-확장성"><a href="#트랜잭션을-지원하는-쓰기-지연과-애플리케이션-확장성" class="headerlink" title="트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성"></a>트랜잭션을 지원하는 쓰기 지연과 애플리케이션 확장성</h4><p><strong>트랜잭션을 지원하는 쓰기 지연의 가장큰 장점은 데이터베이스 테이블 로우에 락이 걸리는 시간을 최소한다는 것이다. 이 기능은 트랜잭션을 커밋해서 영속성 컨텍스트를 플러시하기 전까지는 데이터베이스에 데이터를 등록, 수정, 삭제 하지 않는다. 따라서 커밋 전까지 데이터베이스 로우에 락을 걸지 않는다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update(memberA); <span class="comment">// UPDATE SQL Member A</span></span><br><span class="line">비즈니스로직A(); <span class="comment">// UPDATE SQL ...</span></span><br><span class="line">비즈니스로직B(); <span class="comment">// UPDATE SQL ...</span></span><br><span class="line">commit();</span><br></pre></td></tr></table></figure>
+<p><strong>JPQL를 사용하지 않고 SQL 직접다루면 update(memberA)를 호출할 때 UPDATE SQL을 실행하면 데이터베이스 테이블 로우에 락을 건다. 이 락은 비즈니스 <code>로직A()</code>, <code>비즈니스 로직B()</code>를 모두 수행하고 <code>commit()</code>을 호출할 때까지 유지된다. 트랜잭션 격리 수준에 따라 다르지만 보통 많이 사용하는 커밋된 읽기 Read Committed 격리 수준이나 그 이상에는 데이터베이스에 현재 수정 중인 데이터(로우)를 수정하려는 다른 트랜잭션은 락이 풀릴 때까지 대기한다.</strong></p>
+<p><strong>JPA는 커밋을 해야 플러시를 호출하고 데이터베이스에 수정 쿼리를 보낸다.</strong> 예제에서 <code>commit()</code>을 호출할 때 UPDATE SQL을 실행하고 바로 데이터베이스 트랜잭션을 커밋한다. 쿼리를 보내고 보내고 바로 트랜잭션을 커밋하므로 결과적으로 데이터베이스에 락이 걸리는 시간을 최소화 한다. <strong>이는 동시에 더 많은 트래잭션을 처리할 수 있다는 장점이 된다.</strong></p>
+<h2 id="엔티티-수정"><a href="#엔티티-수정" class="headerlink" title="엔티티 수정"></a>엔티티 수정</h2><h3 id="변경-감지"><a href="#변경-감지" class="headerlink" title="변경 감지"></a>변경 감지</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">EntityMaanger em  = emf.createEnttiyManager();</span><br><span class="line">ENtityTranscation transaction = em.getTransaction();</span><br><span class="line">transaction.begin(); // 트랜잭션 시작</span><br><span class="line"></span><br><span class="line">// 영성속 텐티티 조회</span><br><span class="line">Member memberA = em.find(Member.class, &quot;memberA&quot;);</span><br><span class="line"></span><br><span class="line">// 영속성 엔티티 데이터 수정</span><br><span class="line"></span><br><span class="line">memberA.setUsername(&quot;hi&quot;);</span><br><span class="line">memberA.setAge(10);</span><br><span class="line"></span><br><span class="line">//em.update(member) 이런 코드가 있어야하지 않을까?</span><br><span class="line"></span><br><span class="line">transaction.commit(); // 트랜잭션 커밋</span><br></pre></td></tr></table></figure>
+<p><strong>엔티티의 변경사항을 데이터베이스에 자동으로 반영하는 기능을 변경 감지(dirty checking) 이라 한다.</strong><br><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-persistent-dirty-checking.png"><br>JPA는 엔티티를 영속성 컨텍스트에 보관할 때, <strong>최초 상태를 복사해서 저장해두는데 이것을 스냅샷이리고 한다.</strong> 그리고 플러시 시점에서 스냡샵과 엔티티를 비교해서 변경된 엔티티를 찾는다.</p>
+<ol>
+<li><strong>트랜잭션을 커밋하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.</strong></li>
+<li>엔티티와 스냅샵을 비교해서 변경된 엔티티를 찾는다.</li>
+<li><strong>변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.</strong></li>
+<li>쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.</li>
+<li>데이터베이스 트랜잭션을 커밋한다.</li>
+</ol>
+<h3 id="읽기-전용-트랜잭션"><a href="#읽기-전용-트랜잭션" class="headerlink" title="읽기 전용 트랜잭션"></a>읽기 전용 트랜잭션</h3><p>스프링 프레임워크를 사용하면 트랜잭션을 읽기 전용 모드로 설정할 수 있다. <code>@Transactional(readOnly = true)</code> 옵션을 주면 스프링 프레임워크가 하이버네이트 세션의 플러시 모드를 MANUAL로 설정한다 <strong>그렇게되면 강제로 플러시를 호출하지 않은 한 플러시가 일어나지 않는다.</strong> 따라서 트랜잭션을 커밋해도 영속성 컨텍스트 플러시하지 않는다. 영속성 컨텍스트를 플러시하지 않으니 엔티티의 등록, 수정, 삭제는 당연히 동작하지 않는다. <strong>플러시 할 때 일어나는 스냅샷비교와 같은 무거운 로직을 수행하지 않으므로 성능에 향상된다.</strong></p>
+<p><strong>변경 감지는 영속성 컨텍스타 관리하는 영속 상태의 엔티티에만 적용된다.</strong> 비영속, 준영속처럼 영속성 컨텍스트의 관리를받지 못하는 엔티티는 값을 변경해도 데이터베이스에 반영되지 않는다.</p>
+<h2 id="엔티티-삭제"><a href="#엔티티-삭제" class="headerlink" title="엔티티 삭제"></a>엔티티 삭제</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Member</span> <span class="variable">meberA</span> <span class="operator">=</span> em.find(Member.class, <span class="string">&quot;memberA&quot;</span>); <span class="comment">// 삭제할 대상 엔티티 조회</span></span><br><span class="line">em.remove(memberA); <span class="comment">// 엔티티 삭제</span></span><br></pre></td></tr></table></figure>
+<p><strong>엔티티를 삭제하려면 먼저 삭제 대상 엔티티를 조회해야한다.</strong> em.remove()에 삭제 대상 엔티티를 넘겨주면 엔티티를 삭제한다. 물론 엔티티를 즉시 삭제하는 것이 아니라 엔티티 등록과 비슷하게 삭제 쿼리를 쓰기 지연 데이터베이스에 삭제 쿼리를 전달한다.</p>
+<h2 id="영속성-컨텍스트를-플러시-하는-3-가지-방법"><a href="#영속성-컨텍스트를-플러시-하는-3-가지-방법" class="headerlink" title="영속성 컨텍스트를 플러시 하는 3 가지 방법"></a>영속성 컨텍스트를 플러시 하는 3 가지 방법</h2><p><strong>플러시는 영속성 컨텍스의 변경 내용을 데이터베이스에 반영한다.</strong> 플러시를 실행하면 구체적으로 다음과 같은 일이 일어난다</p>
+<ol>
+<li>변경 감자기 동작해서 영속성 컨텍스트에 있는 모든 엔티티를 스냅샷과 비교 해서 수정된 엔티티를 찾는다. 수정 엔티티는 수정 쿼리를 만들어 쓰기 지연 SQL 등록한다.</li>
+<li>쓰기 지연 SQL 의 저장소의 쿼리를 데이터베이스에 전송한다. (등록, 수정, 삭제 쿼리)</li>
+</ol>
+<p>영속성 컨텍스트를 플러시 하는 방법은 3가지다.</p>
+<ol>
+<li>em.flush()를 직접 호출한다.</li>
+<li>JPQL 쿼리 실행 시 플러시가 자동 호출된다. </li>
+<li>트랜잭션 커밋 시 플러시가 자동 호출된다.</li>
+</ol>
+<h3 id="플러시를-직접-호출하는-경우"><a href="#플러시를-직접-호출하는-경우" class="headerlink" title="플러시를 직접 호출하는 경우"></a>플러시를 직접 호출하는 경우</h3><p>엔티티 매니저의 flush() 메서드를 직접 호출해서 영속성 컨텍스트를 강제로 플러시 한다. <strong>테스트나 다른 프레임워크와 JPA 함께 사용할 때는 제외하고 거의 사용하지 않는다.</strong></p>
+<h3 id="트랜잭션-커밋-시-플러시가-자동-호출"><a href="#트랜잭션-커밋-시-플러시가-자동-호출" class="headerlink" title="트랜잭션 커밋 시 플러시가 자동 호출"></a>트랜잭션 커밋 시 플러시가 자동 호출</h3><p><strong>데이터베이스에 변경 내용을 SQL로 전달하지 않고 트랜잭션만 커밋하면 어떤 데이터도 데이터베이스에 반영되지 않는다. 따라서 트랜잭션을 커밋하기 전에 꼭 플러시를 호출해서 영속성 컨텍스트의 변경 내용을 데이터베이스에 반영해야 한다.</strong> JPA는 이런 문제를 예방하기 위해서 트랜잭션 커밋할 때 플러시를 자동으로 호출한다.</p>
+<h3 id="JPQL-쿼리-실행시-플러시-자동-호출"><a href="#JPQL-쿼리-실행시-플러시-자동-호출" class="headerlink" title="JPQL 쿼리 실행시 플러시 자동 호출"></a>JPQL 쿼리 실행시 플러시 자동 호출</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `JPQL 쿼리 실행시 플러시 자동 호출`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> teamA = Team(<span class="string">&quot;teamA&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> teamB = Team(<span class="string">&quot;teamB&quot;</span>)</span><br><span class="line"></span><br><span class="line">    em.persist(teamA)</span><br><span class="line">    em.persist(teamB)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> teams = query.select(qTeam)</span><br><span class="line">            .from(qTeam)</span><br><span class="line">            .fetch()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">        println(<span class="string">&quot;team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>JPQL이나 QueryDSL 같은 객체지향 <strong>쿼리를 호출할 플러시가 실행된다.</strong></p>
+<ol>
+<li><code>teamA</code>, <code>teamB</code>를 영속성 컨텍스트에 저장한다.</li>
+<li>QueryDSL으로 Team 전체를 조회 한다.</li>
+<li>QueryDSL 쿼리 시점에 <code>teamA</code>, <code>teamB</code> 플러시를 이르켜 데이터베이스에 commit하지 않았다면 QueryDsl으로 조회한 값은 없을 것이다.</li>
+</ol>
+<p>이런 결과가 나오기 때문에 쿼리를 실행하기 직전에 영속성 컨텍스트를 플러시해서 변경 내용을 데이터베이스에 반영해야 한다. JPA는 이런 문제를 예방하기 위해서 JPQL을 실행할 때도 플러시르 자동 호출한다. <strong>참고로 식별자를 기준으로 조회하는 find() 메서드는 호출되지 않는다.</strong></p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://acornpub.co.kr/book/jpa-programmig">자바 ORM 표준 JPA 프로그래밍</a></li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/rest-template-mock-test/"
+                    data-tooltip="RestTemplate Mock 기반 테스트 하기"
+                    aria-label="이전: RestTemplate Mock 기반 테스트 하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/jpa-persistent-context/"
+                    data-tooltip="JPA 영속성 컨텍스트 주의 점"
+                    aria-label="다음: JPA 영속성 컨텍스트 주의 점"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-flush/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-flush/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-flush/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/rest-template-mock-test/"
+                    data-tooltip="RestTemplate Mock 기반 테스트 하기"
+                    aria-label="이전: RestTemplate Mock 기반 테스트 하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/jpa-persistent-context/"
+                    data-tooltip="JPA 영속성 컨텍스트 주의 점"
+                    aria-label="다음: JPA 영속성 컨텍스트 주의 점"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-flush/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-flush/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-flush/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-flush/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-flush/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-flush/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

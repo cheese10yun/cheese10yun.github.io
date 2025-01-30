@@ -1,0 +1,736 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Node.JS로 카카오봇 만들기 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n\n\n\n전체소스는 GitHub branch develop-base에서 확인할 수 있습니다.\n옐로우 아이디 등록 링크\n\n해당 프로필은 하번 설정하면 변경이 불가능합니다. 이 작업이 완료되면 2 ~ 3일 이후에 옐로우아이디가 발급됩니다. 발급되기 전까지 Node API 서버를 구성합니다. 자세한 설명은 아래에 있습니다.\n\nAPI형 자동읍답 설정하기 선택\n\n앱 등록 절차를 진행합니다.\n앱등록시 반드시 keyboard API가 동작해야합니다. 아래의 노드 서버 설정을 완료하고 API TEST를 진행합니다.\n\n카카오 봇 API 간단설명용어 설명수신 API\n카카오톡 이용자가 플러스친구, 옐로아이디에게 보낸 메시지를 전달 받은 후 응답을 할 수 있는 API 입니다. http(s) restful api를 통하여 카카오 API 서버 -&gt; 파트너 서버를 호출합니다.\n\napp_key\n플러스친구&#x2F;옐로아이디에서 자동응답을 위한 앱 등록시 프로필별로 발급되는 고유 키 값입니다. 자동응답 기능만 이용하시는 경우 사용되지 않으며, 일부 app_secret을 통한 별도 인증이 필요한 일부 프로필에만 사용됩니다.\n\napp_secret\n인증을 위해 app_key와 조합하여 사용되는 키 값입니다. 자동응답 기능만 이용하시는 경우 사용되지 않으며, 일부 app_secret을 통한 별도 인증이 필요한 일부 프로필에만 사용됩니다.\n\nuser_key\n특정 카카오톡 이용자를 구분하기 위한 key 입니다. 카카오에서는 이용자의 개인정보를 외부에 제공하지 않으므로, 외부 파트너사에서 카카오톡 이용자를 구분하기 위해서는 카카오로부터 API를 통해 user_key를 response로 받아야 합니다. user_key는 특정 카카오톡 이용자에 대해 프로필별로 각기 다르게 발급됩니다. 따라서 user_key는 해당 프로필에 대해서만 유효합니다. 카카오톡 이용자가 프로필을 차단했다가 다시 추가한 경우에는 user_key가 갱신되지 않으며, 이용자가 카카오톡 탈퇴 후 재가입한 경우 갱신됩니다.\n\nAPI 설정\n\n\nURL\nmethod\n설명\n\n\n\n&#x2F;keyboard\nGET\n키보드 영역에 표현될 버튼에 대한 정보. 생략시 text 타입이 선택된다\n\n\n&#x2F;message\nPOST\n자동응답 명령어에 대한 응답 메시지의 내용\n\n\n&#x2F;friend\nPOST\n특정 카카오톡 이용자가 플러스친구&#x2F;옐로아이디를 친구로 추가하거나 차단하는 경우 해당 정보를 파트너사 서버로 전달하는 API입니다.\n\n\n&#x2F;friend\nDELETE\n특정 카카오톡 이용자가 플러스친구&#x2F;옐로아이디를 친구로 추가하거나 차단하는 경우 해당 정보를 파트너사 서버로 전달하는 API입니다.\n\n\n&#x2F;chat_room&#x2F;:user_key\nDELETE\n사용자가 채팅방 나가기를 해서 채팅방을 목록에서 삭제했을 경우 해당 정보를 파트\n\n\n출저 : 카카오톡 플러스친구&#x2F;옐로아이디 API v. 2.0 개요\nNode API 설정Node keyboard API12345678910router.get(&#x27;/keyboard&#x27;, (req, res) =&gt; &#123;  const menu = &#123;      type: &#x27;buttons&#x27;,      buttons: [&quot;메뉴1&quot;, &quot;메뉴2&quot;, &quot;메뉴3&quot;]  &#125;;  res.set(&#123;      &#x27;content-type&#x27;: &#x27;application/json&#x27;  &#125;).send(JSON.stringify(menu));&#125;);\n\nResponse12345678&#123;  &quot;type&quot;: &quot;buttons&quot;,  &quot;buttons&quot;: [    &quot;메뉴1&quot;,    &quot;메뉴2&quot;,    &quot;메뉴3&quot;  ]&#125;\n\n스크린샷\nNode Message API1234567891011121314151617181920212223router.post(&#x27;/message&#x27;, (req, res) =&gt; &#123;    const _obj = &#123;        user_key: req.body.user_key,        type: req.body.type,        content: req.body.content    &#125;;    let massage = &#123;        &quot;message&quot;: &#123;            &quot;text&quot;: &#x27;응답 메세지...&#x27;        &#125;,        &quot;keyboard&quot;: &#123;            &quot;type&quot;: &quot;buttons&quot;,            &quot;buttons&quot;: [                &quot;메뉴1&quot;,                &quot;메뉴2&quot;,                &quot;메뉴3&quot;            ]        &#125;    &#125;;    res.set(&#123;        &#x27;content-type&#x27;: &#x27;application/json&#x27;    &#125;).send(JSON.stringify(massage));&#125;);\n\nlet massage =&#123;...&#125;에 따라서 메세지 형태가 결정됩니다\n\n기본\n라벨\n포토라벨\n\n기본12345678910111213&#123;  &quot;message&quot;: &#123;    &quot;text&quot;: &quot;메뉴1를 선택했습니다.&quot;  &#125;,  &quot;keyboard&quot;: &#123;    &quot;type&quot;: &quot;buttons&quot;,    &quot;buttons&quot;: [      &quot;메뉴1&quot;,      &quot;메뉴2&quot;,      &quot;메뉴3&quot;,    ]  &#125;&#125;\n\n라벨형12345678910111213141516171819&#123;  &quot;message&quot;: &#123;    &quot;text&quot;: &quot;메뉴2를 선택했습니다.&quot;,    &quot;message_button&quot;: &#123;      &quot;label&quot;: &quot;라벨입니다.&quot;,      &quot;url&quot;: &quot;https://cheese10yun.github.io/&quot;    &#125;  &#125;,  &quot;keyboard&quot;: &#123;    &quot;type&quot;: &quot;buttons&quot;,    &quot;buttons&quot;: [      &quot;메뉴1&quot;,      &quot;메뉴2&quot;,      &quot;메뉴3&quot;,      &quot;메뉴4&quot;,      &quot;메뉴5&quot;    ]  &#125;&#125;\n\n기본 &amp; 라벨형 스크린샷\n\n메뉴1 기본\n메뉴2 라벨\n\n포토형12345678910111213141516171819202122&#123;  &quot;message&quot;: &#123;    &quot;text&quot;: &quot;메뉴3를 선택했습니다.&quot;,    &quot;photo&quot;: &#123;      &quot;url&quot;: &quot;http://i.imgur.com/tvuH0ZJ.png&quot;,      &quot;width&quot;: 640,      &quot;height&quot;: 480    &#125;,    &quot;message_button&quot;: &#123;      &quot;label&quot;: &quot;라벨입니다&quot;,      &quot;url&quot;: &quot;https://cheese10yun.github.io/&quot;    &#125;  &#125;,  &quot;keyboard&quot;: &#123;    &quot;type&quot;: &quot;buttons&quot;,    &quot;buttons&quot;: [      &quot;메뉴1&quot;,      &quot;메뉴2&quot;,      &quot;메뉴3&quot;,    ]  &#125;&#125;\n\n포토형 메세지 스크린샷\n라벨을 터치하면 등록된 URL 주소로 이동합니다. \nNode friend API1234567891011121314151617router.post(&#x27;/friend&#x27;, (req, res) =&gt; &#123;    const user_key = req.body.user_key;    console.log(`$&#123;user_key&#125;님이 쳇팅방에 참가했습니다.`);        res.set(&#123;        &#x27;content-type&#x27;: &#x27;application/json&#x27;    &#125;).send(JSON.stringify(&#123;success:true&#125;));&#125;);router.delete(&#x27;/friend&#x27;, (req, res) =&gt; &#123;    const user_key = req.body.user_key;    console.log(`$&#123;user_key&#125;님이 쳇팅방을 차단했습니다.`);        res.set(&#123;        &#x27;content-type&#x27;: &#x27;application/json&#x27;    &#125;).send(JSON.stringify(&#123;success:true&#125;));&#125;);\n\n\nNode chat_room API12345678router.delete(&#x27;/chat_room/:user_key&#x27;, (req, res) =&gt; &#123;    const user_key = req.params.user_key;    console.log(`$&#123;user_key&#125;님이 쳇팅방에서 나갔습니다.`);    res.set(&#123;        &#x27;content-type&#x27;: &#x27;application/json&#x27;    &#125;).send(JSON.stringify(&#123;success:true&#125;));&#125;);\n\n나머지 API들은 간단하게 작성합니다.\n마무리학교 식단 및 통학 버스 알림 봇을 만들다가 기본 구조를 갖는 소스코드를 올리는 것도 좋을 거 같아서 기존 프로젝트에서 불필요 소스코드를 제거하고 올린 거라 좀 어색한 부분이 있네요. 비슷한 프로젝트를 진행하실 분들은 다른 master branch를 참조하세요.\n","dateCreated":"2017-02-16T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-02-16T00:00:00+09:00","description":"Node.JS로 카카오봇 만들기","headline":"Node.JS로 카카오봇 만들기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/kakao-bot-node/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/kakao-bot-node/","keywords":"Node"}</script>
+    <meta name="description" content="Node.JS로 카카오봇 만들기">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Node.JS로 카카오봇 만들기">
+<meta property="og:url" content="https://cheese10yun.github.io/kakao-bot-node/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Node.JS로 카카오봇 만들기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="http://i.imgur.com/68DXtkf.png">
+<meta property="og:image" content="http://i.imgur.com/J9bloey.png">
+<meta property="og:image" content="http://i.imgur.com/NDfHewo.png">
+<meta property="og:image" content="http://i.imgur.com/YDxMB6D.png">
+<meta property="og:image" content="http://i.imgur.com/JUFtFR8.png">
+<meta property="og:image" content="http://i.imgur.com/y792Ihv.png?1">
+<meta property="og:image" content="http://i.imgur.com/QEAHMC7.png?1">
+<meta property="og:image" content="http://i.imgur.com/pJLjWvK.png?1">
+<meta property="article:published_time" content="2017-02-15T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:04:19.703Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://i.imgur.com/68DXtkf.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Node.JS로 카카오봇 만들기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-02-16T00:00:00+09:00">
+	
+		    2017/02/16
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <iframe src="https://ghbtns.com/github-btn.html?user=cheese10yun&repo=KaKaoBot-Node&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+
+<iframe src="https://ghbtns.com/github-btn.html?user=cheese10yun&type=follow&count=true&size=large" frameborder="0" scrolling="0" width="220px" height="30px"></iframe>
+
+<p><strong>전체소스는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/Node-Boot">GitHub branch develop-base</a>에서 확인할 수 있습니다.</strong></p>
+<h2 id="옐로우-아이디-등록-링크"><a href="#옐로우-아이디-등록-링크" class="headerlink" title="옐로우 아이디 등록 링크"></a>옐로우 아이디 등록 <a target="_blank" rel="noopener" href="https://yellowid.kakao.com/">링크</a></h2><p><img src="http://i.imgur.com/68DXtkf.png" alt="옐로우아이디 등록"></p>
+<p><img src="http://i.imgur.com/J9bloey.png" alt="옐로우아이디 경고"></p>
+<p><strong>해당 프로필은 하번 설정하면 변경이 불가능합니다. 이 작업이 완료되면 2 ~ 3일 이후에 옐로우아이디가 발급됩니다. 발급되기 전까지 Node API 서버를 구성합니다. 자세한 설명은 아래에 있습니다.</strong></p>
+<p><img src="http://i.imgur.com/NDfHewo.png" alt="API형 자동읍답 선택"></p>
+<p><strong>API형 자동읍답 설정하기 선택</strong></p>
+<p><img src="http://i.imgur.com/YDxMB6D.png"></p>
+<p><strong>앱 등록 절차를 진행합니다.</strong></p>
+<p><strong>앱등록시 반드시 keyboard API가 동작해야합니다. 아래의 노드 서버 설정을 완료하고 API TEST를 진행합니다.</strong></p>
+<p><img src="http://i.imgur.com/JUFtFR8.png" alt="API TEST"></p>
+<h2 id="카카오-봇-API-간단설명"><a href="#카카오-봇-API-간단설명" class="headerlink" title="카카오 봇 API 간단설명"></a>카카오 봇 API 간단설명</h2><h3 id="용어-설명"><a href="#용어-설명" class="headerlink" title="용어 설명"></a>용어 설명</h3><h4 id="수신-API"><a href="#수신-API" class="headerlink" title="수신 API"></a>수신 API</h4><ul>
+<li>카카오톡 이용자가 플러스친구, 옐로아이디에게 보낸 메시지를 전달 받은 후 응답을 할 수 있는 API 입니다. http(s) restful api를 통하여 카카오 API 서버 -&gt; 파트너 서버를 호출합니다.</li>
+</ul>
+<h4 id="app-key"><a href="#app-key" class="headerlink" title="app_key"></a>app_key</h4><ul>
+<li>플러스친구&#x2F;옐로아이디에서 자동응답을 위한 앱 등록시 프로필별로 발급되는 고유 키 값입니다. 자동응답 기능만 이용하시는 경우 사용되지 않으며, 일부 app_secret을 통한 별도 인증이 필요한 일부 프로필에만 사용됩니다.</li>
+</ul>
+<h4 id="app-secret"><a href="#app-secret" class="headerlink" title="app_secret"></a>app_secret</h4><ul>
+<li>인증을 위해 app_key와 조합하여 사용되는 키 값입니다. 자동응답 기능만 이용하시는 경우 사용되지 않으며, 일부 app_secret을 통한 별도 인증이 필요한 일부 프로필에만 사용됩니다.</li>
+</ul>
+<h4 id="user-key"><a href="#user-key" class="headerlink" title="user_key"></a>user_key</h4><ul>
+<li>특정 카카오톡 이용자를 구분하기 위한 key 입니다. 카카오에서는 이용자의 개인정보를 외부에 제공하지 않으므로, 외부 파트너사에서 카카오톡 이용자를 구분하기 위해서는 카카오로부터 API를 통해 user_key를 response로 받아야 합니다. user_key는 특정 카카오톡 이용자에 대해 프로필별로 각기 다르게 발급됩니다. 따라서 user_key는 해당 프로필에 대해서만 유효합니다. 카카오톡 이용자가 프로필을 차단했다가 다시 추가한 경우에는 user_key가 갱신되지 않으며, 이용자가 카카오톡 탈퇴 후 재가입한 경우 갱신됩니다.</li>
+</ul>
+<h3 id="API-설정"><a href="#API-설정" class="headerlink" title="API 설정"></a>API 설정</h3><table>
+<thead>
+<tr>
+<th>URL</th>
+<th>method</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x2F;keyboard</td>
+<td>GET</td>
+<td>키보드 영역에 표현될 버튼에 대한 정보. 생략시 text 타입이 선택된다</td>
+</tr>
+<tr>
+<td>&#x2F;message</td>
+<td>POST</td>
+<td>자동응답 명령어에 대한 응답 메시지의 내용</td>
+</tr>
+<tr>
+<td>&#x2F;friend</td>
+<td>POST</td>
+<td>특정 카카오톡 이용자가 플러스친구&#x2F;옐로아이디를 친구로 추가하거나 차단하는 경우 해당 정보를 파트너사 서버로 전달하는 API입니다.</td>
+</tr>
+<tr>
+<td>&#x2F;friend</td>
+<td>DELETE</td>
+<td>특정 카카오톡 이용자가 플러스친구&#x2F;옐로아이디를 친구로 추가하거나 차단하는 경우 해당 정보를 파트너사 서버로 전달하는 API입니다.</td>
+</tr>
+<tr>
+<td>&#x2F;chat_room&#x2F;:user_key</td>
+<td>DELETE</td>
+<td>사용자가 채팅방 나가기를 해서 채팅방을 목록에서 삭제했을 경우 해당 정보를 파트</td>
+</tr>
+</tbody></table>
+<p><a target="_blank" rel="noopener" href="https://github.com/plusfriend/auto_reply">출저 : 카카오톡 플러스친구&#x2F;옐로아이디 API v. 2.0 개요</a></p>
+<h2 id="Node-API-설정"><a href="#Node-API-설정" class="headerlink" title="Node API 설정"></a>Node API 설정</h2><h3 id="Node-keyboard-API"><a href="#Node-keyboard-API" class="headerlink" title="Node keyboard API"></a>Node keyboard API</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">get</span>(<span class="string">&#x27;/keyboard&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> menu = &#123;</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;buttons&#x27;</span>,</span><br><span class="line">      <span class="attr">buttons</span>: [<span class="string">&quot;메뉴1&quot;</span>, <span class="string">&quot;메뉴2&quot;</span>, <span class="string">&quot;메뉴3&quot;</span>]</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  res.<span class="title function_">set</span>(&#123;</span><br><span class="line">      <span class="string">&#x27;content-type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">  &#125;).<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(menu));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;buttons&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;buttons&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;메뉴1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;메뉴2&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;메뉴3&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="스크린샷"><a href="#스크린샷" class="headerlink" title="스크린샷"></a>스크린샷</h3><p><img src="http://i.imgur.com/y792Ihv.png?1"></p>
+<h3 id="Node-Message-API"><a href="#Node-Message-API" class="headerlink" title="Node Message API"></a>Node Message API</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/message&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> _obj = &#123;</span><br><span class="line">        <span class="attr">user_key</span>: req.<span class="property">body</span>.<span class="property">user_key</span>,</span><br><span class="line">        <span class="attr">type</span>: req.<span class="property">body</span>.<span class="property">type</span>,</span><br><span class="line">        <span class="attr">content</span>: req.<span class="property">body</span>.<span class="property">content</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> massage = &#123;</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;text&quot;</span>: <span class="string">&#x27;응답 메세지...&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;keyboard&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;buttons&quot;</span>,</span><br><span class="line">            <span class="string">&quot;buttons&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;메뉴1&quot;</span>,</span><br><span class="line">                <span class="string">&quot;메뉴2&quot;</span>,</span><br><span class="line">                <span class="string">&quot;메뉴3&quot;</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    res.<span class="title function_">set</span>(&#123;</span><br><span class="line">        <span class="string">&#x27;content-type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;).<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(massage));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><code><b>let massage =&#123;...&#125;</b></code>에 따라서 메세지 형태가 결정됩니다</p>
+<ul>
+<li>기본</li>
+<li>라벨</li>
+<li>포토라벨</li>
+</ul>
+<h3 id="기본"><a href="#기본" class="headerlink" title="기본"></a>기본</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;text&quot;</span><span class="punctuation">:</span> <span class="string">&quot;메뉴1를 선택했습니다.&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;keyboard&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;buttons&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;buttons&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;메뉴1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴2&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴3&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="라벨형"><a href="#라벨형" class="headerlink" title="라벨형"></a>라벨형</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;text&quot;</span><span class="punctuation">:</span> <span class="string">&quot;메뉴2를 선택했습니다.&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message_button&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="string">&quot;라벨입니다.&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://cheese10yun.github.io/&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;keyboard&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;buttons&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;buttons&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;메뉴1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴2&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴3&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴4&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴5&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="기본-라벨형-스크린샷"><a href="#기본-라벨형-스크린샷" class="headerlink" title="기본 &amp; 라벨형 스크린샷"></a>기본 &amp; 라벨형 스크린샷</h3><p><img src="http://i.imgur.com/QEAHMC7.png?1"></p>
+<ul>
+<li>메뉴1 기본</li>
+<li>메뉴2 라벨</li>
+</ul>
+<h3 id="포토형"><a href="#포토형" class="headerlink" title="포토형"></a>포토형</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;text&quot;</span><span class="punctuation">:</span> <span class="string">&quot;메뉴3를 선택했습니다.&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;photo&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://i.imgur.com/tvuH0ZJ.png&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;width&quot;</span><span class="punctuation">:</span> <span class="number">640</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;height&quot;</span><span class="punctuation">:</span> <span class="number">480</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message_button&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="string">&quot;라벨입니다&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://cheese10yun.github.io/&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;keyboard&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;buttons&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;buttons&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;메뉴1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴2&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;메뉴3&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="포토형-메세지-스크린샷"><a href="#포토형-메세지-스크린샷" class="headerlink" title="포토형 메세지 스크린샷"></a>포토형 메세지 스크린샷</h3><p><img src="http://i.imgur.com/pJLjWvK.png?1"></p>
+<p><strong>라벨을 터치하면 등록된 URL 주소로 이동합니다.</strong> </p>
+<h3 id="Node-friend-API"><a href="#Node-friend-API" class="headerlink" title="Node friend API"></a>Node friend API</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">post</span>(<span class="string">&#x27;/friend&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> user_key = req.<span class="property">body</span>.<span class="property">user_key</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;user_key&#125;</span>님이 쳇팅방에 참가했습니다.`</span>);</span><br><span class="line">    </span><br><span class="line">    res.<span class="title function_">set</span>(&#123;</span><br><span class="line">        <span class="string">&#x27;content-type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;).<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">success</span>:<span class="literal">true</span>&#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">router.<span class="title function_">delete</span>(<span class="string">&#x27;/friend&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> user_key = req.<span class="property">body</span>.<span class="property">user_key</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;user_key&#125;</span>님이 쳇팅방을 차단했습니다.`</span>);</span><br><span class="line">    </span><br><span class="line">    res.<span class="title function_">set</span>(&#123;</span><br><span class="line">        <span class="string">&#x27;content-type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;).<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">success</span>:<span class="literal">true</span>&#125;));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Node-chat-room-API"><a href="#Node-chat-room-API" class="headerlink" title="Node chat_room API"></a>Node chat_room API</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">router.<span class="title function_">delete</span>(<span class="string">&#x27;/chat_room/:user_key&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> user_key = req.<span class="property">params</span>.<span class="property">user_key</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;user_key&#125;</span>님이 쳇팅방에서 나갔습니다.`</span>);</span><br><span class="line"></span><br><span class="line">    res.<span class="title function_">set</span>(&#123;</span><br><span class="line">        <span class="string">&#x27;content-type&#x27;</span>: <span class="string">&#x27;application/json&#x27;</span></span><br><span class="line">    &#125;).<span class="title function_">send</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">success</span>:<span class="literal">true</span>&#125;));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>나머지 API들은 간단하게 작성합니다.</p>
+<h3 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h3><p>학교 식단 및 통학 버스 알림 봇을 만들다가 기본 구조를 갖는 소스코드를 올리는 것도 좋을 거 같아서 기존 프로젝트에서 불필요 소스코드를 제거하고 올린 거라 좀 어색한 부분이 있네요. 비슷한 프로젝트를 진행하실 분들은 다른 master branch를 참조하세요.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Node/" rel="tag">Node</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/aws-s3-imgage/"
+                    data-tooltip="AWS S3 업로드시 이미지 최적화"
+                    aria-label="이전: AWS S3 업로드시 이미지 최적화"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/npm-sudo-err/"
+                    data-tooltip="npm sudo 권한으로 설치시 오류 해결"
+                    aria-label="다음: npm sudo 권한으로 설치시 오류 해결"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/aws-s3-imgage/"
+                    data-tooltip="AWS S3 업로드시 이미지 최적화"
+                    aria-label="이전: AWS S3 업로드시 이미지 최적화"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/npm-sudo-err/"
+                    data-tooltip="npm sudo 권한으로 설치시 오류 해결"
+                    aria-label="다음: npm sudo 권한으로 설치시 오류 해결"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/kakao-bot-node/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/kakao-bot-node/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/kakao-bot-node/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/kakao-bot-node/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

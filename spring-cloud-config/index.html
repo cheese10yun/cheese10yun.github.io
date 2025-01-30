@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring Cloud Config 살펴보기 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n스프링 5.0 마스터를보고 정리한 자료 입니다. 전체 코드는 Github에서 확인할 수 있습니다.\n\n스프링 클라우드 컨피그는 중앙 집중식 마이크로서비스 구성을 지원한다. 여기서 두 가지 중요한 구성 요소의 조합이다.\n\n스프링 클라우드 컨피그 서버 : 버전 관리 리포지토리로 백업된 중앙 집중식 구성 노출을 지원한다.\n스프링 클라우드 컨피그 클라이언트 : 애플리케이션이 스프링 클라우드 컨피그 서버에 연결하도록 지원한다.\n\n\nGitHub Repository 연결\nGitHub Repository에 \n\nmicoroservice-a-default.yml\nmicoroservice-a-dev.yml\n\n아래 처럼 작성합니다.\n12application:  message: &quot;Message From &#123;ENV&#125; Local Git Repository&quot;\n&#123;ENV&#125;에 ddefault, dev 환경에 맞는 값을 작성합니다.\nConfig Server12implementation &#x27;org.springframework.cloud:spring-cloud-config-server&#x27;implementation &#x27;org.springframework.boot:spring-boot-starter-actuator&#x27;\nconfig server 의존 성을 추가합니다. actuator도 편의를 위해서 추가합니다.\n12345678910111213server:  port: 8888spring:  application:    name: &quot;config-server&quot;  cloud:    config:      server:        git:          uri: &quot;https://github.com/cheese10yun/msa-study-sample&quot;\n\nconfig server는 8888 port를 사용하는 관례가 있어 port를 8888로 지정합니다. Github Repository URI 주소를 입력합니다.\n123456789@SpringBootApplication@EnableConfigServerpublic class ConfigServerApplication &#123;  public static void main(String[] args) &#123;    SpringApplication.run(ConfigServerApplication.class, args);  &#125;&#125;\n@EnableConfigServer 어노테이션을 추가만 하면 별다른 설정없이 Config Server가 설정됩니다. \nactuator 의존성이 있으면 IntellJ Endpoints -&gt; Mappings에서 현재 서버의 API mapping 정보를 쉽게 확인할 수 있습니다.\n마우스 왼쪽 클릭을 한 이후에 Open In Http Request…를 클릭하면 쉽게 HTTP 콜을 할 수 있습니다.\n\nURL 형식은 &#x2F;{appliation-name}&#x2F;{profile}&#x2F;{label}입니다. 위에서 등록한 micoroservice-a-default.yml을 확인해보기 위해서 http://localhost:8888/microservice-a/default을 호출합니다.\n1234567891011121314151617&#123;  &quot;name&quot;: &quot;microservice-a&quot;,  &quot;profiles&quot;: [    &quot;default&quot;  ],  &quot;label&quot;: null,  &quot;version&quot;: &quot;c03eecc5d8eabefc4b2a8f085789f42bd5317366&quot;,  &quot;state&quot;: null,  &quot;propertySources&quot;: [    &#123;      &quot;name&quot;: &quot;https://github.com/cheese10yun/msa-study-sample/microservice-a-default.yml&quot;,      &quot;source&quot;: &#123;        &quot;application.message&quot;: &quot;Message From Default Local Git Repository&quot;      &#125;    &#125;  ]&#125;\n응답 값을 보면 해당 properties를 잘 읽어 오는 것을 확인할 수 있습니다. \nhttp://localhost:8888/microservice-a/dev을 호출하면 micoroservice-a-dev.yml의 값을 제대로 읽어 오는지 확인할 수 있습니다.\n1234567891011121314151617&#123;  &quot;name&quot;: &quot;microservice-a&quot;,  &quot;profiles&quot;: [    &quot;dev&quot;  ],  &quot;label&quot;: null,  &quot;version&quot;: &quot;c03eecc5d8eabefc4b2a8f085789f42bd5317366&quot;,  &quot;state&quot;: null,  &quot;propertySources&quot;: [    &#123;      &quot;name&quot;: &quot;https://github.com/cheese10yun/msa-study-sample/microservice-a-dev.yml&quot;,      &quot;source&quot;: &#123;        &quot;application.message&quot;: &quot;Message From Default Dev Git Repository&quot;      &#125;    &#125;  ]&#125;\n\nClient1234dependencies &#123;    implementation &#x27;org.springframework.cloud:spring-cloud-config-client&#x27;    implementation &#x27;org.springframework.boot:spring-boot-starter-actuator&#x27;&#125;\n필요한 의존성을 추가합니다.\n12345678910@Component@ConfigurationProperties(&quot;application&quot;)@Getter@Setterpublic class ApplicationConfiguration &#123;  private String message;&#125;\n프로퍼티를 읽을 ConfigurationProperties 객체를 만듭니다.\n12345678910111213141516@RestController@RequiredArgsConstructorpublic class WelcomeController &#123;  private final ApplicationConfiguration applicationConfiguration;  @GetMapping(&quot;/message&quot;)  public Map&lt;String, String&gt; welcome() &#123;    final Map&lt;String, String&gt; map = new HashMap&lt;&gt;();    map.put(&quot;message&quot;, applicationConfiguration.getMessage());    return map;  &#125;&#125;\n해당 메시지를 확인할 수 있는 컨트롤러를 만듭니다. getMessage() 메시지는 각 환경마다 다른 메시지를 출력합니다.\n1234567891011spring:  profiles:    active: &#123;ENV&#125;  cloud:    config:      uri: http://localhost:8888  application:    name: microservice-a\n파일명은 bootstrap.yml으로 지정합니다. active는 각 환경마다 지정합니다. dev으로 지정하고 http://127.0.0.1:8080/message API를 호출해보겠습니다.\n\n이것도 인텔리제이를 이용해서 호출하면 간편합니다.\n123&#123;  &quot;message&quot;: &quot;Message From Default Dev Git Repository&quot;&#125;\n\nDev 메시지가 출력되는 것을 확인 할 수 있습니다. profiles을 default 으로 지정하면 메시지에는 local 이라는 문자가 출력됩니다.\nRefresh마이크로서비스 A의 properties의 변경이 생겼을 경우 Refresh API를 호출해서 설정을 변경할 수 있다.\n\nmessage API를 호출하면 기존 메시지가 그대로 출력된다.\n123# microservice-a-default.ymlapplication:  message: &quot;Message From Default Local Git Repository (Properties update...)&quot;\nmicroservice-a-default.yml 메시지를 위와 같이 변경한 이후에 \nPOST http://127.0.0.1:8080/actuator/refresh을 호출하면\n1234[  &quot;config.client.version&quot;,  &quot;application.message&quot;]\n\nResponse으로 application.message의 변경을 알려준다. 이후 message api를 호출하면 아래 그림처럼 변경된 Response를 확인 할 수 있다.\n\n결론Github Repository와 같은 버전 관리 리포지토리로 백업된 중앙 집중 구성으로 properties를 제공해줍니다. 또 Properties 설정 및 단순한 설정으로 클라이언트 애플리케이션이 스프링 클라우드 컨피그 서버에 쉽게 연결되도록 지원해줍니다.\n","dateCreated":"2019-05-25T23:40:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-05-25T23:40:00+09:00","description":"스프링 클라우드 컨피그는 중앙 집중식 마이크로서비스 구성을 지원한다. 여기서 두 가지 중요한 구성 요소의 조합이다.","headline":"Spring Cloud Config 살펴보기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-cloud-config/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-cloud-config/","keywords":"Spring, MSA"}</script>
+    <meta name="description" content="스프링 클라우드 컨피그는 중앙 집중식 마이크로서비스 구성을 지원한다. 여기서 두 가지 중요한 구성 요소의 조합이다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Cloud Config 살펴보기">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-cloud-config/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="스프링 클라우드 컨피그는 중앙 집중식 마이크로서비스 구성을 지원한다. 여기서 두 가지 중요한 구성 요소의 조합이다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-msa-demo/raw/master/assets/msa-config-server.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/github-img.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/intellj-actuator.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/http-call.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/message-call.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-1.png">
+<meta property="og:image" content="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-2.png">
+<meta property="article:published_time" content="2019-05-25T14:40:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.944Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="MSA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/spring-msa-demo/raw/master/assets/msa-config-server.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring Cloud Config 살펴보기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-05-25T23:40:00+09:00">
+	
+		    2019/05/25
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p><a target="_blank" rel="noopener" href="http://acornpub.co.kr/book/mastering-spring-5.0">스프링 5.0 마스터</a>를보고 정리한 자료 입니다. 전체 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/msa-study-sample/blob/master/docs/config.md">Github</a>에서 확인할 수 있습니다.</p>
+</blockquote>
+<p>스프링 클라우드 컨피그는 중앙 집중식 마이크로서비스 구성을 지원한다. 여기서 두 가지 중요한 구성 요소의 조합이다.</p>
+<ul>
+<li>스프링 클라우드 컨피그 서버 : 버전 관리 리포지토리로 백업된 중앙 집중식 구성 노출을 지원한다.</li>
+<li>스프링 클라우드 컨피그 클라이언트 : 애플리케이션이 스프링 클라우드 컨피그 서버에 연결하도록 지원한다.</li>
+</ul>
+<p><img src="https://github.com/cheese10yun/spring-msa-demo/raw/master/assets/msa-config-server.png"></p>
+<h2 id="GitHub-Repository-연결"><a href="#GitHub-Repository-연결" class="headerlink" title="GitHub Repository 연결"></a>GitHub Repository 연결</h2><p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/github-img.png"></p>
+<p>GitHub Repository에 </p>
+<ul>
+<li>micoroservice-a-default.yml</li>
+<li>micoroservice-a-dev.yml</li>
+</ul>
+<p>아래 처럼 작성합니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">application:</span></span><br><span class="line">  <span class="attr">message:</span> <span class="string">&quot;Message From &#123;ENV&#125; Local Git Repository&quot;</span></span><br></pre></td></tr></table></figure>
+<p><code>&#123;ENV&#125;</code>에 ddefault, dev 환경에 맞는 값을 작성합니다.</p>
+<h2 id="Config-Server"><a href="#Config-Server" class="headerlink" title="Config Server"></a>Config Server</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">&#x27;org.springframework.cloud:spring-cloud-config-server&#x27;</span></span><br><span class="line">implementation <span class="string">&#x27;org.springframework.boot:spring-boot-starter-actuator&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>config server 의존 성을 추가합니다. actuator도 편의를 위해서 추가합니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8888</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">&quot;config-server&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">git:</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">&quot;https://github.com/cheese10yun/msa-study-sample&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>config server는 8888 port를 사용하는 관례가 있어 port를 8888로 지정합니다. Github Repository URI 주소를 입력합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConfigServerApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    SpringApplication.run(ConfigServerApplication.class, args);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@EnableConfigServer</code> 어노테이션을 추가만 하면 별다른 설정없이 Config Server가 설정됩니다. </p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/intellj-actuator.png"><br>actuator 의존성이 있으면 IntellJ Endpoints -&gt; Mappings에서 현재 서버의 API mapping 정보를 쉽게 확인할 수 있습니다.</p>
+<p>마우스 왼쪽 클릭을 한 이후에 Open In Http Request…를 클릭하면 쉽게 HTTP 콜을 할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/http-call.png"></p>
+<p>URL 형식은 &#x2F;{appliation-name}&#x2F;{profile}&#x2F;{label}입니다. 위에서 등록한 <code>micoroservice-a-default.yml</code>을 확인해보기 위해서 <code>http://localhost:8888/microservice-a/default</code>을 호출합니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;microservice-a&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;profiles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;default&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c03eecc5d8eabefc4b2a8f085789f42bd5317366&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;propertySources&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://github.com/cheese10yun/msa-study-sample/microservice-a-default.yml&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;application.message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Message From Default Local Git Repository&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>응답 값을 보면 해당 properties를 잘 읽어 오는 것을 확인할 수 있습니다. </p>
+<p><code>http://localhost:8888/microservice-a/dev</code>을 호출하면 <code>micoroservice-a-dev.yml</code>의 값을 제대로 읽어 오는지 확인할 수 있습니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;microservice-a&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;profiles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;dev&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c03eecc5d8eabefc4b2a8f085789f42bd5317366&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;propertySources&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://github.com/cheese10yun/msa-study-sample/microservice-a-dev.yml&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;application.message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Message From Default Dev Git Repository&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation <span class="string">&#x27;org.springframework.cloud:spring-cloud-config-client&#x27;</span></span><br><span class="line">    implementation <span class="string">&#x27;org.springframework.boot:spring-boot-starter-actuator&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>필요한 의존성을 추가합니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(&quot;application&quot;)</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@Setter</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApplicationConfiguration</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> String message;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>프로퍼티를 읽을 ConfigurationProperties 객체를 만듭니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WelcomeController</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ApplicationConfiguration applicationConfiguration;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="meta">@GetMapping(&quot;/message&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> Map&lt;String, String&gt; <span class="title function_">welcome</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    map.put(<span class="string">&quot;message&quot;</span>, applicationConfiguration.getMessage());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> map;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>해당 메시지를 확인할 수 있는 컨트롤러를 만듭니다. <code>getMessage()</code> 메시지는 각 환경마다 다른 메시지를 출력합니다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> &#123;<span class="string">ENV</span>&#125;</span><br><span class="line"></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">microservice-a</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>파일명은 <code>bootstrap.yml</code>으로 지정합니다. <code>active</code>는 각 환경마다 지정합니다. dev으로 지정하고 <code>http://127.0.0.1:8080/message</code> API를 호출해보겠습니다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/message-call.png"></p>
+<p>이것도 인텔리제이를 이용해서 호출하면 간편합니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Message From Default Dev Git Repository&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>Dev</code> 메시지가 출력되는 것을 확인 할 수 있습니다. <code>profiles</code>을 <code>default</code> 으로 지정하면 메시지에는 local 이라는 문자가 출력됩니다.</p>
+<h2 id="Refresh"><a href="#Refresh" class="headerlink" title="Refresh"></a>Refresh</h2><p>마이크로서비스 A의 properties의 변경이 생겼을 경우 Refresh API를 호출해서 설정을 변경할 수 있다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-1.png"></p>
+<p>message API를 호출하면 기존 메시지가 그대로 출력된다.</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># microservice-a-default.yml</span></span><br><span class="line"><span class="attr">application:</span></span><br><span class="line">  <span class="attr">message:</span> <span class="string">&quot;Message From Default Local Git Repository (Properties update...)&quot;</span></span><br></pre></td></tr></table></figure>
+<p><code>microservice-a-default.yml</code> 메시지를 위와 같이 변경한 이후에 </p>
+<p>POST <a target="_blank" rel="noopener" href="http://127.0.0.1:8080/actuator/refresh%EC%9D%84">http://127.0.0.1:8080/actuator/refresh을</a> 호출하면</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &quot;config.client.version&quot;,</span><br><span class="line">  &quot;application.message&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>Response으로 application.message의 변경을 알려준다. 이후 message api를 호출하면 아래 그림처럼 변경된 Response를 확인 할 수 있다.</p>
+<p><img src="https://github.com/cheese10yun/msa-study-sample/raw/master/static/json-2.png"></p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>Github Repository와 같은 버전 관리 리포지토리로 백업된 중앙 집중 구성으로 properties를 제공해줍니다. 또 Properties 설정 및 단순한 설정으로 클라이언트 애플리케이션이 스프링 클라우드 컨피그 서버에 쉽게 연결되도록 지원해줍니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/MSA/" rel="tag">MSA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/intellij-boot-run-config/"
+                    data-tooltip="Spring Boot 여러 서버 실행 하기"
+                    aria-label="이전: Spring Boot 여러 서버 실행 하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-rabbitmq/"
+                    data-tooltip="Rabbit MQ 기초 사용법"
+                    aria-label="다음: Rabbit MQ 기초 사용법"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/intellij-boot-run-config/"
+                    data-tooltip="Spring Boot 여러 서버 실행 하기"
+                    aria-label="이전: Spring Boot 여러 서버 실행 하기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-rabbitmq/"
+                    data-tooltip="Rabbit MQ 기초 사용법"
+                    aria-label="다음: Rabbit MQ 기초 사용법"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-cloud-config/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-cloud-config/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-cloud-config/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-cloud-config/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

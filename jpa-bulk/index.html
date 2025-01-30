@@ -1,0 +1,691 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>JPA 벌크 작업 주의점 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.\n코드123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657internal class BulkTest(        private val em: EntityManager) : SpringBootTestSupport() &#123;    val query = JPAQueryFactory(em)    @BeforeEach    internal fun setUp() &#123;        val teams = listOf(                Team(&quot;team_1&quot;),                Team(&quot;team_2&quot;),                Team(&quot;team_3&quot;),                Team(&quot;team_4&quot;),                Team(&quot;team_5&quot;),                Team(&quot;team_6&quot;),                Team(&quot;team_7&quot;),                Team(&quot;team_8&quot;),                Team(&quot;team_9&quot;),                Team(&quot;team_10&quot;)        )        for (team in teams) &#123;            em.persist(team)        &#125;    &#125;    @Test    internal fun `bulk test`() &#123;        // team 전체를 조회한다. team name은 team_x 이다.        val teams = query.selectFrom(qTeam).fetch()        for (team in teams) &#123;            println(&quot;before update team : $team&quot;)        &#125;        val ids = teams.map &#123; it.id!! &#125;        // team  name 전체를 none name으로 변경한다.         val updateCount = query.update(qTeam)                .set(qTeam.name, &quot;none name&quot;)                .where(qTeam.id.`in`(ids))                .execute()        println(&quot;update count : $updateCount&quot;)        for (team in teams) &#123;            println(&quot;after update team : $team&quot;)        &#125;        val newSelectTeams = query.selectFrom(qTeam).fetch()            for (team in newSelectTeams) &#123;            println(&quot;new select team : $team&quot;)        &#125;    &#125;&#125;\n\n코드는 간단합니다. team_1, team_2…team_10을 저장하고 query dsl update를 이용해서 team name을 none name으로 변경하는 것입니다. 그리고 변경 제대로 변경이 되었는지 확인하는 확인하는 반복문이 있습니다.\n\n로그를 보면 team name 1 ~ 10까지 제대로 출력되는 것을 확인할 수 있습니다.\n\nupdate query, update count가 정상적으로 출력됩니다. 이제 업데이트된 team을 확인하는 아래 코드의 로그를 확인해보겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n예상했던 none name이 아닌 이전 데이터가 출력 되는 것을 획인 할 수 있습니다. 그렇다면 새로 query dsl으로 조회 쿼리를 해보겠습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규로 조회한 데이터에서도 team name이 변경되지 않은 것을 확인할 수 있습니다. 왜 변경되지 않은 것일 까요?\nTeam 엔티티가 변경되지 않은 이유JPA 벌크성 작업은 영속성 컨텍스트와 무관업데이트 이후 아래 코드가 team name 변경 전 데이터인 이유를 설명드리겠습니다.\n123for (team in teams) &#123;    println(&quot;after update team : $team&quot;)&#125;\n\n엔티티 수정 메커니즘\n엔티티의 변경사항을 을 데이터베이스에 반영하는 것을 변경 감지(dirty checking)이라고 합니다. JPA는 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두고. 플러시 시점에서 스냅샷과 엔티티를 비교해서 변경된 엔티티를 데이터베이스에 반영하게 됩니다. 즉 아래와 같은 절차를 진행하게 됩니다.\n\n트랜잭션을 커밋 하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.\n엔티티와 스냅샷을 비교해서 변경된 엔티티를 찾는다.\n변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.\n쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.\n데이터베이스 트랜잭션을 커밋 한다.\n\n벌크 수정 메커니즘하지만 벌크성 작업은 영속성 컨텍스트와 무관합니다. 벌크 연산은 영속성 컨텍스트를 통하지 않고 아래 그림처럼 데이터베이스에 직접 쿼리를 진행합니다.\n\n즉 영속성 컨텍스트와 무관하니 기존 영속성 컨텍스트에 존재하는 Team의 name들은 변경이 없는 것입니다.\n영속성 컨텍스트는 1차 캐시된 것이 우선이다.after update team를 조회했을 때는 영속성 컨텍스트와 무관했기 때문에 기존 데이터가 나왔지만 신규 조회를 한 아래 코드 왜 변경 전 name이 출력 되었을까요? 그 이유는 영속성 컨텍스트 저장 메커니즘에 있습니다.\n12345val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n영속성 컨텍스트 저장 메커니즘영속성 컨텍스트 1차 캐시 저장 메커니즘 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 \n\nfindById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. 반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 query 하여 결과를 가져옵니다. 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.\n\nJPQL을 호출하면 데이터베이스에 우선적으로 조회한다.\n조회한 값을 영속성 컨텍스트에 저장을 시도한다.\n저장을 시도할 때 해당 데이터가 이미 영속성 컨텍스트에 존재하는 경우(영속성 컨텍스트에서는 식별자 값으로 식별) 데이터베이스에서 조회한 신규 데이터를 버린다.\n\n즉 이미 영속성컨텍스트에 team들이 존재하기 때문에 신규 조회한 영속성 컨텍스트를 버리게 되는 것입니다. 영속성 컨텍스트에서는 ID를 기반으로 식별작을 합니다.\n해결 방법해결 방법은 간단합니다. 영속성 컨텍스트를 초기화(clear)을 하면 됩니다. 영속성 컨텍스트가 초기화됐기 때문에 신규 조회한 team 객체들이 모두 영속성 컨텍스트에 그대로 반영되게 됩니다. \n12345678...em.clear() // 영속성 컨텍스트를 초기화 한다.val newSelectTeams = query.selectFrom(qTeam).fetch()for (team in newSelectTeams) &#123;    println(&quot;new select team : $team&quot;)&#125;\n\n신규 조회한 team name 제대로 변경된 것을 확인할 수 있습니다. \n참고\n자바 ORM 표준 JPA 프로그래밍\n\n","dateCreated":"2020-02-01T00:00:00+09:00","dateModified":"2025-01-31T04:44:51+09:00","datePublished":"2020-02-01T00:00:00+09:00","description":"JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.","headline":"JPA 벌크 작업 주의점","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/jpa-bulk/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/jpa-bulk/","keywords":"JPA, ORM, Performance"}</script>
+    <meta name="description" content="JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JPA 벌크 작업 주의점">
+<meta property="og:url" content="https://cheese10yun.github.io/jpa-bulk/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/before-update.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/update-query.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/ater-update.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/team-2.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-persistent-dirty-checking.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/blob/master/assets/jpa-bulk.png?raw=true">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/query-result-.png">
+<meta property="og:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/team-name.png">
+<meta property="article:published_time" content="2020-01-31T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:44:51.967Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta property="article:tag" content="Performance">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/before-update.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            JPA 벌크 작업 주의점
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-02-01T00:00:00+09:00">
+	
+		    2020/02/01
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>JPA Bulk 작업을 진행할 때 영속성 컨텍스트의 메커니즘을 이해하지 못한 상태라면 예상하지 못한 문제를 만날 수도 있게 됩니다. 어떤 문제가 있고 이 문제가 왜 발생하는지 정리해 보았습니다.</p>
+<h2 id="코드"><a href="#코드" class="headerlink" title="코드"></a>코드</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title class_">BulkTest</span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> em: EntityManager</span><br><span class="line">) : SpringBootTestSupport() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> query = JPAQueryFactory(em)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> teams = listOf(</span><br><span class="line">                Team(<span class="string">&quot;team_1&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_2&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_3&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_4&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_5&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_6&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_7&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_8&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_9&quot;</span>),</span><br><span class="line">                Team(<span class="string">&quot;team_10&quot;</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">            em.persist(team)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> `bulk test`<span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// team 전체를 조회한다. team name은 team_x 이다.</span></span><br><span class="line">        <span class="keyword">val</span> teams = query.selectFrom(qTeam).fetch()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">            println(<span class="string">&quot;before update team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> ids = teams.map &#123; it.id!! &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// team  name 전체를 none name으로 변경한다. </span></span><br><span class="line">        <span class="keyword">val</span> updateCount = query.update(qTeam)</span><br><span class="line">                .<span class="keyword">set</span>(qTeam.name, <span class="string">&quot;none name&quot;</span>)</span><br><span class="line">                .<span class="keyword">where</span>(qTeam.id.`<span class="keyword">in</span>`(ids))</span><br><span class="line">                .execute()</span><br><span class="line"></span><br><span class="line">        println(<span class="string">&quot;update count : <span class="variable">$updateCount</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">            println(<span class="string">&quot;after update team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> newSelectTeams = query.selectFrom(qTeam).fetch()</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">for</span> (team <span class="keyword">in</span> newSelectTeams) &#123;</span><br><span class="line">            println(<span class="string">&quot;new select team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>코드는 간단합니다. <code>team_1</code>, <code>team_2</code>…<code>team_10</code>을 저장하고 query dsl update를 이용해서 <code>team name</code>을 <code>none name</code>으로 변경하는 것입니다. 그리고 변경 제대로 변경이 되었는지 확인하는 확인하는 반복문이 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/before-update.png"></p>
+<p>로그를 보면 <code>team name</code> 1 ~ 10까지 제대로 출력되는 것을 확인할 수 있습니다.</p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/update-query.png"></p>
+<p>update query, update count가 정상적으로 출력됩니다. 이제 업데이트된 <code>team</code>을 확인하는 아래 코드의 로그를 확인해보겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">    println(<span class="string">&quot;after update team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/ater-update.png"><br>예상했던 <code>none name</code>이 아닌 이전 데이터가 출력 되는 것을 획인 할 수 있습니다. 그렇다면 새로 query dsl으로 조회 쿼리를 해보겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> newSelectTeams = query.selectFrom(qTeam).fetch()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> newSelectTeams) &#123;</span><br><span class="line">    println(<span class="string">&quot;new select team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/team-2.png"></p>
+<p>신규로 조회한 데이터에서도 <code>team name</code>이 변경되지 않은 것을 확인할 수 있습니다. 왜 변경되지 않은 것일 까요?</p>
+<h2 id="Team-엔티티가-변경되지-않은-이유"><a href="#Team-엔티티가-변경되지-않은-이유" class="headerlink" title="Team 엔티티가 변경되지 않은 이유"></a>Team 엔티티가 변경되지 않은 이유</h2><h3 id="JPA-벌크성-작업은-영속성-컨텍스트와-무관"><a href="#JPA-벌크성-작업은-영속성-컨텍스트와-무관" class="headerlink" title="JPA 벌크성 작업은 영속성 컨텍스트와 무관"></a>JPA 벌크성 작업은 영속성 컨텍스트와 무관</h3><p>업데이트 이후 아래 코드가 <code>team name</code> 변경 전 데이터인 이유를 설명드리겠습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> teams) &#123;</span><br><span class="line">    println(<span class="string">&quot;after update team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="엔티티-수정-메커니즘"><a href="#엔티티-수정-메커니즘" class="headerlink" title="엔티티 수정 메커니즘"></a>엔티티 수정 메커니즘</h4><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/jpa-persistent-dirty-checking.png"></p>
+<p><strong>엔티티의 변경사항을 을 데이터베이스에 반영하는 것을 변경 감지(dirty checking)이라고 합니다.</strong> JPA는 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두고. 플러시 시점에서 스냅샷과 엔티티를 비교해서 변경된 엔티티를 데이터베이스에 반영하게 됩니다. 즉 아래와 같은 절차를 진행하게 됩니다.</p>
+<ol>
+<li><strong>트랜잭션을 커밋 하면 엔티티 매니저 내부에서 먼저 플러시가 호출된다.</strong></li>
+<li><strong>엔티티와 스냅샷을 비교해서 변경된 엔티티를 찾는다.</strong></li>
+<li>변경된 엔티티가 있으면 수정 쿼리를 생성해서 쓰기 지연 SQL 저장소에 보낸다.</li>
+<li>쓰기 지연 저장소의 SQL을 데이터베이스에 보낸다.</li>
+<li><strong>데이터베이스 트랜잭션을 커밋 한다.</strong></li>
+</ol>
+<h4 id="벌크-수정-메커니즘"><a href="#벌크-수정-메커니즘" class="headerlink" title="벌크 수정 메커니즘"></a>벌크 수정 메커니즘</h4><p><strong>하지만 벌크성 작업은 영속성 컨텍스트와 무관합니다.</strong> 벌크 연산은 영속성 컨텍스트를 통하지 않고 아래 그림처럼 <strong>데이터베이스에 직접 쿼리를 진행합니다.</strong></p>
+<p><img src="https://github.com/cheese10yun/TIL/blob/master/assets/jpa-bulk.png?raw=true"></p>
+<p><strong>즉 영속성 컨텍스트와 무관하니 기존 영속성 컨텍스트에 존재하는 Team의 name들은 변경이 없는 것입니다.</strong></p>
+<h3 id="영속성-컨텍스트는-1차-캐시된-것이-우선이다"><a href="#영속성-컨텍스트는-1차-캐시된-것이-우선이다" class="headerlink" title="영속성 컨텍스트는 1차 캐시된 것이 우선이다."></a>영속성 컨텍스트는 1차 캐시된 것이 우선이다.</h3><p><code>after update team</code>를 조회했을 때는 영속성 컨텍스트와 무관했기 때문에 기존 데이터가 나왔지만 <strong>신규 조회를 한 아래 코드 왜 변경 전 name이 출력 되었을까요? 그 이유는 영속성 컨텍스트 저장 메커니즘에 있습니다.</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> newSelectTeams = query.selectFrom(qTeam).fetch()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> newSelectTeams) &#123;</span><br><span class="line">    println(<span class="string">&quot;new select team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="영속성-컨텍스트-저장-메커니즘"><a href="#영속성-컨텍스트-저장-메커니즘" class="headerlink" title="영속성 컨텍스트 저장 메커니즘"></a>영속성 컨텍스트 저장 메커니즘</h4><p><a href="https://cheese10yun.github.io/jpa-persistent-context/">영속성 컨텍스트 1차 캐시 저장 메커니즘</a> 관련 포스팅에서 이미 포스팅한 적이 있습니다. 해당 글을 </p>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/query-result-.png"></p>
+<p>findById() 같은 경우는 영속성 컨텍스트를 먼저 찾고 영속성 컨텍스트에 해당 엔티티가 있으면 그 값을 바로 리턴합니다. 이를 1차 캐시라고 말합니다. <strong>반면 JPQL은 영속성 컨텍스트를 먼저 조회하지 않고 데이터베이스에 query 하여 결과를 가져옵니다. 그리고 아래와 같은 흐름으로 영속성 컨텍스트를 저장을 시도합니다.</strong></p>
+<ol>
+<li>JPQL을 호출하면 데이터베이스에 우선적으로 조회한다.</li>
+<li>조회한 값을 영속성 컨텍스트에 저장을 시도한다.</li>
+<li>저장을 시도할 때 해당 데이터가 이미 영속성 컨텍스트에 존재하는 경우(영속성 컨텍스트에서는 식별자 값으로 식별) 데이터베이스에서 조회한 신규 데이터를 버린다.</li>
+</ol>
+<p><strong>즉 이미 영속성컨텍스트에 team들이 존재하기 때문에 신규 조회한 영속성 컨텍스트를 버리게 되는 것입니다.</strong> 영속성 컨텍스트에서는 ID를 기반으로 식별작을 합니다.</p>
+<h2 id="해결-방법"><a href="#해결-방법" class="headerlink" title="해결 방법"></a>해결 방법</h2><p>해결 방법은 간단합니다. <strong>영속성 컨텍스트를 초기화(clear)을 하면 됩니다.</strong> 영속성 컨텍스트가 초기화됐기 때문에 신규 조회한 <code>team</code> 객체들이 모두 영속성 컨텍스트에 그대로 반영되게 됩니다. </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">em.clear() <span class="comment">// 영속성 컨텍스트를 초기화 한다.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> newSelectTeams = query.selectFrom(qTeam).fetch()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (team <span class="keyword">in</span> newSelectTeams) &#123;</span><br><span class="line">    println(<span class="string">&quot;new select team : <span class="variable">$team</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github.com/cheese10yun/blog-sample/raw/master/query-dsl/docs/images/team-name.png"></p>
+<p>신규 조회한 <code>team name</code> 제대로 변경된 것을 확인할 수 있습니다. </p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://acornpub.co.kr/book/jpa-programmig">자바 ORM 표준 JPA 프로그래밍</a></li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Performance/" rel="tag">Performance</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/jpa-preference/"
+                    data-tooltip="JPA 선호하는 패턴"
+                    aria-label="이전: JPA 선호하는 패턴"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/rest-template-mock-test/"
+                    data-tooltip="RestTemplate Mock 기반 테스트 하기"
+                    aria-label="다음: RestTemplate Mock 기반 테스트 하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/jpa-preference/"
+                    data-tooltip="JPA 선호하는 패턴"
+                    aria-label="이전: JPA 선호하는 패턴"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/rest-template-mock-test/"
+                    data-tooltip="RestTemplate Mock 기반 테스트 하기"
+                    aria-label="다음: RestTemplate Mock 기반 테스트 하기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-bulk/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/jpa-bulk/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/jpa-bulk/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/jpa-bulk/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

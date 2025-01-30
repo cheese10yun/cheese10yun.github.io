@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring OAuth2 JDBC TokenStore - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"해당 코드는 Github에서 확인할 수 있습니다.\n데이터베이스 스키마 구성하기가장 먼저 데이터베이스를 생성해야합니다.\n1mysql&gt; create database oauth2;\n\n1234567891011121314151617spring:  profiles: init  jpa:    database: mysql    properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect    hibernate:      ddl-auto: create    show-sql: true    properties:      hibernate.format_sql: true  datasource:    url: jdbc:mysql://localhost:3306/oauth2?useSSL=false&amp;serverTimezone=UTC    username: &lt;your-usesrname&gt;    password: &lt;your-password&gt;    driver-class-name: com.mysql.cj.jdbc.Driver    initialization-mode: always    platform: oauth2\n\n데이터 베이스 구성을 위한 profile을 구성합니다. 해당 profile은 OAuth2에 대한 스키마 생성 및 더미데이터를 insert 해줍니다. \ndatasource.platform 속성 값에 oauth2가 입력되어 있습니다. 간단하게 설명드리면 resources에 위치한 $&#123;platform&#125;.sql을 실행시킵니다.\n프로젝트에 resources 디렉토리에는 schema-oauth2.sql, data-oauth2.sql가 존재하고 각각은 테이블 스미카, oauth_client_details 더미데이터 insert 입니다. 세부적인 sql 파일을 직접 확인하는것을 권장드립니다.\n프로젝트의 profile은 init으로 구동시에 schema-oauth2.sql , data-oauth2.sql가 실행됩니다. 프로젝트 실행시에 딱 한번만 init으로 진행하시고 이후 부터는 local로 진행하시면 됩니다.\noauth_client_details table123456789101112131415161718192021222324252627INSERT INTO `oauth_client_details`(  `client_id`,  `resource_ids`,  `client_secret`,  `scope`,  `authorized_grant_types`,  `web_server_redirect_uri`,  `authorities`,  `access_token_validity`,  `refresh_token_validity`,  `additional_information`,  `autoapprove`  )  VALUES(  &#x27;client&#x27;,  null,  &#x27;&#123;bcrypt&#125;$2a$10$iP9ejueOGXO29.Yio7rqeuW9.yOC4YaV8fJp3eIWbP45eZSHFEwMG&#x27;,  &#x27;read_profile,read_posts&#x27;,  &#x27;authorization_code,implicit,password,client_credentials,refresh_token&#x27;,  &#x27;http://localhost:9000/callback&#x27;,  null,  3000,  6000,  null ,  &#x27;false&#x27;  );\n\nclient_id : 클라이언트를 구분하는 ID\nclient_secret : 클라이언트의 비밀번호로 OAuth2 서버에 요청할때 인증을 하기위한 용도로 사용한다.\nauthorized_grant_types: OAuth2 승인 방식의 종류 ..., ... 이런 형식으로,를 이용해서 구분한다.\naccess_token_validity : Access Token의 유효시간\nrefresh_token_validity : Refresh Token의 유효 시간\nscope: 클라이언트로 발급된 Access Token의 Scope, 리소스에 접근 가능한 권한 구분은 , 으로한다\nautoapprove: 권한코드 방식 같은 형태로 Access Token을 발급받을 때에는 사용자에게 scope 범위를 허가받는 화면이 나옵니다. 이 화면 자체가 나오지 않게 설정하는 값입니다. true하면 아래 화면이 나오지 않습니다.\n\n\n프로젝트 구동123spring:  profiles:    active: init # 기본은 local로 되어있습니다.\n\n프로젝트를 실행할때 application.yml 최상단에 있는 active를 local로 변경합니다. 스키마, 더미데이터 입력이 목적이기 때문에 프로젝트 최초 1회 구동시 init으로 진행하시고 이후는 local로 진행하면됩니다.\nOAuth2 테이블\n프로젝트를 구동하면 테이블 생성 및 더미데이터를 확인 할 수 있습니다.\nCode이전에 코드에 몇가지 빈들을 등록하게 되면 간단하게 RDBMS에 토큰 정보를 저장할 수 있습니다.\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950@Configuration@EnableAuthorizationServer@AllArgsConstructorpublic class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter &#123;    private final DataSource dataSource; // (1)    @Override    public void configure(ClientDetailsServiceConfigurer clients) throws Exception &#123;        clients                .jdbc(dataSource) // (5)        ;//기존 코드//                .inMemory()//                .withClient(&quot;client&quot;)//                .secret(&quot;&#123;bcrypt&#125;$2a$10$iP9ejueOGXO29.Yio7rqeuW9.yOC4YaV8fJp3eIWbP45eZSHFEwMG&quot;)  // password//                .redirectUris(&quot;http://localhost:9000/callback&quot;)//                .authorizedGrantTypes(&quot;authorization_code&quot;, &quot;implicit&quot;, &quot;password&quot;, &quot;client_credentials&quot;, &quot;refresh_token&quot;)//                .accessTokenValiditySeconds(120)//                .refreshTokenValiditySeconds(240)//                .scopes(&quot;read_profile&quot;);     &#125;    @Override    public void configure(AuthorizationServerEndpointsConfigurer endpoints) &#123;        //@formatter:off        endpoints //(4)                .approvalStore(approvalStore())                .tokenStore(tokenStore())                .authenticationManager(authenticationManager)        ;        //@formatter:on    &#125;    @Bean    public TokenStore tokenStore() &#123; //(2)        return new JdbcTokenStore(dataSource);    &#125;    @Bean    public ApprovalStore approvalStore() &#123; //(3)        return new JdbcApprovalStore(dataSource);    &#125;    @Bean    public PasswordEncoder passwordEncoder() &#123;        return new BCryptPasswordEncoder();    &#125;&#125;\n\n(1) 토큰에 대한 영속화를 진행하기 위해서 Datasoruce 의존성을 주입받습니다.\n(2) 주입 받은 Datasoruce 의존성을 기반으로 JdbcTokenStore을 생성합니다.\n(3) 2번과 마찬가지로 Datasoruce을 주입시켜 JdbcApprovalStore을 생성합니다.\n(4) 2,3 번에서 생성한 객체을 AuthorizationServerEndpointsConfigurer 객체에 넣어줍니다.\n(5) clinet inMemory() 방식에서 jdbc() 방식으로 변경합니다. 의존성은 dataSource 주입해줍니다.\n\nTokenStore 인터페이스는 Access Token, Refresh Token과 관련된 인증 데이터를 저장, 검색, 제거, 읽기에 대한 정의입니다.ApprovalStore 인터페이스는 리소스의 소유자의 승인을 추가, 검색, 취소 하기위한 메서드들이 정의되있습니다.\n이렇듯 스프링에서는 인터페이스를 제공함으로써 확장포인트를 열어두어 확장에는 열려있는 모듈을 지향하고 있습니다.\n대표적으로 Resource Owner Password Credentials Grant, Authorization Code Grant Type 인증을 살펴보겠습니다.\nResource Owner Password Credentials Grant요청12345curl -X POST \\  http://localhost:8080/oauth/token \\  -H &#x27;Authorization: Basic Y2xpZW50OnBhc3N3b3Jk&#x27; \\  -H &#x27;Content-Type: application/x-www-form-urlencoded&#x27; \\  -d &#x27;username=user&amp;password=pass&amp;grant_type=password&amp;scope=read_profile&#x27;\n\n응답1234567&#123;  &quot;access_token&quot;: &quot;a7cce128-bd4a-4986-a56b-de75f5246364&quot;,  &quot;token_type&quot;: &quot;bearer&quot;,  &quot;refresh_token&quot;: &quot;a7c43419-4875-47f5-9d79-829301ed0030&quot;,  &quot;expires_in&quot;: 871,  &quot;scope&quot;: &quot;read_profile&quot;&#125;\n\nAuthorization Code Grant Type요청http://localhost:8080/oauth/authorize?client_id&#x3D;client&amp;redirect_uri&#x3D;http://localhost:9000/callback&amp;response_type&#x3D;code&amp;scope&#x3D;read_profile 해당 페이지로 이동\n로그인 정보를 입력합니다.\n12username: userpassword: pass\n\n\n권한 승인이 완료하면 권한 코드가 전송됩니다. Authorization Code Grant Type 방식 에서 말한 권한 부여 코드를 응답받은 것입니다. \n넘겨받은 승인 코드로 Authorization Code Grant 인증을 진행합니다.\n12345curl -X POST \\  http://localhost:8080/oauth/token \\  -H &#x27;Authorization: Basic Y2xpZW50OnBhc3N3b3Jk&#x27; \\  -H &#x27;Content-Type: application/x-www-form-urlencoded&#x27; \\  -d &#x27;code=rNHo29&amp;grant_type=authorization_code&amp;redirect_uri=http%3A%2F%2Flocalhost%3A9000%2Fcallback&amp;scope=read_profile&#x27;\n만약 IntelliJ를 사용하신다면 api.http를 이용해서 더 쉽게 호출 해볼 수 있습니다.\n응답1234567&#123;  &quot;access_token&quot;: &quot;883c329b-8f05-457c-907c-ce8637a7aa80&quot;,  &quot;token_type&quot;: &quot;bearer&quot;,  &quot;refresh_token&quot;: &quot;a7c43419-4875-47f5-9d79-829301ed0030&quot;,  &quot;expires_in&quot;: 2942,  &quot;scope&quot;: &quot;read_profile&quot;&#125;\n\n입력된 데이터\n위에서 발급 받은 Access Token, Refresh Token을 확인 할 수 있습니다.\n참고\nSpring Boot로 만드는 OAuth2 시스템 8 OAuth2 서버를 커스터마이징 해보자(클라이언트 관리 편)\nOAuth 2.0 쿡북\n\n","dateCreated":"2018-11-25T00:10:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2018-11-25T00:10:00+09:00","description":"Spring OAuth2 JDBC TokenStore","headline":"Spring OAuth2 JDBC TokenStore","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-oauth2-jdbc/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-oauth2-jdbc/","keywords":"Spring, OAuth2"}</script>
+    <meta name="description" content="Spring OAuth2 JDBC TokenStore">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring OAuth2 JDBC TokenStore">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-oauth2-jdbc/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Spring OAuth2 JDBC TokenStore">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/springboot-oauth2/master/assets/oauth-prove.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/ouath2-schema.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-login.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth-prove.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth-code.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/ouath2-http.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-table-access-token.png">
+<meta property="og:image" content="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-table-refresh-token.png">
+<meta property="article:published_time" content="2018-11-24T15:10:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.805Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="OAuth2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/springboot-oauth2/master/assets/oauth-prove.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring OAuth2 JDBC TokenStore
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-11-25T00:10:00+09:00">
+	
+		    2018/11/25
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>해당 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/springboot-oauth2">Github</a>에서 확인할 수 있습니다.</strong></p>
+<h2 id="데이터베이스-스키마-구성하기"><a href="#데이터베이스-스키마-구성하기" class="headerlink" title="데이터베이스 스키마 구성하기"></a>데이터베이스 스키마 구성하기</h2><p>가장 먼저 데이터베이스를 생성해야합니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database oauth2;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span> <span class="string">init</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">database:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="attr">properties.hibernate.dialect:</span> <span class="string">org.hibernate.dialect.MySQL5InnoDBDialect</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">create</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">properties:</span></span><br><span class="line">      <span class="attr">hibernate.format_sql:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/oauth2?useSSL=false&amp;serverTimezone=UTC</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">&lt;your-usesrname&gt;</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">&lt;your-password&gt;</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">initialization-mode:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">platform:</span> <span class="string">oauth2</span></span><br></pre></td></tr></table></figure>
+
+<p>데이터 베이스 구성을 위한 profile을 구성합니다. 해당 profile은 OAuth2에 대한 스키마 생성 및 더미데이터를 insert 해줍니다. </p>
+<p><code>datasource.platform</code> 속성 값에 <code>oauth2</code>가 입력되어 있습니다. 간단하게 설명드리면 <code>resources</code>에 위치한 <code>$&#123;platform&#125;.sql</code>을 실행시킵니다.</p>
+<p>프로젝트에 <code>resources</code> 디렉토리에는 <code>schema-oauth2.sql</code>, <code>data-oauth2.sql</code>가 존재하고 각각은 테이블 스미카, <code>oauth_client_details</code> 더미데이터 insert 입니다. 세부적인 sql 파일을 직접 확인하는것을 권장드립니다.</p>
+<p>프로젝트의 profile은 init으로 구동시에 <code>schema-oauth2.sql</code> , <code>data-oauth2.sql</code>가 실행됩니다. 프로젝트 실행시에 딱 한번만 init으로 진행하시고 이후 부터는 local로 진행하시면 됩니다.</p>
+<h3 id="oauth-client-details-table"><a href="#oauth-client-details-table" class="headerlink" title="oauth_client_details table"></a>oauth_client_details table</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> `oauth_client_details`(</span><br><span class="line">  `client_id`,</span><br><span class="line">  `resource_ids`,</span><br><span class="line">  `client_secret`,</span><br><span class="line">  `<span class="keyword">scope</span>`,</span><br><span class="line">  `authorized_grant_types`,</span><br><span class="line">  `web_server_redirect_uri`,</span><br><span class="line">  `authorities`,</span><br><span class="line">  `access_token_validity`,</span><br><span class="line">  `refresh_token_validity`,</span><br><span class="line">  `additional_information`,</span><br><span class="line">  `autoapprove`</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  <span class="keyword">VALUES</span>(</span><br><span class="line">  <span class="string">&#x27;client&#x27;</span>,</span><br><span class="line">  <span class="keyword">null</span>,</span><br><span class="line">  <span class="string">&#x27;&#123;bcrypt&#125;$2a$10$iP9ejueOGXO29.Yio7rqeuW9.yOC4YaV8fJp3eIWbP45eZSHFEwMG&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;read_profile,read_posts&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;authorization_code,implicit,password,client_credentials,refresh_token&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;http://localhost:9000/callback&#x27;</span>,</span><br><span class="line">  <span class="keyword">null</span>,</span><br><span class="line">  <span class="number">3000</span>,</span><br><span class="line">  <span class="number">6000</span>,</span><br><span class="line">  <span class="keyword">null</span> ,</span><br><span class="line">  <span class="string">&#x27;false&#x27;</span></span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<ul>
+<li>client_id : 클라이언트를 구분하는 ID</li>
+<li>client_secret : 클라이언트의 비밀번호로 OAuth2 서버에 요청할때 인증을 하기위한 용도로 사용한다.</li>
+<li>authorized_grant_types: OAuth2 승인 방식의 종류 <code>...</code>, <code>...</code> 이런 형식으로<code>,</code>를 이용해서 구분한다.</li>
+<li>access_token_validity : Access Token의 유효시간</li>
+<li>refresh_token_validity : Refresh Token의 유효 시간</li>
+<li>scope: 클라이언트로 발급된 Access Token의 Scope, 리소스에 접근 가능한 권한 구분은 <code>,</code> 으로한다</li>
+<li>autoapprove: 권한코드 방식 같은 형태로 Access Token을 발급받을 때에는 사용자에게 scope 범위를 허가받는 화면이 나옵니다. 이 화면 자체가 나오지 않게 설정하는 값입니다. true하면 아래 화면이 나오지 않습니다.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/springboot-oauth2/master/assets/oauth-prove.png"></p>
+<h2 id="프로젝트-구동"><a href="#프로젝트-구동" class="headerlink" title="프로젝트 구동"></a>프로젝트 구동</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">init</span> <span class="comment"># 기본은 local로 되어있습니다.</span></span><br></pre></td></tr></table></figure>
+
+<p>프로젝트를 실행할때 <code>application.yml</code> 최상단에 있는 active를 local로 변경합니다. <strong>스키마, 더미데이터 입력이 목적이기 때문에 프로젝트 최초 1회 구동시 init으로 진행하시고 이후는 local로 진행하면됩니다.</strong></p>
+<h3 id="OAuth2-테이블"><a href="#OAuth2-테이블" class="headerlink" title="OAuth2 테이블"></a>OAuth2 테이블</h3><p><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/ouath2-schema.png" alt="ouath2-schema"></p>
+<p>프로젝트를 구동하면 테이블 생성 및 더미데이터를 확인 할 수 있습니다.</p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>이전에 코드에 몇가지 빈들을 등록하게 되면 간단하게 RDBMS에 토큰 정보를 저장할 수 있습니다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAuthorizationServer</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AuthorizationServerConfig</span> <span class="keyword">extends</span> <span class="title class_">AuthorizationServerConfigurerAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DataSource dataSource; <span class="comment">// (1)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(ClientDetailsServiceConfigurer clients)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        clients</span><br><span class="line">                .jdbc(dataSource) <span class="comment">// (5)</span></span><br><span class="line">        ;</span><br><span class="line"><span class="comment">//기존 코드</span></span><br><span class="line"><span class="comment">//                .inMemory()</span></span><br><span class="line"><span class="comment">//                .withClient(&quot;client&quot;)</span></span><br><span class="line"><span class="comment">//                .secret(&quot;&#123;bcrypt&#125;$2a$10$iP9ejueOGXO29.Yio7rqeuW9.yOC4YaV8fJp3eIWbP45eZSHFEwMG&quot;)  // password</span></span><br><span class="line"><span class="comment">//                .redirectUris(&quot;http://localhost:9000/callback&quot;)</span></span><br><span class="line"><span class="comment">//                .authorizedGrantTypes(&quot;authorization_code&quot;, &quot;implicit&quot;, &quot;password&quot;, &quot;client_credentials&quot;, &quot;refresh_token&quot;)</span></span><br><span class="line"><span class="comment">//                .accessTokenValiditySeconds(120)</span></span><br><span class="line"><span class="comment">//                .refreshTokenValiditySeconds(240)</span></span><br><span class="line"><span class="comment">//                .scopes(&quot;read_profile&quot;); </span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(AuthorizationServerEndpointsConfigurer endpoints)</span> &#123;</span><br><span class="line">        <span class="comment">//@formatter:off</span></span><br><span class="line">        endpoints <span class="comment">//(4)</span></span><br><span class="line">                .approvalStore(approvalStore())</span><br><span class="line">                .tokenStore(tokenStore())</span><br><span class="line">                .authenticationManager(authenticationManager)</span><br><span class="line">        ;</span><br><span class="line">        <span class="comment">//@formatter:on</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> TokenStore <span class="title function_">tokenStore</span><span class="params">()</span> &#123; <span class="comment">//(2)</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">JdbcTokenStore</span>(dataSource);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> ApprovalStore <span class="title function_">approvalStore</span><span class="params">()</span> &#123; <span class="comment">//(3)</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">JdbcApprovalStore</span>(dataSource);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> PasswordEncoder <span class="title function_">passwordEncoder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">BCryptPasswordEncoder</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(1) 토큰에 대한 영속화를 진행하기 위해서 <code>Datasoruce</code> 의존성을 주입받습니다.</li>
+<li>(2) 주입 받은 <code>Datasoruce</code> 의존성을 기반으로 <code>JdbcTokenStore</code>을 생성합니다.</li>
+<li>(3) 2번과 마찬가지로 <code>Datasoruce</code>을 주입시켜 <code>JdbcApprovalStore</code>을 생성합니다.</li>
+<li>(4) 2,3 번에서 생성한 객체을 <code>AuthorizationServerEndpointsConfigurer</code> 객체에 넣어줍니다.</li>
+<li>(5) clinet <code>inMemory()</code> 방식에서 <code>jdbc()</code> 방식으로 변경합니다. 의존성은 dataSource 주입해줍니다.</li>
+</ul>
+<p>TokenStore 인터페이스는 Access Token, Refresh Token과 관련된 인증 데이터를 저장, 검색, 제거, 읽기에 대한 정의입니다.<br>ApprovalStore 인터페이스는 리소스의 소유자의 승인을 추가, 검색, 취소 하기위한 메서드들이 정의되있습니다.</p>
+<p><strong>이렇듯 스프링에서는 인터페이스를 제공함으로써 확장포인트를 열어두어 확장에는 열려있는 모듈을 지향하고 있습니다.</strong></p>
+<p>대표적으로 Resource Owner Password Credentials Grant, Authorization Code Grant Type 인증을 살펴보겠습니다.</p>
+<h3 id="Resource-Owner-Password-Credentials-Grant"><a href="#Resource-Owner-Password-Credentials-Grant" class="headerlink" title="Resource Owner Password Credentials Grant"></a>Resource Owner Password Credentials Grant</h3><h4 id="요청"><a href="#요청" class="headerlink" title="요청"></a>요청</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST \</span><br><span class="line">  http://localhost:8080/oauth/token \</span><br><span class="line">  -H <span class="string">&#x27;Authorization: Basic Y2xpZW50OnBhc3N3b3Jk&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/x-www-form-urlencoded&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;username=user&amp;password=pass&amp;grant_type=password&amp;scope=read_profile&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="응답"><a href="#응답" class="headerlink" title="응답"></a>응답</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;a7cce128-bd4a-4986-a56b-de75f5246364&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bearer&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;refresh_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;a7c43419-4875-47f5-9d79-829301ed0030&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span> <span class="number">871</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;scope&quot;</span><span class="punctuation">:</span> <span class="string">&quot;read_profile&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Authorization-Code-Grant-Type"><a href="#Authorization-Code-Grant-Type" class="headerlink" title="Authorization Code Grant Type"></a>Authorization Code Grant Type</h3><h4 id="요청-1"><a href="#요청-1" class="headerlink" title="요청"></a>요청</h4><p><a target="_blank" rel="noopener" href="http://localhost:8080/oauth/authorize?client_id=client&redirect_uri=http://localhost:9000/callback&response_type=code&scope=read_profile">http://localhost:8080/oauth/authorize?client_id&#x3D;client&amp;redirect_uri&#x3D;http://localhost:9000/callback&amp;response_type&#x3D;code&amp;scope&#x3D;read_profile</a> 해당 페이지로 이동</p>
+<p><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-login.png" alt="oauth2-login"><br>로그인 정보를 입력합니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username: user</span><br><span class="line">password: pass</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth-prove.png" alt="oauth-code"></p>
+<p><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth-code.png" alt="oauth-code"><br>권한 승인이 완료하면 권한 코드가 전송됩니다. <a href="#authorization-code-grant-type-%EB%B0%A9%EC%8B%9D">Authorization Code Grant Type 방식</a> 에서 말한 <code>권한 부여 코드</code>를 응답받은 것입니다. </p>
+<p>넘겨받은 승인 코드로 Authorization Code Grant 인증을 진행합니다.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST \</span><br><span class="line">  http://localhost:8080/oauth/token \</span><br><span class="line">  -H <span class="string">&#x27;Authorization: Basic Y2xpZW50OnBhc3N3b3Jk&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/x-www-form-urlencoded&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;code=rNHo29&amp;grant_type=authorization_code&amp;redirect_uri=http%3A%2F%2Flocalhost%3A9000%2Fcallback&amp;scope=read_profile&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>만약 IntelliJ를 사용하신다면 <code>api.http</code>를 이용해서 더 쉽게 호출 해볼 수 있습니다.<br><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/ouath2-http.png" alt="ouath2-http"></p>
+<h4 id="응답-1"><a href="#응답-1" class="headerlink" title="응답"></a>응답</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;883c329b-8f05-457c-907c-ce8637a7aa80&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bearer&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;refresh_token&quot;</span><span class="punctuation">:</span> <span class="string">&quot;a7c43419-4875-47f5-9d79-829301ed0030&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span> <span class="number">2942</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;scope&quot;</span><span class="punctuation">:</span> <span class="string">&quot;read_profile&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="입력된-데이터"><a href="#입력된-데이터" class="headerlink" title="입력된 데이터"></a>입력된 데이터</h3><p><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-table-access-token.png" alt="oauth2-table-access-token"><br><img src="https://github.com/cheese10yun/springboot-oauth2/raw/master/assets/oauth2-table-refresh-token.png" alt="oauth2-table-refresh-token"></p>
+<p>위에서 발급 받은 Access Token, Refresh Token을 확인 할 수 있습니다.</p>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://brunch.co.kr/@sbcoba/8">Spring Boot로 만드는 OAuth2 시스템 8 OAuth2 서버를 커스터마이징 해보자(클라이언트 관리 편)</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791161752211&orderClick=LAG&Kc=">OAuth 2.0 쿡북</a></li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/OAuth2/" rel="tag">OAuth2</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/https/"
+                    data-tooltip="HTTPS에 대한 기초 이해"
+                    aria-label="이전: HTTPS에 대한 기초 이해"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-oauth2-provider/"
+                    data-tooltip="Spring OAuth2 Provider 정리"
+                    aria-label="다음: Spring OAuth2 Provider 정리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/https/"
+                    data-tooltip="HTTPS에 대한 기초 이해"
+                    aria-label="이전: HTTPS에 대한 기초 이해"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-oauth2-provider/"
+                    data-tooltip="Spring OAuth2 Provider 정리"
+                    aria-label="다음: Spring OAuth2 Provider 정리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-oauth2-jdbc/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

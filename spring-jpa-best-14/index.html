@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Spring-JPA Best Practices step-14 - JUnit5 적용하기 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.\n단순한 테스트 이외에는 테스트 코드 네이밍으로 테스트하고자 하는 의미를 전달하기가 매우 어렵습니다. 이때 아주 유용하게 사용할 수 있는 것이 @DisplayName 입니다.\n\n위 그림처럼 @DisplayName(....)  어노테이션으로 코드에 대한 설명을 문자열로 대체할 수 있습니다. 이 대체된 문자열은 실제 테스트 케이스 이름으로 표시됩니다.\n의존성 추가Spring Boot2의 테스트코드 의존성은 JUnit4를 기본으로 가져오기 때문에 spring-boot-starter-test 의존성 이외에도 추가적인 작업이 필요합니다.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;    &lt;!--spring-boot-starter-test 의존성에서 가져오는 JUnit 제외 --&gt;    &lt;exclusions&gt;        &lt;exclusion&gt;            &lt;groupId&gt;junit&lt;/groupId&gt;            &lt;artifactId&gt;junit&lt;/artifactId&gt;        &lt;/exclusion&gt;    &lt;/exclusions&gt;&lt;/dependency&gt;&lt;!--필요한 의존성 추가 --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;    &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;    &lt;version&gt;5.3.2&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-junit-jupiter&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.platform&lt;/groupId&gt;    &lt;artifactId&gt;junit-platform-runner&lt;/artifactId&gt;    &lt;version&gt;1.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;    &lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;    &lt;version&gt;5.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;\n\n테스트 코드12345678910111213141516171819202122232425262728293031323334353637383940414243import org.junit.jupiter.api.DisplayName;import org.junit.jupiter.api.Test;import org.junit.jupiter.api.extension.ExtendWith;import org.junit.platform.runner.JUnitPlatform;import org.junit.runner.RunWith;import org.mockito.InjectMocks;import org.mockito.Mock;import org.mockito.junit.jupiter.MockitoExtension;import java.util.Optional;import static org.hamcrest.CoreMatchers.is;import static org.junit.Assert.assertThat;import static org.mockito.ArgumentMatchers.anyLong;import static org.mockito.BDDMockito.given;import static org.mockito.Mockito.atLeastOnce;import static org.mockito.Mockito.verify;@ExtendWith(MockitoExtension.class)public class AccountServiceJUnit5Test &#123;    @InjectMocks    private AccountService accountService;    @Mock    private AccountRepository accountRepository;    @Test    @DisplayName(&quot;findById_존재하는경우_회원리턴&quot;)    public void findBy_not_existed_test() &#123;        //given        final AccountDto.SignUpReq dto = buildSignUpReq();        given(accountRepository.findById(anyLong())).willReturn(Optional.of(dto.toEntity()));        //when        final Account account = accountService.findById(anyLong());        //then        verify(accountRepository, atLeastOnce()).findById(anyLong());        assertThatEqual(dto, account);    &#125;&#125;\n필요한 패키지의 경로가 중요하기 때문에 필요한 import을 추가했습니다. 아직 Spring Boot2에서 기본으로 가져온 의존성이 아니기 때문에 복잡한 부분이 있습니다. Prod 코드에는 Spring Boot2에서 JUnit5를 기본으로 택했을 때 변경하는 것이 더 안전하고 효율적이라고 생각합니다. \n","dateCreated":"2019-02-06T21:15:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-02-06T21:15:00+09:00","description":"JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.","headline":"Spring-JPA Best Practices step-14 - JUnit5 적용하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-jpa-best-14/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-jpa-best-14/","keywords":"Guide, Spring, Test"}</script>
+    <meta name="description" content="JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring-JPA Best Practices step-14 - JUnit5 적용하기">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-14/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/junit5-display-name.png">
+<meta property="article:published_time" content="2019-02-06T12:15:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.975Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Guide">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Test">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/junit5-display-name.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring-JPA Best Practices step-14 - JUnit5 적용하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-02-06T21:15:00+09:00">
+	
+		    2019/02/06
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p>해당 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-jpa-best-practices">Github</a>를 확인해주세요.</p>
+</blockquote>
+<p>JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 <code>@DisplayName</code> 입니다.</p>
+<p>단순한 테스트 이외에는 테스트 코드 네이밍으로 테스트하고자 하는 의미를 전달하기가 매우 어렵습니다. 이때 아주 유용하게 사용할 수 있는 것이 <code>@DisplayName</code> 입니다.</p>
+<p><img src="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/junit5-display-name.png"></p>
+<p>위 그림처럼 <code>@DisplayName(....)</code>  어노테이션으로 코드에 대한 설명을 문자열로 대체할 수 있습니다. 이 대체된 문자열은 실제 테스트 케이스 이름으로 표시됩니다.</p>
+<h2 id="의존성-추가"><a href="#의존성-추가" class="headerlink" title="의존성 추가"></a>의존성 추가</h2><p>Spring Boot2의 테스트코드 의존성은 JUnit4를 기본으로 가져오기 때문에 <code>spring-boot-starter-test</code> 의존성 이외에도 추가적인 작업이 필요합니다.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--spring-boot-starter-test 의존성에서 가져오는 JUnit 제외 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--필요한 의존성 추가 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.jupiter<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-jupiter-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.3.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mockito<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mockito-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mockito<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mockito-junit-jupiter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.platform<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-platform-runner<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.vintage<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-vintage-engine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="테스트-코드"><a href="#테스트-코드" class="headerlink" title="테스트 코드"></a>테스트 코드</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.DisplayName;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.extension.ExtendWith;</span><br><span class="line"><span class="keyword">import</span> org.junit.platform.runner.JUnitPlatform;</span><br><span class="line"><span class="keyword">import</span> org.junit.runner.RunWith;</span><br><span class="line"><span class="keyword">import</span> org.mockito.InjectMocks;</span><br><span class="line"><span class="keyword">import</span> org.mockito.Mock;</span><br><span class="line"><span class="keyword">import</span> org.mockito.junit.jupiter.MockitoExtension;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Optional;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.hamcrest.CoreMatchers.is;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.Assert.assertThat;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.ArgumentMatchers.anyLong;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.BDDMockito.given;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.atLeastOnce;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.verify;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@ExtendWith(MockitoExtension.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AccountServiceJUnit5Test</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@InjectMocks</span></span><br><span class="line">    <span class="keyword">private</span> AccountService accountService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Mock</span></span><br><span class="line">    <span class="keyword">private</span> AccountRepository accountRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;findById_존재하는경우_회원리턴&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">findBy_not_existed_test</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//given</span></span><br><span class="line">        <span class="keyword">final</span> AccountDto.<span class="type">SignUpReq</span> <span class="variable">dto</span> <span class="operator">=</span> buildSignUpReq();</span><br><span class="line">        given(accountRepository.findById(anyLong())).willReturn(Optional.of(dto.toEntity()));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//when</span></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Account</span> <span class="variable">account</span> <span class="operator">=</span> accountService.findById(anyLong());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//then</span></span><br><span class="line">        verify(accountRepository, atLeastOnce()).findById(anyLong());</span><br><span class="line">        assertThatEqual(dto, account);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>필요한 패키지의 경로가 중요하기 때문에 필요한 <code>import</code>을 추가했습니다. 아직 Spring Boot2에서 기본으로 가져온 의존성이 아니기 때문에 복잡한 부분이 있습니다. Prod 코드에는 Spring Boot2에서 JUnit5를 기본으로 택했을 때 변경하는 것이 더 안전하고 효율적이라고 생각합니다. </p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Guide/" rel="tag">Guide</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Test/" rel="tag">Test</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-jpa-best-15/"
+                    data-tooltip="Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    aria-label="이전: Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-jpa-best-13/"
+                    data-tooltip="Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    aria-label="다음: Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-jpa-best-15/"
+                    data-tooltip="Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    aria-label="이전: Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-jpa-best-13/"
+                    data-tooltip="Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    aria-label="다음: Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-jpa-best-14/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-jpa-best-14/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-jpa-best-14/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-jpa-best-14/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

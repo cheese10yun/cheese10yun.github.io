@@ -1,0 +1,789 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Yun Blog">
+    <title>Rabbit MQ 기초 사용법 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n코드는 Github에 공개되어 있습니다.\n\nRabbmit MQ란 ?래빗MQ는 오픈소스 AMQP 브로커다. AMQP는 유선을 통해 전송되는 메시지 형식을 포함하는 개발형 프로토컬이며, JMS와 같은 다른 메시징 솔루션에 비해 인기가 높다.\nJMS는  API, AMQP는 프로토콜이다. JMS는 메시지의 형식이 아닌 브로커와 통신하는 방법을 정의한다. 또한 자바 애플리케이션에만 국한돼 있다. AMQP는 브로커와 통신하는 방법에 대해서 논하지 않지만. 메시지가 유선을 통해 큐에 어떻게 넣고 꺼내지는지에 대해 정의한다.\n서로 다른 두 가지 애플리케이션을 생각해보자, 둘 다 자바면 JVMS를 통해 통신할 수 있지만 이중에 하나가 루비라면 JMS는 사용하지 못할것이다.\nJMS 발송 브로커는 매시지 전송을 위해 AMQP를 사용할 수 있어 JMS와 AMQP의 차이점을 더 확연하게 해준다.\nAMQP 기본사항AMQP-기반 생상자는 큐에 직접 게시하지 않고 익스체인지에 게시한다. 큐가 선언되면 익스체인지에 바인딩돼야 한다. 여러 큐를 동일한 익스체인지에 바인딩해 토픽 개념을 애쿨레이션 할 수 있다.\n토픽 익스체인지를 통해 라우팅 키는 comment.*와 같은 와일드 카드를 사용할 수 있다. 이 상황은 사용자가 조건을 제공할 때 까지 실제 라우팅 키를 알 수 없는 클라이언트에 가장 적합하다.\n12345678@RabbitListener(bindings = @QueueBinding(    value = @Queue,    exchange = @Exchange(value = &quot;learning-spring-boot&quot;),    key = &quot;comments.new&quot;))public void save(Comment comment)&#123;    commentRepository.save(comment)&#125;\n\n@RabbitListener 어노테이션은 메시지를 사용하는 방법을 등록하는 가장 쉬운 방법이다.\n@QueueBinding 어노테이션은 큐와 익스체인지를 즉시 선언하는 가장 쉬운 방법이다. 이 경우 이 메서드에 대한 익명 큐를 생성하고 leaning-spring-boot 익스체인지에 바인딩한다.\n이 메서드는 라우팅 키는 comments.new이며, 이는 leanirng-spring-boot 익스체인지에 게시된 메시지가 이 메서드를 호출하게 한다는 것을 의미한다.\n@RabbitListener 메서드는 스프링 AMQP Message 스프링 메시징 Message 다양한 메시지 헤더, 평범하고 오래된 자바 객체를 받을 수 있다.\n메서드 자체는 CommentWriterRepository를 호출해서 실제로 데이터 저장소에 코멘드틀 저장한다.\n\n래빗MQ를 사용하려면 일반적으로 @EnableRabbit이 필요하지만 스프링 부트 덕분에 Spring-boot-stater-amqp가 클래스 패스에 있으면 자동으로 활성화된다.\n@RabbitListener를 사용하면 운영에 필요한 모든 익스체인지와 큐를 동적으로 생성할 수 있다는 점이다.\n스프링 AMQP 메시지 객체를 제공하기 위해 메서드 시그니처를 선언했다면 바이트 배열을 풀수 있을 것이다. 그러나 스프링 AMQP는 도메인 객체를 직렬화하는 기능이 제한돼 있다. 아무런 노력을 기울리지 않고도 간단한 문자열과 직렬화 처리할 수 있다.\nRabbitMQ와 AMQP\n출처 티몬의 개발이야기 RabbitMQ와 Spring AMQP를 이용한 간단한 작업 큐 만들기\n\nAMQP프로그래밍에서 MQ는 프로세스 또는 프로그램 인스턴스가 데이터를 서로 교환할 때 사용하는 방법을 말한다. 이러한 MQ를 오픈소스에 기반한 표준 프로토콜이 AMQP이다. AMQP 자체가 프로토콜을 의미하기 때문에 이 프로토콜을 구현한 MQ 제품들은 여러가지가 있으며 그 중하나가 RabbitMQ이다.\nAMQP의 구성요소와 라우팅 알고리즘\n\nAMQP의 라우팅 모델은 Exchange, Queue, Binding으로 구성된다.\n\n\n\n\n이름\n설명\n\n\n\nExchange\nPublisher(Producer)로부터 수신한 메시지를 큐에 분배하는 라우터 역할\n\n\nQueue\n메시지를 메모리나 디스크에 저장했다가 Cusomer에게 메시지를 전달하는 역할\n\n\nBinding\nExchange와 Queue의 관계를 정의한 것\n\n\nExchagne TypeExchagne Type은 메시지를 어떤 방법으로 라우팅할지 결정하는 일종의 알고리즘 말하며 AMQP에서는 다음과 같은 Exchange Type을 정의하고 있다.\n\n\n\nExchagne Type\n정의\n\n\n\nDirect exchagne\nExchagne에 바인된 Queue중에 메시지의 라우팅 키와 매핑되어 있는 Queue로 메시지를 전달한다. 1:1 관계로 Unicast 방식에 접합하며, 주로 라운드 로빈 방식으로 여러 workers(Cusumer)간 Task를 분리에 사용된다.\n\n\nFanout Exchagne\n메시지의 라우팅 키를 무시하고 Exchagne에 바인딩된 모든 Queue에 메시지를 전달한다. 1:N 관계로 메시지를 브로드캐스트하는 용도로 사용된다.\n\n\nTopic Exchagne\nExchagne에 바인딩 된 Queue 중에서 메시지의 라우팅 키가 패턴에 맞는 Queue에세 모두 메시지를 전달한다. Mulicast 방섹에 접합하다.\n\n\nHeaders Exchagne\n라우팅 키 대신에 메시지 헤더에 여러 속성들을 더해 속성들이 매칭되는 큐에 메시지를 전달한다.\n\n\nRabbit MQRabbitMQ는 AMQP를 구현한 오픈소스 메시지 소프트웨어 Pulisher(Producer)로부터 메시지를 받아 Cunsumer에게 라우트하는 것이 주된 역할이다.\n\n출처 RabibitMQ Tutorials\n\n\nRabbit MQ Exchagne Type\n\n\n이름\nRabbitMQ 이름\n\n\n\nDirect Exchange\n(Empty string) and amq.direct\n\n\nFanout Exchange\nanq.fanout\n\n\nTopic Exchange\namq.topic\n\n\nHeader Exchange\namq.match(and amq.headers in RabbitMQ)\n\n\nSample Code\n전체 코드는 Blog-Sample Code를 참고하세요\n\n123public interface RabbitMqEvent &#123;  String MEMBER_SIGNUPED_EVENT = &quot;signuped.event&quot;;&#125;\n\n이벤트 이름을 작성하는 객체입니다. 인터페이스로 관리하는게 효율적으로 보여짐\n\nPublisher : RabbitTemplate12345678910@Beanpublic RabbitTemplate amqpTemplate() &#123;  RabbitTemplate rabbitTemplate = new RabbitTemplate();  rabbitTemplate.setConnectionFactory(connectionFactory);  rabbitTemplate.setMandatory(true);  rabbitTemplate.setChannelTransacted(true);  rabbitTemplate.setReplyTimeout(60000);  rabbitTemplate.setMessageConverter(queueMessageConverter());  return rabbitTemplate;&#125;\n\n이벤트를 Publisher하는 template를 생성합니다.\nConnectionFactory 의존성 주입을 받아 생성합니다.\nmessage conveter를 등록시킵니다. 다른 예제들은 Bean으로 등록시는데 딱히 Bean으로 등록시킬 필요는 없어 보입니다.\nsetChannelTransacted 플래극 값은 Transaction 으로 생성하게 해줍니다. (@Transcational 이 붙은 것처럼 처리됩니다. 만약 데이터베이스의 트랜잭션과 연결된다면 트랜잭션이 전이 된다고 이해했습니다.)\nsetReplyTimeout amqpTemplate의 timeout을 지정합니다.\n\nComsumer : SimpleRabbitListenerContainerFactory\nspring-amqp Document을 참고했습니다. 제가 이해한 부분으로 설명하는 것이라 틀린 부분이 있을 수 있습니다.\n\n12345678910111213141516@Bean  public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(      ConnectionFactory connectionFactory) &#123;    final SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();    factory.setConnectionFactory(connectionFactory);    factory.setDefaultRequeueRejected(false);    factory.setMessageConverter(queueMessageConverter());    factory.setChannelTransacted(true);    factory.setAdviceChain(RetryInterceptorBuilder        .stateless()        .maxAttempts(MAX_TRY_COUNT)        .recoverer(new RabbitMqExceptionHandler())        .backOffOptions(INITIAL_INTERVAL, MULTIPLIER, MAX_INTERVAL)        .build());    return factory;  &#125;\n\nsetDefaultRequeueRejected true일 경우 리서너에서 예외가 발생시에 다시 큐에 쌓이게 됩니다. 예외 상황을 해제하기 전까지 무한 반복할 거같아 기본 설정이 false이고 true 변경할 일이 거의 없어 보입니다.\nsetChannelTransacted 위 설정과 동일합니다.\nrecoverer 예외를 핸들링할 수 있는 객체를 지정해서 핸들링 할 수 있습니다. 에러 로그, 에러 알림 정도 설정하면 좋을거 같음\nmaxAttempts 예외가 발생 했을 경우 몇번을 더 재시도 할 횟수를 지정합니다.\nbackOffOptions 재시도 횟수에 대한 옵션을 지정합니다. 3000, 3, 10000 인자값을 지정 했다면 3초 간격으로 3으로 곱해서 최대 10초 까지 재시도 하라는 것입니다.\n\n12345public Member doSignUp(final SignUpRequest dto) &#123;    final Member member = memberRepository.save(dto.toEnttiy());    amqpTemplate.convertAndSend(RabbitMqEvent.MEMBER_SIGNUPED_EVENT, SignUpedEvent.of(member));    return member;  &#125;\n\nconvertAndSend 위에서 등록한 template 기반으로 이벤트를 발생시킵니다.\n첫 번째 인자는 이벤트의 이름(스트링 벨류), 이벤트 처리시에 넘겨줄 객체를 바인딩 시킵니다.\n\n12345@RabbitListener(queues = RabbitMqEvent.MEMBER_SIGNUPED_EVENT)public void handleSignUpEvent(final SignUpedEvent event) &#123;  log.error(event.toString());  throw new IllegalArgumentException();&#125;\n\n@RabbitListener 어노테이션으로 리슨할 이벤트 이름을 지정합니다.\nconvertAndSend에서 넘겨준 객체 SignUpedEvent를 매게변수를 받습니다.\nIllegalArgumentException(); 설정을 통해서 예외를 발생시킵니다. 위에서 설정한 3번의 일정한 반복이 진행되는지 확인 해 봅니다.\n\n\n12345672019-03-03 20:43:57.459 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)2019-03-03 20:44:00.466 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)2019-03-03 20:44:09.470 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)... Retries exhausted for message (Body:&#x27;&#123;&quot;id&quot;:1,&quot;email&quot;:&quot;asdasd@asdsad.com&quot;,&quot;name&quot;:&quot;asdasd&quot;&#125;&#x27; MessageProperties [headers=&#123;__TypeId__=yun.blog.rabbitmqsample.event.SignUpedEvent&#125;, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=signuped.event, deliveryTag=1, consumerTag=amq.ctag-XBOTLdkMvnhT6vypyy7HTQ, consumerQueue=signuped.event])\n\n\n3번의 재시도가 시도됨\n등록된 예외 핸들러 RabbitMqExceptionHandler 객체에서 로깅 출력\n\n참고\n스프링 부트 2.0 마이크로서비스와 리액티브 프로그래밍\nRabbitmq\n티몬의 개발이야기 RabbitMQ와 Spring AMQP를 이용한 간단한 작업 큐 만들기\n\n","dateCreated":"2019-05-17T22:50:00+09:00","dateModified":"2025-01-31T04:41:33+09:00","datePublished":"2019-05-17T22:50:00+09:00","description":"래빗MQ는 오픈소스 AMQP 브로커다. AMQP는 유선을 통해 전송되는 메시지 형식을 포함하는 개발형 프로토컬이며, JMS와 같은 다른 메시징 솔루션에 비해 인기가 높다.","headline":"Rabbit MQ 기초 사용법","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-rabbitmq/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-rabbitmq/","keywords":"Event, Spring"}</script>
+    <meta name="description" content="래빗MQ는 오픈소스 AMQP 브로커다. AMQP는 유선을 통해 전송되는 메시지 형식을 포함하는 개발형 프로토컬이며, JMS와 같은 다른 메시징 솔루션에 비해 인기가 높다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Rabbit MQ 기초 사용법">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-rabbitmq/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="래빗MQ는 오픈소스 AMQP 브로커다. AMQP는 유선을 통해 전송되는 메시지 형식을 포함하는 개발형 프로토컬이며, JMS와 같은 다른 메시징 솔루션에 비해 인기가 높다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq-turorial.png">
+<meta property="og:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq-retry.png">
+<meta property="article:published_time" content="2019-05-17T13:50:00.000Z">
+<meta property="article:modified_time" content="2025-01-30T19:41:33.921Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Event">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-categories"
+                            
+                            rel="noopener"
+                            title="카테고리"
+                        >
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">카테고리</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link open-algolia-search"
+                            href="#search"
+                            
+                            rel="noopener"
+                            title="검색"
+                        >
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">검색</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Rabbit MQ 기초 사용법
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-05-17T22:50:00+09:00">
+	
+		    2019/05/17
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <blockquote>
+<p>코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/blog-sample/tree/master/rabbitmq-sample">Github</a>에 공개되어 있습니다.</p>
+</blockquote>
+<h2 id="Rabbmit-MQ란"><a href="#Rabbmit-MQ란" class="headerlink" title="Rabbmit MQ란 ?"></a>Rabbmit MQ란 ?</h2><p>래빗MQ는 오픈소스 AMQP 브로커다. AMQP는 유선을 통해 전송되는 메시지 형식을 포함하는 개발형 프로토컬이며, JMS와 같은 다른 메시징 솔루션에 비해 인기가 높다.</p>
+<p>JMS는  API, AMQP는 프로토콜이다. JMS는 메시지의 형식이 아닌 브로커와 통신하는 방법을 정의한다. 또한 자바 애플리케이션에만 국한돼 있다. AMQP는 브로커와 통신하는 방법에 대해서 논하지 않지만. 메시지가 유선을 통해 큐에 어떻게 넣고 꺼내지는지에 대해 정의한다.</p>
+<p>서로 다른 두 가지 애플리케이션을 생각해보자, 둘 다 자바면 JVMS를 통해 통신할 수 있지만 이중에 하나가 루비라면 JMS는 사용하지 못할것이다.</p>
+<p>JMS 발송 브로커는 매시지 전송을 위해 AMQP를 사용할 수 있어 JMS와 AMQP의 차이점을 더 확연하게 해준다.</p>
+<h2 id="AMQP-기본사항"><a href="#AMQP-기본사항" class="headerlink" title="AMQP 기본사항"></a>AMQP 기본사항</h2><p>AMQP-기반 생상자는 큐에 직접 게시하지 않고 익스체인지에 게시한다. 큐가 선언되면 익스체인지에 바인딩돼야 한다. 여러 큐를 동일한 익스체인지에 바인딩해 토픽 개념을 애쿨레이션 할 수 있다.</p>
+<p>토픽 익스체인지를 통해 라우팅 키는 <code>comment.*</code>와 같은 와일드 카드를 사용할 수 있다. 이 상황은 사용자가 조건을 제공할 때 까지 실제 라우팅 키를 알 수 없는 클라이언트에 가장 적합하다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RabbitListener(bindings = @QueueBinding(</span></span><br><span class="line"><span class="meta">    value = @Queue,</span></span><br><span class="line"><span class="meta">    exchange = @Exchange(value = &quot;learning-spring-boot&quot;),</span></span><br><span class="line"><span class="meta">    key = &quot;comments.new&quot;</span></span><br><span class="line"><span class="meta">))</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(Comment comment)</span>&#123;</span><br><span class="line">    commentRepository.save(comment)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>@RabbitListener</code> 어노테이션은 메시지를 사용하는 방법을 등록하는 가장 쉬운 방법이다.</li>
+<li><code>@QueueBinding</code> 어노테이션은 큐와 익스체인지를 즉시 선언하는 가장 쉬운 방법이다. 이 경우 이 메서드에 대한 익명 큐를 생성하고 leaning-spring-boot 익스체인지에 바인딩한다.</li>
+<li>이 메서드는 라우팅 키는 <code>comments.new</code>이며, 이는 leanirng-spring-boot 익스체인지에 게시된 메시지가 이 메서드를 호출하게 한다는 것을 의미한다.</li>
+<li><code>@RabbitListener</code> 메서드는 스프링 AMQP Message 스프링 메시징 Message 다양한 메시지 헤더, 평범하고 오래된 자바 객체를 받을 수 있다.</li>
+<li>메서드 자체는 <code>CommentWriterRepository</code>를 호출해서 실제로 데이터 저장소에 코멘드틀 저장한다.</li>
+</ul>
+<p>래빗MQ를 사용하려면 일반적으로 @EnableRabbit이 필요하지만 스프링 부트 덕분에 Spring-boot-stater-amqp가 클래스 패스에 있으면 자동으로 활성화된다.</p>
+<p>@RabbitListener를 사용하면 운영에 필요한 모든 익스체인지와 큐를 동적으로 생성할 수 있다는 점이다.</p>
+<p>스프링 AMQP 메시지 객체를 제공하기 위해 메서드 시그니처를 선언했다면 바이트 배열을 풀수 있을 것이다. <strong>그러나 스프링 AMQP는 도메인 객체를 직렬화하는 기능이 제한돼 있다. 아무런 노력을 기울리지 않고도 간단한 문자열과 직렬화 처리할 수 있다.</strong></p>
+<h2 id="RabbitMQ와-AMQP"><a href="#RabbitMQ와-AMQP" class="headerlink" title="RabbitMQ와 AMQP"></a>RabbitMQ와 AMQP</h2><blockquote>
+<p>출처 <a target="_blank" rel="noopener" href="http://blog.naver.com/PostView.nhn?blogId=tmondev&logNo=220419853534&parentCategoryNo=&categoryNo=6&viewDate=&isShowPopularPosts=false&from=postView">티몬의 개발이야기 RabbitMQ와 Spring AMQP를 이용한 간단한 작업 큐 만들기</a></p>
+</blockquote>
+<h3 id="AMQP"><a href="#AMQP" class="headerlink" title="AMQP"></a>AMQP</h3><p>프로그래밍에서 MQ는 프로세스 또는 프로그램 인스턴스가 데이터를 서로 교환할 때 사용하는 방법을 말한다. 이러한 MQ를 오픈소스에 기반한 표준 프로토콜이 AMQP이다. AMQP 자체가 프로토콜을 의미하기 때문에 이 프로토콜을 구현한 MQ 제품들은 여러가지가 있으며 그 중하나가 RabbitMQ이다.</p>
+<h3 id="AMQP의-구성요소와-라우팅-알고리즘"><a href="#AMQP의-구성요소와-라우팅-알고리즘" class="headerlink" title="AMQP의 구성요소와 라우팅 알고리즘"></a>AMQP의 구성요소와 라우팅 알고리즘</h3><p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq.png"></p>
+<ul>
+<li>AMQP의 라우팅 모델은 Exchange, Queue, Binding으로 구성된다.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>이름</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Exchange</td>
+<td>Publisher(Producer)로부터 수신한 메시지를 큐에 분배하는 라우터 역할</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>메시지를 메모리나 디스크에 저장했다가 Cusomer에게 메시지를 전달하는 역할</td>
+</tr>
+<tr>
+<td>Binding</td>
+<td>Exchange와 Queue의 관계를 정의한 것</td>
+</tr>
+</tbody></table>
+<h3 id="Exchagne-Type"><a href="#Exchagne-Type" class="headerlink" title="Exchagne Type"></a>Exchagne Type</h3><p>Exchagne Type은 메시지를 어떤 방법으로 라우팅할지 결정하는 일종의 알고리즘 말하며 AMQP에서는 다음과 같은 Exchange Type을 정의하고 있다.</p>
+<table>
+<thead>
+<tr>
+<th>Exchagne Type</th>
+<th>정의</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Direct exchagne</td>
+<td>Exchagne에 바인된 Queue중에 메시지의 라우팅 키와 매핑되어 있는 Queue로 메시지를 전달한다. 1:1 관계로 Unicast 방식에 접합하며, 주로 라운드 로빈 방식으로 여러 workers(Cusumer)간 Task를 분리에 사용된다.</td>
+</tr>
+<tr>
+<td>Fanout Exchagne</td>
+<td>메시지의 라우팅 키를 무시하고 Exchagne에 바인딩된 모든 Queue에 메시지를 전달한다. 1:N 관계로 메시지를 브로드캐스트하는 용도로 사용된다.</td>
+</tr>
+<tr>
+<td>Topic Exchagne</td>
+<td>Exchagne에 바인딩 된 Queue 중에서 메시지의 라우팅 키가 패턴에 맞는 Queue에세 모두 메시지를 전달한다. Mulicast 방섹에 접합하다.</td>
+</tr>
+<tr>
+<td>Headers Exchagne</td>
+<td>라우팅 키 대신에 메시지 헤더에 여러 속성들을 더해 속성들이 매칭되는 큐에 메시지를 전달한다.</td>
+</tr>
+</tbody></table>
+<h2 id="Rabbit-MQ"><a href="#Rabbit-MQ" class="headerlink" title="Rabbit MQ"></a>Rabbit MQ</h2><p>RabbitMQ는 AMQP를 구현한 오픈소스 메시지 소프트웨어 Pulisher(Producer)로부터 메시지를 받아 Cunsumer에게 라우트하는 것이 주된 역할이다.</p>
+<blockquote>
+<p>출처 <a href="%5Bhttp://blog.naver.com/PostView.nhn?blogId=tmondev&logNo=220419853534&parentCategoryNo=&categoryNo=6&viewDate=&isShowPopularPosts=false&from=postView%5D(http://www.rabbitmq.com/getstarted.htm)">RabibitMQ Tutorials</a></p>
+</blockquote>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq-turorial.png"></p>
+<h3 id="Rabbit-MQ-Exchagne-Type"><a href="#Rabbit-MQ-Exchagne-Type" class="headerlink" title="Rabbit MQ Exchagne Type"></a>Rabbit MQ Exchagne Type</h3><table>
+<thead>
+<tr>
+<th>이름</th>
+<th>RabbitMQ 이름</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Direct Exchange</td>
+<td>(Empty string) and amq.direct</td>
+</tr>
+<tr>
+<td>Fanout Exchange</td>
+<td>anq.fanout</td>
+</tr>
+<tr>
+<td>Topic Exchange</td>
+<td>amq.topic</td>
+</tr>
+<tr>
+<td>Header Exchange</td>
+<td>amq.match(and amq.headers in RabbitMQ)</td>
+</tr>
+</tbody></table>
+<h2 id="Sample-Code"><a href="#Sample-Code" class="headerlink" title="Sample Code"></a>Sample Code</h2><blockquote>
+<p>전체 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/blog-sample/tree/master/rabbitmq-sample">Blog-Sample Code</a>를 참고하세요</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">RabbitMqEvent</span> &#123;</span><br><span class="line">  <span class="type">String</span> <span class="variable">MEMBER_SIGNUPED_EVENT</span> <span class="operator">=</span> <span class="string">&quot;signuped.event&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>이벤트 이름을 작성하는 객체입니다. 인터페이스로 관리하는게 효율적으로 보여짐</li>
+</ul>
+<h3 id="Publisher-RabbitTemplate"><a href="#Publisher-RabbitTemplate" class="headerlink" title="Publisher : RabbitTemplate"></a>Publisher : RabbitTemplate</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> RabbitTemplate <span class="title function_">amqpTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">RabbitTemplate</span> <span class="variable">rabbitTemplate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RabbitTemplate</span>();</span><br><span class="line">  rabbitTemplate.setConnectionFactory(connectionFactory);</span><br><span class="line">  rabbitTemplate.setMandatory(<span class="literal">true</span>);</span><br><span class="line">  rabbitTemplate.setChannelTransacted(<span class="literal">true</span>);</span><br><span class="line">  rabbitTemplate.setReplyTimeout(<span class="number">60000</span>);</span><br><span class="line">  rabbitTemplate.setMessageConverter(queueMessageConverter());</span><br><span class="line">  <span class="keyword">return</span> rabbitTemplate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>이벤트를 Publisher하는 template를 생성합니다.</li>
+<li>ConnectionFactory 의존성 주입을 받아 생성합니다.</li>
+<li>message conveter를 등록시킵니다. 다른 예제들은 Bean으로 등록시는데 딱히 Bean으로 등록시킬 필요는 없어 보입니다.</li>
+<li><code>setChannelTransacted</code> 플래극 값은 Transaction 으로 생성하게 해줍니다. (<code>@Transcational</code> 이 붙은 것처럼 처리됩니다. 만약 데이터베이스의 트랜잭션과 연결된다면 트랜잭션이 전이 된다고 이해했습니다.)</li>
+<li><code>setReplyTimeout</code> amqpTemplate의 timeout을 지정합니다.</li>
+</ul>
+<h3 id="Comsumer-SimpleRabbitListenerContainerFactory"><a href="#Comsumer-SimpleRabbitListenerContainerFactory" class="headerlink" title="Comsumer : SimpleRabbitListenerContainerFactory"></a>Comsumer : SimpleRabbitListenerContainerFactory</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-amqp/api/org/springframework/amqp/rabbit/listener/AbstractMessageListenerContainer.html#setDefaultRequeueRejected-boolean-">spring-amqp Document</a>을 참고했습니다. 제가 이해한 부분으로 설명하는 것이라 틀린 부분이 있을 수 있습니다.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">  <span class="keyword">public</span> SimpleRabbitListenerContainerFactory <span class="title function_">rabbitListenerContainerFactory</span><span class="params">(</span></span><br><span class="line"><span class="params">      ConnectionFactory connectionFactory)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">SimpleRabbitListenerContainerFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleRabbitListenerContainerFactory</span>();</span><br><span class="line">    factory.setConnectionFactory(connectionFactory);</span><br><span class="line">    factory.setDefaultRequeueRejected(<span class="literal">false</span>);</span><br><span class="line">    factory.setMessageConverter(queueMessageConverter());</span><br><span class="line">    factory.setChannelTransacted(<span class="literal">true</span>);</span><br><span class="line">    factory.setAdviceChain(RetryInterceptorBuilder</span><br><span class="line">        .stateless()</span><br><span class="line">        .maxAttempts(MAX_TRY_COUNT)</span><br><span class="line">        .recoverer(<span class="keyword">new</span> <span class="title class_">RabbitMqExceptionHandler</span>())</span><br><span class="line">        .backOffOptions(INITIAL_INTERVAL, MULTIPLIER, MAX_INTERVAL)</span><br><span class="line">        .build());</span><br><span class="line">    <span class="keyword">return</span> factory;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>setDefaultRequeueRejected</code> true일 경우 리서너에서 예외가 발생시에 다시 큐에 쌓이게 됩니다. 예외 상황을 해제하기 전까지 무한 반복할 거같아 기본 설정이 false이고 true 변경할 일이 거의 없어 보입니다.</li>
+<li><code>setChannelTransacted</code> 위 설정과 동일합니다.</li>
+<li><code>recoverer</code> 예외를 핸들링할 수 있는 객체를 지정해서 핸들링 할 수 있습니다. 에러 로그, 에러 알림 정도 설정하면 좋을거 같음</li>
+<li><code>maxAttempts</code> 예외가 발생 했을 경우 몇번을 더 재시도 할 횟수를 지정합니다.</li>
+<li><code>backOffOptions</code> 재시도 횟수에 대한 옵션을 지정합니다. <code>3000, 3, 10000</code> 인자값을 지정 했다면 3초 간격으로 3으로 곱해서 최대 10초 까지 재시도 하라는 것입니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Member <span class="title function_">doSignUp</span><span class="params">(<span class="keyword">final</span> SignUpRequest dto)</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">Member</span> <span class="variable">member</span> <span class="operator">=</span> memberRepository.save(dto.toEnttiy());</span><br><span class="line">    amqpTemplate.convertAndSend(RabbitMqEvent.MEMBER_SIGNUPED_EVENT, SignUpedEvent.of(member));</span><br><span class="line">    <span class="keyword">return</span> member;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>convertAndSend</code> 위에서 등록한 template 기반으로 이벤트를 발생시킵니다.</li>
+<li>첫 번째 인자는 이벤트의 이름(스트링 벨류), 이벤트 처리시에 넘겨줄 객체를 바인딩 시킵니다.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RabbitListener(queues = RabbitMqEvent.MEMBER_SIGNUPED_EVENT)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleSignUpEvent</span><span class="params">(<span class="keyword">final</span> SignUpedEvent event)</span> &#123;</span><br><span class="line">  log.error(event.toString());</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>@RabbitListener</code> 어노테이션으로 리슨할 이벤트 이름을 지정합니다.</li>
+<li><code>convertAndSend</code>에서 넘겨준 객체 <code>SignUpedEvent</code>를 매게변수를 받습니다.</li>
+<li><code>IllegalArgumentException();</code> 설정을 통해서 예외를 발생시킵니다. 위에서 설정한 3번의 일정한 반복이 진행되는지 확인 해 봅니다.</li>
+</ul>
+<p><img src="https://github.com/cheese10yun/TIL/raw/master/assets/rabbitmq-retry.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">2019-03-03 20:43:57.459 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)</span><br><span class="line">2019-03-03 20:44:00.466 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)</span><br><span class="line">2019-03-03 20:44:09.470 ERROR 58190 --- [cTaskExecutor-1] y.b.rabbitmqsample.event.SignUpListener  : SignUpedEvent(id=1, email=asdasd@asdsad.com, name=asdasd)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"> Retries exhausted for message (Body:&#x27;&#123;&quot;id&quot;:1,&quot;email&quot;:&quot;asdasd@asdsad.com&quot;,&quot;name&quot;:&quot;asdasd&quot;&#125;&#x27; MessageProperties [headers=&#123;__TypeId__=yun.blog.rabbitmqsample.event.SignUpedEvent&#125;, contentType=application/json, contentEncoding=UTF-8, contentLength=0, receivedDeliveryMode=PERSISTENT, priority=0, redelivered=false, receivedExchange=, receivedRoutingKey=signuped.event, deliveryTag=1, consumerTag=amq.ctag-XBOTLdkMvnhT6vypyy7HTQ, consumerQueue=signuped.event])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>3번의 재시도가 시도됨</li>
+<li>등록된 예외 핸들러 <code>RabbitMqExceptionHandler</code> 객체에서 로깅 출력</li>
+</ul>
+<h2 id="참고"><a href="#참고" class="headerlink" title="참고"></a>참고</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://acornpub.co.kr/book/spring-boot-2.0-2e">스프링 부트 2.0 마이크로서비스와 리액티브 프로그래밍</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.rabbitmq.com/">Rabbitmq</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.naver.com/PostView.nhn?blogId=tmondev&logNo=220419853534&parentCategoryNo=&categoryNo=6&viewDate=&isShowPopularPosts=false&from=postView">티몬의 개발이야기 RabbitMQ와 Spring AMQP를 이용한 간단한 작업 큐 만들기</a></li>
+</ul>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Event/" rel="tag">Event</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Spring/" rel="tag">Spring</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-cloud-config/"
+                    data-tooltip="Spring Cloud Config 살펴보기"
+                    aria-label="이전: Spring Cloud Config 살펴보기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/checked-exception/"
+                    data-tooltip="Checked Exception을 대하는 자세"
+                    aria-label="다음: Checked Exception을 대하는 자세"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-cloud-config/"
+                    data-tooltip="Spring Cloud Config 살펴보기"
+                    aria-label="이전: Spring Cloud Config 살펴보기"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/checked-exception/"
+                    data-tooltip="Checked Exception을 대하는 자세"
+                    aria-label="다음: Checked Exception을 대하는 자세"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-rabbitmq/"
+                    title="Google+에 공유하기"
+                    aria-label="Google+에 공유하기"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-rabbitmq/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-rabbitmq/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/spring-rabbitmq/"
+                        aria-label="Google+에 공유하기"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>
