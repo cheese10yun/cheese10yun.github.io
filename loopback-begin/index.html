@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.\n공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.\nLoopback 특징\n정말 빠르게 REST API를 만들수 있습니다.\n기본적으로 API Document를 Swagger 만들어줍니다.\nCLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.\n다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.\n\nLoopback 설치\n기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.\n\n1$ npm install -g loopback-cli\n\nHello world 프로젝트 설정루프백의 기초적인 특징을 알아보겠습니다.\n123456789$ lb? 애플리케이션 이름은 무엇입니까? hello-world? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world  create hello-world/    info 작업 디렉토리를 hello-world(으)로 번경? 사용하려는 LoopBack 버전은 무엇입니까? 3.x (current)? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, including a single vanilla Message and a single remote method)\n\n터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.\n프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.\n버전은 3.x 최신 버전을 선택합니다.\n예상하는 애플리케이션 종류는  hello-world를 선택합니다.\n\nHello world 프로젝트 실행12$ cd hello-world/$ node .\n\n위에서 CLI로 생성한 프로젝트 디렉토리로 이동합니다.\nnode . 명령어로 프로젝트를 실행 합니다.\nhttp://0.0.0.0:3000/explorer로 이동합니다.\nAPI Document Swagger가 정상적으로 출력되면 아래 그림과 같습니다.\n\nAPI Document\n\nLoopback 기본 User모델을 기반으로 User API를 만들어 줍니다.\nUser API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.\n\nPOST &#x2F;Users (회원 가입)\n123456&#123;  &quot;realm&quot;: &quot;string&quot;,  &quot;username&quot;: &quot;loopback&quot;,  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\ndata에 JSON 타입으로 해당 데이터를 입력합니다.\n기본설정인 In-memory db에 저장됩니다.\n\nPOST &#x2F;Users&#x2F;login (로그인)\n1234&#123;  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\n\n\ncredentials 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.\n회원 정보가 일치할 경우 Response Body에 AccessToekn 정보를 넘겨 줍니다.\nAccessToekn.id의 값 KIjxd....을 오른쪽 상단 ToKen Set에 입력합니다.\nloopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.\nAccessToekn 모델 또한 Loopback의 기본 제공 모델중 하나입니다.\n\nGET &#x2F;Users&#x2F;{id} (해당 회원 조회)\n\nid 파라마터에 AccessToekn에서 발급 받은 userId를 입력합니다.\n자신의 정보를 조회할 수 있습니다.\n자신의 이외의 회원 정보를 조회할 경우 아래와 같은 StatusCode 401를 리턴 받습니다.\n\n1234567&#123;  &quot;error&quot;: &#123;    &quot;statusCode&quot;: 401,    &quot;name&quot;: &quot;Error&quot;,    &quot;message&quot;: &quot;권한 필수&quot;  &#125;&#125;\n\n결론루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.\n","dateCreated":"2017-05-05T00:00:00+09:00","dateModified":"2025-01-31T04:04:19+09:00","datePublished":"2017-05-05T00:00:00+09:00","description":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.","headline":"Loopback 시작하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/loopback-begin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/loopback-begin/","keywords":"Node, LoopBack"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.\n공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.\nLoopback 특징\n\n정말 빠르게 REST API를 만들수 있습니다.\n기본적으로 API Document를 Swagger 만들어줍니다.\nCLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.\n다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.\n\nLoopback 설치\n\n기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.\n\n1$ npm install -g loopback-cli\nHello world 프로젝트 설정\n루프백의 기초적인 특징을 알아보겠습니다.\n123456789$ lb? 애플리케이션 이름은 무엇입니까? hello-world? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world  create hello-world/    info 작업 디렉토리를 hello-world(으)로 번경? 사용하려는 LoopBack 버전은 무엇입니까? 3.x (current)? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, including a single vanilla Message and a single remote method)\n\n터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.\n프러젝트 이름, 디렉토리 이름 등 간단하게 설정합니다.\n버전은 3.x 최신 버전을 선택합니다.\n예상하는 애플리케이션 종류는  hello-world를 선택합니다.\n\nHello world 프로젝트 실행\n12$ cd hello-world/$ node .\n\n위에서 CLI로 생성한 프로젝트 디렉토리로 이동합니다.\nnode . 명령어로 프로젝트를 실행 합니다.\nhttp://0.0.0.0:3000/explorer로 이동합니다.\nAPI Document Swagger가 정상적으로 출력되면 아래 그림과 같습니다.\n\nAPI Document\n\n\nLoopback 기본 User모델을 기반으로 User API를 만들어 줍니다.\nUser API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.\n\nPOST /Users (회원 가입)\n\n123456&#123;  &quot;realm&quot;: &quot;string&quot;,  &quot;username&quot;: &quot;loopback&quot;,  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\ndata에 JSON 타입으로 해당 데이터를 입력합니다.\n기본설정인 In-memory db에 저장됩니다.\n\nPOST /Users/login (로그인)\n\n1234&#123;  &quot;email&quot;: &quot;loopback@loopback.com&quot;,  &quot;password&quot;: &quot;loopback&quot;&#125;\n\ncredentials 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.\n회원 정보가 일치할 경우 Response Body에 AccessToekn 정보를 넘겨 줍니다.\nAccessToekn.id의 값 KIjxd....을 오른쪽 상단 ToKen Set에 입력합니다.\nloopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.\nAccessToekn 모델 또한 Loopback의 기본 제공 모델중 하나입니다.\n\nGET /Users/{id} (해당 회원 조회)\n\n\nid 파라마터에 AccessToekn에서 발급 받은 userId를 입력합니다.\n자신의 정보를 조회할 수 있습니다.\n자신의 이외의 회원 정보를 조회할 경우 아래와 같은 StatusCode 401를 리턴 받습니다.\n\n1234567&#123;  &quot;error&quot;: &#123;    &quot;statusCode&quot;: 401,    &quot;name&quot;: &quot;Error&quot;,    &quot;message&quot;: &quot;권한 필수&quot;  &#125;&#125;\n결론\n루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.\n","dateCreated":"2017-05-05T00:00:00+09:00","dateModified":"2025-01-31T06:29:31+09:00","datePublished":"2017-05-05T00:00:00+09:00","description":"최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.","headline":"Loopback 시작하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/loopback-begin/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/loopback-begin/","keywords":"Node, LoopBack"}</script>
     <meta name="description" content="최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Loopback 시작하기">
@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://i.imgur.com/0W8k2M9.png">
 <meta property="og:image" content="http://i.imgur.com/gWBT25M.png">
 <meta property="article:published_time" content="2017-05-04T15:00:00.000Z">
-<meta property="article:modified_time" content="2025-01-30T19:04:19.691Z">
+<meta property="article:modified_time" content="2025-01-30T21:29:31.805Z">
 <meta property="article:author" content="Yun">
 <meta property="article:tag" content="Node">
 <meta property="article:tag" content="LoopBack">
@@ -290,18 +290,20 @@
         <div class="main-content-wrap">
             <p>최근 이직을 하게 되어 이렇게 오랜만에 포스팅하게 되었습니다. 바쁘다는 핑계로 미루다 보면 계속 못할 거 같아 많은 준비는 못 했지만 이번 회사에서 처음 접하게 된 Loopback Framework를 간단하게 정리하겠습니다.</p>
 <p><strong>공식 문서에 상세한 내용이 나와 있어 이론보다는 실습 위주로 설명하겠습니다 1개월 정도밖에 사용해보지 않은 프레임워크라 이론적인 측면을 자세히 설명하기가 어려운 점이 있습니다.</strong></p>
-<h3 id="Loopback-특징"><a href="#Loopback-특징" class="headerlink" title="Loopback 특징"></a>Loopback 특징</h3><ul>
+<h3 id="Loopback-특징">Loopback 특징</h3>
+<ul>
 <li>정말 빠르게 REST API를 만들수 있습니다.</li>
 <li>기본적으로 API Document를 Swagger 만들어줍니다.</li>
 <li>CLI를 통해서 편리하게 모델 생성, 정의 접근 권한 등등 작업을 진행할 수 있습니다.</li>
 <li>다양한 데이터베이스를 ORM으로 쉽게 관리할 수 있습니다.</li>
 </ul>
-<h3 id="Loopback-설치"><a href="#Loopback-설치" class="headerlink" title="Loopback 설치"></a>Loopback 설치</h3><ul>
+<h3 id="Loopback-설치">Loopback 설치</h3>
+<ul>
 <li>기본적으로 Node, NPM이 설치되있는 환경이라 가정하겠습니다.</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g loopback-cli</span><br></pre></td></tr></table></figure>
-
-<h3 id="Hello-world-프로젝트-설정"><a href="#Hello-world-프로젝트-설정" class="headerlink" title="Hello world 프로젝트 설정"></a>Hello world 프로젝트 설정</h3><p><strong>루프백의 기초적인 특징을 알아보겠습니다.</strong></p>
+<h3 id="Hello-world-프로젝트-설정">Hello world 프로젝트 설정</h3>
+<p><strong>루프백의 기초적인 특징을 알아보겠습니다.</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ lb</span><br><span class="line">? 애플리케이션 이름은 무엇입니까? hello-world</span><br><span class="line">? 프로젝트를 포함시킬 디렉토리 이름 입력: hello-world</span><br><span class="line">  create hello-world/</span><br><span class="line">    info 작업 디렉토리를 hello-world(으)로 번경</span><br><span class="line"></span><br><span class="line">? 사용하려는 LoopBack 버전은 무엇입니까? 3.x (current)</span><br><span class="line">? 예상하는 애플리케이션 종류는 무엇입니까? hello-world (A project containing a controller, includi</span><br><span class="line">ng a single vanilla Message and a single remote method)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>터미널에서 원하시는 디렉토리 이동 이후 lb 명령어를 입력하고 프로젝트 설정을 이어 갑니다.</li>
@@ -309,29 +311,30 @@
 <li>버전은 3.x 최신 버전을 선택합니다.</li>
 <li>예상하는 애플리케이션 종류는  hello-world를 선택합니다.</li>
 </ul>
-<h3 id="Hello-world-프로젝트-실행"><a href="#Hello-world-프로젝트-실행" class="headerlink" title="Hello world 프로젝트 실행"></a>Hello world 프로젝트 실행</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hello-world/</span><br><span class="line">$ node .</span><br></pre></td></tr></table></figure>
+<h3 id="Hello-world-프로젝트-실행">Hello world 프로젝트 실행</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hello-world/</span><br><span class="line">$ node .</span><br></pre></td></tr></table></figure>
 <ul>
 <li>위에서 <code>CLI</code>로 생성한 프로젝트 디렉토리로 이동합니다.</li>
 <li><code>node .</code> 명령어로 프로젝트를 실행 합니다.</li>
 <li><code>http://0.0.0.0:3000/explorer</code>로 이동합니다.</li>
 <li>API Document <code>Swagger</code>가 정상적으로 출력되면 아래 그림과 같습니다.</li>
 </ul>
-<h3 id="API-Document"><a href="#API-Document" class="headerlink" title="API Document"></a>API Document</h3><p><img src="http://i.imgur.com/D9cINil.png"></p>
+<h3 id="API-Document">API Document</h3>
+<p><img src="http://i.imgur.com/D9cINil.png" alt=""></p>
 <ul>
 <li>Loopback 기본 <code>User</code>모델을 기반으로 User API를 만들어 줍니다.</li>
 <li>User API는 회원 가입, 로그인, 로그아웃, 회원 정보 수정, 등등 User에 대한 REST API가 있습니다.</li>
 </ul>
-<h4 id="POST-Users-회원-가입"><a href="#POST-Users-회원-가입" class="headerlink" title="POST &#x2F;Users (회원 가입)"></a>POST &#x2F;Users (회원 가입)</h4><p><img src="http://i.imgur.com/ako0hjq.png"></p>
+<h4 id="POST-Users-회원-가입">POST /Users (회원 가입)</h4>
+<p><img src="http://i.imgur.com/ako0hjq.png" alt=""></p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;realm&quot;</span><span class="punctuation">:</span> <span class="string">&quot;string&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;loopback&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;loopback@loopback.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;loopback&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
 <ul>
 <li><code>data</code>에 JSON 타입으로 해당 데이터를 입력합니다.</li>
 <li><em><strong>기본설정인 In-memory db에 저장됩니다.</strong></em></li>
 </ul>
-<h4 id="POST-Users-login-로그인"><a href="#POST-Users-login-로그인" class="headerlink" title="POST &#x2F;Users&#x2F;login (로그인)"></a>POST &#x2F;Users&#x2F;login (로그인)</h4><p><img src="http://i.imgur.com/0W8k2M9.png"></p>
+<h4 id="POST-Users-login-로그인">POST /Users/login (로그인)</h4>
+<p><img src="http://i.imgur.com/0W8k2M9.png" alt=""></p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;loopback@loopback.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;loopback&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-
 <ul>
 <li><code>credentials</code> 위에서 가입한 email, password 정보를 JSON 타입으로 입력합니다.</li>
 <li>회원 정보가 일치할 경우 <code>Response Body</code>에 <code>AccessToekn</code> 정보를 넘겨 줍니다.</li>
@@ -339,15 +342,16 @@
 <li>loopback에서는 기본적으로 인증처리를 AccessToekn 방식으로 지원합니다.</li>
 <li><code>AccessToekn</code> 모델 또한 Loopback의 기본 제공 모델중 하나입니다.</li>
 </ul>
-<h4 id="GET-Users-id-해당-회원-조회"><a href="#GET-Users-id-해당-회원-조회" class="headerlink" title="GET &#x2F;Users&#x2F;{id} (해당 회원 조회)"></a>GET &#x2F;Users&#x2F;{id} (해당 회원 조회)</h4><p><img src="http://i.imgur.com/gWBT25M.png"></p>
+<h4 id="GET-Users-id-해당-회원-조회">GET /Users/{id} (해당 회원 조회)</h4>
+<p><img src="http://i.imgur.com/gWBT25M.png" alt=""></p>
 <ul>
 <li><code>id</code> 파라마터에 <code>AccessToekn</code>에서 발급 받은 <code>userId</code>를 입력합니다.</li>
 <li>자신의 정보를 조회할 수 있습니다.</li>
 <li>자신의 이외의 회원 정보를 조회할 경우 아래와 같은 <code>StatusCode</code> 401를 리턴 받습니다.</li>
 </ul>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;error&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;statusCode&quot;</span><span class="punctuation">:</span> <span class="number">401</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Error&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;권한 필수&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h3><p>루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.</p>
+<h3 id="결론">결론</h3>
+<p>루프백에서 기본적으로 모델을 생성하고 모델 간의 관계를 정의하면 기본적인 CURD REST API를 자동으로 만들어 줍니다. 또한, Swagger를 이용해서 API Document 또한 자동으로 만들어 주어 정말 빠르게 API를 개발할 수 있게 해줍니다. 또 특정 API에 대한 접근 권한 및 인증 처리도 정말 간단하게 이루어지고, 이 밖에도 다양한 장점들로 빠르게 계발할 수 있도록 도와줍니다. 이러한 장점들을 한 번에 소개하기는 힘들어 해당 파트 마다 소개를 이어 나갈 거 같습니다. 오늘 포스팅한 내용은 부실하지만 이렇게라도 시작을 하지 않으면 계속 늦어질 거 같아 빠르게 정리해보았습니다. 앞으로는 간단한 게시판을 만들면서 Loopback의 장점들을 소개할 예정입니다.</p>
 
             
 
