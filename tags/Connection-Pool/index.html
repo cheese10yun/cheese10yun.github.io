@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
     <meta name="generator" content="Yun Blog">
-    <title>태그: Batch Insert - Yun Blog</title>
+    <title>태그: Connection Pool - Yun Blog</title>
     <meta name="author" content="Yun">
     
         <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
@@ -22,7 +22,7 @@
     <meta name="description" content="기술 블로그">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Yun Blog">
-<meta property="og:url" content="https://cheese10yun.github.io/tags/Batch-Insert/index.html">
+<meta property="og:url" content="https://cheese10yun.github.io/tags/Connection-Pool/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="기술 블로그">
 <meta property="og:locale" content="ko_KR">
@@ -273,17 +273,17 @@
                     
                         <a
                             class="link-unstyled"
-                            href="/spring-batch-batch-insert/"
-                            aria-label=": Batch Insert 성능 향상기 2편 - 성능 측정"
+                            href="/redis-lettuce-connection/"
+                            aria-label=": Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징"
                         >
-                            Batch Insert 성능 향상기 2편 - 성능 측정
+                            Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time datetime="2021-02-27T00:00:00+09:00">
+    <time datetime="2024-11-17T16:13:12+09:00">
 	
-		    2021/02/27
+		    2024/11/17
     	
     </time>
     
@@ -292,12 +292,12 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    JPA + MySQL + GenerationType.IDENTITY 조합으로는 Batch Insert를 사용할 수 없습니다. 자세한 내용은 Batch Insert 성능 향상기 1편 - With JPA에서 자세하게 정리했습니다.
+                    Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다.
                     
                         <a
-                            href="/spring-batch-batch-insert/"
+                            href="/redis-lettuce-connection/"
                             class="postShorten-excerpt_link link"
-                            aria-label=": Batch Insert 성능 향상기 2편 - 성능 측정"
+                            aria-label=": Hikari와 비교하며 알아보는 Redis Lettuce 커넥션 풀의 특징"
                         >
                             계속 읽기
                         </a>
@@ -318,17 +318,17 @@
                     
                         <a
                             class="link-unstyled"
-                            href="/jpa-batch-insert/"
-                            aria-label=": Batch Insert 성능 향상기 1편 - With JPA"
+                            href="/mysql-connection-pool-timeout-1/"
+                            aria-label=": HikariCP로 MySQL Connection Pool 최적화하기"
                         >
-                            Batch Insert 성능 향상기 1편 - With JPA
+                            HikariCP로 MySQL Connection Pool 최적화하기
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time datetime="2021-02-22T00:00:00+09:00">
+    <time datetime="2024-10-26T00:00:00+09:00">
 	
-		    2021/02/22
+		    2024/10/26
     	
     </time>
     
@@ -337,12 +337,57 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    성능 향상을 위해서 Batch Insert를 도입하는 과정 중 JPA, Mysql 환경에서의 Batch Insert에 대한 방법과 제약사항들에 대해서 정리했습니다.
+                    Spring Boot는 기본적으로 HikariCP를 내장된 커넥션 풀로 지원하며, 이를 통해 데이터베이스 연결을 효율적으로 관리할 수 있습니다. 이번 포스팅에서는 Spring Boot 환경에서 HikariCP의 설정을 최적화하여 TPS 변화에 유연하게 대응하는 방법을 알아보겠습니다.
                     
                         <a
-                            href="/jpa-batch-insert/"
+                            href="/mysql-connection-pool-timeout-1/"
                             class="postShorten-excerpt_link link"
-                            aria-label=": Batch Insert 성능 향상기 1편 - With JPA"
+                            aria-label=": HikariCP로 MySQL Connection Pool 최적화하기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/mysql-connection-pool-timeout/"
+                            aria-label=": MySQL Connection Pool 관리 - HikariCP 설정 및 타임아웃 처리"
+                        >
+                            MySQL Connection Pool 관리 - HikariCP 설정 및 타임아웃 처리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2024-10-21T01:15:31+09:00">
+	
+		    2024/10/21
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    애플리케이션에서 MySQL 데이터베이스와의 효율적인 연결을 위해 커넥션 풀을 사용합니다. 커넥션 풀은 미리 일정한 수의 데이터베이스 연결을 생성해 두고, 애플리케이션이 필요할 때마다 이 연결들을 재사용함으로써 성능을 향상시키는 기법입니다.
+                    
+                        <a
+                            href="/mysql-connection-pool-timeout/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": MySQL Connection Pool 관리 - HikariCP 설정 및 타임아웃 처리"
                         >
                             계속 읽기
                         </a>
