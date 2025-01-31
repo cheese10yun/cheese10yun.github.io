@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느낌이 있어서 저는 거의 모든 작업을 인텔리제이에서 하는 것을 지향합니다. 이번 포스팅은 Source Tree 즉 Git 관련 툴을 대체하는 방법을 소개하겠습니다. 해당 기능의 단축키는 스크린샷 하단에 표시되있습니다.*\nCommit\n\n\nDiff : 변경 이력이 있는 모든 파일에 대해서 Diff 기능을 제공합니다. Commit을 하기 전에 자신이 변경한 모든 파일에 대해서 한 번 꼼꼼하게 읽어 보는 습관을 갖는 것이 실수를 줄이는 가장 효율적인 방법이라고 생각합니다.\nBefore Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.\n\nCheck TODO:  //TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.\nOptimize imports : 사용하지 않은 imports를 제거해 줍니다.\nReformat Code : 인텔리제이에서 설정한 코드스타일로 변경 해줍니다.\n\n\n\nPush\n\n\n커밋한 내용을 레파지토리에 푸쉬 하는 기능입니다.\n\nPull\n\n\nRemote Repository에 변경 내역을 Pull 받는 기능입니다.\n\nStash\n\n\nStash 기능은 아주 간단하게 소개하면 변경 내역을 임시저장 해놓는 기능입니다. 가령 다른 branch로 변경을 원할 때 변경 내역이 남아 있어 부득이하게 commit을 하는 경우가 있습니다. 그럴 때 stash 임시 저장소에 저장하면 편리하게 branch 간의 이동을 할 수 있습니다.\n기본 단축키가 지정되있지 않아 Find Action 으로 stash 기능을 사용합니다.\n\nUnStash\n\n\nStash 저장한 내역을 POP 하는 기능입니다.\n기본 단축키가 지정되있지 않아 Find Action 으로 unStash 기능을 사용합니다.\n저장한 메시지를 기반으로 선택하고 Apply Stash을 클릭하면 변경 내역을 불러옵니다.\n\nShare Project on Github\n\n\n해당 프로젝트를 Github에 올리는 기능입니다.\n\nBranch\n\n\nNew branch, Checkout, Compare, Merge, Rebase 등등 다양한 기능들을 제공합니다.\n\n","dateCreated":"2018-04-03T00:00:00+09:00","dateModified":"2025-01-31T06:34:16+09:00","datePublished":"2018-04-03T00:00:00+09:00","description":"벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다.","headline":"인텔리제이 Git 활용법","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-git/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-git/","keywords":"Jetbrains, IntelliJ"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느낌이 있어서 저는 거의 모든 작업을 인텔리제이에서 하는 것을 지향합니다. 이번 포스팅은 Source Tree 즉 Git 관련 툴을 대체하는 방법을 소개하겠습니다. 해당 기능의 단축키는 스크린샷 하단에 표시되있습니다.*\nCommit\n\nDiff : 변경 이력이 있는 모든 파일에 대해서 Diff 기능을 제공합니다. Commit을 하기 전에 자신이 변경한 모든 파일에 대해서 한 번 꼼꼼하게 읽어 보는 습관을 갖는 것이 실수를 줄이는 가장 효율적인 방법이라고 생각합니다.\nBefore Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.\nCheck TODO:  &#x2F;&#x2F;TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.\nOptimize imports : 사용하지 않은 imports를 제거해 줍니다.\nReformat Code : 인텔리제이에서 설정한 코드스타일로 변경 해줍니다.\n\n\n\nPush\n\n커밋한 내용을 레파지토리에 푸쉬 하는 기능입니다.\n\nPull\n\nRemote Repository에 변경 내역을 Pull 받는 기능입니다.\n\nStash\n\nStash 기능은 아주 간단하게 소개하면 변경 내역을 임시저장 해놓는 기능입니다. 가령 다른 branch로 변경을 원할 때 변경 내역이 남아 있어 부득이하게 commit을 하는 경우가 있습니다. 그럴 때 stash 임시 저장소에 저장하면 편리하게 branch 간의 이동을 할 수 있습니다.\n기본 단축키가 지정되있지 않아 Find Action 으로 stash 기능을 사용합니다.\n\nUnStash\n\nStash 저장한 내역을 POP 하는 기능입니다.\n기본 단축키가 지정되있지 않아 Find Action 으로 unStash 기능을 사용합니다.\n저장한 메시지를 기반으로 선택하고 Apply Stash을 클릭하면 변경 내역을 불러옵니다.\n\nShare Project on Github\n\n해당 프로젝트를 Github에 올리는 기능입니다.\n\nBranch\n\nNew branch, Checkout, Compare, Merge, Rebase 등등 다양한 기능들을 제공합니다.\n\n","dateCreated":"2018-04-03T00:00:00+09:00","dateModified":"2025-01-31T06:34:16+09:00","datePublished":"2018-04-03T00:00:00+09:00","description":"벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다.","headline":"인텔리제이 Git 활용법","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-git/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-git/","keywords":"Jetbrains, IntelliJ"}</script>
     <meta name="description" content="벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="인텔리제이 Git 활용법">
@@ -292,48 +292,40 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <p>벡엔드 개발을 할 때 많은 틀을 사용합니다. Source Tree, Postman, Sequel Pro 등등 수없이 개발하다가 해당툴을 사용하기 위해서 왔다 갔다 하는 경우가 많습니다. 하지만 외부 툴을 사용하는 순간 뭔가 개발 흐름이 끊기는 느낌이 있어서 저는 거의 모든 작업을 인텔리제이에서 하는 것을 지향합니다. <strong>이번 포스팅은 Source Tree 즉 Git 관련 툴을 대체하는 방법을 소개하겠습니다. 해당 기능의 단축키는 스크린샷 하단에 표시되있습니다.</strong>*</p>
-<h2 id="Commit">Commit</h2>
-<p><img src="https://i.imgur.com/6xFlHcv.png" alt=""></p>
+<h2 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h2><p><img src="https://i.imgur.com/6xFlHcv.png"></p>
 <ul>
 <li>Diff : 변경 이력이 있는 모든 파일에 대해서 Diff 기능을 제공합니다. Commit을 하기 전에 자신이 변경한 모든 파일에 대해서 한 번 꼼꼼하게 읽어 보는 습관을 갖는 것이 실수를 줄이는 가장 효율적인 방법이라고 생각합니다.</li>
-<li>Before Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.
-<ul>
-<li>Check TODO:  //TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.</li>
+<li>Before Commit : **인텔리제이로 커밋을 했을 경우 얻을 수 있는 최고의 장점이라고 생각합니다. **간단하게 다루고 이 기능은 추후 포스팅을 통해서 다시 한번 다루겠습니다.<ul>
+<li>Check TODO:  &#x2F;&#x2F;TODO 메시지가 남아 있을 경우 사용자에게 해당 TODO가 남아 있다고 알려줍니다.</li>
 <li>Optimize imports : 사용하지 않은 imports를 제거해 줍니다.</li>
 <li>Reformat Code : 인텔리제이에서 설정한 코드스타일로 변경 해줍니다.</li>
 </ul>
 </li>
 </ul>
-<h2 id="Push">Push</h2>
-<p><img src="https://i.imgur.com/TzF1dNk.png" alt=""></p>
+<h2 id="Push"><a href="#Push" class="headerlink" title="Push"></a>Push</h2><p><img src="https://i.imgur.com/TzF1dNk.png"></p>
 <ul>
 <li>커밋한 내용을 레파지토리에 푸쉬 하는 기능입니다.</li>
 </ul>
-<h2 id="Pull">Pull</h2>
-<p><img src="https://i.imgur.com/pMhiJPi.png" alt=""></p>
+<h2 id="Pull"><a href="#Pull" class="headerlink" title="Pull"></a>Pull</h2><p><img src="https://i.imgur.com/pMhiJPi.png"></p>
 <ul>
 <li>Remote Repository에 변경 내역을 Pull 받는 기능입니다.</li>
 </ul>
-<h2 id="Stash">Stash</h2>
-<p><img src="https://i.imgur.com/ZIn63MI.png" alt=""></p>
+<h2 id="Stash"><a href="#Stash" class="headerlink" title="Stash"></a>Stash</h2><p><img src="https://i.imgur.com/ZIn63MI.png"></p>
 <ul>
 <li>Stash 기능은 아주 간단하게 소개하면 변경 내역을 임시저장 해놓는 기능입니다. 가령 다른 branch로 변경을 원할 때 변경 내역이 남아 있어 부득이하게 commit을 하는 경우가 있습니다. 그럴 때 stash 임시 저장소에 저장하면 편리하게 branch 간의 이동을 할 수 있습니다.</li>
 <li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 stash 기능을 사용합니다.</li>
 </ul>
-<h2 id="UnStash">UnStash</h2>
-<p><img src="https://i.imgur.com/kDCYgib.png" alt=""></p>
+<h2 id="UnStash"><a href="#UnStash" class="headerlink" title="UnStash"></a>UnStash</h2><p><img src="https://i.imgur.com/kDCYgib.png"></p>
 <ul>
 <li>Stash 저장한 내역을 POP 하는 기능입니다.</li>
 <li>기본 단축키가 지정되있지 않아 <code>Find Action</code> 으로 unStash 기능을 사용합니다.</li>
 <li>저장한 메시지를 기반으로 선택하고 <code>Apply Stash</code>을 클릭하면 변경 내역을 불러옵니다.</li>
 </ul>
-<h2 id="Share-Project-on-Github">Share Project on Github</h2>
-<p><img src="https://i.imgur.com/bOJ0X8n.png" alt=""></p>
+<h2 id="Share-Project-on-Github"><a href="#Share-Project-on-Github" class="headerlink" title="Share Project on Github"></a>Share Project on Github</h2><p><img src="https://i.imgur.com/bOJ0X8n.png"></p>
 <ul>
 <li>해당 프로젝트를 Github에 올리는 기능입니다.</li>
 </ul>
-<h2 id="Branch">Branch</h2>
-<p><img src="https://i.imgur.com/HJjPhjW.png" alt=""></p>
+<h2 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h2><p><img src="https://i.imgur.com/HJjPhjW.png"></p>
 <ul>
 <li>New branch, Checkout, Compare, Merge, Rebase 등등 다양한 기능들을 제공합니다.</li>
 </ul>
