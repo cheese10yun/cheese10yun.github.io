@@ -9,8 +9,16 @@
 
 
     <url>
-        <loc>https://cheese10yun.github.io/n-1/</loc>
-        <lastmod>2025-01-31T13:40:55.642Z</lastmod>
+        <loc>https://cheese10yun.github.io/spring-camp-2023-test/</loc>
+        <lastmod>2025-01-31T16:48:41.102Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/kakao-tech-meet-spring-batch-performance/</loc>
+        <lastmod>2025-01-31T16:48:41.078Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -18,7 +26,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/spring-data-mongo-repository-2/</loc>
-        <lastmod>2025-01-31T13:39:16.919Z</lastmod>
+        <lastmod>2025-01-31T16:23:01.933Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/n-1/</loc>
+        <lastmod>2025-01-31T13:40:55.642Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
