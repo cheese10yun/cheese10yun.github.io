@@ -9,7 +9,7 @@
     <atom:link href="https://cheese10yun.github.io/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>기술 블로그</description>
-    <pubDate>Fri, 31 Jan 2025 13:31:40 GMT</pubDate>
+    <pubDate>Fri, 31 Jan 2025 13:39:16 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
@@ -30,7 +30,7 @@
       
       <category domain="https://cheese10yun.github.io/tags/Spring/">Spring</category>
       
-      <category domain="https://cheese10yun.github.io/tags/MongoDB/">MongoDB</category>
+      <category domain="https://cheese10yun.github.io/tags/Mongo/">Mongo</category>
       
       
       <comments>https://cheese10yun.github.io/spring-data-mongo-repository-2/#disqus_thread</comments>
@@ -270,7 +270,7 @@
     </item>
     
     <item>
-      <title>IntelliJ 각종 팁</title>
+      <title>인텔리제이 각종 팁</title>
       <link>https://cheese10yun.github.io/intellij-tip2/</link>
       <guid>https://cheese10yun.github.io/intellij-tip2/</guid>
       <pubDate>Sun, 25 Feb 2024 14:26:36 GMT</pubDate>
@@ -318,7 +318,7 @@
     </item>
     
     <item>
-      <title>IntelliJ cannot resolve symbol 에러 해결</title>
+      <title>인텔리제이 cannot resolve symbol 에러 해결</title>
       <link>https://cheese10yun.github.io/intellij-cannot-resolve-symbol/</link>
       <guid>https://cheese10yun.github.io/intellij-cannot-resolve-symbol/</guid>
       <pubDate>Fri, 22 Dec 2023 15:00:00 GMT</pubDate>

@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA N + 1 문제\n1234select o.* m.*from Order oleft outer join Member m on o.MEMBER_ID=m.MEMBER_IDwhere o.id =1\n\n실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.\n위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자\n\n12List&lt;Order&gt; orders = em.createQuery(&quot;select o from Order o&quot;, Order.class)\t.getResultList(); // 연과된 모든 엔티티를 조회한다.\n\n실행된 SQL은 다음과 같다.\n\n12345select * from Order // JPQL로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQL\nJPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다. 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.\n코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.\n\nselect o from Order o  JPQL을 분석해서 select * from Order SQL을 생성한다.\n데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.\nOrder.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.\n연관된 Member를 영속성 컨텍스트에서 찾는다.\n만약 영속성 컨텍스트에 없으면 select * from member where id? SQL을 조회한 order 엔티티 수만큼 실행한다.\n\n","dateCreated":"2017-12-03T03:13:04+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2017-12-03T03:13:04+09:00","description":"JPA n+1 문제","headline":"JPA n+1 문제","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/n-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/n-1/","keywords":"JPA, ORM"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"1234select o.* m.*from Order oleft outer join Member m on o.MEMBER_ID=m.MEMBER_IDwhere o.id =1\n\n실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.\n위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자\n\n12List&lt;Order&gt; orders = em.createQuery(&quot;select o from Order o&quot;, Order.class)\t.getResultList(); // 연과된 모든 엔티티를 조회한다.\n\n실행된 SQL은 다음과 같다.\n\n12345select * from Order // JPQL로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQLselect * from Member where id = ? // EAGER 로 실행된 SQL\nJPA가 JPQL을 분석해서 SQL을 생헐 할 때 글로벌 패치 전략을 참고하지 않고 오직 JPQL 자체만 사용한다. 따라서 즉시 로딩이든 지연 로딩이든 구분하지 않고 JPQL 쿼리 자체에 충실하게 SQL을 만든다.\n코드를 분석하먄 내부에서 다음과 같은 순서로 동작한다.\n\nselect o from Order o  JPQL을 분석해서 select * from Order SQL을 생성한다.\n데이터베이스에서 결과를 받아 order 엔티티 인스턴스를 생성한다.\nOrder.member의 글로벌 페지 전략이 즉시 로딩이므로 order를 로딩히는 즉시 연관된 member로 로딩해야한다.\n연관된 Member를 영속성 컨텍스트에서 찾는다.\n만약 영속성 컨텍스트에 없으면 select * from member where id? SQL을 조회한 order 엔티티 수만큼 실행한다.\n\n","dateCreated":"2017-12-03T03:13:04+09:00","dateModified":"2025-01-31T22:40:55+09:00","datePublished":"2017-12-03T03:13:04+09:00","description":"JPA n+1 문제","headline":"JPA n+1 문제","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/n-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/n-1/","keywords":"JPA, ORM"}</script>
     <meta name="description" content="JPA n+1 문제">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JPA n+1 문제">
@@ -27,7 +27,7 @@
 <meta property="og:description" content="JPA n+1 문제">
 <meta property="og:locale" content="ko_KR">
 <meta property="article:published_time" content="2017-12-02T18:13:04.000Z">
-<meta property="article:modified_time" content="2025-01-31T11:24:39.766Z">
+<meta property="article:modified_time" content="2025-01-31T13:40:55.642Z">
 <meta property="article:author" content="Yun">
 <meta property="article:tag" content="JPA">
 <meta property="article:tag" content="ORM">
@@ -283,8 +283,7 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h1>JPA N + 1 문제</h1>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> o.<span class="operator">*</span> m.<span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Order</span> o</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> <span class="keyword">Member</span> m <span class="keyword">on</span> o.MEMBER_ID<span class="operator">=</span>m.MEMBER_ID</span><br><span class="line"><span class="keyword">where</span> o.id <span class="operator">=</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+            <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> o.<span class="operator">*</span> m.<span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> <span class="keyword">Order</span> o</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> <span class="keyword">Member</span> m <span class="keyword">on</span> o.MEMBER_ID<span class="operator">=</span>m.MEMBER_ID</span><br><span class="line"><span class="keyword">where</span> o.id <span class="operator">=</span><span class="number">1</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>실행된 SQL을 보면 즉시 로딩으로 설정한 member 엔티티를 조인 쿼리로 함께 조회한다. 여기까지 보면 글로벌 즉시 로딩 전략이 상당히 좋아보이지만 문제는 JPQL을 사용할 때 발생한다.</li>
 <li>위처럼 즉시 로딩으로 설정했다고 가정하고 JPQL로 조회 해보자</li>
@@ -328,8 +327,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/intellij-builder-pattern/"
-                    data-tooltip="인텔리제이로 Builder Pattern 쉽게 구현하기"
-                    aria-label="이전: 인텔리제이로 Builder Pattern 쉽게 구현하기"
+                    data-tooltip="인텔리제이 Builder Pattern 쉽게 구현하기"
+                    aria-label="이전: 인텔리제이 Builder Pattern 쉽게 구현하기"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -456,8 +455,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/intellij-builder-pattern/"
-                    data-tooltip="인텔리제이로 Builder Pattern 쉽게 구현하기"
-                    aria-label="이전: 인텔리제이로 Builder Pattern 쉽게 구현하기"
+                    data-tooltip="인텔리제이 Builder Pattern 쉽게 구현하기"
+                    aria-label="이전: 인텔리제이 Builder Pattern 쉽게 구현하기"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
