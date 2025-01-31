@@ -18,13 +18,13 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 소개Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다. \n프로젝트는 지속해서 추가될 예정이라 상단의 전체 사용법은 Github에서 확인하실 수 있습니다.\n목차\n\n\n프로젝트 소개\n목차\n전체 플로우\nIssue 발행\nIssue란?\nIssue Template\nIssue Template 등록\nIssue Template 사용법\nIssue Template 파일\n\n\n\n\nIssue 작업\n등록된 issue 살펴 보기\nIssue 연동\nIssue 기반 Bracnh 생성\n\n\nPull Request[Code Review]\nJetbrains Pull Request\nGitHub Pull Request\nPull Request 작성법\nCode Review\n\n\n\n\n세부 사용법\nZenHub 사용법\nCode Coverage\n\n\n\n전체 플로우\nIsuee 발급\nIssue 작업\nPull Request Coide Review 진행\nIssue 반영\n\nIssue 발행Issue란?모든것이 이슈라고 볼 수 있습니다. 새로운 추가될 가능, 개선 해야할 가능, 버그 등등 모든것이 이슈라고 볼 수 있습니다. 모든 활동 내역에 대해서 이슈를 등록하고 그 이슈기반으로 작업을 진행하게 됩니다.\n이슈를 등록할 때 자주 사용하는 템플릿을 등록해서 사용하는 방법이 효율적입니다. 이슈 템플릿을 등록하는 방법을 소개해드리겠습니다.\nIssue TemplateIssue Template 등록\n환경에 앎맞는 Issue Template 생성을 합니다.\nIssue Template 사용법\n위에서 등록한 Issue Template 기반으로 이슈를 생성할 수 있습니다.\nIssue Template 파일123456789101112.├── .github│   └── ISSUE_TEMPLATE│       ├── bug_report.md│       └── feature_request.md├── README.md├── github.iml├── images├── mvnw├── mvnw.cmd├── pom.xml└── src\n위에서 등록된 Issue Template은 .github&#x2F;ISSUE_TEMPLATE 디렉터리에 생성된 것을 확인할 수 있습니다.각자의 맞는 한경에 따라서 Issue Template를 작성하시면 됩니다. 저 같은 경우에는 Back-end를 주로 담당하기 때문에 bug tempalte 에서 서버로그, response body 값을 등록했습니다.\nIssue 작업등록된 issue 살펴 보기\n\nAssignees : 해당 작업의 담당자\nLabels: 해당 작업의 성격\nMilestone: 해당 작업이 속한 파트\n\n\n다른 것들은 이해하기 쉬울 텐데 Milestone은 조금 생소할 수 있습니다. Milestone에 간단하게 설명해 드리면 이번 출시 버전이 1.0.0 일 경우 해당 버전이든 이슈(작업) 기능 강화, 새 기능추가, 버그 기타 등등 모든 이슈를 Version 1.0.0 Milestone이라는 항목에 추가하면 위 그림처럼 Version 1.0.0에 대한 전체적인 상황을 한눈에 볼 수가 있는 장점이 있습니다.\nIssue 연동\n만약 Jetbrains의 IDE를 사용하고 계신다면 Task 연동을 통해서 Github와 연동하시는 것을 적극 권장해 드립니다.\nIssue 기반 Bracnh 생성위에서 언급한 Jetbrains의 Task 연동을 하지 않아도 크게 상관없습니다. Task의 갖는 가장 큰 기능은 Github 이슈 기반으로 Branch를 생성을 쉽게 도와주는 것으로 생각합니다. 즉 Github에서 생성된 Issue 기반으로 Branch를 생성하는 것이 핵심입니다.\nGithub Issue는 각자의 유니크한 값인 Issue Number를 갖습니다. 또 그 Iusse Number 기반으로 Branch를 이름을 갖게 하여 해당 Branch의 명확한 작업의 의도를 갖게 할 수 있습니다.\nBranch 네이밍을 통해서 해당 작업의 의도를 갖게 하는 것은 한계가 있습니다. 또 동료 개발자들이 정확히 무슨 작업을 하는지도 Branch 네이밍을 통해서 유추해내기도 어렵고, 해당 작업이 반영(머지)될 때 도 마찬가지입니다. 이러한 문제들을 Issue Number 기반으로 Branch를 생성(Issue Number Branch 네이밍에 추가)하면 아주 명확해집니다.\nPull Request[Code Review]issue-1에 대한 풀리퀘스트를 통해서 코드리뷰를 진행해 보겠습니다.\nJetbrains Pull Request만약 Jetbrains IDE를 사용하신다면 위 방법 처럼 Pull Request를 하는 방법을 권장드립니다.\nGitHub Pull Request\nGithub Code 텝에서 New Pull Request 버튼을 클릭해서 Pull Request를 진행 합니다.\nPull Request 작성법\n\n왼쪽 위에 Reviewers 톱니바퀴 버튼을 클릭해서 리뷰어를 지정합니다.\nresolved: #1(해당 Issue Number) 풀리퀘스트 요청하는 이유 즉 무슨 이슈에 대한 작업인지 명시합니다.\n\nresolved 키워드를 입력하면 해당 풀리퀘스트가 master Branch에 반영되면 자동으로 close 됩니다. 자동으로 close 되는 것이 싫으시다면 issue: #[해당 Issue Number]를 작성해주세요.\n이렇게 Pull Request가 생성되면 새로운 Issue Number가 부여됩니다. 즉 Pull Request도 Issue입니다.\n\n반드시 해당 풀리퀘스트가 무슨 이슈에 따른 요청인지 명시하시는 것을 권장합니다. 그렇게 되면 위 그림처럼 해당 이슈에 #2[방금 요청한 풀리퀘스트]가 연결되어 해당 이슈가 무슨 코드로 인해서 진행됐는지 추적하기 좋습니다.\nCode Review리뷰어가 요청받은 Pull Request로 가서 Add your review 버튼을 클릭합니다.\n소스코드에 대한 질문 등 다양한 comment를 남기는 방식으로 pull reqeust가 진행합니다.\n\nApprove: 코드에 대한 의문점이 없다면 승인 .\nComment: 간단한 피드백 제출\nRequest changes: 해당 코드에 문제가 있다고 판단되며 코드를 반드시 수정 요구\n\n위 항목은 Comment로 Submit review를 진행했습니다.\n위에서 작성한 comment가 해결됬었다면 Merge pull request 버튼을 눌러서 해당 pull request를 반영합니다. 반영이 완료되고 해당 branch가 더는 필요 없다고 판단되시면 Delete branch 버튼을 통해서 Remote에 있는 Branch를 삭제할 수 있습니다.\n위에서 작성한 resolved: #1 키워드 덕분에 소스코드가 해당 Branch에 적용됐으니 자동으로 #1에 대한 이슈는 close 처리됩니다.\n세부 사용법\n추가 예정\n\nZenHub 사용법\n추가 예정\n\nCode Coverage\n추가 예정\n\n","dateCreated":"2018-07-08T17:13:46+09:00","dateModified":"2025-01-31T06:34:16+09:00","datePublished":"2018-07-08T17:13:46+09:00","description":"Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다.","headline":"Github로 프로젝트 관리하기 Part1","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/github-proejct/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/github-proejct/","keywords":"Github"}</script>
-    <meta name="description" content="Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 소개\nGithub를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다.\n프로젝트는 지속해서 추가될 예정이라 상단의 전체 사용법은 Github에서 확인하실 수 있습니다.\n목차\n\n\n프로젝트 소개\n목차\n전체 플로우\n\nIssue 발행\n\nIssue란?\nIssue Template\n\nIssue Template 등록\nIssue Template 사용법\nIssue Template 파일\n\n\n\n\nIssue 작업\n\n등록된 issue 살펴 보기\nIssue 연동\nIssue 기반 Bracnh 생성\n\n\nPull Request[Code Review]\n\nJetbrains Pull Request\nGitHub Pull Request\nPull Request 작성법\nCode Review\n\n\n\n\n세부 사용법\nZenHub 사용법\nCode Coverage\n\n\n전체 플로우\n\nIsuee 발급\nIssue 작업\nPull Request Coide Review 진행\nIssue 반영\n\nIssue 발행\nIssue란?\n모든것이 이슈라고 볼 수 있습니다. 새로운 추가될 가능, 개선 해야할 가능, 버그 등등 모든것이 이슈라고 볼 수 있습니다. 모든 활동 내역에 대해서 이슈를 등록하고 그 이슈기반으로 작업을 진행하게 됩니다.\n이슈를 등록할 때 자주 사용하는 템플릿을 등록해서 사용하는 방법이 효율적입니다. 이슈 템플릿을 등록하는 방법을 소개해드리겠습니다.\nIssue Template\nIssue Template 등록\n\n환경에 앎맞는 Issue Template 생성을 합니다.\nIssue Template 사용법\n\n위에서 등록한 Issue Template 기반으로 이슈를 생성할 수 있습니다.\nIssue Template 파일\n123456789101112.├── .github│   └── ISSUE_TEMPLATE│       ├── bug_report.md│       └── feature_request.md├── README.md├── github.iml├── images├── mvnw├── mvnw.cmd├── pom.xml└── src\n위에서 등록된 Issue Template은 .github/ISSUE_TEMPLATE 디렉터리에 생성된 것을 확인할 수 있습니다.\n각자의 맞는 한경에 따라서 Issue Template를 작성하시면 됩니다. 저 같은 경우에는 Back-end를 주로 담당하기 때문에 bug tempalte 에서 서버로그, response body 값을 등록했습니다.\nIssue 작업\n등록된 issue 살펴 보기\n\n\nAssignees : 해당 작업의 담당자\nLabels: 해당 작업의 성격\nMilestone: 해당 작업이 속한 파트\n\n\n다른 것들은 이해하기 쉬울 텐데 Milestone은 조금 생소할 수 있습니다. Milestone에 간단하게 설명해 드리면 이번 출시 버전이 1.0.0 일 경우 해당 버전이든 이슈(작업) 기능 강화, 새 기능추가, 버그 기타 등등 모든 이슈를 Version 1.0.0 Milestone이라는 항목에 추가하면 위 그림처럼 Version 1.0.0에 대한 전체적인 상황을 한눈에 볼 수가 있는 장점이 있습니다.\nIssue 연동\n\n만약 Jetbrains의 IDE를 사용하고 계신다면 Task 연동을 통해서 Github와 연동하시는 것을 적극 권장해 드립니다.\nIssue 기반 Bracnh 생성\n\n위에서 언급한 Jetbrains의 Task 연동을 하지 않아도 크게 상관없습니다. Task의 갖는 가장 큰 기능은 Github 이슈 기반으로 Branch를 생성을 쉽게 도와주는 것으로 생각합니다. 즉 Github에서 생성된 Issue 기반으로 Branch를 생성하는 것이 핵심입니다.\nGithub Issue는 각자의 유니크한 값인 Issue Number를 갖습니다. 또 그 Iusse Number 기반으로 Branch를 이름을 갖게 하여 해당 Branch의 명확한 작업의 의도를 갖게 할 수 있습니다.\nBranch 네이밍을 통해서 해당 작업의 의도를 갖게 하는 것은 한계가 있습니다. 또 동료 개발자들이 정확히 무슨 작업을 하는지도 Branch 네이밍을 통해서 유추해내기도 어렵고, 해당 작업이 반영(머지)될 때 도 마찬가지입니다. 이러한 문제들을 Issue Number 기반으로 Branch를 생성(Issue Number Branch 네이밍에 추가)하면 아주 명확해집니다.\nPull Request[Code Review]\nissue-1에 대한 풀리퀘스트를 통해서 코드리뷰를 진행해 보겠습니다.\nJetbrains Pull Request\n\n만약 Jetbrains IDE를 사용하신다면 위 방법 처럼 Pull Request를 하는 방법을 권장드립니다.\nGitHub Pull Request\n\nGithub Code 텝에서 New Pull Request 버튼을 클릭해서 Pull Request를 진행 합니다.\nPull Request 작성법\n\n\n왼쪽 위에 Reviewers 톱니바퀴 버튼을 클릭해서 리뷰어를 지정합니다.\nresolved: #1(해당 Issue Number) 풀리퀘스트 요청하는 이유 즉 무슨 이슈에 대한 작업인지 명시합니다.\n\nresolved 키워드를 입력하면 해당 풀리퀘스트가 master Branch에 반영되면 자동으로 close 됩니다. 자동으로 close 되는 것이 싫으시다면 issue: #[해당 Issue Number]를 작성해주세요.\n이렇게 Pull Request가 생성되면 새로운 Issue Number가 부여됩니다. 즉 Pull Request도 Issue입니다.\n\n반드시 해당 풀리퀘스트가 무슨 이슈에 따른 요청인지 명시하시는 것을 권장합니다. 그렇게 되면 위 그림처럼 해당 이슈에 #2[방금 요청한 풀리퀘스트]가 연결되어 해당 이슈가 무슨 코드로 인해서 진행됐는지 추적하기 좋습니다.\nCode Review\n리뷰어가 요청받은 Pull Request로 가서 Add your review 버튼을 클릭합니다.\n\n소스코드에 대한 질문 등 다양한 comment를 남기는 방식으로 pull reqeust가 진행합니다.\n\nApprove: 코드에 대한 의문점이 없다면 승인 .\nComment: 간단한 피드백 제출\nRequest changes: 해당 코드에 문제가 있다고 판단되며 코드를 반드시 수정 요구\n\n위 항목은 Comment로 Submit review를 진행했습니다.\n\n위에서 작성한 comment가 해결됬었다면 Merge pull request 버튼을 눌러서 해당 pull request를 반영합니다. 반영이 완료되고 해당 branch가 더는 필요 없다고 판단되시면 Delete branch 버튼을 통해서 Remote에 있는 Branch를 삭제할 수 있습니다.\n위에서 작성한 resolved: #1 키워드 덕분에 소스코드가 해당 Branch에 적용됐으니 자동으로 #1에 대한 이슈는 close 처리됩니다.\n세부 사용법\n\n추가 예정\n\nZenHub 사용법\n\n추가 예정\n\nCode Coverage\n\n추가 예정\n\n","dateCreated":"2018-07-08T17:13:46+09:00","dateModified":"2025-01-31T20:33:58+09:00","datePublished":"2018-07-08T17:13:46+09:00","description":"Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.","headline":"Github로 프로젝트 관리하기 Part1","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/github-proejct/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/github-proejct/","keywords":"Github"}</script>
+    <meta name="description" content="Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Github로 프로젝트 관리하기 Part1">
 <meta property="og:url" content="https://cheese10yun.github.io/github-proejct/index.html">
 <meta property="og:site_name" content="Yun Blog">
-<meta property="og:description" content="Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니">
+<meta property="og:description" content="Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:image" content="https://github.com/cheese10yun/github/blob/master/images/issue-template-rg.gif?raw=true">
 <meta property="og:image" content="https://github.com/cheese10yun/github/blob/master/images/add-new-issue.gif?raw=true">
@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://i.imgur.com/k11vL5w.png">
 <meta property="og:image" content="https://i.imgur.com/EHnVEjU.png">
 <meta property="article:published_time" content="2018-07-08T08:13:46.000Z">
-<meta property="article:modified_time" content="2025-01-30T21:34:16.707Z">
+<meta property="article:modified_time" content="2025-01-31T11:33:58.278Z">
 <meta property="article:author" content="Yun">
 <meta property="article:tag" content="Github">
 <meta name="twitter:card" content="summary">
@@ -295,17 +295,21 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h1 id="프로젝트-소개"><a href="#프로젝트-소개" class="headerlink" title="프로젝트 소개"></a>프로젝트 소개</h1><p>Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. <strong>issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다.</strong> 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다. </p>
+            <h1>프로젝트 소개</h1>
+<p>Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. <strong>issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다.</strong> 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다.</p>
 <p>프로젝트는 지속해서 추가될 예정이라 상단의 전체 사용법은 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/github">Github</a>에서 확인하실 수 있습니다.</p>
-<h1 id="목차"><a href="#목차" class="headerlink" title="목차"></a>목차</h1><h1 id="table-of-contents">목차</h1><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C"><span class="toc-text">프로젝트 소개</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%EB%AA%A9%EC%B0%A8"><span class="toc-text">목차</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%EC%A0%84%EC%B2%B4-%ED%94%8C%EB%A1%9C%EC%9A%B0"><span class="toc-text">전체 플로우</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-%EB%B0%9C%ED%96%89"><span class="toc-text">Issue 발행</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue%EB%9E%80"><span class="toc-text">Issue란?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-Template"><span class="toc-text">Issue Template</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%EB%93%B1%EB%A1%9D"><span class="toc-text">Issue Template 등록</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%EC%82%AC%EC%9A%A9%EB%B2%95"><span class="toc-text">Issue Template 사용법</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%ED%8C%8C%EC%9D%BC"><span class="toc-text">Issue Template 파일</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-%EC%9E%91%EC%97%85"><span class="toc-text">Issue 작업</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EB%93%B1%EB%A1%9D%EB%90%9C-issue-%EC%82%B4%ED%8E%B4-%EB%B3%B4%EA%B8%B0"><span class="toc-text">등록된 issue 살펴 보기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-%EC%97%B0%EB%8F%99"><span class="toc-text">Issue 연동</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-%EA%B8%B0%EB%B0%98-Bracnh-%EC%83%9D%EC%84%B1"><span class="toc-text">Issue 기반 Bracnh 생성</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pull-Request-Code-Review"><span class="toc-text">Pull Request[Code Review]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Jetbrains-Pull-Request"><span class="toc-text">Jetbrains Pull Request</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GitHub-Pull-Request"><span class="toc-text">GitHub Pull Request</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pull-Request-%EC%9E%91%EC%84%B1%EB%B2%95"><span class="toc-text">Pull Request 작성법</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Review"><span class="toc-text">Code Review</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%EC%84%B8%EB%B6%80-%EC%82%AC%EC%9A%A9%EB%B2%95"><span class="toc-text">세부 사용법</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ZenHub-%EC%82%AC%EC%9A%A9%EB%B2%95"><span class="toc-text">ZenHub 사용법</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Code-Coverage"><span class="toc-text">Code Coverage</span></a></li></ol>
-
+<h1>목차</h1>
+<h1 id="table-of-contents">목차</h1><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">프로젝트 소개</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">목차</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">전체 플로우</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-%EB%B0%9C%ED%96%89"><span class="toc-text">Issue 발행</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue%EB%9E%80"><span class="toc-text">Issue란?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-Template"><span class="toc-text">Issue Template</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%EB%93%B1%EB%A1%9D"><span class="toc-text">Issue Template 등록</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%EC%82%AC%EC%9A%A9%EB%B2%95"><span class="toc-text">Issue Template 사용법</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Issue-Template-%ED%8C%8C%EC%9D%BC"><span class="toc-text">Issue Template 파일</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Issue-%EC%9E%91%EC%97%85"><span class="toc-text">Issue 작업</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EB%93%B1%EB%A1%9D%EB%90%9C-issue-%EC%82%B4%ED%8E%B4-%EB%B3%B4%EA%B8%B0"><span class="toc-text">등록된 issue 살펴 보기</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-%EC%97%B0%EB%8F%99"><span class="toc-text">Issue 연동</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Issue-%EA%B8%B0%EB%B0%98-Bracnh-%EC%83%9D%EC%84%B1"><span class="toc-text">Issue 기반 Bracnh 생성</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pull-Request-Code-Review"><span class="toc-text">Pull Request[Code Review]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Jetbrains-Pull-Request"><span class="toc-text">Jetbrains Pull Request</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GitHub-Pull-Request"><span class="toc-text">GitHub Pull Request</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pull-Request-%EC%9E%91%EC%84%B1%EB%B2%95"><span class="toc-text">Pull Request 작성법</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code-Review"><span class="toc-text">Code Review</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">세부 사용법</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">ZenHub 사용법</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Code Coverage</span></a></li></ol>
 <ul>
 <li><a href="#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C">프로젝트 소개</a></li>
 <li><a href="#%EB%AA%A9%EC%B0%A8">목차</a></li>
-<li><a href="#%EC%A0%84%EC%B2%B4-%ED%94%8C%EB%A1%9C%EC%9A%B0">전체 플로우</a><ul>
-<li><a href="#issue-%EB%B0%9C%ED%96%89">Issue 발행</a><ul>
+<li><a href="#%EC%A0%84%EC%B2%B4-%ED%94%8C%EB%A1%9C%EC%9A%B0">전체 플로우</a>
+<ul>
+<li><a href="#issue-%EB%B0%9C%ED%96%89">Issue 발행</a>
+<ul>
 <li><a href="#issue%EB%9E%80">Issue란?</a></li>
-<li><a href="#issue-template">Issue Template</a><ul>
+<li><a href="#issue-template">Issue Template</a>
+<ul>
 <li><a href="#issue-template-%EB%93%B1%EB%A1%9D">Issue Template 등록</a></li>
 <li><a href="#issue-template-%EC%82%AC%EC%9A%A9%EB%B2%95">Issue Template 사용법</a></li>
 <li><a href="#issue-template-%ED%8C%8C%EC%9D%BC">Issue Template 파일</a></li>
@@ -313,13 +317,15 @@
 </li>
 </ul>
 </li>
-<li><a href="#issue-%EC%9E%91%EC%97%85">Issue 작업</a><ul>
+<li><a href="#issue-%EC%9E%91%EC%97%85">Issue 작업</a>
+<ul>
 <li><a href="#%EB%93%B1%EB%A1%9D%EB%90%9C-issue-%EC%82%B4%ED%8E%B4-%EB%B3%B4%EA%B8%B0">등록된 issue 살펴 보기</a></li>
 <li><a href="#issue-%EC%97%B0%EB%8F%99">Issue 연동</a></li>
 <li><a href="#issue-%EA%B8%B0%EB%B0%98-bracnh-%EC%83%9D%EC%84%B1">Issue 기반 Bracnh 생성</a></li>
 </ul>
 </li>
-<li><a href="#pull-requestcode-review">Pull Request[Code Review]</a><ul>
+<li><a href="#pull-requestcode-review">Pull Request[Code Review]</a>
+<ul>
 <li><a href="#jetbrains-pull-request">Jetbrains Pull Request</a></li>
 <li><a href="#github-pull-request">GitHub Pull Request</a></li>
 <li><a href="#pull-request-%EC%9E%91%EC%84%B1%EB%B2%95">Pull Request 작성법</a></li>
@@ -333,39 +339,56 @@
 <li><a href="#code-coverage">Code Coverage</a></li>
 </ul>
 <!-- /TOC -->
-
-<h1 id="전체-플로우"><a href="#전체-플로우" class="headerlink" title="전체 플로우"></a>전체 플로우</h1><ol>
+<h1>전체 플로우</h1>
+<ol>
 <li>Isuee 발급</li>
 <li>Issue 작업</li>
 <li>Pull Request Coide Review 진행</li>
 <li>Issue 반영</li>
 </ol>
-<h2 id="Issue-발행"><a href="#Issue-발행" class="headerlink" title="Issue 발행"></a>Issue 발행</h2><h3 id="Issue란"><a href="#Issue란" class="headerlink" title="Issue란?"></a>Issue란?</h3><p>모든것이 이슈라고 볼 수 있습니다. 새로운 추가될 가능, 개선 해야할 가능, 버그 등등 모든것이 이슈라고 볼 수 있습니다. 모든 활동 내역에 대해서 이슈를 등록하고 그 이슈기반으로 작업을 진행하게 됩니다.</p>
+<h2 id="Issue-발행">Issue 발행</h2>
+<h3 id="Issue란">Issue란?</h3>
+<p>모든것이 이슈라고 볼 수 있습니다. 새로운 추가될 가능, 개선 해야할 가능, 버그 등등 모든것이 이슈라고 볼 수 있습니다. 모든 활동 내역에 대해서 이슈를 등록하고 그 이슈기반으로 작업을 진행하게 됩니다.</p>
 <p>이슈를 등록할 때 자주 사용하는 템플릿을 등록해서 사용하는 방법이 효율적입니다. 이슈 템플릿을 등록하는 방법을 소개해드리겠습니다.</p>
-<h3 id="Issue-Template"><a href="#Issue-Template" class="headerlink" title="Issue Template"></a>Issue Template</h3><h4 id="Issue-Template-등록"><a href="#Issue-Template-등록" class="headerlink" title="Issue Template 등록"></a>Issue Template 등록</h4><p><img src="https://github.com/cheese10yun/github/blob/master/images/issue-template-rg.gif?raw=true"></p>
+<h3 id="Issue-Template">Issue Template</h3>
+<h4 id="Issue-Template-등록">Issue Template 등록</h4>
+<p><img src="https://github.com/cheese10yun/github/blob/master/images/issue-template-rg.gif?raw=true" alt=""></p>
 <p>환경에 앎맞는 Issue Template 생성을 합니다.</p>
-<h4 id="Issue-Template-사용법"><a href="#Issue-Template-사용법" class="headerlink" title="Issue Template 사용법"></a>Issue Template 사용법</h4><p><img src="https://github.com/cheese10yun/github/blob/master/images/add-new-issue.gif?raw=true" alt="new_issue"></p>
+<h4 id="Issue-Template-사용법">Issue Template 사용법</h4>
+<p><img src="https://github.com/cheese10yun/github/blob/master/images/add-new-issue.gif?raw=true" alt="new_issue"></p>
 <p>위에서 등록한 Issue Template 기반으로 이슈를 생성할 수 있습니다.</p>
-<h4 id="Issue-Template-파일"><a href="#Issue-Template-파일" class="headerlink" title="Issue Template 파일"></a>Issue Template 파일</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── .github</span><br><span class="line">│   └── ISSUE_TEMPLATE</span><br><span class="line">│       ├── bug_report.md</span><br><span class="line">│       └── feature_request.md</span><br><span class="line">├── README.md</span><br><span class="line">├── github.iml</span><br><span class="line">├── images</span><br><span class="line">├── mvnw</span><br><span class="line">├── mvnw.cmd</span><br><span class="line">├── pom.xml</span><br><span class="line">└── src</span><br></pre></td></tr></table></figure>
-<p>위에서 등록된 Issue Template은 .github&#x2F;ISSUE_TEMPLATE 디렉터리에 생성된 것을 확인할 수 있습니다.<br><strong>각자의 맞는 한경에 따라서 Issue Template를 작성하시면 됩니다.</strong> 저 같은 경우에는 Back-end를 주로 담당하기 때문에 bug tempalte 에서 서버로그, response body 값을 등록했습니다.</p>
-<h2 id="Issue-작업"><a href="#Issue-작업" class="headerlink" title="Issue 작업"></a>Issue 작업</h2><h3 id="등록된-issue-살펴-보기"><a href="#등록된-issue-살펴-보기" class="headerlink" title="등록된 issue 살펴 보기"></a>등록된 issue 살펴 보기</h3><p><img src="https://i.imgur.com/2ciNoCd.png" alt="등록된-이슈"></p>
+<h4 id="Issue-Template-파일">Issue Template 파일</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── .github</span><br><span class="line">│   └── ISSUE_TEMPLATE</span><br><span class="line">│       ├── bug_report.md</span><br><span class="line">│       └── feature_request.md</span><br><span class="line">├── README.md</span><br><span class="line">├── github.iml</span><br><span class="line">├── images</span><br><span class="line">├── mvnw</span><br><span class="line">├── mvnw.cmd</span><br><span class="line">├── pom.xml</span><br><span class="line">└── src</span><br></pre></td></tr></table></figure>
+<p>위에서 등록된 Issue Template은 .github/ISSUE_TEMPLATE 디렉터리에 생성된 것을 확인할 수 있습니다.<br>
+<strong>각자의 맞는 한경에 따라서 Issue Template를 작성하시면 됩니다.</strong> 저 같은 경우에는 Back-end를 주로 담당하기 때문에 bug tempalte 에서 서버로그, response body 값을 등록했습니다.</p>
+<h2 id="Issue-작업">Issue 작업</h2>
+<h3 id="등록된-issue-살펴-보기">등록된 issue 살펴 보기</h3>
+<p><img src="https://i.imgur.com/2ciNoCd.png" alt="등록된-이슈"></p>
 <ul>
 <li>Assignees : 해당 작업의 담당자</li>
 <li>Labels: 해당 작업의 성격</li>
 <li>Milestone: 해당 작업이 속한 파트</li>
 </ul>
-<p><img src="https://i.imgur.com/DkniJHn.png"></p>
+<p><img src="https://i.imgur.com/DkniJHn.png" alt=""></p>
 <p>다른 것들은 이해하기 쉬울 텐데 Milestone은 조금 생소할 수 있습니다. Milestone에 간단하게 설명해 드리면 이번 출시 버전이 1.0.0 일 경우 해당 버전이든 이슈(작업) 기능 강화, 새 기능추가, 버그 기타 등등 모든 이슈를 Version 1.0.0 Milestone이라는 항목에 추가하면 위 그림처럼 Version 1.0.0에 대한 전체적인 상황을 한눈에 볼 수가 있는 장점이 있습니다.</p>
-<h3 id="Issue-연동"><a href="#Issue-연동" class="headerlink" title="Issue 연동"></a>Issue 연동</h3><p><img src="https://i.imgur.com/FtO0Xme.png" alt="intellij-task"></p>
+<h3 id="Issue-연동">Issue 연동</h3>
+<p><img src="https://i.imgur.com/FtO0Xme.png" alt="intellij-task"></p>
 <p>만약 Jetbrains의 IDE를 사용하고 계신다면 Task 연동을 통해서 Github와 연동하시는 것을 적극 권장해 드립니다.</p>
-<h3 id="Issue-기반-Bracnh-생성"><a href="#Issue-기반-Bracnh-생성" class="headerlink" title="Issue 기반 Bracnh 생성"></a>Issue 기반 Bracnh 생성</h3><p><img src="https://i.imgur.com/R8aFoCL.png" alt="issue-base-branch"><br>위에서 언급한 Jetbrains의 Task 연동을 하지 않아도 크게 상관없습니다. Task의 갖는 가장 큰 기능은 Github 이슈 기반으로 Branch를 생성을 쉽게 도와주는 것으로 생각합니다. <strong>즉 Github에서 생성된 Issue 기반으로 Branch를 생성하는 것이 핵심입니다.</strong></p>
+<h3 id="Issue-기반-Bracnh-생성">Issue 기반 Bracnh 생성</h3>
+<p><img src="https://i.imgur.com/R8aFoCL.png" alt="issue-base-branch"><br>
+위에서 언급한 Jetbrains의 Task 연동을 하지 않아도 크게 상관없습니다. Task의 갖는 가장 큰 기능은 Github 이슈 기반으로 Branch를 생성을 쉽게 도와주는 것으로 생각합니다. <strong>즉 Github에서 생성된 Issue 기반으로 Branch를 생성하는 것이 핵심입니다.</strong></p>
 <p>Github Issue는 각자의 유니크한 값인 Issue Number를 갖습니다. 또 그 Iusse Number 기반으로 Branch를 이름을 갖게 하여 해당 Branch의 명확한 작업의 의도를 갖게 할 수 있습니다.</p>
 <p>Branch 네이밍을 통해서 해당 작업의 의도를 갖게 하는 것은 한계가 있습니다. 또 동료 개발자들이 정확히 무슨 작업을 하는지도 Branch 네이밍을 통해서 유추해내기도 어렵고, 해당 작업이 반영(머지)될 때 도 마찬가지입니다. 이러한 문제들을 Issue Number 기반으로 Branch를 생성(Issue Number Branch 네이밍에 추가)하면 아주 명확해집니다.</p>
-<h2 id="Pull-Request-Code-Review"><a href="#Pull-Request-Code-Review" class="headerlink" title="Pull Request[Code Review]"></a>Pull Request[Code Review]</h2><p><a target="_blank" rel="noopener" href="https://github.com/cheese10yun/github/issues/1">issue-1</a>에 대한 풀리퀘스트를 통해서 코드리뷰를 진행해 보겠습니다.</p>
-<h3 id="Jetbrains-Pull-Request"><a href="#Jetbrains-Pull-Request" class="headerlink" title="Jetbrains Pull Request"></a>Jetbrains Pull Request</h3><p><img src="https://i.imgur.com/vkNR06g.png" alt="intellij-pull-request"><br>만약 Jetbrains IDE를 사용하신다면 위 방법 처럼 Pull Request를 하는 방법을 권장드립니다.</p>
-<h3 id="GitHub-Pull-Request"><a href="#GitHub-Pull-Request" class="headerlink" title="GitHub Pull Request"></a>GitHub Pull Request</h3><p><img src="https://i.imgur.com/6bBTJUV.png" alt="github-pull-request"></p>
+<h2 id="Pull-Request-Code-Review">Pull Request[Code Review]</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/cheese10yun/github/issues/1">issue-1</a>에 대한 풀리퀘스트를 통해서 코드리뷰를 진행해 보겠습니다.</p>
+<h3 id="Jetbrains-Pull-Request">Jetbrains Pull Request</h3>
+<p><img src="https://i.imgur.com/vkNR06g.png" alt="intellij-pull-request"><br>
+만약 Jetbrains IDE를 사용하신다면 위 방법 처럼 Pull Request를 하는 방법을 권장드립니다.</p>
+<h3 id="GitHub-Pull-Request">GitHub Pull Request</h3>
+<p><img src="https://i.imgur.com/6bBTJUV.png" alt="github-pull-request"></p>
 <p>Github Code 텝에서 <code>New Pull Request</code> 버튼을 클릭해서 Pull Request를 진행 합니다.</p>
-<h3 id="Pull-Request-작성법"><a href="#Pull-Request-작성법" class="headerlink" title="Pull Request 작성법"></a>Pull Request 작성법</h3><p><img src="https://i.imgur.com/3TnHt0c.png"></p>
+<h3 id="Pull-Request-작성법">Pull Request 작성법</h3>
+<p><img src="https://i.imgur.com/3TnHt0c.png" alt=""></p>
 <ul>
 <li>왼쪽 위에 Reviewers 톱니바퀴 버튼을 클릭해서 리뷰어를 지정합니다.</li>
 <li>resolved: #1(해당 Issue Number) 풀리퀘스트 요청하는 이유 즉 무슨 이슈에 대한 작업인지 명시합니다.</li>
@@ -374,23 +397,29 @@
 <p>이렇게 Pull Request가 생성되면 새로운 Issue Number가 부여됩니다. <strong>즉 Pull Request도 Issue입니다.</strong></p>
 <p><img src="https://i.imgur.com/skNmpeQ.png" alt="issue-pull-request-연결"></p>
 <p><strong>반드시 해당 풀리퀘스트가 무슨 이슈에 따른 요청인지 명시하시는 것을 권장합니다.</strong> 그렇게 되면 위 그림처럼 해당 이슈에 #2[방금 요청한 풀리퀘스트]가 연결되어 해당 이슈가 무슨 코드로 인해서 진행됐는지 추적하기 좋습니다.</p>
-<h3 id="Code-Review"><a href="#Code-Review" class="headerlink" title="Code Review"></a>Code Review</h3><p>리뷰어가 요청받은 Pull Request로 가서 <code>Add your review</code> 버튼을 클릭합니다.</p>
-<p><img src="https://i.imgur.com/k11vL5w.png" alt="리뷰진행"><br>소스코드에 대한 질문 등 다양한 comment를 남기는 방식으로 pull reqeust가 진행합니다.</p>
+<h3 id="Code-Review">Code Review</h3>
+<p>리뷰어가 요청받은 Pull Request로 가서 <code>Add your review</code> 버튼을 클릭합니다.</p>
+<p><img src="https://i.imgur.com/k11vL5w.png" alt="리뷰진행"><br>
+소스코드에 대한 질문 등 다양한 comment를 남기는 방식으로 pull reqeust가 진행합니다.</p>
 <ul>
 <li>Approve: 코드에 대한 의문점이 없다면 승인 .</li>
 <li>Comment: 간단한 피드백 제출</li>
 <li>Request changes: 해당 코드에 문제가 있다고 판단되며 코드를 반드시 수정 요구</li>
 </ul>
 <p>위 항목은 Comment로 Submit review를 진행했습니다.</p>
-<p><img src="https://i.imgur.com/EHnVEjU.png" alt="comment-표시"><br>위에서 작성한 comment가 해결됬었다면 <code>Merge pull request</code> 버튼을 눌러서 해당 pull request를 반영합니다. 반영이 완료되고 해당 branch가 더는 필요 없다고 판단되시면 <code>Delete branch</code> 버튼을 통해서 Remote에 있는 Branch를 삭제할 수 있습니다.</p>
+<p><img src="https://i.imgur.com/EHnVEjU.png" alt="comment-표시"><br>
+위에서 작성한 comment가 해결됬었다면 <code>Merge pull request</code> 버튼을 눌러서 해당 pull request를 반영합니다. 반영이 완료되고 해당 branch가 더는 필요 없다고 판단되시면 <code>Delete branch</code> 버튼을 통해서 Remote에 있는 Branch를 삭제할 수 있습니다.</p>
 <p><strong>위에서 작성한 resolved: #1 키워드 덕분에 소스코드가 해당 Branch에 적용됐으니 자동으로 #1에 대한 이슈는 close 처리됩니다.</strong></p>
-<h1 id="세부-사용법"><a href="#세부-사용법" class="headerlink" title="세부 사용법"></a>세부 사용법</h1><ul>
+<h1>세부 사용법</h1>
+<ul>
 <li>추가 예정</li>
 </ul>
-<h1 id="ZenHub-사용법"><a href="#ZenHub-사용법" class="headerlink" title="ZenHub 사용법"></a>ZenHub 사용법</h1><ul>
+<h1>ZenHub 사용법</h1>
+<ul>
 <li>추가 예정</li>
 </ul>
-<h1 id="Code-Coverage"><a href="#Code-Coverage" class="headerlink" title="Code Coverage"></a>Code Coverage</h1><ul>
+<h1>Code Coverage</h1>
+<ul>
 <li>추가 예정</li>
 </ul>
 
