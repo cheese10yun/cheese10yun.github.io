@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"TabTab Limit\n\nsettings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능\n여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천\n\n자주 사용하는 Tab 이동\n\n\n\nName\nHot Key\nDesc\n\n\n\nSplit Right\nfn + ctr +  ➡️\n현재 화면 오른 쪽으로 분활\n\n\nSplit Down\nfn + ctr +  ⬇️\n현재 화면 아래 쪽으로 분할\n\n\nGoto Next Splitter\nshift + cmd  ➡️\n현재 포커싱 화면애서 다음 Tab으로 이동\n\n\nGoto Previous Splitter\nshift + cmd  ⬅️\n현재 포커싱 화면애서 이전 다음 Tab으로 이동\n\n\n&lt;- Back\ncmd + [\n현재 Tab의 이전 Tab, tab limit 1 지정시 유용\n\n\n-&gt; Forword\ncmd + ]\n현재 Tab의 다음 Tab, tab limit 1 지정시 유용\n\n\nRecent Files\ncmd + e\n최근 Open 파일 리스트\n\n\nRecent Locations\nshift + cmd + e\n최근 Open 파일 커서 위치\n\n\nBookmarks 지정\ncmd + F3\n북마크 지정\n\n\nBookmarks\nF3\n지정한 북마크 리스트\n\n\nGo to file\nshift + cmd + o\n파일 열기\n\n\n간단 팁Find Action\n\n특정한 기능을 찾고 싶은 경우 단축키 shift + cmd + a Find Action으로 해당 기능을 찾을 수 있음\n대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash\n\nKey map\n\nKey map 통해서 Hot Key 조회 및 등록 가능\n키워드를 통해 검색 or 단축키를 통한 검색도 지원\n\nLive Template\n\n코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.\nsout, psvm 등이 여기에 해당합니다.\nss, tdd, jobc, jobcode, comment-formatter sf 등등을 커스텀 해서 사용\n\n등록 방법\n\nSettings -&gt; Live Templates\n\nformatter 코드 정렬 제외\n12345678910fun asd(): Unit &#123;    //@formatter:off    val a = 10        val b = 10 // 코드 정렬에서 제외        val c = 10        val d = 10    val e = 10    val f = 10    //@formatter:on&#125;\n\n특정한 이유로 코드 정렬을 제외하고 싶을 때 @formatter:off ~ @formatter:on을 활용하여 제외할 수 있다.\n\nGradle Task\n\nGradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.\nbuild.gradle.kts에 직접 작성한 TASK도 동작 가능\n\n문자열동일 문자열 ⌘ + ⌃ + g\n동일 위치열 ⌥ + drag or ⌥⌥\n복사 히스토리 command + shift + v\n활용 방법\n특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.\nPluginsString Manipulation PluginString Manipulation Plugin 플러그인은 문자열에 대한 다양한 기능을 제공합니다.\n\n\n특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.\n\n\n\nSwitch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.\n\nGrep Console\n출처 Grep Console\n\nGrep Console를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인\nKey Promoter X\n출처 Key Promoter X\n\nKey Promoter X는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인\nPresentation Assistant\nPresentation Assistant는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인\nKotlin Fill Class\n출처 Kotlin Fill Class\n\nKotlin Fill Class는 코틀린 생성자 네임드 파라미터 기반으로 생성을 도와주는 플러그인\nInspection Lens\n출처 Inspection Lens\n\nInspection Lens는 오류, 경고 및 기타 검사 하이라이트를 인라인으로 표시해 주는 플러그인\n플러그인 찾는 방법\n플러그인 검색을 /sortBy:downloads으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택\nHTTP Client\nHTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능\nHTTP Env\n1234567891011&#123;  &quot;local&quot;: &#123;    &quot;shop-service&quot;: &quot;http://localhost:8080&quot;  &#125;,  &quot;sandbox&quot;: &#123;    &quot;shop-service&quot;: &quot;http://snadbox-xxxx&quot;  &#125;,  &quot;beta&quot;: &#123;    &quot;shop-service&quot;: &quot;http://beta-xxxx&quot;  &#125;&#125;\n\nHTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.\nHTTP Curl Copy &amp; Paste\nCurl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.\n\n반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.\nQuery parameter 정리\nQuery parameter를 쉽게 정리할 수 있습니다.\nGitHub Code ReviewGitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.\n\nPullRequest를 확인합니다. Find Action 기능을 통해서 찾을 수 있고 CMD + 3 단축키로도 찾을 수 있습니다.\n\nPullRequest를 내용을 확인할 수 있습니다.\n\nDiff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.\n\n작성된 코멘트는 실제 Github에도 작성됩니다.\n\nIDEA에서 해당 PR을 Meger 할 수 있습니다.\n\nPull Request 항목들을 필터를 통해서 검색도 가능합니다.\n","dateCreated":"2023-06-04T00:00:00+09:00","dateModified":"2025-02-01T17:02:31+09:00","datePublished":"2023-06-04T00:00:00+09:00","description":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","headline":"인텔리제이 자주 사용하는 기능 및 추천 플러그인 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-tip/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-tip/","keywords":"IntelliJ, Tools"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Tab\nTab Limit\n\n\nsettings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능\n여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천\n\n자주 사용하는 Tab 이동\n\n\n\n\nName\nHot Key\nDesc\n\n\n\n\nSplit Right\nfn + ctr +  ➡️\n현재 화면 오른 쪽으로 분활\n\n\nSplit Down\nfn + ctr +  ⬇️\n현재 화면 아래 쪽으로 분할\n\n\nGoto Next Splitter\nshift + cmd  ➡️\n현재 포커싱 화면애서 다음 Tab으로 이동\n\n\nGoto Previous Splitter\nshift + cmd  ⬅️\n현재 포커싱 화면애서 이전 다음 Tab으로 이동\n\n\n&lt;- Back\ncmd + [\n현재 Tab의 이전 Tab, tab limit 1 지정시 유용\n\n\n-&gt; Forword\ncmd + ]\n현재 Tab의 다음 Tab, tab limit 1 지정시 유용\n\n\nRecent Files\ncmd + e\n최근 Open 파일 리스트\n\n\nRecent Locations\nshift + cmd + e\n최근 Open 파일 커서 위치\n\n\nBookmarks 지정\ncmd + F3\n북마크 지정\n\n\nBookmarks\nF3\n지정한 북마크 리스트\n\n\nGo to file\nshift + cmd + o\n파일 열기\n\n\n\n간단 팁\nFind Action\n\n\n특정한 기능을 찾고 싶은 경우 단축키 shift + cmd + a Find Action으로 해당 기능을 찾을 수 있음\n대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash\n\nKey map\n\n\nKey map 통해서 Hot Key 조회 및 등록 가능\n키워드를 통해 검색 or 단축키를 통한 검색도 지원\n\nLive Template\n\n\n코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.\nsout, psvm 등이 여기에 해당합니다.\nss, tdd, jobc, jobcode, comment-formatter sf 등등을 커스텀 해서 사용\n\n등록 방법\n\n\nSettings -&gt; Live Templates\n\nformatter 코드 정렬 제외\n\n12345678910fun asd(): Unit &#123;    //@formatter:off    val a = 10        val b = 10 // 코드 정렬에서 제외        val c = 10        val d = 10    val e = 10    val f = 10    //@formatter:on&#125;\n\n특정한 이유로 코드 정렬을 제외하고 싶을 때 @formatter:off ~ @formatter:on을 활용하여 제외할 수 있다.\n\nGradle Task\n\n\nGradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.\nbuild.gradle.kts에 직접 작성한 TASK도 동작 가능\n\n문자열\n동일 문자열 ⌘ + ⌃ + g\n\n동일 위치열 ⌥ + drag or ⌥⌥\n\n복사 히스토리 command + shift + v\n\n활용 방법\n\n특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.\nPlugins\nString Manipulation Plugin\nString Manipulation Plugin 플러그인은 문자열에 대한 다양한 기능을 제공합니다.\n\n\n특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.\n\n\n\nSwitch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.\n\nGrep Console\n\n\n\n출처 Grep Console\n\nGrep Console를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인\nKey Promoter X\n\n\n출처 Key Promoter X\n\nKey Promoter X는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인\nPresentation Assistant\n\nPresentation Assistant는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인\nKotlin Fill Class\n\n\n출처 Kotlin Fill Class\n\nKotlin Fill Class는 코틀린 생성자 네임드 파라미터 기반으로 생성을 도와주는 플러그인\nInspection Lens\n\n\n출처 Inspection Lens\n\nInspection Lens는 오류, 경고 및 기타 검사 하이라이트를 인라인으로 표시해 주는 플러그인\n플러그인 찾는 방법\n\n플러그인 검색을 /sortBy:downloads으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택\nHTTP Client\n\nHTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능\nHTTP Env\n\n1234567891011&#123;  &quot;local&quot;: &#123;    &quot;shop-service&quot;: &quot;http://localhost:8080&quot;  &#125;,  &quot;sandbox&quot;: &#123;    &quot;shop-service&quot;: &quot;http://snadbox-xxxx&quot;  &#125;,  &quot;beta&quot;: &#123;    &quot;shop-service&quot;: &quot;http://beta-xxxx&quot;  &#125;&#125;\nHTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.\nHTTP Curl Copy &amp; Paste\n\nCurl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.\n\n반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.\nQuery parameter 정리\n\nQuery parameter를 쉽게 정리할 수 있습니다.\nGitHub Code Review\nGitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.\n\nPullRequest를 확인합니다. Find Action 기능을 통해서 찾을 수 있고 CMD + 3 단축키로도 찾을 수 있습니다.\n\nPullRequest를 내용을 확인할 수 있습니다.\n\nDiff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.\n\n작성된 코멘트는 실제 Github에도 작성됩니다.\n\nIDEA에서 해당 PR을 Meger 할 수 있습니다.\n\nPull Request 항목들을 필터를 통해서 검색도 가능합니다.\n","dateCreated":"2023-06-04T00:00:00+09:00","dateModified":"2025-02-01T17:02:31+09:00","datePublished":"2023-06-04T00:00:00+09:00","description":"IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리","headline":"인텔리제이 자주 사용하는 기능 및 추천 플러그인 정리","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-tip/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-tip/","keywords":"Tools, IntelliJ"}</script>
     <meta name="description" content="IntelliJ 자주 사용하는 기능 및 추천 플러그인 정리">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="인텔리제이 자주 사용하는 기능 및 추천 플러그인 정리">
@@ -61,8 +61,8 @@
 <meta property="article:published_time" content="2023-06-03T15:00:00.000Z">
 <meta property="article:modified_time" content="2025-02-01T08:02:31.986Z">
 <meta property="article:author" content="Yun">
-<meta property="article:tag" content="IntelliJ">
 <meta property="article:tag" content="Tools">
+<meta property="article:tag" content="IntelliJ">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-1.png">
     
@@ -288,12 +288,15 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h2 id="Tab"><a href="#Tab" class="headerlink" title="Tab"></a>Tab</h2><h3 id="Tab-Limit"><a href="#Tab-Limit" class="headerlink" title="Tab Limit"></a>Tab Limit</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-1.png"></p>
+            <h2 id="Tab">Tab</h2>
+<h3 id="Tab-Limit">Tab Limit</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-1.png" alt=""></p>
 <ul>
 <li>settings -&gt; editor tabs -&gt; Tab Limit으로 Tab limit 설정 가능</li>
 <li>여러 Tab을 켜도 Limit 한 설정값으로 유지, Limit 1을 추천</li>
 </ul>
-<h3 id="자주-사용하는-Tab-이동"><a href="#자주-사용하는-Tab-이동" class="headerlink" title="자주 사용하는 Tab 이동"></a>자주 사용하는 Tab 이동</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-2.png"></p>
+<h3 id="자주-사용하는-Tab-이동">자주 사용하는 Tab 이동</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-2.png" alt=""></p>
 <table>
 <thead>
 <tr>
@@ -302,7 +305,8 @@
 <th>Desc</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td><code>Split Right</code></td>
 <td>fn + ctr +  ➡️</td>
 <td>현재 화면 오른 쪽으로 분활</td>
@@ -357,95 +361,125 @@
 <td>shift + cmd + o</td>
 <td>파일 열기</td>
 </tr>
-</tbody></table>
-<h2 id="간단-팁"><a href="#간단-팁" class="headerlink" title="간단 팁"></a>간단 팁</h2><h3 id="Find-Action"><a href="#Find-Action" class="headerlink" title="Find Action"></a>Find Action</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-3.png"></p>
+</tbody>
+</table>
+<h2 id="간단-팁">간단 팁</h2>
+<h3 id="Find-Action">Find Action</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-3.png" alt=""></p>
 <ul>
 <li>특정한 기능을 찾고 싶은 경우 단축키 <code>shift + cmd + a</code> Find Action으로 해당 기능을 찾을 수 있음</li>
 <li>대충 이런 기능이 있지 않을까 하는 기능을 검색을 통해서 해당 기능의 유무를 빠르게 파악 가능 ex) git stash</li>
 </ul>
-<h3 id="Key-map"><a href="#Key-map" class="headerlink" title="Key map"></a>Key map</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-4.png"></p>
+<h3 id="Key-map">Key map</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-4.png" alt=""></p>
 <ul>
 <li>Key map 통해서 Hot Key 조회 및 등록 가능</li>
 <li>키워드를 통해 검색 or 단축키를 통한 검색도 지원</li>
 </ul>
-<h3 id="Live-Template"><a href="#Live-Template" class="headerlink" title="Live Template"></a>Live Template</h3><p><img src="https://camo.githubusercontent.com/5471e679d04d13a643230014376ab5e736a72b4252a10e644eb41e158b3e5ea4/68747470733a2f2f692e696d6775722e636f6d2f6d5a75444d64552e676966"></p>
+<h3 id="Live-Template">Live Template</h3>
+<p><img src="https://camo.githubusercontent.com/5471e679d04d13a643230014376ab5e736a72b4252a10e644eb41e158b3e5ea4/68747470733a2f2f692e696d6775722e636f6d2f6d5a75444d64552e676966" alt=""></p>
 <ul>
 <li>코드 템플릿을 미리 지정해서 편하게 코드를 작성할 수 있는 기능입니다.</li>
 <li><code>sout</code>, <code>psvm</code> 등이 여기에 해당합니다.</li>
 <li><code>ss</code>, <code>tdd</code>, <code>jobc</code>, <code>jobcode</code>, <code>comment-formatter</code> <code>sf</code> 등등을 커스텀 해서 사용</li>
 </ul>
-<h4 id="등록-방법"><a href="#등록-방법" class="headerlink" title="등록 방법"></a>등록 방법</h4><p><img src="https://camo.githubusercontent.com/05c612752077fb8488efe81f76609936965dfeb0340540bdc7b45d8040cd5524/68747470733a2f2f692e696d6775722e636f6d2f483471523461612e706e67"></p>
+<h4 id="등록-방법">등록 방법</h4>
+<p><img src="https://camo.githubusercontent.com/05c612752077fb8488efe81f76609936965dfeb0340540bdc7b45d8040cd5524/68747470733a2f2f692e696d6775722e636f6d2f483471523461612e706e67" alt=""></p>
 <ul>
 <li>Settings -&gt; Live Templates</li>
 </ul>
-<h3 id="formatter-코드-정렬-제외"><a href="#formatter-코드-정렬-제외" class="headerlink" title="formatter 코드 정렬 제외"></a>formatter 코드 정렬 제외</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-8.png"></p>
+<h3 id="formatter-코드-정렬-제외">formatter 코드 정렬 제외</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-8.png" alt=""></p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">asd</span><span class="params">()</span></span>: <span class="built_in">Unit</span> &#123;</span><br><span class="line">    <span class="comment">//@formatter:off</span></span><br><span class="line">    <span class="keyword">val</span> a = <span class="number">10</span></span><br><span class="line">        <span class="keyword">val</span> b = <span class="number">10</span> <span class="comment">// 코드 정렬에서 제외</span></span><br><span class="line">        <span class="keyword">val</span> c = <span class="number">10</span></span><br><span class="line">        <span class="keyword">val</span> d = <span class="number">10</span></span><br><span class="line">    <span class="keyword">val</span> e = <span class="number">10</span></span><br><span class="line">    <span class="keyword">val</span> f = <span class="number">10</span></span><br><span class="line">    <span class="comment">//@formatter:on</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>특정한 이유로 코드 정렬을 제외하고 싶을 때 <code>@formatter:off ~ @formatter:on</code>을 활용하여 제외할 수 있다.</li>
 </ul>
-<h3 id="Gradle-Task"><a href="#Gradle-Task" class="headerlink" title="Gradle Task"></a>Gradle Task</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/gradle-task-run-1.gif"></p>
+<h3 id="Gradle-Task">Gradle Task</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/gradle-task-run-1.gif" alt=""></p>
 <ul>
 <li>Gradle Task 자동 완성 기능을 통해서 보다 쉽게 Gradle 명령어를 사용할 수 있습니다.</li>
 <li><code>build.gradle.kts</code>에 직접 작성한 TASK도 동작 가능</li>
 </ul>
-<h2 id="문자열"><a href="#문자열" class="headerlink" title="문자열"></a>문자열</h2><h3 id="동일-문자열-⌘-⌃-g"><a href="#동일-문자열-⌘-⌃-g" class="headerlink" title="동일 문자열 ⌘ + ⌃ + g"></a>동일 문자열 ⌘ + ⌃ + g</h3><p><img src="https://camo.githubusercontent.com/6980a81c4101651570d8f5d1d5f0ccfe951ec6c37af4b7856b4486ec5d92bdd3/68747470733a2f2f692e696d6775722e636f6d2f66414d41364f722e676966"></p>
-<h3 id="동일-위치열-⌥-drag-or-⌥⌥"><a href="#동일-위치열-⌥-drag-or-⌥⌥" class="headerlink" title="동일 위치열 ⌥ + drag or ⌥⌥"></a>동일 위치열 ⌥ + drag or ⌥⌥</h3><p><img src="https://camo.githubusercontent.com/208370c96ef96e70a051b984025f8d954679d08cb32abbe724f6a39f5cb0ffb1/68747470733a2f2f692e696d6775722e636f6d2f5a3549596736772e676966"></p>
-<h3 id="복사-히스토리-command-shift-v"><a href="#복사-히스토리-command-shift-v" class="headerlink" title="복사 히스토리 command + shift + v"></a>복사 히스토리 command + shift + v</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-7.png"></p>
-<h3 id="활용-방법"><a href="#활용-방법" class="headerlink" title="활용 방법"></a>활용 방법</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-14.gif"></p>
+<h2 id="문자열">문자열</h2>
+<h3 id="동일-문자열-⌘-⌃-g">동일 문자열 ⌘ + ⌃ + g</h3>
+<p><img src="https://camo.githubusercontent.com/6980a81c4101651570d8f5d1d5f0ccfe951ec6c37af4b7856b4486ec5d92bdd3/68747470733a2f2f692e696d6775722e636f6d2f66414d41364f722e676966" alt=""></p>
+<h3 id="동일-위치열-⌥-drag-or-⌥⌥">동일 위치열 ⌥ + drag or ⌥⌥</h3>
+<p><img src="https://camo.githubusercontent.com/208370c96ef96e70a051b984025f8d954679d08cb32abbe724f6a39f5cb0ffb1/68747470733a2f2f692e696d6775722e636f6d2f5a3549596736772e676966" alt=""></p>
+<h3 id="복사-히스토리-command-shift-v">복사 히스토리 command + shift + v</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-7.png" alt=""></p>
+<h3 id="활용-방법">활용 방법</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-14.gif" alt=""></p>
 <p>특정 Entity를 응답 객체로 만들어야 하는 경우 동일 문자열을 복사해서 보다 쉽게 Response 객체를 만들 수 있습니다.</p>
-<h2 id="Plugins"><a href="#Plugins" class="headerlink" title="Plugins"></a>Plugins</h2><h3 id="String-Manipulation-Plugin"><a href="#String-Manipulation-Plugin" class="headerlink" title="String Manipulation Plugin"></a>String Manipulation Plugin</h3><p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.åcom/plugin/2162-string-manipulation/">String Manipulation Plugin</a> 플러그인은 문자열에 대한 다양한 기능을 제공합니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/string-manipulation-1.gif"></p>
+<h2 id="Plugins">Plugins</h2>
+<h3 id="String-Manipulation-Plugin">String Manipulation Plugin</h3>
+<p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.xn--com-tla/plugin/2162-string-manipulation/">String Manipulation Plugin</a> 플러그인은 문자열에 대한 다양한 기능을 제공합니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/IntelliJ/master/assets/string-manipulation-1.gif" alt=""></p>
 <ul>
 <li>특정 값에 대해서 자동으로 증가시켜 중복되지 않는 값으로 설정할 수 있습니다.</li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-jpa/docs/string-manipulation-3.gif"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/kotlin-jpa/docs/string-manipulation-3.gif" alt=""></p>
 <ul>
 <li>Switch는 다양한 문자열 포맷으로 쉽게 변경이 가능합니다.</li>
 </ul>
-<h3 id="Grep-Console"><a href="#Grep-Console" class="headerlink" title="Grep Console"></a>Grep Console</h3><blockquote>
-<p><img src="https://plugins.jetbrains.com/files/7125/screenshot_16117.png"><br><img src="https://plugins.jetbrains.com/files/7125/screenshot_17407.png"><br>출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/7125-grep-console">Grep Console</a></p>
+<h3 id="Grep-Console">Grep Console</h3>
+<blockquote>
+<p><img src="https://plugins.jetbrains.com/files/7125/screenshot_16117.png" alt=""><br>
+<img src="https://plugins.jetbrains.com/files/7125/screenshot_17407.png" alt=""><br>
+출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/7125-grep-console">Grep Console</a></p>
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/7125-grep-console">Grep Console</a>를 Grep 해서 보다 쉽게 로그 확인을 도와주는 플러그인</p>
-<h3 id="Key-Promoter-X"><a href="#Key-Promoter-X" class="headerlink" title="Key Promoter X"></a>Key Promoter X</h3><blockquote>
-<p><img src="https://plugins.jetbrains.com/files/9792/screenshot_17105.png"><br>출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/9792-key-promoter-x">Key Promoter X</a></p>
+<h3 id="Key-Promoter-X">Key Promoter X</h3>
+<blockquote>
+<p><img src="https://plugins.jetbrains.com/files/9792/screenshot_17105.png" alt=""><br>
+출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/9792-key-promoter-x">Key Promoter X</a></p>
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/9792-key-promoter-x">Key Promoter X</a>는 IDE에서 마우스를 사용하면 대체 가능한 단축키를 알려주는 플러그인</p>
-<h3 id="Presentation-Assistant"><a href="#Presentation-Assistant" class="headerlink" title="Presentation Assistant"></a>Presentation Assistant</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-6.png"></p>
+<h3 id="Presentation-Assistant">Presentation Assistant</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-6.png" alt=""></p>
 <p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/7345-presentation-assistant">Presentation Assistant</a>는 사용하는 단축키와 기능 명을 디스플레이 해주는 플러그인</p>
-<h3 id="Kotlin-Fill-Class"><a href="#Kotlin-Fill-Class" class="headerlink" title="Kotlin Fill Class"></a>Kotlin Fill Class</h3><blockquote>
-<p><img src="https://user-images.githubusercontent.com/8841470/59397528-e61a4380-8dc7-11e9-9684-d82d225316fe.gif"><br>출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/10942-kotlin-fill-class">Kotlin Fill Class</a></p>
+<h3 id="Kotlin-Fill-Class">Kotlin Fill Class</h3>
+<blockquote>
+<p><img src="https://user-images.githubusercontent.com/8841470/59397528-e61a4380-8dc7-11e9-9684-d82d225316fe.gif" alt=""><br>
+출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/10942-kotlin-fill-class">Kotlin Fill Class</a></p>
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/10942-kotlin-fill-class">Kotlin Fill Class</a>는 코틀린 생성자 네임드 파라미터 기반으로 생성을 도와주는 플러그인</p>
-<h3 id="Inspection-Lens"><a href="#Inspection-Lens" class="headerlink" title="Inspection Lens"></a>Inspection Lens</h3><blockquote>
-<p><img src="https://plugins.jetbrains.com/files/19678/screenshot_fdccbd0c-626e-4502-8622-71931e8b8fef"><br>출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/19678-inspection-lens">Inspection Lens</a></p>
+<h3 id="Inspection-Lens">Inspection Lens</h3>
+<blockquote>
+<p><img src="https://plugins.jetbrains.com/files/19678/screenshot_fdccbd0c-626e-4502-8622-71931e8b8fef" alt=""><br>
+출처 <a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/19678-inspection-lens">Inspection Lens</a></p>
 </blockquote>
 <p><a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/19678-inspection-lens">Inspection Lens</a>는 오류, 경고 및 기타 검사 하이라이트를 인라인으로 표시해 주는 플러그인</p>
-<h3 id="플러그인-찾는-방법"><a href="#플러그인-찾는-방법" class="headerlink" title="플러그인 찾는 방법"></a>플러그인 찾는 방법</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-15.png"></p>
+<h3 id="플러그인-찾는-방법">플러그인 찾는 방법</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-15.png" alt=""></p>
 <p>플러그인 검색을 <code>/sortBy:downloads</code>으로 다운로드가 높은 순으로 정렬하고 필요한 플러그인을 선택</p>
-<h2 id="HTTP-Client"><a href="#HTTP-Client" class="headerlink" title="HTTP Client"></a>HTTP Client</h2><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-9.gif"></p>
+<h2 id="HTTP-Client">HTTP Client</h2>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-9.gif" alt=""></p>
 <p>HTTP Client는 Postman처럼 HTTP 호출을 도와주는 도구로 IntelliJ에서 사용 가능</p>
-<h3 id="HTTP-Env"><a href="#HTTP-Env" class="headerlink" title="HTTP Env"></a>HTTP Env</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-10.png"></p>
+<h3 id="HTTP-Env">HTTP Env</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-10.png" alt=""></p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;local&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;shop-service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://localhost:8080&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;sandbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;shop-service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://snadbox-xxxx&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;beta&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;shop-service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://beta-xxxx&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
 <p>HTTP 호출 환경을 JSON으로 관리할 수 있습니다. HTTP 호출에 대한 환경을 지정하여 호출 가능합니다.</p>
-<h3 id="HTTP-Curl-Copy-Paste"><a href="#HTTP-Curl-Copy-Paste" class="headerlink" title="HTTP Curl Copy &amp; Paste"></a>HTTP Curl Copy &amp; Paste</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-11.gif"></p>
+<h3 id="HTTP-Curl-Copy-Paste">HTTP Curl Copy &amp; Paste</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-11.gif" alt=""></p>
 <p>Curl을 붙여넣기를 하면 HTTP Client에 맞는 형식으로 자동으로 변환 됩니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-12.gif"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-12.gif" alt=""></p>
 <p>반대로 HTTP Client를 Curl 형식으로 변환하여 복사할 수 있습니다.</p>
-<h3 id="Query-parameter-정리"><a href="#Query-parameter-정리" class="headerlink" title="Query parameter 정리"></a>Query parameter 정리</h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-13.gif"></p>
+<h3 id="Query-parameter-정리">Query parameter 정리</h3>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/intellij-test/intellij-test/images/tip-13.gif" alt=""></p>
 <p>Query parameter를 쉽게 정리할 수 있습니다.</p>
-<h2 id="GitHub-Code-Review"><a href="#GitHub-Code-Review" class="headerlink" title="GitHub Code Review"></a>GitHub Code Review</h2><p>GitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-3.png"></p>
+<h2 id="GitHub-Code-Review">GitHub Code Review</h2>
+<p>GitHub 기반으로 코드 리뷰를 진행하면 단순 Diff만 보이기 때문에 디테일한 부분까지 확인하고 싶은 경우는 pull을 받아 진행하곤 합니다. IntelliJ에서는 GitHub 기반 코드 리뷰를 IDEA에서 진행할 있습니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-3.png" alt=""></p>
 <p>PullRequest를 확인합니다. <code>Find Action</code> 기능을 통해서 찾을 수 있고 <code>CMD + 3</code> 단축키로도 찾을 수 있습니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-4.png"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-4.png" alt=""></p>
 <p>PullRequest를 내용을 확인할 수 있습니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-5.png"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-5.png" alt=""></p>
 <p>Diff가 있는 파일을 선택하여 확인이 가능하며 필요한 부분에 코멘트를 작성할 수 있습니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-6.png"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-6.png" alt=""></p>
 <p>작성된 코멘트는 실제 Github에도 작성됩니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-8.png"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-8.png" alt=""></p>
 <p>IDEA에서 해당 PR을 Meger 할 수 있습니다.</p>
-<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-9.png"></p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/github-project-management/master/images//intellij-pr-9.png" alt=""></p>
 <p>Pull Request 항목들을 필터를 통해서 검색도 가능합니다.</p>
 
             
