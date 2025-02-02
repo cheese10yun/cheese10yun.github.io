@@ -3,6 +3,20 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
+        <lastmod>2025-02-02T17:14:34.149Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
+        <lastmod>2025-02-02T17:14:34.149Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/tags/Test/</loc>
         <lastmod>2025-02-02T10:39:58.358Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -59,22 +73,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/tags/ORM/</loc>
-        <lastmod>2025-02-02T10:27:46.236Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/tags/OOP/</loc>
         <lastmod>2025-02-02T10:20:02.448Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/JPA/</loc>
-        <lastmod>2025-02-02T10:19:26.814Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

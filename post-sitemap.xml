@@ -9,6 +9,14 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/jpa-embedded/</loc>
+        <lastmod>2025-02-02T17:14:34.149Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-boot-test/</loc>
         <lastmod>2025-02-02T10:39:58.358Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -1467,14 +1475,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-oop-bank-api/</loc>
         <lastmod>2025-01-31T11:04:41.018Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jpa-embedded/</loc>
-        <lastmod>2025-01-31T11:02:48.101Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
