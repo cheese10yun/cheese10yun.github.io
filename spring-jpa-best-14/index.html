@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
     <meta name="generator" content="Yun Blog">
-    <title>Spring-JPA Best Practices step-14 - JUnit5 적용하기 - Yun Blog</title>
+    <title>Spring JPA Best Practices step-14 - JUnit5 적용하기 - Yun Blog</title>
     <meta name="author" content="Yun">
     
         <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
@@ -18,17 +18,17 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.\n단순한 테스트 이외에는 테스트 코드 네이밍으로 테스트하고자 하는 의미를 전달하기가 매우 어렵습니다. 이때 아주 유용하게 사용할 수 있는 것이 @DisplayName 입니다.\n\n위 그림처럼 @DisplayName(....)  어노테이션으로 코드에 대한 설명을 문자열로 대체할 수 있습니다. 이 대체된 문자열은 실제 테스트 케이스 이름으로 표시됩니다.\n의존성 추가\nSpring Boot2의 테스트코드 의존성은 JUnit4를 기본으로 가져오기 때문에 spring-boot-starter-test 의존성 이외에도 추가적인 작업이 필요합니다.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;    &lt;!--spring-boot-starter-test 의존성에서 가져오는 JUnit 제외 --&gt;    &lt;exclusions&gt;        &lt;exclusion&gt;            &lt;groupId&gt;junit&lt;/groupId&gt;            &lt;artifactId&gt;junit&lt;/artifactId&gt;        &lt;/exclusion&gt;    &lt;/exclusions&gt;&lt;/dependency&gt;&lt;!--필요한 의존성 추가 --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;    &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;    &lt;version&gt;5.3.2&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-junit-jupiter&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.platform&lt;/groupId&gt;    &lt;artifactId&gt;junit-platform-runner&lt;/artifactId&gt;    &lt;version&gt;1.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;    &lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;    &lt;version&gt;5.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;\n테스트 코드\n12345678910111213141516171819202122232425262728293031323334353637383940414243import org.junit.jupiter.api.DisplayName;import org.junit.jupiter.api.Test;import org.junit.jupiter.api.extension.ExtendWith;import org.junit.platform.runner.JUnitPlatform;import org.junit.runner.RunWith;import org.mockito.InjectMocks;import org.mockito.Mock;import org.mockito.junit.jupiter.MockitoExtension;import java.util.Optional;import static org.hamcrest.CoreMatchers.is;import static org.junit.Assert.assertThat;import static org.mockito.ArgumentMatchers.anyLong;import static org.mockito.BDDMockito.given;import static org.mockito.Mockito.atLeastOnce;import static org.mockito.Mockito.verify;@ExtendWith(MockitoExtension.class)public class AccountServiceJUnit5Test &#123;    @InjectMocks    private AccountService accountService;    @Mock    private AccountRepository accountRepository;    @Test    @DisplayName(&quot;findById_존재하는경우_회원리턴&quot;)    public void findBy_not_existed_test() &#123;        //given        final AccountDto.SignUpReq dto = buildSignUpReq();        given(accountRepository.findById(anyLong())).willReturn(Optional.of(dto.toEntity()));        //when        final Account account = accountService.findById(anyLong());        //then        verify(accountRepository, atLeastOnce()).findById(anyLong());        assertThatEqual(dto, account);    &#125;&#125;\n필요한 패키지의 경로가 중요하기 때문에 필요한 import을 추가했습니다. 아직 Spring Boot2에서 기본으로 가져온 의존성이 아니기 때문에 복잡한 부분이 있습니다. Prod 코드에는 Spring Boot2에서 JUnit5를 기본으로 택했을 때 변경하는 것이 더 안전하고 효율적이라고 생각합니다.\n","dateCreated":"2019-02-06T21:15:00+09:00","dateModified":"2025-02-02T13:43:50+09:00","datePublished":"2019-02-06T21:15:00+09:00","description":"JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.","headline":"Spring-JPA Best Practices step-14 - JUnit5 적용하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-jpa-best-14/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-jpa-best-14/","keywords":"Spring, Test"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n해당 코드는 Github를 확인해주세요.\n\nJUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.\n단순한 테스트 이외에는 테스트 코드 네이밍으로 테스트하고자 하는 의미를 전달하기가 매우 어렵습니다. 이때 아주 유용하게 사용할 수 있는 것이 @DisplayName 입니다.\n\n위 그림처럼 @DisplayName(....)  어노테이션으로 코드에 대한 설명을 문자열로 대체할 수 있습니다. 이 대체된 문자열은 실제 테스트 케이스 이름으로 표시됩니다.\n의존성 추가\nSpring Boot2의 테스트코드 의존성은 JUnit4를 기본으로 가져오기 때문에 spring-boot-starter-test 의존성 이외에도 추가적인 작업이 필요합니다.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;    &lt;!--spring-boot-starter-test 의존성에서 가져오는 JUnit 제외 --&gt;    &lt;exclusions&gt;        &lt;exclusion&gt;            &lt;groupId&gt;junit&lt;/groupId&gt;            &lt;artifactId&gt;junit&lt;/artifactId&gt;        &lt;/exclusion&gt;    &lt;/exclusions&gt;&lt;/dependency&gt;&lt;!--필요한 의존성 추가 --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;    &lt;artifactId&gt;junit-jupiter-api&lt;/artifactId&gt;    &lt;version&gt;5.3.2&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mockito&lt;/groupId&gt;    &lt;artifactId&gt;mockito-junit-jupiter&lt;/artifactId&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.platform&lt;/groupId&gt;    &lt;artifactId&gt;junit-platform-runner&lt;/artifactId&gt;    &lt;version&gt;1.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt;    &lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;    &lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;    &lt;version&gt;5.2.0&lt;/version&gt;    &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;\n테스트 코드\n12345678910111213141516171819202122232425262728293031323334353637383940414243import org.junit.jupiter.api.DisplayName;import org.junit.jupiter.api.Test;import org.junit.jupiter.api.extension.ExtendWith;import org.junit.platform.runner.JUnitPlatform;import org.junit.runner.RunWith;import org.mockito.InjectMocks;import org.mockito.Mock;import org.mockito.junit.jupiter.MockitoExtension;import java.util.Optional;import static org.hamcrest.CoreMatchers.is;import static org.junit.Assert.assertThat;import static org.mockito.ArgumentMatchers.anyLong;import static org.mockito.BDDMockito.given;import static org.mockito.Mockito.atLeastOnce;import static org.mockito.Mockito.verify;@ExtendWith(MockitoExtension.class)public class AccountServiceJUnit5Test &#123;    @InjectMocks    private AccountService accountService;    @Mock    private AccountRepository accountRepository;    @Test    @DisplayName(&quot;findById_존재하는경우_회원리턴&quot;)    public void findBy_not_existed_test() &#123;        //given        final AccountDto.SignUpReq dto = buildSignUpReq();        given(accountRepository.findById(anyLong())).willReturn(Optional.of(dto.toEntity()));        //when        final Account account = accountService.findById(anyLong());        //then        verify(accountRepository, atLeastOnce()).findById(anyLong());        assertThatEqual(dto, account);    &#125;&#125;\n필요한 패키지의 경로가 중요하기 때문에 필요한 import을 추가했습니다. 아직 Spring Boot2에서 기본으로 가져온 의존성이 아니기 때문에 복잡한 부분이 있습니다. Prod 코드에는 Spring Boot2에서 JUnit5를 기본으로 택했을 때 변경하는 것이 더 안전하고 효율적이라고 생각합니다.\n","dateCreated":"2019-02-06T21:15:00+09:00","dateModified":"2025-02-02T18:20:44+09:00","datePublished":"2019-02-06T21:15:00+09:00","description":"JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.","headline":"Spring JPA Best Practices step-14 - JUnit5 적용하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-jpa-best-14/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-jpa-best-14/","keywords":"Spring, Test"}</script>
     <meta name="description" content="JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Spring-JPA Best Practices step-14 - JUnit5 적용하기">
+<meta property="og:title" content="Spring JPA Best Practices step-14 - JUnit5 적용하기">
 <meta property="og:url" content="https://cheese10yun.github.io/spring-jpa-best-14/index.html">
 <meta property="og:site_name" content="Yun Blog">
 <meta property="og:description" content="JUnit5는 다양한 어노테이션들이 추가되었습니다. 그중에 Junit5를 도입할 만큼 매력 있는 어노테이션 @DisplayName 입니다.">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:image" content="https://github.com/cheese10yun/spring-jpa-best-practices/raw/master/images/junit5-display-name.png">
 <meta property="article:published_time" content="2019-02-06T12:15:00.000Z">
-<meta property="article:modified_time" content="2025-02-02T04:43:50.848Z">
+<meta property="article:modified_time" content="2025-02-02T09:20:44.272Z">
 <meta property="article:author" content="Yun">
 <meta property="article:tag" content="Spring">
 <meta property="article:tag" content="Test">
@@ -238,7 +238,7 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Spring-JPA Best Practices step-14 - JUnit5 적용하기
+            Spring JPA Best Practices step-14 - JUnit5 적용하기
         </h1>
     
     
@@ -295,8 +295,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/spring-jpa-best-15/"
-                    data-tooltip="Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
-                    aria-label="이전: Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    data-tooltip="Spring JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    aria-label="이전: Spring JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -309,8 +309,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/spring-jpa-best-13/"
-                    data-tooltip="Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
-                    aria-label="다음: Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    data-tooltip="Spring JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    aria-label="다음: Spring JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">다음</span>
@@ -423,8 +423,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/spring-jpa-best-15/"
-                    data-tooltip="Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
-                    aria-label="이전: Spring-JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    data-tooltip="Spring JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
+                    aria-label="이전: Spring JPA Best Practices step-15 - Querydsl를 이용해서 Repository 확장하기 (1)"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -437,8 +437,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/spring-jpa-best-13/"
-                    data-tooltip="Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
-                    aria-label="다음: Spring-JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    data-tooltip="Spring JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
+                    aria-label="다음: Spring JPA Best Practices step-13 - Query Dsl이용한 페이징 API 만들기"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">다음</span>

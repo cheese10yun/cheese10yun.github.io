@@ -9,6 +9,150 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-08/</loc>
+        <lastmod>2025-02-02T09:20:44.293Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
+        <lastmod>2025-02-02T09:20:44.292Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-16/</loc>
+        <lastmod>2025-02-02T09:20:44.291Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-06/</loc>
+        <lastmod>2025-02-02T09:20:44.289Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-13/</loc>
+        <lastmod>2025-02-02T09:20:44.288Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best/</loc>
+        <lastmod>2025-02-02T09:20:44.287Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-12/</loc>
+        <lastmod>2025-02-02T09:20:44.285Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-10/</loc>
+        <lastmod>2025-02-02T09:20:44.284Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-04/</loc>
+        <lastmod>2025-02-02T09:20:44.282Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-09/</loc>
+        <lastmod>2025-02-02T09:20:44.281Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-11/</loc>
+        <lastmod>2025-02-02T09:20:44.279Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-15/</loc>
+        <lastmod>2025-02-02T09:20:44.278Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-07/</loc>
+        <lastmod>2025-02-02T09:20:44.276Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-05/</loc>
+        <lastmod>2025-02-02T09:20:44.275Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
+        <lastmod>2025-02-02T09:20:44.273Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-jpa-best-14/</loc>
+        <lastmod>2025-02-02T09:20:44.272Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/spring-data-mongo-repository-2/</loc>
+        <lastmod>2025-02-02T09:18:48.839Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/jpa-query-dsl-group-concat/</loc>
+        <lastmod>2025-02-02T09:17:43.407Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/resilience4j-basic/</loc>
         <lastmod>2025-02-02T07:23:31.102Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -27,14 +171,6 @@
     <url>
         <loc>https://cheese10yun.github.io/checked-exception/</loc>
         <lastmod>2025-02-02T04:43:50.934Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-08/</loc>
-        <lastmod>2025-02-02T04:43:50.931Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -65,24 +201,8 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-02/</loc>
-        <lastmod>2025-02-02T04:43:50.923Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/external-infrastructure-testing/</loc>
         <lastmod>2025-02-02T04:43:50.921Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-16/</loc>
-        <lastmod>2025-02-02T04:43:50.918Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -105,14 +225,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-06/</loc>
-        <lastmod>2025-02-02T04:43:50.912Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-custom-valdate-annotation/</loc>
         <lastmod>2025-02-02T04:43:50.909Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -123,22 +235,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-data-mongo-test-setup/</loc>
         <lastmod>2025-02-02T04:43:50.907Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-13/</loc>
-        <lastmod>2025-02-02T04:43:50.905Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best/</loc>
-        <lastmod>2025-02-02T04:43:50.903Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -177,38 +273,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-12/</loc>
-        <lastmod>2025-02-02T04:43:50.891Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-10/</loc>
-        <lastmod>2025-02-02T04:43:50.889Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-04/</loc>
-        <lastmod>2025-02-02T04:43:50.887Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-09/</loc>
-        <lastmod>2025-02-02T04:43:50.885Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-data-mongo-update-guide-1/</loc>
         <lastmod>2025-02-02T04:43:50.882Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -219,22 +283,6 @@
     <url>
         <loc>https://cheese10yun.github.io/ConstraintValidator/</loc>
         <lastmod>2025-02-02T04:43:50.880Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-11/</loc>
-        <lastmod>2025-02-02T04:43:50.878Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-15/</loc>
-        <lastmod>2025-02-02T04:43:50.876Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -265,38 +313,6 @@
     </url>
 
     <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-07/</loc>
-        <lastmod>2025-02-02T04:43:50.867Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-05/</loc>
-        <lastmod>2025-02-02T04:43:50.864Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-03/</loc>
-        <lastmod>2025-02-02T04:43:50.862Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-data-mongo-repository-2/</loc>
-        <lastmod>2025-02-02T04:43:50.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://cheese10yun.github.io/spring-guide-domain/</loc>
         <lastmod>2025-02-02T04:43:50.857Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -315,14 +331,6 @@
     <url>
         <loc>https://cheese10yun.github.io/lombok-config/</loc>
         <lastmod>2025-02-02T04:43:50.851Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-jpa-best-14/</loc>
-        <lastmod>2025-02-02T04:43:50.848Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -1323,14 +1331,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-cloud/</loc>
         <lastmod>2025-01-31T11:24:39.761Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/jpa-query-dsl-group-concat/</loc>
-        <lastmod>2025-01-31T11:24:39.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
