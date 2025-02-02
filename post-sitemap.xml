@@ -9,6 +9,22 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/spring-boot-test/</loc>
+        <lastmod>2025-02-02T10:39:58.358Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
+        <lastmod>2025-02-02T10:37:13.378Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/productivity/</loc>
         <lastmod>2025-02-02T10:35:36.858Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -547,14 +563,6 @@
     <url>
         <loc>https://cheese10yun.github.io/intellij-builder-pattern/</loc>
         <lastmod>2025-01-31T13:37:33.345Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/intellij-boot-run-config/</loc>
-        <lastmod>2025-01-31T13:37:20.371Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -1179,14 +1187,6 @@
     <url>
         <loc>https://cheese10yun.github.io/github-proejct-part2/</loc>
         <lastmod>2025-01-31T11:24:39.850Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/spring-boot-test/</loc>
-        <lastmod>2025-01-31T11:24:39.842Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
