@@ -1932,6 +1932,12 @@ a.fancybox {
       display: block;
       width: auto;
       max-width: 100%; }
+    .post .post-content img.kroki {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto; }
     .post .post-content :not(blockquote):not(li):not(.alert) > p {
       margin: 1.5em 0 0 0; }
     .post .post-content li p {
