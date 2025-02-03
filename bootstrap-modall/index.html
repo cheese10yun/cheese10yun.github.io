@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.\n1234$(&#x27;.modal&#x27;).on(&#x27;hidden.bs.modal&#x27;, function (e) &#123;    console.log(&#x27;modal close&#x27;);  $(this).find(&#x27;form&#x27;)[0].reset()&#125;);\n\n\n활용방법#해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.\n  생각 보다 내용이 없네요…..\n","dateCreated":"2017-01-10T00:00:00+09:00","dateModified":"2025-01-31T22:13:08+09:00","datePublished":"2017-01-10T00:00:00+09:00","description":"부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.","headline":"Bootstrap Modal 입력값 초기화","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/bootstrap-modall/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/bootstrap-modall/","keywords":"Javascript"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.\n1234$(&#x27;.modal&#x27;).on(&#x27;hidden.bs.modal&#x27;, function (e) &#123;    console.log(&#x27;modal close&#x27;);  $(this).find(&#x27;form&#x27;)[0].reset()&#125;);\n활용방법#\n해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.\n생각 보다 내용이 없네요…\n","dateCreated":"2017-01-10T00:00:00+09:00","dateModified":"2025-01-31T22:13:08+09:00","datePublished":"2017-01-10T00:00:00+09:00","description":"부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.","headline":"Bootstrap Modal 입력값 초기화","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/bootstrap-modall/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/bootstrap-modall/","keywords":"Javascript"}</script>
     <meta name="description" content="부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Bootstrap Modal 입력값 초기화">
@@ -259,10 +259,9 @@
             <p><img src="https://i.imgur.com/SHu3JYX.png" alt="EC2 Innound"></p>
 <p>부트스트랩 모달에서 값을 입력하고 모달을 닫으면 이전 입력값은 초기화 되지 않고 남아 있습니다. 이 입력값을 모달을 닫을때 같이 초기화 시켜주는 예제 및 활용법 에대해서 포스팅을 진행하겠습니다.</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&#x27;.modal&#x27;</span>).<span class="title function_">on</span>(<span class="string">&#x27;hidden.bs.modal&#x27;</span>, <span class="keyword">function</span> (<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;modal close&#x27;</span>);</span><br><span class="line">  $(<span class="variable language_">this</span>).<span class="title function_">find</span>(<span class="string">&#x27;form&#x27;</span>)[<span class="number">0</span>].<span class="title function_">reset</span>()</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-
-<h3><span id="hwalyongbangbeob">활용방법</span><a href="#hwalyongbangbeob" class="header-anchor">#</a></h3><p>해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.</p>
-<p>  생각 보다 내용이 없네요…..</p>
+<h3><span id="hwalyongbangbeob">활용방법</span><a href="#hwalyongbangbeob" class="header-anchor">#</a></h3>
+<p>해당 로직은 공통으로 사용될 로직이니 공통적으로 사용되는 로직체 추가하는 것이 좋습니다.</p>
+<p>생각 보다 내용이 없네요…</p>
 
             
 
