@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\nJPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 IntelliJ JPA Console 기능으로 확인해볼 수 있습니다.\nDataBase 연동\nData Source\n\n\n사용 중인 데이터베이스를 선택합니다.\n\nDatabase 정보 입력\n\n\nName, Host, Database, User, Password를 입력합니다.\n\nJPA 연동\nJPA Module 추가\n\n\nProject Structure 설정\nModules 탭이동\n상단 + 클릭 이후 JPA 추가\n하단 + 클릭 이후 Hibernate 추가\n\nPersistence 추가\n\n\n위의 작업을 완료했으면 왼쪽 탭에 Persistence 추가됩니다.\nAssign Data Sources….를 클릭합니다.\nAssign Data Sources 에서 Data Source 항목에 위에 추가해 Data Source 항목을 추가합니다.\n\nJPA Console\nJPA Console 연결\n\n\nentityManagerFactory를 클릭합니다.\nConsole를 클릭합니다.\nJPA Console를 선택합니다.\n\nQuery\n\nJPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 구체적인 사용법을 진행해 보겠습니다\n","dateCreated":"2018-01-23T01:30:46+09:00","dateModified":"2025-01-31T22:14:22+09:00","datePublished":"2018-01-23T01:30:46+09:00","description":"JPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 IntelliJ JPA Console 기능으로 확인해볼 수 있습니다.","headline":"인텔리제이 JPA Console","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-jpa-console/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-jpa-console/","keywords":"JPA, ORM, Tools, IntelliJ"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\nJPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 IntelliJ JPA Console 기능으로 확인해볼 수 있습니다.\nDataBase 연동#Data Source#\n\n사용 중인 데이터베이스를 선택합니다.\n\nDatabase 정보 입력#\n\nName, Host, Database, User, Password를 입력합니다.\n\nJPA 연동#JPA Module 추가#\n\nProject Structure 설정\nModules 탭이동\n상단 + 클릭 이후 JPA 추가\n하단 + 클릭 이후 Hibernate 추가\n\nPersistence 추가#\n\n위의 작업을 완료했으면 왼쪽 탭에 Persistence 추가됩니다.\nAssign Data Sources….를 클릭합니다.\nAssign Data Sources 에서 Data Source 항목에 위에 추가해 Data Source 항목을 추가합니다.\n\nJPA Console#JPA Console 연결#\n\nentityManagerFactory를 클릭합니다.\nConsole를 클릭합니다.\nJPA Console를 선택합니다.\n\nQuery#JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 구체적인 사용법을 진행해 보겠습니다\n","dateCreated":"2018-01-23T01:30:46+09:00","dateModified":"2025-01-31T22:14:22+09:00","datePublished":"2018-01-23T01:30:46+09:00","description":"JPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 IntelliJ JPA Console 기능으로 확인해볼 수 있습니다.","headline":"인텔리제이 JPA Console","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-jpa-console/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-jpa-console/","keywords":"JPA, ORM, Tools, IntelliJ"}</script>
     <meta name="description" content="JPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 IntelliJ JPA Console 기능으로 확인해볼 수 있습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="인텔리제이 JPA Console">
@@ -265,46 +265,36 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p><img src="https://i.imgur.com/oJqtQpV.gif" alt=""></p>
+            <p><img src="https://i.imgur.com/oJqtQpV.gif"></p>
 <p><strong>JPA를 시작하면서 크게 불편했던 점이 쿼리 실행 결과를 바로바로 확인할 수 없는 점이었는데 <code>IntelliJ JPA Console</code> 기능으로 확인해볼 수 있습니다.</strong></p>
-<h2 id="DataBase-연동">DataBase 연동</h2>
-<h3 id="Data-Source">Data Source</h3>
-<p><img src="https://i.imgur.com/7Uaibtf.png" alt=""></p>
+<h2><span id="database-yeondong">DataBase 연동</span><a href="#database-yeondong" class="header-anchor">#</a></h2><h3><span id="data-source">Data Source</span><a href="#data-source" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/7Uaibtf.png"></p>
 <ul>
 <li>사용 중인 데이터베이스를 선택합니다.</li>
 </ul>
-<h3 id="Database-정보-입력">Database 정보 입력</h3>
-<p><img src="https://i.imgur.com/Lt9fDab.png" alt=""></p>
+<h3><span id="database-jeongbo-ibryeog">Database 정보 입력</span><a href="#database-jeongbo-ibryeog" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/Lt9fDab.png"></p>
 <ul>
 <li><code>Name</code>, <code>Host</code>, <code>Database</code>, <code>User</code>, <code>Password</code>를 입력합니다.</li>
 </ul>
-<h2 id="JPA-연동">JPA 연동</h2>
-<h3 id="JPA-Module-추가">JPA Module 추가</h3>
-<p><img src="https://i.imgur.com/hnAQEtJ.png" alt=""></p>
+<h2><span id="jpa-yeondong">JPA 연동</span><a href="#jpa-yeondong" class="header-anchor">#</a></h2><h3><span id="jpa-module-cuga">JPA Module 추가</span><a href="#jpa-module-cuga" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/hnAQEtJ.png"></p>
 <ol>
 <li><code>Project Structure</code> 설정</li>
 <li><code>Modules</code> 탭이동</li>
 <li>상단 <code>+</code> 클릭 이후 <code>JPA</code> 추가</li>
 <li>하단 <code>+</code> 클릭 이후 <code>Hibernate</code> 추가</li>
 </ol>
-<h3 id="Persistence-추가">Persistence 추가</h3>
-<p><img src="https://i.imgur.com/q8l4Pkr.png" alt=""></p>
+<h3><span id="persistence-cuga">Persistence 추가</span><a href="#persistence-cuga" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/q8l4Pkr.png"></p>
 <ol>
 <li>위의 작업을 완료했으면 왼쪽 탭에 <code>Persistence</code> 추가됩니다.</li>
 <li><code>Assign Data Sources….</code>를 클릭합니다.</li>
 <li><code>Assign Data Sources</code> 에서 <code>Data Source</code> 항목에 위에 추가해 <code>Data Source</code> 항목을 추가합니다.</li>
 </ol>
-<h2 id="JPA-Console">JPA Console</h2>
-<h3 id="JPA-Console-연결">JPA Console 연결</h3>
-<p><img src="https://i.imgur.com/230LRUi.png" alt=""></p>
+<h2><span id="jpa-console">JPA Console</span><a href="#jpa-console" class="header-anchor">#</a></h2><h3><span id="jpa-console-yeongyeol">JPA Console 연결</span><a href="#jpa-console-yeongyeol" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/230LRUi.png"></p>
 <ol>
 <li><code>entityManagerFactory</code>를 클릭합니다.</li>
 <li><code>Console</code>를 클릭합니다.</li>
 <li><code>JPA Console</code>를 선택합니다.</li>
 </ol>
-<h3 id="Query">Query</h3>
-<p><img src="https://i.imgur.com/oJqtQpV.gif" alt=""><br>
-JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 구체적인 사용법을 진행해 보겠습니다</p>
+<h3><span id="query">Query</span><a href="#query" class="header-anchor">#</a></h3><p><img src="https://i.imgur.com/oJqtQpV.gif"><br>JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 구체적인 사용법을 진행해 보겠습니다</p>
 
             
 
@@ -388,19 +378,6 @@ JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 �
                     aria-label="Twitter에 공유하기"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
-                </a>
-            </li>
-        
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/intellij-jpa-console/"
-                    title="Google+에 공유하기"
-                    aria-label="Google+에 공유하기"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
@@ -519,19 +496,6 @@ JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 �
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/intellij-jpa-console/"
-                    title="Google+에 공유하기"
-                    aria-label="Google+에 공유하기"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
-        
         
             
         
@@ -575,19 +539,6 @@ JPQL 쿼리를 통해서 결과를 출력했습니다. 다음 포스팅에는 �
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
-                    </a>
-                </li>
-            
-                
-                
-                <li class="share-option">
-                    <a
-                        class="share-option-btn"
-                        target="new"
-                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/intellij-jpa-console/"
-                        aria-label="Google+에 공유하기"
-                    >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
                     </a>
                 </li>
             

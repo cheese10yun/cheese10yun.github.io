@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Property Inclusion Annotations\n\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\n@JsonIgnoreProperties\n\n무시할 속성이나 속성 목록을 표시하는 데 사용됩니다\n\n12345@JsonIgnoreProperties(&#123;&quot;id&quot;&#125;)public static class BeanWithIgnore &#123;    public int id;    public String name;&#125;\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n@JsonIgnore\n\n필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.\n\n12345public static class BeanWithIgnore &#123;    @JsonIgnore    public int id;    public String name;&#125;\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n@JsonIgnoreType\n\n주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다\n\n12345678910public static class User &#123;public int id;public Name name;    @JsonIgnoreType    public static class Name &#123;        public String firstName;        public String lastName;    &#125;&#125;\n123&#123;  &quot;id&quot;: 1&#125;\n@JsonInclude\n\n어노테이션 속성을 제외 하는 데 사용 됩니다\n\n123456@JsonInclude(JsonInclude.Include.NON_NULL)@AllArgsConstructorpublic static class MyBean &#123;    public int id;    public String name;&#125;\n1234//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.&#123;  &quot;id&quot;: 1&#125;\n@JsonAutoDetect\n12345@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)public static class PrivateBean &#123;    private int id;    private String name;&#125;\n12345// Visibility.ANY 경우 표시&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;yun&quot;&#125;\n","dateCreated":"2018-06-13T00:00:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-06-13T00:00:00+09:00","description":"Jackson 어노테이션 사용법(3)","headline":"Jackson 어노테이션 사용법(3)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/jackson-annotation-03/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/jackson-annotation-03/","keywords":"Jackson"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Jackson Property Inclusion Annotations#\nJackson Annotation Examples 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.\n테스트코드도 참고하시면 좋습니다.\n해당 코드 및 전체 Jackson 정리는 Github를 참고해주세요\n\n@JsonIgnoreProperties#\n무시할 속성이나 속성 목록을 표시하는 데 사용됩니다\n\n12345@JsonIgnoreProperties(&#123;&quot;id&quot;&#125;)public static class BeanWithIgnore &#123;    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnore#\n필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.\n\n12345public static class BeanWithIgnore &#123;    @JsonIgnore    public int id;    public String name;&#125;\n\n123&#123;  &quot;name&quot;: &quot;yun&quot;&#125;\n\n@JsonIgnoreType#\n주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다\n\n12345678910public static class User &#123;public int id;public Name name;    @JsonIgnoreType    public static class Name &#123;        public String firstName;        public String lastName;    &#125;&#125;\n123&#123;  &quot;id&quot;: 1&#125;\n\n@JsonInclude#\n어노테이션 속성을 제외 하는 데 사용 됩니다\n\n123456@JsonInclude(JsonInclude.Include.NON_NULL)@AllArgsConstructorpublic static class MyBean &#123;    public int id;    public String name;&#125;\n1234//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.&#123;  &quot;id&quot;: 1&#125;\n\n@JsonAutoDetect#12345@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)public static class PrivateBean &#123;    private int id;    private String name;&#125;\n\n12345// Visibility.ANY 경우 표시&#123;  &quot;id&quot;: 1,  &quot;name&quot;: &quot;yun&quot;&#125;\n","dateCreated":"2018-06-13T00:00:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-06-13T00:00:00+09:00","description":"Jackson 어노테이션 사용법(3)","headline":"Jackson 어노테이션 사용법(3)","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/jackson-annotation-03/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/jackson-annotation-03/","keywords":"Jackson"}</script>
     <meta name="description" content="Jackson 어노테이션 사용법(3)">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Jackson 어노테이션 사용법(3)">
@@ -254,38 +254,39 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h2 id="Jackson-Property-Inclusion-Annotations">Jackson Property Inclusion Annotations</h2>
-<ul>
+            <h2><span id="jackson-property-inclusion-annotations">Jackson Property Inclusion Annotations</span><a href="#jackson-property-inclusion-annotations" class="header-anchor">#</a></h2><ul>
 <li><a target="_blank" rel="noopener" href="http://www.baeldung.com/jackson-annotations">Jackson Annotation Examples</a> 예제를 적용전, 적용후로 나누어서 정리 해봤습니다.</li>
 <li>테스트코드도 참고하시면 좋습니다.</li>
 <li>해당 코드 및 전체 Jackson 정리는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/blog-sample/tree/master/jackson">Github</a>를 참고해주세요</li>
 </ul>
-<h3 id="JsonIgnoreProperties">@JsonIgnoreProperties</h3>
-<ul>
+<h3><span id="jsonignoreproperties">@JsonIgnoreProperties</span><a href="#jsonignoreproperties" class="header-anchor">#</a></h3><ul>
 <li>무시할 속성이나 속성 목록을 표시하는 데 사용됩니다</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnoreProperties(&#123;&quot;id&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">BeanWithIgnore</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> id;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yun&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="JsonIgnore">@JsonIgnore</h3>
-<ul>
+
+<h3><span id="jsonignore">@JsonIgnore</span><a href="#jsonignore" class="header-anchor">#</a></h3><ul>
 <li>필드 레벨에서 무시 될 수있는 속성을 표시하는 데 사용됩니다.</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">BeanWithIgnore</span> &#123;</span><br><span class="line">    <span class="meta">@JsonIgnore</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> id;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yun&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="JsonIgnoreType">@JsonIgnoreType</h3>
-<ul>
+
+<h3><span id="jsonignoretype">@JsonIgnoreType</span><a href="#jsonignoretype" class="header-anchor">#</a></h3><ul>
 <li>주석이 달린 형식의 모든 속성을 무시하도록 지정하는 데 사용됩니다</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> id;</span><br><span class="line"><span class="keyword">public</span> Name name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnoreType</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Name</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> String firstName;</span><br><span class="line">        <span class="keyword">public</span> String lastName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="JsonInclude">@JsonInclude</h3>
-<ul>
+
+<h3><span id="jsoninclude">@JsonInclude</span><a href="#jsoninclude" class="header-anchor">#</a></h3><ul>
 <li>어노테이션 속성을 제외 하는 데 사용 됩니다</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonInclude(JsonInclude.Include.NON_NULL)</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">MyBean</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> id;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NON_NULL 사용시 name이 null인 경우에 제외 됩니다.</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="JsonAutoDetect">@JsonAutoDetect</h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">PrivateBean</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="jsonautodetect">@JsonAutoDetect</span><a href="#jsonautodetect" class="header-anchor">#</a></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">PrivateBean</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Visibility.ANY 경우 표시</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yun&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
             
@@ -370,19 +371,6 @@
                     aria-label="Twitter에 공유하기"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
-                </a>
-            </li>
-        
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jackson-annotation-03/"
-                    title="Google+에 공유하기"
-                    aria-label="Google+에 공유하기"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
             </li>
         
@@ -501,19 +489,6 @@
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=https://cheese10yun.github.io/jackson-annotation-03/"
-                    title="Google+에 공유하기"
-                    aria-label="Google+에 공유하기"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
-        
         
             
         
@@ -557,19 +532,6 @@
                         aria-label="Twitter에 공유하기"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
-                    </a>
-                </li>
-            
-                
-                
-                <li class="share-option">
-                    <a
-                        class="share-option-btn"
-                        target="new"
-                        href="https://plus.google.com/share?url=https://cheese10yun.github.io/jackson-annotation-03/"
-                        aria-label="Google+에 공유하기"
-                    >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Google+에 공유하기</span>
                     </a>
                 </li>
             
