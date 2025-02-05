@@ -1931,7 +1931,9 @@ a.fancybox {
     .post .post-content img {
       display: block;
       width: auto;
-      max-width: 100%; }
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto; }
     .post .post-content img.kroki {
       display: block;
       width: auto;
