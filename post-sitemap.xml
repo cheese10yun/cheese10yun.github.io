@@ -9,6 +9,14 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/mysql-connection-pool-timeout-1/</loc>
+        <lastmod>2025-02-05T17:49:32.851Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/redis-lettuce-connection/</loc>
         <lastmod>2025-02-03T18:58:58.892Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -683,14 +691,6 @@
     <url>
         <loc>https://cheese10yun.github.io/spring-oop-04/</loc>
         <lastmod>2025-01-31T13:31:40.679Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/mysql-connection-pool-timeout-1/</loc>
-        <lastmod>2025-01-31T13:31:40.676Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
