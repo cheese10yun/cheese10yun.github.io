@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
+    <meta name="generator" content="Yun Blog">
+    <title>Spring Data MongoDB로 배열의 특정 요소 업데이트하기 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Data MongoDB를 활용해 한 도큐먼트(한 row)의 특정 배열 요소만 선택적으로 업데이트하는 방법을 알아보겠습니다.\n일반적으로 find로 데이터를 조회한 후 save로 업데이트하는 방식은 편리하지만, 대량 데이터를 처리할 때는 updateOne 또는 updateMany를 이용한 벌크 업데이트가 성능 면에서 큰 이점을 제공합니다.이번 포스팅에서는 MongoDB의 arrayFilters 옵션과 Spring Data MongoDB를 사용해 배열의 특정 요소만 업데이트하는 방법을 살펴봅니다.\n\n이전 포스팅 MongoDB Update 성능 측정 및 분석 을 통해 일반 업데이트와 벌크 업데이트의 성능 차이를 확인할 수 있습니다.\n\n문제 정의#예를 들어, 다음과 같은 도큐먼트가 있다고 가정합니다.\n1234567891011121314151617181920&#123;  &quot;_id&quot;: &quot;67bc734b9aa3007af5a704af&quot;,  &quot;items&quot;: [    &#123;      &quot;name&quot;: &quot;나이키 에어 포스&quot;,      &quot;category&quot;: &quot;신발&quot;,      &quot;price&quot;: 100.00    &#125;,    &#123;      &quot;name&quot;: &quot;나이키 후드&quot;,      &quot;category&quot;: &quot;상의&quot;,      &quot;price&quot;: 200.00    &#125;,    &#123;      &quot;name&quot;: &quot;나이키 반바지&quot;,      &quot;category&quot;: &quot;하의&quot;,      &quot;price&quot;: 300.00    &#125;  ]&#125;\n\n이 중에서 배열 items에 있는 특정 요소의 price만 업데이트하고 싶을 때,예를 들어 “나이키 에어 포스”와 “나이키 후드”의 가격을 각각 222, 333으로 변경한다고 해보겠습니다.\nMongoDB Update 쿼리#MongoDB에서는 arrayFilters 옵션을 사용하여 배열의 각 요소에 대해 조건을 지정할 수 있습니다. 아래 쿼리는 items 배열에서 이름이 “나이키 에어 포스”인 요소와 “나이키 후드”인 요소의 price를 업데이트하는 예시입니다.\n1234567891011121314151617db.order_item.updateOne(        &#123;          &quot;_id&quot;: ObjectId(&quot;67bc7db1f407ca76116d9e35&quot;)        &#125;,        &#123;          &quot;$set&quot;: &#123;            &quot;items.$[elem0].price&quot;: NumberDecimal(222),            &quot;items.$[elem1].price&quot;: NumberDecimal(333)          &#125;        &#125;,        &#123;          arrayFilters: [            &#123;&quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;&#125;,            &#123;&quot;elem1.name&quot;: &quot;나이키 후드&quot;&#125;          ]        &#125;)\n\n위 쿼리는 조건에 맞는 배열 요소만 골라 업데이트하기 때문에, 불필요한 도큐먼트 전체를 업데이트하는 것보다 성능이 훨씬 우수합니다.\n여기서 $[elem0]와 $[elem1]는 자리표현자로, 실제 업데이트 시에는 arrayFilters 옵션에 지정된 조건을 만족하는 배열 요소의 실제 인덱스와 매핑됩니다. 예를 들어, &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot; 조건을 통해 MongoDB는 items 배열에서 이름이 “나이키 에어 포스”인 요소를 찾아 그 인덱스에 해당하는 위치에 $[elem0]를 매핑하여 업데이트를 적용합니다. 동일한 방식으로 &quot;elem1.name&quot;: &quot;나이키 후드&quot; 조건도 적용됩니다.\nSpring Data MongoDB에서 업데이트 적용하기#Spring Data MongoDB에서도 위와 같이 arrayFilters 옵션을 사용할 수 있습니다. 일반적으로 아래와 같이 엔티티와 업데이트 쿼리 객체를 정의합니다.\n도메인 클래스#12345678910111213141516@Document(collection = &quot;order_item&quot;)data class OrderItem(  @Field(&quot;items&quot;)  val items: List&lt;Item&gt; = emptyList()) : Auditable()data class Item(  @Field(&quot;name&quot;)  val name: String,  @Field(&quot;category&quot;)  val category: String,  @Field(&quot;price&quot;)  val price: BigDecimal)\n\n업데이트 쿼리에 사용할 객체#123456789101112object OrderItemQueryForm &#123;  data class UpdateItem(    val orderItem: ObjectId,    val items: List&lt;UpdateItemForm&gt;  )  data class UpdateItemForm(    val name: String,    val category: String,    val price: BigDecimal  )&#125;\n\n이전 포스팅 Spring Data MongoDB에서의 Update 전략과 경험 - 업데이트 쿼리에 사용할 객체 정의에서 업데이트 쿼리에 사용할 객체를 별도로 관리하는 방법에 대해 자세히 다루었습니다.\n\n단순 업데이트 쿼리 구현 (기본 방법)#아래 코드는 Spring Data MongoDB의 Update와 filterArray 메서드를 활용하여, 배열의 각 요소에 대해 조건을 지정하는 업데이트 쿼리를 작성한 예시입니다.\n이 경우, form.items 리스트의 각 항목마다 고유한 자리표현자(예: elem0, elem1)를 할당하여 해당 요소의 price를 업데이트하고, arrayFilters 조건으로 name만 적용합니다.\n1234567891011121314151617class OrderItemCustomRepositoryImpl(    private val mongoTemplate: MongoTemplate) : OrderItemCustomRepository &#123;    override fun updateItems(form: OrderItemQueryForm.UpdateItem) &#123;        val query = Query(Criteria.where(&quot;_id&quot;).`is`(form.orderItem))        val update = Update()        form.items.forEachIndexed &#123; index, item -&gt;            update                .set(&quot;items.\\$[elem$&#123;index&#125;].price&quot;, item.price)                .filterArray(&quot;elem$&#123;index&#125;.name&quot;, item.name)        &#125;        mongoTemplate.updateFirst(query, update, OrderItem::class.java)    &#125;&#125;\n\n\n이전 포스팅 Spring Data MongoDB Repository 확장에서 Repository를 확장하여 커스텀 메서드를 구현하는 방법에 대해 자세히 다루었습니다.\n\n이 코드는 내부적으로 아래와 같은 MongoDB 업데이트 명령을 생성합니다.\n\n업데이트 문서 ($set):123456&#123;  &quot;$set&quot;: &#123;    &quot;items.$[elem0].price&quot;: &#123;&quot;$numberDecimal&quot;: &quot;222&quot;&#125;,    &quot;items.$[elem1].price&quot;: &#123;&quot;$numberDecimal&quot;: &quot;333&quot;&#125;  &#125;&#125;\n업데이트 옵션 (arrayFilters):123456&#123;  &quot;arrayFilters&quot;: [    &#123; &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot; &#125;,    &#123; &quot;elem1.name&quot;: &quot;나이키 후드&quot; &#125;  ]&#125;\n\n복합 조건의 arrayFilters 적용#실제 상황에서는 배열 요소를 업데이트할 때 name뿐 아니라 category 등 복합 조건으로 필터링해야 하는 경우가 있습니다. 예를 들어, 아래 MongoDB 쿼리는 배열의 조건을 복합 키로 찾아 “나이키 에어 포스”는 신발, “나이키 후드”는 상의인 경우에만 업데이트하도록 합니다.\n1234567891011121314151617db.order_item.updateOne(    &#123;        &quot;_id&quot;: ObjectId(&quot;67bc7db1f407ca76116d9e35&quot;)    &#125;,    &#123;        &quot;$set&quot;: &#123;            &quot;items.$[elem0].price&quot;: NumberDecimal(333),            &quot;items.$[elem1].price&quot;: NumberDecimal(333)        &#125;    &#125;,    &#123;        arrayFilters: [            &#123;&quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;, &quot;elem0.category&quot;: &quot;신발&quot;&#125;,            &#123;&quot;elem1.name&quot;: &quot;나이키 후드&quot;, &quot;elem1.category&quot;: &quot;상의&quot;&#125;        ]    &#125;)\n\n위와 같이 복합 조건으로 업데이트하려면 단순하게 filterArray()를 여러 번 호출하는 방법은 동작하지 않습니다. 예를 들어, 아래와 같이 작성하면\n12345678910111213override fun updateItems(form: OrderItemQueryForm.UpdateItem) &#123;    val query = Query(Criteria.where(&quot;_id&quot;).`is`(form.orderItem))    val update = Update()    form.items.forEachIndexed &#123; index, item -&gt;        update            .set(&quot;items.\\$[elem$&#123;index&#125;].price&quot;, item.price)            .filterArray(&quot;elem$&#123;index&#125;.name&quot;, item.name)            .filterArray(&quot;elem$&#123;index&#125;.category&quot;, item.category)    &#125;    mongoTemplate.updateFirst(query, update, documentClass)&#125;\n\nSpring Data MongoDB에서는 동일한 자리표현자(예: elem0)에 대해 두 번의 filterArray 호출이 이루어지면, 내부적으로 각각 별도의 Document가 생성되어 중복된 최상위 키가 되어 버립니다. 결과적으로 원하는 복합 조건의 arrayFilters가 아닌,\n1234567891011121314[  &#123;    &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;  &#125;,  &#123;    &quot;elem0.category&quot;: &quot;신발&quot;  &#125;,  &#123;    &quot;elem1.name&quot;: &quot;나이키 후드&quot;  &#125;,  &#123;    &quot;elem1.category&quot;: &quot;상의&quot;  &#125;]\n\n와 같이 분리되어 전달되며, 원하는 쿼리가 아니며 정상적으로 인덱스를 찾아 업데이트하지 못하게 됩니다.\n해결 방법 – 커스텀 UpdateDefinition 활용#복합 조건을 하나의 Document로 결합하여 업데이트 옵션으로 분리해서 전달하기 위해, 커스텀 UpdateDefinition을 사용할 수 있습니다. 예를 들어, 아래와 같이 UpdateWithArrayFilters 클래스를 정의합니다.\n123456789101112131415161718192021222324import org.bson.Documentimport org.springframework.data.mongodb.core.query.Updateimport org.springframework.data.mongodb.core.query.UpdateDefinitionclass UpdateWithArrayFilters(    private val update: Update,    private val arrayFilters: List&lt;Document&gt;) : UpdateDefinition &#123;    // 업데이트 문서는 내부 update의 updateObject만 반환 (즉, $set 부분만 포함)    override fun getUpdateObject(): Document = update.updateObject    // getArrayFilters()에서는 List&lt;Document&gt;로 보관된 조건들을    // UpdateDefinition.ArrayFilter 타입으로 변환하여 반환합니다.    override fun getArrayFilters(): List&lt;UpdateDefinition.ArrayFilter&gt; &#123;        return arrayFilters            .map &#123; doc -&gt; UpdateDefinition.ArrayFilter &#123; doc &#125; &#125;            .toList()    &#125;    // 나머지 메서드는 내부 update에 위임    override fun isIsolated(): Boolean = update.isIsolated    override fun modifies(key: String): Boolean = update.modifies(key)    override fun inc(key: String) = update.inc(key)&#125;\n\n이 클래스를 사용한 업데이트 쿼리 구현은 아래와 같습니다.\n1234567891011121314151617181920override fun updateItems(form: OrderItemQueryForm.UpdateItem) &#123;    val query = Query(Criteria.where(&quot;_id&quot;).`is`(form.orderItem))    val update = Update()    val arrayFilters = mutableListOf&lt;Document&gt;()    // 각 항목마다 자리표현자(elem0, elem1, …)를 생성하여 업데이트할 필드와 조건 Document를 구성    form.items.forEachIndexed &#123; index, item -&gt;        // 예: &quot;items.$[elem0].price&quot;: item.price        update.set(&quot;items.\\$[elem$index].price&quot;, item.price)        // 복합 조건 Document: &#123; &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;, &quot;elem0.category&quot;: &quot;신발&quot; &#125;        arrayFilters.add(            Document(&quot;elem$&#123;index&#125;.name&quot;, item.name)                .append(&quot;elem$&#123;index&#125;.category&quot;, item.category)        )    &#125;    // 커스텀 UpdateDefinition 생성 – 업데이트 문서와 arrayFilters 옵션을 분리하여 전달합니다.    val updateApplyArrayFilters = UpdateWithArrayFilters(update, arrayFilters.toList())    mongoTemplate.updateFirst(query, updateApplyArrayFilters, documentClass)&#125;\n\n이 방식으로 업데이트를 수행하면 최종적으로 MongoDB에 전송되는 명령은 다음과 같습니다.\n\n업데이트 문서 ($set 부분):123456&#123;  &quot;$set&quot;: &#123;    &quot;items.$[elem0].price&quot;: &#123;&quot;$numberDecimal&quot;: &quot;333&quot;&#125;,    &quot;items.$[elem1].price&quot;: &#123;&quot;$numberDecimal&quot;: &quot;333&quot;&#125;  &#125;&#125;\n업데이트 옵션 (arrayFilters):123456&#123;  &quot;arrayFilters&quot;: [    &#123; &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;, &quot;elem0.category&quot;: &quot;신발&quot; &#125;,    &#123; &quot;elem1.name&quot;: &quot;나이키 후드&quot;, &quot;elem1.category&quot;: &quot;상의&quot; &#125;  ]&#125;\n\n즉, getUpdateObject()에서는 $set 부분만 반환하고, getArrayFilters()에서 반환한 조건들이 별도의 업데이트 옵션으로 전달되어 MongoDB가 올바르게 인식하게 됩니다.\nMongoCustomRepositorySupport을 통한 bulkOps 기능 제공#\nbulkOps를 사용하면 대량 데이터 처리 시 업데이트 성능이 크게 향상됩니다. 위 그림에서도 볼 수 있듯이, 단일 업데이트에 비해 벌크 업데이트를 적용할 경우 처리 속도가 현저히 개선됩니다.\n아래 코드는 BulkOperations를 활용하여 여러 도큐먼트에 대해 벌크 업데이트를 수행하는 편의 기능을 제공합니다.MongoCustomRepositorySupport 추상 클래스는 bulkUpdateDefinition 메서드를 통해, Query와 UpdateDefinition 생성자를 담은 람다 리스트를 받아 BulkOperations 객체에 각 업데이트를 추가한 후 일괄 실행합니다.\n123456789101112131415161718abstract class MongoCustomRepositorySupport&lt;T&gt;(  protected val documentClass: Class&lt;T&gt;,  protected val mongoTemplate: MongoTemplate) &#123;    protected fun bulkUpdateDefinition(        operations: List&lt;Pair&lt;() -&gt; Query, () -&gt; UpdateDefinition&gt;&gt;, // Query와 Update 생성자를 위한 람다 리스트        bulkMode: BulkOperations.BulkMode = BulkOperations.BulkMode.UNORDERED,    ): BulkWriteResult &#123;        // BulkOperations 객체를 생성합니다.        val bulkOps = mongoTemplate.bulkOps(bulkMode, documentClass)        // 제공된 리스트를 반복하면서 bulk 연산에 각 update를 추가합니다.        operations.forEach &#123; (queryCreator, updateCreator) -&gt;            bulkOps.updateOne(queryCreator.invoke(), updateCreator.invoke())        &#125;        // 모든 업데이트를 실행합니다.        return bulkOps.execute()    &#125;&#125;\n\nOrderItemCustomRepositoryImpl에서는 bulkUpdateDefinition 메서드를 사용하여, 여러 업데이트 폼을 반복 처리합니다.각 폼마다 _id 조건의 Query와, Update 및 복합 조건의 arrayFilters를 적용한 커스텀 UpdateDefinition(UpdateWithArrayFilters)을 생성하여 BulkOperations에 추가합니다.\n12345678910111213141516171819202122232425262728class OrderItemCustomRepositoryImpl(mongoTemplate: MongoTemplate) : OrderItemCustomRepository, MongoCustomRepositorySupport&lt;OrderItem&gt;(  OrderItem::class.java,  mongoTemplate) &#123;    override fun updateItems(forms: List&lt;OrderItemQueryForm.UpdateItem&gt;) &#123;        bulkUpdateDefinition(            forms.map &#123; form -&gt;                Pair(                    first = &#123; Query(Criteria.where(&quot;_id&quot;).`is`(form.orderItem)) &#125;,                    second = &#123;                        val update = Update()                        val arrayFilters = mutableListOf&lt;Document&gt;()                        form.items.forEachIndexed &#123; index, item -&gt;                            update.set(&quot;items.\\$[elem$index].price&quot;, item.price)                            arrayFilters.add(                                Document(&quot;elem$&#123;index&#125;.name&quot;, item.name)                                    .append(&quot;elem$&#123;index&#125;.category&quot;, item.category)                            )                        &#125;                        val customUpdate = UpdateWithArrayFilters(update, arrayFilters.toList())                        customUpdate                    &#125;                )            &#125;        )    &#125;&#125;\n\n이 구조를 사용하면, 대량 업데이트가 필요한 경우 여러 도큐먼트에 대해 Query와 UpdateDefinition을 한 번에 처리할 수 있어, 벌크 업데이트의 성능 이점을 효과적으로 활용할 수 있습니다.\n\n이전 포스팅 MongoDB Update 성능 측정 및 분석 - bulkOps 편의 기능 제공에서 MongoCustomRepositorySupport를 활용한 bulkOps 기능을 구현하는 방법에 대해 자세히 다루었습니다.\n\n테스트 코드 예제#다음은 위 업데이트 쿼리가 올바르게 동작하는지 확인하기 위한 테스트 코드 예시입니다.\n123456789101112131415161718192021222324252627282930313233343536@Testfun `updateItems`() &#123;  // given: 초기 데이터 삽입  val orderItem = mongoTemplate.insert(    OrderItem(      items = listOf(        Item(name = &quot;나이키 에어 포스&quot;, category = &quot;신발&quot;, price = 100.00.toBigDecimal()),        Item(name = &quot;나이키 후드&quot;, category = &quot;상의&quot;, price = 200.00.toBigDecimal()),        Item(name = &quot;나이키 반바지&quot;, category = &quot;하의&quot;, price = 300.00.toBigDecimal())      )    )  )  // 업데이트 폼 생성 (두 항목 업데이트)  val form = OrderItemQueryForm.UpdateItem(    orderItem = orderItem.id!!,    items = listOf(      OrderItemQueryForm.UpdateItemForm(name = &quot;나이키 에어 포스&quot;, category = &quot;신발&quot;, price = 4000.00.toBigDecimal()),      OrderItemQueryForm.UpdateItemForm(name = &quot;나이키 후드&quot;, category = &quot;상의&quot;, price = 5000.00.toBigDecimal())    )  )  // when: 업데이트 실행  orderItemRepository.updateItems(form)  // then: 결과 검증  val result = mongoTemplate.findOne(Query(Criteria.where(&quot;_id&quot;).`is`(orderItem.id)), OrderItem::class.java)!!  result.items.forEach &#123; item -&gt;    when (item.name) &#123;      &quot;나이키 에어 포스&quot; -&gt; assertThat(item.price).isEqualByComparingTo(4000.00.toBigDecimal())      &quot;나이키 후드&quot; -&gt; assertThat(item.price).isEqualByComparingTo(5000.00.toBigDecimal())      &quot;나이키 반바지&quot; -&gt; assertThat(item.price).isEqualByComparingTo(300.00.toBigDecimal()) // 변경 없음      else -&gt; throw IllegalStateException(&quot;검증되지 않은 항목&quot;)    &#125;  &#125;&#125;\n\n위 테스트는 총 3개의 Item 중 2개만 업데이트되고, 나머지 항목은 그대로 남는 것을 확인할 수 있습니다.\n마무리#Spring Data MongoDB에서 배열의 특정 요소만 업데이트하기 위해서는 updateOne&#x2F;updateMany와 arrayFilters 옵션을 활용하는 것이 성능 면에서 매우 유리합니다.\n특히, 배열 요소를 복합 조건(예: name과 category)으로 필터링해야 하는 경우, 단순한 filterArray 호출로는 원하는 결과를 얻기 어려우므로 커스텀 UpdateDefinition(예: UpdateWithArrayFilters)을 활용하여 업데이트 문서와 arrayFilters 옵션을 분리해 전달하는 방법을 사용할 수 있습니다.\n본 포스팅에서는 MongoDB 업데이트 쿼리와 이를 Spring Data MongoDB에서 구현하는 방법을 살펴보았으며, 실제 테스트 코드까지 확인해 보았습니다. 대량 데이터 처리나 업데이트가 빈번한 애플리케이션에서는 find 후 save 방식 대신 벌크 업데이트를 적극 활용하여 성능 최적화를 고려해 보시기 바랍니다.\n","dateCreated":"2025-02-25T00:00:00+09:00","dateModified":"2025-02-25T01:18:41+09:00","datePublished":"2025-02-25T00:00:00+09:00","description":"Spring Data MongoDB에서 arrayFilters를 활용해 배열의 특정 요소만 조건에 맞게 벌크 업데이트하여 대량 데이터 처리 성능을 최적화할 수 있습니다.","headline":"Spring Data MongoDB로 배열의 특정 요소 업데이트하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/","keywords":"Mongo"}</script>
+    <meta name="description" content="Spring Data MongoDB에서 arrayFilters를 활용해 배열의 특정 요소만 조건에 맞게 벌크 업데이트하여 대량 데이터 처리 성능을 최적화할 수 있습니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Data MongoDB로 배열의 특정 요소 업데이트하기">
+<meta property="og:url" content="https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="Spring Data MongoDB에서 arrayFilters를 활용해 배열의 특정 요소만 조건에 맞게 벌크 업데이트하여 대량 데이터 처리 성능을 최적화할 수 있습니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/5fc6127a0800ca9bce5de5a6c73931b2025b0791/mongo-study/images/performance-update.png">
+<meta property="article:published_time" content="2025-02-24T15:00:00.000Z">
+<meta property="article:modified_time" content="2025-02-24T16:18:41.520Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Mongo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/5fc6127a0800ca9bce5de5a6c73931b2025b0791/mongo-study/images/performance-update.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Spring Data MongoDB로 배열의 특정 요소 업데이트하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2025-02-25T00:00:00+09:00">
+	
+		    2025/02/25
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>Spring Data MongoDB를 활용해 한 도큐먼트(한 row)의 특정 배열 요소만 선택적으로 업데이트하는 방법을 알아보겠습니다.</p>
+<p>일반적으로 find로 데이터를 조회한 후 save로 업데이트하는 방식은 편리하지만, <strong>대량 데이터를 처리할 때는 updateOne 또는 updateMany를 이용한 벌크 업데이트가 성능 면에서 큰 이점을 제공합니다.</strong><br>이번 포스팅에서는 MongoDB의 arrayFilters 옵션과 Spring Data MongoDB를 사용해 배열의 특정 요소만 업데이트하는 방법을 살펴봅니다.</p>
+<blockquote>
+<p>이전 포스팅 <a href="https://cheese10yun.github.io/spring-data-mongodb-update-performance/">MongoDB Update 성능 측정 및 분석</a> 을 통해 일반 업데이트와 벌크 업데이트의 성능 차이를 확인할 수 있습니다.</p>
+</blockquote>
+<h2><span id="munje-jeongyi">문제 정의</span><a href="#munje-jeongyi" class="header-anchor">#</a></h2><p>예를 들어, 다음과 같은 도큐먼트가 있다고 가정합니다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;67bc734b9aa3007af5a704af&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;items&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 에어 포스&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;신발&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">100.00</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 후드&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;상의&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">200.00</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 반바지&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;하의&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">300.00</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>이 중에서 배열 <code>items</code>에 있는 특정 요소의 <code>price</code>만 업데이트하고 싶을 때,<br>예를 들어 “나이키 에어 포스”와 “나이키 후드”의 가격을 각각 222, 333으로 변경한다고 해보겠습니다.</p>
+<h2><span id="mongodb-update-kweori">MongoDB Update 쿼리</span><a href="#mongodb-update-kweori" class="header-anchor">#</a></h2><p>MongoDB에서는 arrayFilters 옵션을 사용하여 배열의 각 요소에 대해 조건을 지정할 수 있습니다. 아래 쿼리는 items 배열에서 이름이 “나이키 에어 포스”인 요소와 “나이키 후드”인 요소의 price를 업데이트하는 예시입니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">order_item</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">&quot;_id&quot;</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;67bc7db1f407ca76116d9e35&quot;</span>)</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">&quot;$set&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;items.$[elem0].price&quot;</span>: <span class="title class_">NumberDecimal</span>(<span class="number">222</span>),</span><br><span class="line">            <span class="string">&quot;items.$[elem1].price&quot;</span>: <span class="title class_">NumberDecimal</span>(<span class="number">333</span>)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">arrayFilters</span>: [</span><br><span class="line">            &#123;<span class="string">&quot;elem0.name&quot;</span>: <span class="string">&quot;나이키 에어 포스&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;elem1.name&quot;</span>: <span class="string">&quot;나이키 후드&quot;</span>&#125;</span><br><span class="line">          ]</span><br><span class="line">        &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>위 쿼리는 조건에 맞는 배열 요소만 골라 업데이트하기 때문에, 불필요한 도큐먼트 전체를 업데이트하는 것보다 성능이 훨씬 우수합니다.</p>
+<p>여기서 <code>$[elem0]</code>와 <code>$[elem1]</code>는 자리표현자로, 실제 업데이트 시에는 arrayFilters 옵션에 지정된 조건을 만족하는 배열 요소의 실제 인덱스와 매핑됩니다. 예를 들어, <code>&quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;</code> 조건을 통해 MongoDB는 items 배열에서 이름이 “나이키 에어 포스”인 요소를 찾아 그 인덱스에 해당하는 위치에 <code>$[elem0]</code>를 매핑하여 업데이트를 적용합니다. 동일한 방식으로 <code>&quot;elem1.name&quot;: &quot;나이키 후드&quot;</code> 조건도 적용됩니다.</p>
+<h2><span id="spring-data-mongodbeseo-eobdeiteu-jeogyonghagi">Spring Data MongoDB에서 업데이트 적용하기</span><a href="#spring-data-mongodbeseo-eobdeiteu-jeogyonghagi" class="header-anchor">#</a></h2><p>Spring Data MongoDB에서도 위와 같이 arrayFilters 옵션을 사용할 수 있습니다. 일반적으로 아래와 같이 엔티티와 업데이트 쿼리 객체를 정의합니다.</p>
+<h3><span id="domein-keulraeseu">도메인 클래스</span><a href="#domein-keulraeseu" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Document(collection = <span class="string">&quot;order_item&quot;</span>)</span></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">OrderItem</span>(</span><br><span class="line">  <span class="meta">@Field(<span class="string">&quot;items&quot;</span>)</span></span><br><span class="line">  <span class="keyword">val</span> items: List&lt;Item&gt; = emptyList()</span><br><span class="line">) : Auditable()</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">Item</span>(</span><br><span class="line">  <span class="meta">@Field(<span class="string">&quot;name&quot;</span>)</span></span><br><span class="line">  <span class="keyword">val</span> name: String,</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Field(<span class="string">&quot;category&quot;</span>)</span></span><br><span class="line">  <span class="keyword">val</span> category: String,</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Field(<span class="string">&quot;price&quot;</span>)</span></span><br><span class="line">  <span class="keyword">val</span> price: BigDecimal</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3><span id="eobdeiteu-kweorie-sayonghal-gaegce">업데이트 쿼리에 사용할 객체</span><a href="#eobdeiteu-kweorie-sayonghal-gaegce" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> OrderItemQueryForm &#123;</span><br><span class="line">  <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">UpdateItem</span>(</span><br><span class="line">    <span class="keyword">val</span> orderItem: ObjectId,</span><br><span class="line">    <span class="keyword">val</span> items: List&lt;UpdateItemForm&gt;</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">UpdateItemForm</span>(</span><br><span class="line">    <span class="keyword">val</span> name: String,</span><br><span class="line">    <span class="keyword">val</span> category: String,</span><br><span class="line">    <span class="keyword">val</span> price: BigDecimal</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>이전 포스팅 <a href="https://cheese10yun.github.io/spring-data-mongo-update-guide-1/#eobdeiteu-kweorie-sayonghal-gaegce-jeongyi">Spring Data MongoDB에서의 Update 전략과 경험 - 업데이트 쿼리에 사용할 객체 정의</a>에서 업데이트 쿼리에 사용할 객체를 별도로 관리하는 방법에 대해 자세히 다루었습니다.</p>
+</blockquote>
+<h3><span id="dansun-eobdeiteu-kweori-guhyeon-gibon-bangbeob">단순 업데이트 쿼리 구현 (기본 방법)</span><a href="#dansun-eobdeiteu-kweori-guhyeon-gibon-bangbeob" class="header-anchor">#</a></h3><p>아래 코드는 Spring Data MongoDB의 <code>Update</code>와 <code>filterArray</code> 메서드를 활용하여, 배열의 각 요소에 대해 조건을 지정하는 업데이트 쿼리를 작성한 예시입니다.</p>
+<p>이 경우, form.items 리스트의 각 항목마다 고유한 자리표현자(예: elem0, elem1)를 할당하여 해당 요소의 price를 업데이트하고, arrayFilters 조건으로 name만 적용합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderItemCustomRepositoryImpl</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> mongoTemplate: MongoTemplate</span><br><span class="line">) : OrderItemCustomRepository &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateItems</span><span class="params">(form: <span class="type">OrderItemQueryForm</span>.<span class="type">UpdateItem</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> query = Query(Criteria.<span class="keyword">where</span>(<span class="string">&quot;_id&quot;</span>).`<span class="keyword">is</span>`(form.orderItem))</span><br><span class="line">        <span class="keyword">val</span> update = Update()</span><br><span class="line"></span><br><span class="line">        form.items.forEachIndexed &#123; index, item -&gt;</span><br><span class="line">            update</span><br><span class="line">                .<span class="keyword">set</span>(<span class="string">&quot;items.\$[elem<span class="subst">$&#123;index&#125;</span>].price&quot;</span>, item.price)</span><br><span class="line">                .filterArray(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.name&quot;</span>, item.name)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mongoTemplate.updateFirst(query, update, OrderItem::<span class="keyword">class</span>.java)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>이전 포스팅 <a href="https://cheese10yun.github.io/spring-data-mongo-repository/">Spring Data MongoDB Repository 확장</a>에서 Repository를 확장하여 커스텀 메서드를 구현하는 방법에 대해 자세히 다루었습니다.</p>
+</blockquote>
+<p>이 코드는 내부적으로 아래와 같은 MongoDB 업데이트 명령을 생성합니다.</p>
+<ul>
+<li><strong>업데이트 문서 ($set):</strong><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;$set&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;items.$[elem0].price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;$numberDecimal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;222&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;items.$[elem1].price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;$numberDecimal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;333&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>업데이트 옵션 (arrayFilters):</strong><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;arrayFilters&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;elem0.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 에어 포스&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;elem1.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 후드&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2><span id="boghab-jogeonyi-arrayfilters-jeogyong">복합 조건의 arrayFilters 적용</span><a href="#boghab-jogeonyi-arrayfilters-jeogyong" class="header-anchor">#</a></h2><p>실제 상황에서는 배열 요소를 업데이트할 때 name뿐 아니라 category 등 복합 조건으로 필터링해야 하는 경우가 있습니다. 예를 들어, 아래 MongoDB 쿼리는 배열의 조건을 복합 키로 찾아 “나이키 에어 포스”는 신발, “나이키 후드”는 상의인 경우에만 업데이트하도록 합니다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">order_item</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;_id&quot;</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;67bc7db1f407ca76116d9e35&quot;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;$set&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;items.$[elem0].price&quot;</span>: <span class="title class_">NumberDecimal</span>(<span class="number">333</span>),</span><br><span class="line">            <span class="string">&quot;items.$[elem1].price&quot;</span>: <span class="title class_">NumberDecimal</span>(<span class="number">333</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">arrayFilters</span>: [</span><br><span class="line">            &#123;<span class="string">&quot;elem0.name&quot;</span>: <span class="string">&quot;나이키 에어 포스&quot;</span>, <span class="string">&quot;elem0.category&quot;</span>: <span class="string">&quot;신발&quot;</span>&#125;,</span><br><span class="line">            &#123;<span class="string">&quot;elem1.name&quot;</span>: <span class="string">&quot;나이키 후드&quot;</span>, <span class="string">&quot;elem1.category&quot;</span>: <span class="string">&quot;상의&quot;</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>위와 같이 복합 조건으로 업데이트하려면 단순하게 filterArray()를 여러 번 호출하는 방법은 동작하지 않습니다. 예를 들어, 아래와 같이 작성하면</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateItems</span><span class="params">(form: <span class="type">OrderItemQueryForm</span>.<span class="type">UpdateItem</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> query = Query(Criteria.<span class="keyword">where</span>(<span class="string">&quot;_id&quot;</span>).`<span class="keyword">is</span>`(form.orderItem))</span><br><span class="line">    <span class="keyword">val</span> update = Update()</span><br><span class="line"></span><br><span class="line">    form.items.forEachIndexed &#123; index, item -&gt;</span><br><span class="line">        update</span><br><span class="line">            .<span class="keyword">set</span>(<span class="string">&quot;items.\$[elem<span class="subst">$&#123;index&#125;</span>].price&quot;</span>, item.price)</span><br><span class="line">            .filterArray(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.name&quot;</span>, item.name)</span><br><span class="line">            .filterArray(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.category&quot;</span>, item.category)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mongoTemplate.updateFirst(query, update, documentClass)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Spring Data MongoDB에서는 동일한 자리표현자(예: elem0)에 대해 <strong>두 번의 filterArray 호출이 이루어지면</strong>, 내부적으로 각각 별도의 Document가 생성되어 중복된 최상위 키가 되어 버립니다. <strong>결과적으로 원하는 복합 조건의 arrayFilters가 아닌,</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;elem0.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 에어 포스&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;elem0.category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;신발&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;elem1.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 후드&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;elem1.category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;상의&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>와 같이 분리되어 전달되며, <strong>원하는 쿼리가 아니며 정상적으로 인덱스를 찾아 업데이트하지 못하게 됩니다.</strong></p>
+<h3><span id="haegyeol-bangbeob-keoseuteom-updatedefinition-hwalyong">해결 방법 – 커스텀 UpdateDefinition 활용</span><a href="#haegyeol-bangbeob-keoseuteom-updatedefinition-hwalyong" class="header-anchor">#</a></h3><p>복합 조건을 하나의 Document로 결합하여 업데이트 옵션으로 분리해서 전달하기 위해, 커스텀 UpdateDefinition을 사용할 수 있습니다. 예를 들어, 아래와 같이 UpdateWithArrayFilters 클래스를 정의합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.bson.Document</span><br><span class="line"><span class="keyword">import</span> org.springframework.<span class="keyword">data</span>.mongodb.core.query.Update</span><br><span class="line"><span class="keyword">import</span> org.springframework.<span class="keyword">data</span>.mongodb.core.query.UpdateDefinition</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UpdateWithArrayFilters</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> update: Update,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> arrayFilters: List&lt;Document&gt;</span><br><span class="line">) : UpdateDefinition &#123;</span><br><span class="line">    <span class="comment">// 업데이트 문서는 내부 update의 updateObject만 반환 (즉, $set 부분만 포함)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getUpdateObject</span><span class="params">()</span></span>: Document = update.updateObject</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getArrayFilters()에서는 List&lt;Document&gt;로 보관된 조건들을</span></span><br><span class="line">    <span class="comment">// UpdateDefinition.ArrayFilter 타입으로 변환하여 반환합니다.</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getArrayFilters</span><span class="params">()</span></span>: List&lt;UpdateDefinition.ArrayFilter&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> arrayFilters</span><br><span class="line">            .map &#123; doc -&gt; UpdateDefinition.ArrayFilter &#123; doc &#125; &#125;</span><br><span class="line">            .toList()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 나머지 메서드는 내부 update에 위임</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">isIsolated</span><span class="params">()</span></span>: <span class="built_in">Boolean</span> = update.isIsolated</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">modifies</span><span class="params">(key: <span class="type">String</span>)</span></span>: <span class="built_in">Boolean</span> = update.modifies(key)</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">inc</span><span class="params">(key: <span class="type">String</span>)</span></span> = update.inc(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이 클래스를 사용한 업데이트 쿼리 구현은 아래와 같습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateItems</span><span class="params">(form: <span class="type">OrderItemQueryForm</span>.<span class="type">UpdateItem</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> query = Query(Criteria.<span class="keyword">where</span>(<span class="string">&quot;_id&quot;</span>).`<span class="keyword">is</span>`(form.orderItem))</span><br><span class="line">    <span class="keyword">val</span> update = Update()</span><br><span class="line">    <span class="keyword">val</span> arrayFilters = mutableListOf&lt;Document&gt;()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 각 항목마다 자리표현자(elem0, elem1, …)를 생성하여 업데이트할 필드와 조건 Document를 구성</span></span><br><span class="line">    form.items.forEachIndexed &#123; index, item -&gt;</span><br><span class="line">        <span class="comment">// 예: &quot;items.$[elem0].price&quot;: item.price</span></span><br><span class="line">        update.<span class="keyword">set</span>(<span class="string">&quot;items.\$[elem<span class="variable">$index</span>].price&quot;</span>, item.price)</span><br><span class="line">        <span class="comment">// 복합 조건 Document: &#123; &quot;elem0.name&quot;: &quot;나이키 에어 포스&quot;, &quot;elem0.category&quot;: &quot;신발&quot; &#125;</span></span><br><span class="line">        arrayFilters.add(</span><br><span class="line">            Document(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.name&quot;</span>, item.name)</span><br><span class="line">                .append(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.category&quot;</span>, item.category)</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 커스텀 UpdateDefinition 생성 – 업데이트 문서와 arrayFilters 옵션을 분리하여 전달합니다.</span></span><br><span class="line">    <span class="keyword">val</span> updateApplyArrayFilters = UpdateWithArrayFilters(update, arrayFilters.toList())</span><br><span class="line">    mongoTemplate.updateFirst(query, updateApplyArrayFilters, documentClass)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이 방식으로 업데이트를 수행하면 최종적으로 MongoDB에 전송되는 명령은 다음과 같습니다.</p>
+<ul>
+<li><strong>업데이트 문서 ($set 부분):</strong><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;$set&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;items.$[elem0].price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;$numberDecimal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;333&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;items.$[elem1].price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;$numberDecimal&quot;</span><span class="punctuation">:</span> <span class="string">&quot;333&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>업데이트 옵션 (arrayFilters):</strong><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;arrayFilters&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;elem0.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 에어 포스&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;elem0.category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;신발&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;elem1.name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;나이키 후드&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;elem1.category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;상의&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>즉, getUpdateObject()에서는 $set 부분만 반환하고, getArrayFilters()에서 반환한 조건들이 별도의 업데이트 옵션으로 전달되어 MongoDB가 올바르게 인식하게 됩니다.</p>
+<h3><span id="mongocustomrepositorysupporteul-tonghan-bulkops-gineung-jegong">MongoCustomRepositorySupport을 통한 bulkOps 기능 제공</span><a href="#mongocustomrepositorysupporteul-tonghan-bulkops-gineung-jegong" class="header-anchor">#</a></h3><p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/5fc6127a0800ca9bce5de5a6c73931b2025b0791/mongo-study/images/performance-update.png"></p>
+<p><strong>bulkOps를 사용하면 대량 데이터 처리 시 업데이트 성능이 크게 향상됩니다.</strong> 위 그림에서도 볼 수 있듯이, 단일 업데이트에 비해 벌크 업데이트를 적용할 경우 처리 속도가 현저히 개선됩니다.</p>
+<p>아래 코드는 BulkOperations를 활용하여 여러 도큐먼트에 대해 벌크 업데이트를 수행하는 편의 기능을 제공합니다.<br>MongoCustomRepositorySupport 추상 클래스는 <code>bulkUpdateDefinition</code> 메서드를 통해, Query와 UpdateDefinition 생성자를 담은 람다 리스트를 받아 BulkOperations 객체에 각 업데이트를 추가한 후 일괄 실행합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">MongoCustomRepositorySupport</span>&lt;<span class="type">T</span>&gt;(</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">val</span> documentClass: Class&lt;T&gt;,</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">val</span> mongoTemplate: MongoTemplate</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">fun</span> <span class="title">bulkUpdateDefinition</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        operations: <span class="type">List</span>&lt;<span class="type">Pair</span>&lt;() -&gt; <span class="type">Query</span>, ()</span></span> -&gt; UpdateDefinition&gt;&gt;, <span class="comment">// Query와 Update 생성자를 위한 람다 리스트</span></span><br><span class="line">        bulkMode: BulkOperations.BulkMode = BulkOperations.BulkMode.UNORDERED,</span><br><span class="line">    ): BulkWriteResult &#123;</span><br><span class="line">        <span class="comment">// BulkOperations 객체를 생성합니다.</span></span><br><span class="line">        <span class="keyword">val</span> bulkOps = mongoTemplate.bulkOps(bulkMode, documentClass)</span><br><span class="line">        <span class="comment">// 제공된 리스트를 반복하면서 bulk 연산에 각 update를 추가합니다.</span></span><br><span class="line">        operations.forEach &#123; (queryCreator, updateCreator) -&gt;</span><br><span class="line">            bulkOps.updateOne(queryCreator.invoke(), updateCreator.invoke())</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 모든 업데이트를 실행합니다.</span></span><br><span class="line">        <span class="keyword">return</span> bulkOps.execute()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OrderItemCustomRepositoryImpl에서는 bulkUpdateDefinition 메서드를 사용하여, 여러 업데이트 폼을 반복 처리합니다.<br>각 폼마다 _id 조건의 Query와, Update 및 복합 조건의 arrayFilters를 적용한 커스텀 UpdateDefinition(UpdateWithArrayFilters)을 생성하여 BulkOperations에 추가합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">OrderItemCustomRepositoryImpl</span>(mongoTemplate: MongoTemplate) : OrderItemCustomRepository, MongoCustomRepositorySupport&lt;OrderItem&gt;(</span><br><span class="line">  OrderItem::<span class="keyword">class</span>.java,</span><br><span class="line">  mongoTemplate</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateItems</span><span class="params">(forms: <span class="type">List</span>&lt;<span class="type">OrderItemQueryForm</span>.<span class="type">UpdateItem</span>&gt;)</span></span> &#123;</span><br><span class="line">        bulkUpdateDefinition(</span><br><span class="line">            forms.map &#123; form -&gt;</span><br><span class="line">                Pair(</span><br><span class="line">                    first = &#123; Query(Criteria.<span class="keyword">where</span>(<span class="string">&quot;_id&quot;</span>).`<span class="keyword">is</span>`(form.orderItem)) &#125;,</span><br><span class="line">                    second = &#123;</span><br><span class="line">                        <span class="keyword">val</span> update = Update()</span><br><span class="line">                        <span class="keyword">val</span> arrayFilters = mutableListOf&lt;Document&gt;()</span><br><span class="line">                        form.items.forEachIndexed &#123; index, item -&gt;</span><br><span class="line">                            update.<span class="keyword">set</span>(<span class="string">&quot;items.\$[elem<span class="variable">$index</span>].price&quot;</span>, item.price)</span><br><span class="line">                            arrayFilters.add(</span><br><span class="line">                                Document(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.name&quot;</span>, item.name)</span><br><span class="line">                                    .append(<span class="string">&quot;elem<span class="subst">$&#123;index&#125;</span>.category&quot;</span>, item.category)</span><br><span class="line">                            )</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">val</span> customUpdate = UpdateWithArrayFilters(update, arrayFilters.toList())</span><br><span class="line">                        customUpdate</span><br><span class="line">                    &#125;</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이 구조를 사용하면, 대량 업데이트가 필요한 경우 여러 도큐먼트에 대해 Query와 UpdateDefinition을 한 번에 처리할 수 있어, 벌크 업데이트의 성능 이점을 효과적으로 활용할 수 있습니다.</p>
+<blockquote>
+<p>이전 포스팅 <a href="https://cheese10yun.github.io/spring-data-mongodb-update-performance/#bulkops-pyeonyi-gineung-jegong">MongoDB Update 성능 측정 및 분석 - bulkOps 편의 기능 제공</a>에서 MongoCustomRepositorySupport를 활용한 bulkOps 기능을 구현하는 방법에 대해 자세히 다루었습니다.</p>
+</blockquote>
+<h2><span id="teseuteu-kodeu-yeje">테스트 코드 예제</span><a href="#teseuteu-kodeu-yeje" class="header-anchor">#</a></h2><p>다음은 위 업데이트 쿼리가 올바르게 동작하는지 확인하기 위한 테스트 코드 예시입니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `updateItems`<span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="comment">// given: 초기 데이터 삽입</span></span><br><span class="line">  <span class="keyword">val</span> orderItem = mongoTemplate.insert(</span><br><span class="line">    OrderItem(</span><br><span class="line">      items = listOf(</span><br><span class="line">        Item(name = <span class="string">&quot;나이키 에어 포스&quot;</span>, category = <span class="string">&quot;신발&quot;</span>, price = <span class="number">100.00</span>.toBigDecimal()),</span><br><span class="line">        Item(name = <span class="string">&quot;나이키 후드&quot;</span>, category = <span class="string">&quot;상의&quot;</span>, price = <span class="number">200.00</span>.toBigDecimal()),</span><br><span class="line">        Item(name = <span class="string">&quot;나이키 반바지&quot;</span>, category = <span class="string">&quot;하의&quot;</span>, price = <span class="number">300.00</span>.toBigDecimal())</span><br><span class="line">      )</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 업데이트 폼 생성 (두 항목 업데이트)</span></span><br><span class="line">  <span class="keyword">val</span> form = OrderItemQueryForm.UpdateItem(</span><br><span class="line">    orderItem = orderItem.id!!,</span><br><span class="line">    items = listOf(</span><br><span class="line">      OrderItemQueryForm.UpdateItemForm(name = <span class="string">&quot;나이키 에어 포스&quot;</span>, category = <span class="string">&quot;신발&quot;</span>, price = <span class="number">4000.00</span>.toBigDecimal()),</span><br><span class="line">      OrderItemQueryForm.UpdateItemForm(name = <span class="string">&quot;나이키 후드&quot;</span>, category = <span class="string">&quot;상의&quot;</span>, price = <span class="number">5000.00</span>.toBigDecimal())</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  <span class="comment">// when: 업데이트 실행</span></span><br><span class="line">  orderItemRepository.updateItems(form)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// then: 결과 검증</span></span><br><span class="line">  <span class="keyword">val</span> result = mongoTemplate.findOne(Query(Criteria.<span class="keyword">where</span>(<span class="string">&quot;_id&quot;</span>).`<span class="keyword">is</span>`(orderItem.id)), OrderItem::<span class="keyword">class</span>.java)!!</span><br><span class="line">  result.items.forEach &#123; item -&gt;</span><br><span class="line">    <span class="keyword">when</span> (item.name) &#123;</span><br><span class="line">      <span class="string">&quot;나이키 에어 포스&quot;</span> -&gt; assertThat(item.price).isEqualByComparingTo(<span class="number">4000.00</span>.toBigDecimal())</span><br><span class="line">      <span class="string">&quot;나이키 후드&quot;</span> -&gt; assertThat(item.price).isEqualByComparingTo(<span class="number">5000.00</span>.toBigDecimal())</span><br><span class="line">      <span class="string">&quot;나이키 반바지&quot;</span> -&gt; assertThat(item.price).isEqualByComparingTo(<span class="number">300.00</span>.toBigDecimal()) <span class="comment">// 변경 없음</span></span><br><span class="line">      <span class="keyword">else</span> -&gt; <span class="keyword">throw</span> IllegalStateException(<span class="string">&quot;검증되지 않은 항목&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위 테스트는 총 3개의 Item 중 2개만 업데이트되고, 나머지 항목은 그대로 남는 것을 확인할 수 있습니다.</p>
+<h2><span id="mamuri">마무리</span><a href="#mamuri" class="header-anchor">#</a></h2><p>Spring Data MongoDB에서 배열의 특정 요소만 업데이트하기 위해서는 updateOne&#x2F;updateMany와 arrayFilters 옵션을 활용하는 것이 성능 면에서 매우 유리합니다.</p>
+<p>특히, 배열 요소를 복합 조건(예: name과 category)으로 필터링해야 하는 경우, 단순한 filterArray 호출로는 원하는 결과를 얻기 어려우므로 커스텀 UpdateDefinition(예: UpdateWithArrayFilters)을 활용하여 업데이트 문서와 arrayFilters 옵션을 분리해 전달하는 방법을 사용할 수 있습니다.</p>
+<p>본 포스팅에서는 MongoDB 업데이트 쿼리와 이를 Spring Data MongoDB에서 구현하는 방법을 살펴보았으며, 실제 테스트 코드까지 확인해 보았습니다. <strong>대량 데이터 처리나 업데이트가 빈번한 애플리케이션에서는 find 후 save 방식 대신 벌크 업데이트를 적극 활용하여 성능 최적화를 고려해 보시기 바랍니다.</strong></p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Mongo/" rel="tag">Mongo</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-data-mongo-repository-2/"
+                    data-tooltip="Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                    aria-label="다음: Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+<!-- Comment -->
+<!--  utteranc comment -->
+
+<script src="https://utteranc.es/client.js"
+        repo="cheese10yun/blog-comment"
+        issue-term="title"
+        label="Comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/spring-data-mongo-repository-2/"
+                    data-tooltip="Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                    aria-label="다음: Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/spring-data-mongodb-update-arrayFilters/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>
