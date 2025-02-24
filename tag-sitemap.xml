@@ -4,7 +4,14 @@
 
     <url>
         <loc>https://cheese10yun.github.io/tags/Mongo/</loc>
-        <lastmod>2025-02-24T16:24:15.365Z</lastmod>
+        <lastmod>2025-02-24T16:27:27.820Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/tags/Test/</loc>
+        <lastmod>2025-02-24T16:27:27.820Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -33,13 +40,6 @@
     <url>
         <loc>https://cheese10yun.github.io/tags/Spring/</loc>
         <lastmod>2025-02-08T07:54:28.084Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://cheese10yun.github.io/tags/Test/</loc>
-        <lastmod>2025-02-07T16:54:08.475Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
