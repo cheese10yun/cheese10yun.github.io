@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 소개#Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다. \nCI &amp; Test Coverage#\nGitHub Marketplace Public Repository를 이용하면 대부분 무료로 이용 가능합니다. 본 포스팅에서는  CI는 Travis CI, Test Coverage는 Coveralls를 이용해서 진행하겠습니다.\n전체적인 플로우를 설명하는 것이 목적 이리서 특정 툴에 대한 직접적인 사용법을 다루지는 않겠습니다. 언어의 특성 및 개인에 기호에 맞는 제품을 사용하시면 됩니다.\n전체 플로우#\nPull Request 요청 -&gt; Code Review 진행\nCode Review 완료 -&gt; 특정 Branch에 반영\n특정 Branch 수정시 자동 CI Build 작업 진행 -&gt; 테스트 코드 실행\n테스트 커버지리 표시\n\nPull Request &amp; Code Review#\n별다른 설정을 하지 않았다면 Pull Request를 요청할 경우 Travis에서 자동으로 해당 요청한 코드 기반으로 Build 작업이 진행됩니다. Build가 실패했을 경우는 Pull Request 요청자는 코드를 수정해서 최소한 Build가 된 코드 기반으로 Code Review를 진행하게 해야 됩니다(Build도 안 되는 코드를 리뷰할 이유는 없을 거 같습니다.)\n요청받은 Pull Request에 대해서 Code Review 작업을 진행하게 됩니다. Code Review가 완료되면 Merge pull request를 통해서 해당 작업(issue)을 반영합니다.\n테스트 커버지리 표시#\n위에서 Merge pull request를 통해서 해당 작업(issue)을 반영했다면 Travis가 Build 할 때 작성된 Test Code 기반으로 Coverage 정보를 위처럼 자동으로 코멘드를 추가해줍니다.\n누군가가 테스트 코드를 작성하지 않았다면 Change from base 항목에서 - 표시가 됩니다. 이렇게 해당 작업마다 커버리지를 표시하는 것이 전체 커버리지를 높이고 그 값을 유지하는 좋은 방법이라고 생각합니다.\nWiki#GitHub에서는 기본적인 WIKI 기능을 제공해줍니다. \nWiki 등록#\nGitHub 작성#GitHub에서 위키를 작성할 수 있습니다.\nLocal 작성#위키를 로컬환경에서 작성해서 Push 할 수 있습니다. 이렇게 사용하시는 것을 추천 드립니다.\n","dateCreated":"2018-07-14T00:00:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-07-14T00:00:00+09:00","description":"Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.","headline":"Github로 프로젝트 관리하기 Part2","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/github-proejct-part2/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/github-proejct-part2/","keywords":"Github"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"프로젝트 소개#\nGithub를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다. 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다.\nCI &amp; Test Coverage#\n\nGitHub Marketplace Public Repository를 이용하면 대부분 무료로 이용 가능합니다. 본 포스팅에서는  CI는 Travis CI, Test Coverage는 Coveralls를 이용해서 진행하겠습니다.\n전체적인 플로우를 설명하는 것이 목적 이리서 특정 툴에 대한 직접적인 사용법을 다루지는 않겠습니다. 언어의 특성 및 개인에 기호에 맞는 제품을 사용하시면 됩니다.\n전체 플로우#\n\nPull Request 요청 -&gt; Code Review 진행\nCode Review 완료 -&gt; 특정 Branch에 반영\n특정 Branch 수정시 자동 CI Build 작업 진행 -&gt; 테스트 코드 실행\n테스트 커버지리 표시\n\nPull Request &amp; Code Review#\n\n별다른 설정을 하지 않았다면 Pull Request를 요청할 경우 Travis에서 자동으로 해당 요청한 코드 기반으로 Build 작업이 진행됩니다. Build가 실패했을 경우는 Pull Request 요청자는 코드를 수정해서 최소한 Build가 된 코드 기반으로 Code Review를 진행하게 해야 됩니다(Build도 안 되는 코드를 리뷰할 이유는 없을 거 같습니다.)\n요청받은 Pull Request에 대해서 Code Review 작업을 진행하게 됩니다. Code Review가 완료되면 Merge pull request를 통해서 해당 작업(issue)을 반영합니다.\n테스트 커버지리 표시#\n\n위에서 Merge pull request를 통해서 해당 작업(issue)을 반영했다면 Travis가 Build 할 때 작성된 Test Code 기반으로 Coverage 정보를 위처럼 자동으로 코멘드를 추가해줍니다.\n누군가가 테스트 코드를 작성하지 않았다면 Change from base 항목에서 - 표시가 됩니다. 이렇게 해당 작업마다 커버리지를 표시하는 것이 전체 커버리지를 높이고 그 값을 유지하는 좋은 방법이라고 생각합니다.\nWiki#\nGitHub에서는 기본적인 WIKI 기능을 제공해줍니다.\nWiki 등록#\n\nGitHub 작성#\n\nGitHub에서 위키를 작성할 수 있습니다.\nLocal 작성#\n\n위키를 로컬환경에서 작성해서 Push 할 수 있습니다. 이렇게 사용하시는 것을 추천 드립니다.\n","dateCreated":"2018-07-14T00:00:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-07-14T00:00:00+09:00","description":"Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.","headline":"Github로 프로젝트 관리하기 Part2","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/github-proejct-part2/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/github-proejct-part2/","keywords":"Github"}</script>
     <meta name="description" content="Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Github로 프로젝트 관리하기 Part2">
@@ -261,26 +261,37 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h1><span id="peurojegteu-sogae">프로젝트 소개</span><a href="#peurojegteu-sogae" class="header-anchor">#</a></h1><p>Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. <strong>issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다.</strong> 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다. </p>
-<h1><span id="ci-amp-test-coverage">CI &amp; Test Coverage</span><a href="#ci-amp-test-coverage" class="header-anchor">#</a></h1><p><img src="https://i.imgur.com/G5jo0Ty.png"></p>
+            <h1><span id="peurojegteu-sogae">프로젝트 소개</span><a href="#peurojegteu-sogae" class="header-anchor">#</a></h1>
+<p>Github를 이용해서 Project Management 하는 방법 및 전체적인 프로세스에 대해서 정리했습니다. <strong>issue 관리, 일정 관리, 코드리뷰, 버그 리포트 등 다양한 일들을 Github 하나에서 다 관리할 수 있고 어느 하나 부족하다고 생각하지 않습니다.</strong> 이미 Remote Repository로 Github를 사용 중 이리 사면 적극 추천해 드립니다.</p>
+<h1><span id="ci-amp-test-coverage">CI &amp; Test Coverage</span><a href="#ci-amp-test-coverage" class="header-anchor">#</a></h1>
+<p><img src="https://i.imgur.com/G5jo0Ty.png" alt></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/marketplace/category/continuous-integration">GitHub Marketplace</a> Public Repository를 이용하면 대부분 무료로 이용 가능합니다. <strong>본 포스팅에서는  CI는 Travis CI, Test Coverage는 Coveralls를 이용해서 진행하겠습니다.</strong></p>
 <p>전체적인 플로우를 설명하는 것이 목적 이리서 특정 툴에 대한 직접적인 사용법을 다루지는 않겠습니다. 언어의 특성 및 개인에 기호에 맞는 제품을 사용하시면 됩니다.</p>
-<h2><span id="jeonce-peulrou">전체 플로우</span><a href="#jeonce-peulrou" class="header-anchor">#</a></h2><ol>
+<h2><span id="jeonce-peulrou">전체 플로우</span><a href="#jeonce-peulrou" class="header-anchor">#</a></h2>
+<ol>
 <li>Pull Request 요청 -&gt; Code Review 진행</li>
 <li>Code Review 완료 -&gt; 특정 Branch에 반영</li>
 <li>특정 Branch 수정시 자동 CI Build 작업 진행 -&gt; 테스트 코드 실행</li>
 <li>테스트 커버지리 표시</li>
 </ol>
-<h2><span id="pull-request-amp-code-review">Pull Request &amp; Code Review</span><a href="#pull-request-amp-code-review" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/q6HmT7o.png"></p>
+<h2><span id="pull-request-amp-code-review">Pull Request &amp; Code Review</span><a href="#pull-request-amp-code-review" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/q6HmT7o.png" alt></p>
 <p>별다른 설정을 하지 않았다면 Pull Request를 요청할 경우 Travis에서 자동으로 해당 요청한 코드 기반으로 Build 작업이 진행됩니다. Build가 실패했을 경우는 Pull Request 요청자는 코드를 수정해서 최소한 Build가 된 코드 기반으로 Code Review를 진행하게 해야 됩니다(Build도 안 되는 코드를 리뷰할 이유는 없을 거 같습니다.)</p>
 <p>요청받은 Pull Request에 대해서 Code Review 작업을 진행하게 됩니다. Code Review가 완료되면 Merge pull request를 통해서 해당 작업(issue)을 반영합니다.</p>
-<h2><span id="teseuteu-keobeojiri-pyosi">테스트 커버지리 표시</span><a href="#teseuteu-keobeojiri-pyosi" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/U1ROYeE.png"></p>
+<h2><span id="teseuteu-keobeojiri-pyosi">테스트 커버지리 표시</span><a href="#teseuteu-keobeojiri-pyosi" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/U1ROYeE.png" alt></p>
 <p>위에서 Merge pull request를 통해서 해당 작업(issue)을 반영했다면 Travis가 Build 할 때 작성된 Test Code 기반으로 Coverage 정보를 위처럼 자동으로 코멘드를 추가해줍니다.</p>
 <p>누군가가 테스트 코드를 작성하지 않았다면 <code>Change from base</code> 항목에서 - 표시가 됩니다. <strong>이렇게 해당 작업마다 커버리지를 표시하는 것이 전체 커버리지를 높이고 그 값을 유지하는 좋은 방법이라고 생각합니다.</strong></p>
-<h1><span id="wiki">Wiki</span><a href="#wiki" class="header-anchor">#</a></h1><p>GitHub에서는 기본적인 WIKI 기능을 제공해줍니다. </p>
-<h2><span id="wiki-deungrog">Wiki 등록</span><a href="#wiki-deungrog" class="header-anchor">#</a></h2><p><img src="https://github.com/cheese10yun/github/blob/master/images/wiki.gif?raw=true"></p>
-<h2><span id="github-jagseong">GitHub 작성</span><a href="#github-jagseong" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/t3LuQsm.png"><br>GitHub에서 위키를 작성할 수 있습니다.</p>
-<h2><span id="local-jagseong">Local 작성</span><a href="#local-jagseong" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/Ff6Heeb.png"><br><strong>위키를 로컬환경에서 작성해서 Push 할 수 있습니다. 이렇게 사용하시는 것을 추천 드립니다.</strong></p>
+<h1><span id="wiki">Wiki</span><a href="#wiki" class="header-anchor">#</a></h1>
+<p>GitHub에서는 기본적인 WIKI 기능을 제공해줍니다.</p>
+<h2><span id="wiki-deungrog">Wiki 등록</span><a href="#wiki-deungrog" class="header-anchor">#</a></h2>
+<p><img src="https://github.com/cheese10yun/github/blob/master/images/wiki.gif?raw=true" alt></p>
+<h2><span id="github-jagseong">GitHub 작성</span><a href="#github-jagseong" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/t3LuQsm.png" alt><br>
+GitHub에서 위키를 작성할 수 있습니다.</p>
+<h2><span id="local-jagseong">Local 작성</span><a href="#local-jagseong" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/Ff6Heeb.png" alt><br>
+<strong>위키를 로컬환경에서 작성해서 Push 할 수 있습니다. 이렇게 사용하시는 것을 추천 드립니다.</strong></p>
 
             
 
@@ -383,14 +394,9 @@
 
         
         
-            
-        
-    </div>
-</article>
 
-
-<!-- Comment -->
-<!--  utteranc comment -->
+                
+                    <!--  utteranc comment -->
 
 <script src="https://utteranc.es/client.js"
         repo="cheese10yun/blog-comment"
@@ -401,6 +407,12 @@
         async>
 </script>
 
+                
+
+            
+        
+    </div>
+</article>
 
 
                 <footer id="footer" class="main-content-wrap">

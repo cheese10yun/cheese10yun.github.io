@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"해당 코드는 Github를 확인해주세요.\n단일 책임의 원칙: Single Responsibility Principle#단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.\n\n클래스는 단 한 개의 책임을 가져야 한다.\n클래스의 변경하는 이유는 단 한 개여야 한다.\n누가 해당 메소드의 변경을 유발하는 사용자(Actor) 인가?\n\n사실 단임 책임의 원칙이라는 것은 정말 이해하기 어렵습니다. 우선 명확한 책임을 도출하기까지 시간이 걸리기 때문에 처음부터 단일 책임을 지켜서 설계하는 것은 매우 힘들다고 생각합니다. 또 요구사항이 변경 시에 책임 또한 변경되게 됩니다. 그러니 지속해서 한 클래스가 한 책임만을 갖게 하기는 매우 어렵다고 생각합니다.\n다른 SOLID 원칙 정리 한글 보다 제 개인적인 생각이 많이 들어간 설명이라서 최대한 비판적인 시각으로 봐주시면 감사하겠습니다.\n요구사항#\n카드 결제 시스템이 있다.\n현재 국내 결제를 지원하는 카드는 신한, 우리 카드가 있다.\n국내 결제 카드사들은 지속해서 추가된다.\n앞으로 해외 결제 기능이 추가된다.\n신한 카드는 해외 결제가 가능하다.\n우리 카드는 해외 결제가 불가능하다.\n지속해서 카드사가 추가된다.\n\n\n\n기존 국내 카드 결제의 SRP#\n    \n\n\n12345678910111213141516171819public interface CardPaymentService &#123;    void pay(CardPaymentDto.PaymentRequest req);&#125;public class ShinhanCardPaymentService implements CardPaymentService &#123;    @Override    public void pay(CardPaymentDto.PaymentRequest req) &#123;        // .. 신한 카드 국내 결제 로직..        shinhanCardApi.pay(paymentRequest);    &#125;&#125;public class WooriCardPaymentService implements CardPaymentService &#123;    @Override    public void pay(CardPaymentDto.PaymentRequest req) &#123;        // .. 우리 카드 국내 결제 로직..        wooriCardApi.pay(paymentRequest);    &#125;&#125;\n\n위의 UML, 인터페이스가 이해가 어렵다면 이전 포스팅 OCP, DIP를 먼저 보시는 것을 권장합니다.\n\n클래스의 책임 : 해당 카드사의 결제 API를 호출하기 위한 적절한 값을 생성해서 호출하는 것\n변경의 근원 : 카드 결제를 하는 Actor\nActor : 카드결제를 행하는 행위자\n\n지금 부터는 제 지극적인 주관적인 생각입니다.\n클래스의 변경은 단 한 개여야 한다. 라는 말은 그 클래스의 책임을 수행시키는 Actor의 변경 시에만 클래스의 변경이 가해져야 한다고 저는 해석 했습니다.\n만약 Actor가 결제 완료 시간 등 결제 정보를 받기를 원하게 된다면 pay 메서드의 리턴 타입이 변경이 발생합니다. 즉 카드 결제의 변경은 Actor의 변경에서부터 발생하게 됩니다. \n여기서 Actor를 단순히 사용자로 바라보면 안 되고 Actor는 그 행위(국내 결제)를 하는 행위자로 봐야 한다고 생각합니다. 그리고 단일 책임이라는 것은 단일 Actor를 뜻한다고 생각합니다. 이 부분은 아래에서 추가로 설명하겠습니다.\n추가될 해외 카드 결제의 SRP(미준수)#\n12345678910111213141516171819public interface CardPaymentService &#123;    void pay(CardPaymentDto.PaymentRequest req);    void payOverseas(CardPaymentDto.PaymentRequest req);&#125;public class ShinhanCardPaymentService implements CardPaymentService &#123;    @Override    public void payOverseas(CardPaymentDto.PaymentRequest req) &#123;        // .. 신한 카드 해외 결제 로직..        shinhanCardApi.pay(paymentRequest);    &#125;&#125;public class WooriCardPaymentService implements CardPaymentService &#123;    @Override    public void payOverseas(CardPaymentDto.PaymentRequest req) &#123;        // 우리 카드 결제는 해외 결제 기능이 없음...    &#125;&#125;\n신한 카드는 해외 결제를 할 수 있지만 우리 카드는 해외 결제 기능을 제공하고 있지 않습니다. 각 구현 클래스들은 CardPaymentService 인터페이스를 구현하고 있으므로 payOverseas 기능이 추가되면 우리 카드 결제는 반드시 해당 메서드를 구현 해야 합니다. \n해외 결제만 되고 국내 결제가 안 되는 카드 파트너가 추가되면 어떻게 될까요? 그렇게 되면 위와 반대로 payOverseas 구현 메소드는 구현하고 pay는 구현하지 못하게 됩니다.\n다시 SRP로 넘어가서 \n책임이란 변화에 대한 것#국내 결제에서 해외 결제라는 책임이 하나 더 생긴 것입니다. 그렇게 두 개의 책임이 생겼고 그 결과 두 개의 Actor가 생긴 것이라고 생각합니다. (위에서 언급한 단일 책임 &#x3D; 단일 Actor) 이로써 클래스의 책임을 나누는 작업이 필요해집니다.\n하지만 여기서 정말 중요한 것은 만약 우리카드가 해외 결제를 제공하고, 추가 파트너들도 해외 결제를 제공한다면 ?\n그렇다면 국내, 해외 결제를 할 수 있는 Actor는 한 개가 됩니다. Actor가 하나라는 것은 책임이 하나라는 뜻도 됩니다. 이런 경우 단일 책임의 원칙을 지켰다고 저는 개인적으로 생각합니다.\n하지만 우리는 파트너사들이 어떤 기능을 제공할지, 또 어떤 파트너사들이 추가될지, 어떻게 변경될지 이런 부분들을 예측하기가 어려우므로 SRP를 지속적으로 준수하는 것은 정말 어렵다고 생각합니다.\n추가될 해외 카드 결제의 SRP(준수)#\n카드 파트너사의 해외 결제 여부로 더이상 PaymentService에서 국내 결제와, 해외 결제를 처리를 못하게 되었습니다. 그렇다면 책임을 분리시키고 그것을 인터페이스로 바라보게 하여 앞으로 해외 결제 카드추가시 확장에 열려있게 할 수 있습니다.\n결론#SOLID에서 가장 이해하기 어려운 개념이 SRP라고 생각합니다. 관련자료도 읽어봐도 명확한 이해가 어려워서 저 나름의 결론을 정리한 글입니다. 때문에 다른 원칙에 비해서 제 주관적인 해석들이 많아 잘못된 부분도 있을 수 있습니다.\n","dateCreated":"2018-11-19T21:26:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-11-19T21:26:00+09:00","description":"단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.","headline":"Spring 예제로 보는 SOLID SRP","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-solid-srp/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-solid-srp/","keywords":"Spring, OOP"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"해당 코드는 Github를 확인해주세요.\n단일 책임의 원칙: Single Responsibility Principle#\n단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.\n\n클래스는 단 한 개의 책임을 가져야 한다.\n클래스의 변경하는 이유는 단 한 개여야 한다.\n누가 해당 메소드의 변경을 유발하는 사용자(Actor) 인가?\n\n사실 단임 책임의 원칙이라는 것은 정말 이해하기 어렵습니다. 우선 명확한 책임을 도출하기까지 시간이 걸리기 때문에 처음부터 단일 책임을 지켜서 설계하는 것은 매우 힘들다고 생각합니다. 또 요구사항이 변경 시에 책임 또한 변경되게 됩니다. 그러니 지속해서 한 클래스가 한 책임만을 갖게 하기는 매우 어렵다고 생각합니다.\n다른 SOLID 원칙 정리 한글 보다 제 개인적인 생각이 많이 들어간 설명이라서 최대한 비판적인 시각으로 봐주시면 감사하겠습니다.\n요구사항#\n\n카드 결제 시스템이 있다.\n현재 국내 결제를 지원하는 카드는 신한, 우리 카드가 있다.\n국내 결제 카드사들은 지속해서 추가된다.\n앞으로 해외 결제 기능이 추가된다.\n\n신한 카드는 해외 결제가 가능하다.\n우리 카드는 해외 결제가 불가능하다.\n지속해서 카드사가 추가된다.\n\n\n\n기존 국내 카드 결제의 SRP#\n\n    \n\n12345678910111213141516171819public interface CardPaymentService &#123;    void pay(CardPaymentDto.PaymentRequest req);&#125;public class ShinhanCardPaymentService implements CardPaymentService &#123;    @Override    public void pay(CardPaymentDto.PaymentRequest req) &#123;        // .. 신한 카드 국내 결제 로직..        shinhanCardApi.pay(paymentRequest);    &#125;&#125;public class WooriCardPaymentService implements CardPaymentService &#123;    @Override    public void pay(CardPaymentDto.PaymentRequest req) &#123;        // .. 우리 카드 국내 결제 로직..        wooriCardApi.pay(paymentRequest);    &#125;&#125;\n위의 UML, 인터페이스가 이해가 어렵다면 이전 포스팅 OCP, DIP를 먼저 보시는 것을 권장합니다.\n\n클래스의 책임 : 해당 카드사의 결제 API를 호출하기 위한 적절한 값을 생성해서 호출하는 것\n변경의 근원 : 카드 결제를 하는 Actor\nActor : 카드결제를 행하는 행위자\n\n지금 부터는 제 지극적인 주관적인 생각입니다.\n클래스의 변경은 단 한 개여야 한다. 라는 말은 그 클래스의 책임을 수행시키는 Actor의 변경 시에만 클래스의 변경이 가해져야 한다고 저는 해석 했습니다.\n만약 Actor가 결제 완료 시간 등 결제 정보를 받기를 원하게 된다면 pay 메서드의 리턴 타입이 변경이 발생합니다. 즉 카드 결제의 변경은 Actor의 변경에서부터 발생하게 됩니다.\n여기서 Actor를 단순히 사용자로 바라보면 안 되고 Actor는 그 행위(국내 결제)를 하는 행위자로 봐야 한다고 생각합니다. 그리고 단일 책임이라는 것은 단일 Actor를 뜻한다고 생각합니다. 이 부분은 아래에서 추가로 설명하겠습니다.\n추가될 해외 카드 결제의 SRP(미준수)#\n\n12345678910111213141516171819public interface CardPaymentService &#123;    void pay(CardPaymentDto.PaymentRequest req);    void payOverseas(CardPaymentDto.PaymentRequest req);&#125;public class ShinhanCardPaymentService implements CardPaymentService &#123;    @Override    public void payOverseas(CardPaymentDto.PaymentRequest req) &#123;        // .. 신한 카드 해외 결제 로직..        shinhanCardApi.pay(paymentRequest);    &#125;&#125;public class WooriCardPaymentService implements CardPaymentService &#123;    @Override    public void payOverseas(CardPaymentDto.PaymentRequest req) &#123;        // 우리 카드 결제는 해외 결제 기능이 없음...    &#125;&#125;\n신한 카드는 해외 결제를 할 수 있지만 우리 카드는 해외 결제 기능을 제공하고 있지 않습니다. 각 구현 클래스들은 CardPaymentService 인터페이스를 구현하고 있으므로 payOverseas 기능이 추가되면 우리 카드 결제는 반드시 해당 메서드를 구현 해야 합니다.\n해외 결제만 되고 국내 결제가 안 되는 카드 파트너가 추가되면 어떻게 될까요? 그렇게 되면 위와 반대로 payOverseas 구현 메소드는 구현하고 pay는 구현하지 못하게 됩니다.\n다시 SRP로 넘어가서\n책임이란 변화에 대한 것#\n국내 결제에서 해외 결제라는 책임이 하나 더 생긴 것입니다. 그렇게 두 개의 책임이 생겼고 그 결과 두 개의 Actor가 생긴 것이라고 생각합니다. (위에서 언급한 단일 책임 = 단일 Actor) 이로써 클래스의 책임을 나누는 작업이 필요해집니다.\n하지만 여기서 정말 중요한 것은 만약 우리카드가 해외 결제를 제공하고, 추가 파트너들도 해외 결제를 제공한다면 ?\n그렇다면 국내, 해외 결제를 할 수 있는 Actor는 한 개가 됩니다. Actor가 하나라는 것은 책임이 하나라는 뜻도 됩니다. 이런 경우 단일 책임의 원칙을 지켰다고 저는 개인적으로 생각합니다.\n하지만 우리는 파트너사들이 어떤 기능을 제공할지, 또 어떤 파트너사들이 추가될지, 어떻게 변경될지 이런 부분들을 예측하기가 어려우므로 SRP를 지속적으로 준수하는 것은 정말 어렵다고 생각합니다.\n추가될 해외 카드 결제의 SRP(준수)#\n\n카드 파트너사의 해외 결제 여부로 더이상 PaymentService에서 국내 결제와, 해외 결제를 처리를 못하게 되었습니다. 그렇다면 책임을 분리시키고 그것을 인터페이스로 바라보게 하여 앞으로 해외 결제 카드추가시 확장에 열려있게 할 수 있습니다.\n결론#\nSOLID에서 가장 이해하기 어려운 개념이 SRP라고 생각합니다. 관련자료도 읽어봐도 명확한 이해가 어려워서 저 나름의 결론을 정리한 글입니다. 때문에 다른 원칙에 비해서 제 주관적인 해석들이 많아 잘못된 부분도 있을 수 있습니다.\n","dateCreated":"2018-11-19T21:26:00+09:00","dateModified":"2025-01-31T20:24:39+09:00","datePublished":"2018-11-19T21:26:00+09:00","description":"단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.","headline":"Spring 예제로 보는 SOLID SRP","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-solid-srp/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-solid-srp/","keywords":"Spring, OOP"}</script>
     <meta name="description" content="단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring 예제로 보는 SOLID SRP">
@@ -260,7 +260,8 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <p><strong>해당 코드는 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-SOLID">Github</a>를 확인해주세요.</strong></p>
-<h1><span id="danil-caegimyi-weoncig-single-responsibility-principle">단일 책임의 원칙: Single Responsibility Principle</span><a href="#danil-caegimyi-weoncig-single-responsibility-principle" class="header-anchor">#</a></h1><p>단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.</p>
+<h1><span id="danil-caegimyi-weoncig-single-responsibility-principle">단일 책임의 원칙: Single Responsibility Principle</span><a href="#danil-caegimyi-weoncig-single-responsibility-principle" class="header-anchor">#</a></h1>
+<p>단일 책임의 원칙: Single Responsibility Principle 핵심 키워드는 다음과 같습니다. 해당 키워드를 기반으로 세부적으로 설명하겠습니다.</p>
 <ul>
 <li>클래스는 단 한 개의 책임을 가져야 한다.</li>
 <li>클래스의 변경하는 이유는 단 한 개여야 한다.</li>
@@ -268,23 +269,24 @@
 </ul>
 <p>사실 단임 책임의 원칙이라는 것은 정말 이해하기 어렵습니다. 우선 명확한 책임을 도출하기까지 시간이 걸리기 때문에 처음부터 단일 책임을 지켜서 설계하는 것은 매우 힘들다고 생각합니다. 또 요구사항이 변경 시에 책임 또한 변경되게 됩니다. 그러니 지속해서 한 클래스가 한 책임만을 갖게 하기는 매우 어렵다고 생각합니다.</p>
 <p><strong>다른 SOLID 원칙 정리 한글 보다 제 개인적인 생각이 많이 들어간 설명이라서 최대한 비판적인 시각으로 봐주시면 감사하겠습니다.</strong></p>
-<h2><span id="yogusahang">요구사항</span><a href="#yogusahang" class="header-anchor">#</a></h2><ul>
+<h2><span id="yogusahang">요구사항</span><a href="#yogusahang" class="header-anchor">#</a></h2>
+<ul>
 <li>카드 결제 시스템이 있다.</li>
 <li>현재 국내 결제를 지원하는 카드는 신한, 우리 카드가 있다.</li>
 <li>국내 결제 카드사들은 지속해서 추가된다.</li>
-<li>앞으로 해외 결제 기능이 추가된다.<ul>
+<li>앞으로 해외 결제 기능이 추가된다.
+<ul>
 <li><strong>신한 카드는 해외 결제가 가능하다.</strong></li>
 <li><strong>우리 카드는 해외 결제가 불가능하다.</strong></li>
 <li>지속해서 카드사가 추가된다.</li>
 </ul>
 </li>
 </ul>
-<h2><span id="gijon-gugnae-kadeu-gyeoljeyi-srp">기존 국내 카드 결제의 SRP</span><a href="#gijon-gugnae-kadeu-gyeoljeyi-srp" class="header-anchor">#</a></h2><p align="center">
+<h2><span id="gijon-gugnae-kadeu-gyeoljeyi-srp">기존 국내 카드 결제의 SRP</span><a href="#gijon-gugnae-kadeu-gyeoljeyi-srp" class="header-anchor">#</a></h2>
+<p align="center">
     <img src="https://i.imgur.com/TdGYl8n.png">
 </p>
-
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShinhanCardPaymentService</span> <span class="keyword">implements</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> &#123;</span><br><span class="line">        <span class="comment">// .. 신한 카드 국내 결제 로직..</span></span><br><span class="line">        shinhanCardApi.pay(paymentRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WooriCardPaymentService</span> <span class="keyword">implements</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> &#123;</span><br><span class="line">        <span class="comment">// .. 우리 카드 국내 결제 로직..</span></span><br><span class="line">        wooriCardApi.pay(paymentRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p><strong>위의 UML, 인터페이스가 이해가 어렵다면 이전 포스팅 <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-SOLID/blob/master/docs/OCP.md">OCP</a>, <a target="_blank" rel="noopener" href="https://github.com/cheese10yun/spring-SOLID/blob/master/docs/DIP.md">DIP</a>를 먼저 보시는 것을 권장합니다.</strong></p>
 <ul>
 <li>클래스의 책임 : <strong>해당 카드사의 결제 API를 호출하기 위한 적절한 값을 생성해서 호출하는 것</strong></li>
@@ -293,20 +295,24 @@
 </ul>
 <p>지금 부터는 제 지극적인 주관적인 생각입니다.</p>
 <p>클래스의 변경은 단 한 개여야 한다. <strong>라는 말은 그 클래스의 책임을 수행시키는 Actor의 변경 시에만 클래스의 변경이 가해져야 한다고 저는 해석 했습니다.</strong></p>
-<p>만약 Actor가 결제 완료 시간 등 결제 정보를 받기를 원하게 된다면 <code>pay</code> 메서드의 리턴 타입이 변경이 발생합니다. 즉 카드 결제의 변경은 Actor의 변경에서부터 발생하게 됩니다. </p>
+<p>만약 Actor가 결제 완료 시간 등 결제 정보를 받기를 원하게 된다면 <code>pay</code> 메서드의 리턴 타입이 변경이 발생합니다. 즉 카드 결제의 변경은 Actor의 변경에서부터 발생하게 됩니다.</p>
 <p><strong>여기서 Actor를 단순히 사용자로 바라보면 안 되고 Actor는 그 행위(국내 결제)를 하는 행위자로 봐야 한다고 생각합니다. 그리고 단일 책임이라는 것은 단일 Actor를 뜻한다고 생각합니다.</strong> 이 부분은 아래에서 추가로 설명하겠습니다.</p>
-<h2><span id="cugadoel-haeoe-kadeu-gyeoljeyi-srp-mijunsu">추가될 해외 카드 결제의 SRP(미준수)</span><a href="#cugadoel-haeoe-kadeu-gyeoljeyi-srp-mijunsu" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/DyLl9Fh.png"></p>
+<h2><span id="cugadoel-haeoe-kadeu-gyeoljeyi-srp-mijunsu">추가될 해외 카드 결제의 SRP(미준수)</span><a href="#cugadoel-haeoe-kadeu-gyeoljeyi-srp-mijunsu" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/DyLl9Fh.png" alt></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(CardPaymentDto.PaymentRequest req)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShinhanCardPaymentService</span> <span class="keyword">implements</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> &#123;</span><br><span class="line">        <span class="comment">// .. 신한 카드 해외 결제 로직..</span></span><br><span class="line">        shinhanCardApi.pay(paymentRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WooriCardPaymentService</span> <span class="keyword">implements</span> <span class="title class_">CardPaymentService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">payOverseas</span><span class="params">(CardPaymentDto.PaymentRequest req)</span> &#123;</span><br><span class="line">        <span class="comment">// 우리 카드 결제는 해외 결제 기능이 없음...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>신한 카드는 해외 결제를 할 수 있지만 우리 카드는 해외 결제 기능을 제공하고 있지 않습니다.</strong> 각 구현 클래스들은 CardPaymentService 인터페이스를 구현하고 있으므로 payOverseas 기능이 추가되면 우리 카드 결제는 반드시 해당 메서드를 구현 해야 합니다. </p>
+<p><strong>신한 카드는 해외 결제를 할 수 있지만 우리 카드는 해외 결제 기능을 제공하고 있지 않습니다.</strong> 각 구현 클래스들은 CardPaymentService 인터페이스를 구현하고 있으므로 payOverseas 기능이 추가되면 우리 카드 결제는 반드시 해당 메서드를 구현 해야 합니다.</p>
 <p><strong>해외 결제만 되고 국내 결제가 안 되는 카드 파트너가 추가되면 어떻게 될까요?</strong> 그렇게 되면 위와 반대로 payOverseas 구현 메소드는 구현하고 pay는 구현하지 못하게 됩니다.</p>
-<p>다시 SRP로 넘어가서 </p>
-<h3><span id="caegimiran-byeonhwae-daehan-geos">책임이란 변화에 대한 것</span><a href="#caegimiran-byeonhwae-daehan-geos" class="header-anchor">#</a></h3><p>국내 결제에서 해외 결제라는 책임이 하나 더 생긴 것입니다. 그렇게 두 개의 책임이 생겼고 그 결과 두 개의 Actor가 생긴 것이라고 생각합니다. (위에서 언급한 단일 책임 &#x3D; 단일 Actor) 이로써 클래스의 책임을 나누는 작업이 필요해집니다.</p>
+<p>다시 SRP로 넘어가서</p>
+<h3><span id="caegimiran-byeonhwae-daehan-geos">책임이란 변화에 대한 것</span><a href="#caegimiran-byeonhwae-daehan-geos" class="header-anchor">#</a></h3>
+<p>국내 결제에서 해외 결제라는 책임이 하나 더 생긴 것입니다. 그렇게 두 개의 책임이 생겼고 그 결과 두 개의 Actor가 생긴 것이라고 생각합니다. (위에서 언급한 단일 책임 = 단일 Actor) 이로써 클래스의 책임을 나누는 작업이 필요해집니다.</p>
 <p><strong>하지만 여기서 정말 중요한 것은 만약 우리카드가 해외 결제를 제공하고, 추가 파트너들도 해외 결제를 제공한다면 ?</strong></p>
 <p>그렇다면 국내, 해외 결제를 할 수 있는 Actor는 한 개가 됩니다. Actor가 하나라는 것은 책임이 하나라는 뜻도 됩니다. 이런 경우 단일 책임의 원칙을 지켰다고 저는 개인적으로 생각합니다.</p>
 <p>하지만 우리는 파트너사들이 어떤 기능을 제공할지, 또 어떤 파트너사들이 추가될지, 어떻게 변경될지 이런 부분들을 예측하기가 어려우므로 SRP를 지속적으로 준수하는 것은 정말 어렵다고 생각합니다.</p>
-<h2><span id="cugadoel-haeoe-kadeu-gyeoljeyi-srp-junsu">추가될 해외 카드 결제의 SRP(준수)</span><a href="#cugadoel-haeoe-kadeu-gyeoljeyi-srp-junsu" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/1vc5En5.png"></p>
+<h2><span id="cugadoel-haeoe-kadeu-gyeoljeyi-srp-junsu">추가될 해외 카드 결제의 SRP(준수)</span><a href="#cugadoel-haeoe-kadeu-gyeoljeyi-srp-junsu" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/1vc5En5.png" alt></p>
 <p>카드 파트너사의 해외 결제 여부로 더이상 PaymentService에서 국내 결제와, 해외 결제를 처리를 못하게 되었습니다. 그렇다면 책임을 분리시키고 그것을 인터페이스로 바라보게 하여 앞으로 해외 결제 카드추가시 확장에 열려있게 할 수 있습니다.</p>
-<h2><span id="gyeolron">결론</span><a href="#gyeolron" class="header-anchor">#</a></h2><p>SOLID에서 가장 이해하기 어려운 개념이 SRP라고 생각합니다. 관련자료도 읽어봐도 명확한 이해가 어려워서 저 나름의 결론을 정리한 글입니다. 때문에 다른 원칙에 비해서 제 주관적인 해석들이 많아 잘못된 부분도 있을 수 있습니다.</p>
+<h2><span id="gyeolron">결론</span><a href="#gyeolron" class="header-anchor">#</a></h2>
+<p>SOLID에서 가장 이해하기 어려운 개념이 SRP라고 생각합니다. 관련자료도 읽어봐도 명확한 이해가 어려워서 저 나름의 결론을 정리한 글입니다. 때문에 다른 원칙에 비해서 제 주관적인 해석들이 많아 잘못된 부분도 있을 수 있습니다.</p>
 
             
 
@@ -409,14 +415,9 @@
 
         
         
-            
-        
-    </div>
-</article>
 
-
-<!-- Comment -->
-<!--  utteranc comment -->
+                
+                    <!--  utteranc comment -->
 
 <script src="https://utteranc.es/client.js"
         repo="cheese10yun/blog-comment"
@@ -427,6 +428,12 @@
         async>
 </script>
 
+                
+
+            
+        
+    </div>
+</article>
 
 
                 <footer id="footer" class="main-content-wrap">

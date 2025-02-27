@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n     \n\n\n위 그림처럼 유자가 추가한 properties 속성들도 자동 완성을 지원합니다.\n\n     \n\n\n또 Properties 속성이 코드에 바인딩 되는지 확인 할 수 있어 아주 유용합니다.\nProperties#12345sample:  email: &quot;yun@test.com&quot;  name : &quot;yun&quot;  age: 27  auth: true\n\n12345678910@Configuration@ConfigurationProperties(prefix = &quot;sample&quot;)public class SampleProperties &#123;    private String email;    private String name;    private int age;    private boolean auth;    // getter, setter &#125;\nProperties 속성값과 바인딩 될 객체입니다.\nPlugin 추가#\n     \n\n\n대부분 이미 설치가 되어있을 겁니다.\n의존성 추가#maven#12345&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;    &lt;optional&gt;true&lt;/optional&gt;&lt;/dependency&gt;\n\ngradle#123dependencies &#123;    optional &quot;org.springframework.boot:spring-boot-configuration-processor&quot;&#125;\n\nIntellij 설정#\n     \n\n\nSettings &gt; Build, Execution &amp; Deployment &gt; Compiler &gt; Annotation Processors 에서 Enable annotation processing를 체크\n","dateCreated":"2018-08-05T00:00:00+09:00","dateModified":"2025-01-31T22:14:22+09:00","datePublished":"2018-08-05T00:00:00+09:00","description":"IntelliJ IDEA에서 Assistant 플러그인을 사용하여 개발 생산성을 향상시키는 방법을 설명합니다.","headline":"인텔리제이 Properties 자동완성","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-Assistant/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-Assistant/","keywords":"Tools, IntelliJ"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n     \n\n위 그림처럼 유자가 추가한 properties 속성들도 자동 완성을 지원합니다.\n\n     \n\n또 Properties 속성이 코드에 바인딩 되는지 확인 할 수 있어 아주 유용합니다.\nProperties#\n12345sample:  email: &quot;yun@test.com&quot;  name : &quot;yun&quot;  age: 27  auth: true\n12345678910@Configuration@ConfigurationProperties(prefix = &quot;sample&quot;)public class SampleProperties &#123;    private String email;    private String name;    private int age;    private boolean auth;    // getter, setter &#125;\nProperties 속성값과 바인딩 될 객체입니다.\nPlugin 추가#\n\n     \n\n대부분 이미 설치가 되어있을 겁니다.\n의존성 추가#\nmaven#\n12345&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;    &lt;optional&gt;true&lt;/optional&gt;&lt;/dependency&gt;\ngradle#\n123dependencies &#123;    optional &quot;org.springframework.boot:spring-boot-configuration-processor&quot;&#125;\nIntellij 설정#\n\n     \n\nSettings &gt; Build, Execution &amp; Deployment &gt; Compiler &gt; Annotation Processors 에서 Enable annotation processing를 체크\n","dateCreated":"2018-08-05T00:00:00+09:00","dateModified":"2025-01-31T22:14:22+09:00","datePublished":"2018-08-05T00:00:00+09:00","description":"IntelliJ IDEA에서 Assistant 플러그인을 사용하여 개발 생산성을 향상시키는 방법을 설명합니다.","headline":"인텔리제이 Properties 자동완성","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/intellij-Assistant/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/intellij-Assistant/","keywords":"Tools, IntelliJ"}</script>
     <meta name="description" content="IntelliJ IDEA에서 Assistant 플러그인을 사용하여 개발 생산성을 향상시키는 방법을 설명합니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="인텔리제이 Properties 자동완성">
@@ -263,30 +263,29 @@
             <p align="center">
     <img src="https://i.imgur.com/X6giEx5.gif"> 
 </p>
-
 <p>위 그림처럼 유자가 추가한 properties 속성들도 자동 완성을 지원합니다.</p>
 <p align="center">
     <img src="https://i.imgur.com/AmkyrnX.gif"> 
 </p>
-
 <p>또 Properties 속성이 코드에 바인딩 되는지 확인 할 수 있어 아주 유용합니다.</p>
-<h2><span id="properties">Properties</span><a href="#properties" class="header-anchor">#</a></h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sample:</span></span><br><span class="line">  <span class="attr">email:</span> <span class="string">&quot;yun@test.com&quot;</span></span><br><span class="line">  <span class="attr">name :</span> <span class="string">&quot;yun&quot;</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">27</span></span><br><span class="line">  <span class="attr">auth:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
+<h2><span id="properties">Properties</span><a href="#properties" class="header-anchor">#</a></h2>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sample:</span></span><br><span class="line">  <span class="attr">email:</span> <span class="string">&quot;yun@test.com&quot;</span></span><br><span class="line">  <span class="attr">name :</span> <span class="string">&quot;yun&quot;</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">27</span></span><br><span class="line">  <span class="attr">auth:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;sample&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SampleProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> auth;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getter, setter </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Properties 속성값과 바인딩 될 객체입니다.</p>
-<h2><span id="plugin-cuga">Plugin 추가</span><a href="#plugin-cuga" class="header-anchor">#</a></h2><p align="center">
+<h2><span id="plugin-cuga">Plugin 추가</span><a href="#plugin-cuga" class="header-anchor">#</a></h2>
+<p align="center">
     <img src="https://i.imgur.com/rVX7XJz.png"> 
 </p>
-
 <p><strong>대부분 이미 설치가 되어있을 겁니다.</strong></p>
-<h2><span id="yijonseong-cuga">의존성 추가</span><a href="#yijonseong-cuga" class="header-anchor">#</a></h2><h3><span id="maven">maven</span><a href="#maven" class="header-anchor">#</a></h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3><span id="gradle">gradle</span><a href="#gradle" class="header-anchor">#</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    optional &quot;org.springframework.boot:spring-boot-configuration-processor&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2><span id="intellij-seoljeong">Intellij 설정</span><a href="#intellij-seoljeong" class="header-anchor">#</a></h2><p align="center">
+<h2><span id="yijonseong-cuga">의존성 추가</span><a href="#yijonseong-cuga" class="header-anchor">#</a></h2>
+<h3><span id="maven">maven</span><a href="#maven" class="header-anchor">#</a></h3>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3><span id="gradle">gradle</span><a href="#gradle" class="header-anchor">#</a></h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    optional &quot;org.springframework.boot:spring-boot-configuration-processor&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="intellij-seoljeong">Intellij 설정</span><a href="#intellij-seoljeong" class="header-anchor">#</a></h2>
+<p align="center">
     <img src="https://i.imgur.com/Gojvv1c.png"> 
 </p>
-
 <p><code>Settings &gt; Build, Execution &amp; Deployment &gt; Compiler &gt; Annotation Processors</code> 에서 <code>Enable annotation processing</code>를 체크</p>
 
             
@@ -390,14 +389,9 @@
 
         
         
-            
-        
-    </div>
-</article>
 
-
-<!-- Comment -->
-<!--  utteranc comment -->
+                
+                    <!--  utteranc comment -->
 
 <script src="https://utteranc.es/client.js"
         repo="cheese10yun/blog-comment"
@@ -408,6 +402,12 @@
         async>
 </script>
 
+                
+
+            
+        
+    </div>
+</article>
 
 
                 <footer id="footer" class="main-content-wrap">

@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Boot HTTPS 적용하기#스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.\n키스토어 생성#123456789101112131415161718keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000키 저장소 비밀번호 입력:새 비밀번호 다시 입력:이름과 성을 입력하십시오.  [Unknown]:  test조직 단위 이름을 입력하십시오.  [Unknown]:  test조직 이름을 입력하십시오.  [Unknown]:  test구/군/시 이름을 입력하십시오?  [Unknown]:  test시/도 이름을 입력하십시오.  [Unknown]:  test이 조직의 두 자리 국가 코드를 입력하십시오.  [Unknown]:  01CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?  [아니오]:  y\n\nproperties 설정#YML#123456server:  ssl:    key-store: keystore.p12    key-store-password: cheese    keyStoreType: PKCS12    keyAlias: tomcat\n\n\nProperties#1234server.ssl.key-store: keystore.p12server.ssl.key-store-password: cheeseserver.ssl.keyStoreType: PKCS12server.ssl.keyAlias: tomcat\n\nhttps 요청#\n\n\n스프링 부트 참고\n\n","dateCreated":"2018-09-10T00:00:00+09:00","dateModified":"2025-01-31T20:33:58+09:00","datePublished":"2018-09-10T00:00:00+09:00","description":"Spring Boot 애플리케이션에서 HTTPS를 설정하여 보안 통신을 구현하는 방법을 설명합니다.","headline":"Spring Boot HTTPS 적용 하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-https/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-https/","keywords":"Spring, Network"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"Spring Boot HTTPS 적용하기#\n스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.\n키스토어 생성#\n123456789101112131415161718keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000키 저장소 비밀번호 입력:새 비밀번호 다시 입력:이름과 성을 입력하십시오.  [Unknown]:  test조직 단위 이름을 입력하십시오.  [Unknown]:  test조직 이름을 입력하십시오.  [Unknown]:  test구/군/시 이름을 입력하십시오?  [Unknown]:  test시/도 이름을 입력하십시오.  [Unknown]:  test이 조직의 두 자리 국가 코드를 입력하십시오.  [Unknown]:  01CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?  [아니오]:  y\nproperties 설정#\nYML#\n123456server:  ssl:    key-store: keystore.p12    key-store-password: cheese    keyStoreType: PKCS12    keyAlias: tomcat\nProperties#\n1234server.ssl.key-store: keystore.p12server.ssl.key-store-password: cheeseserver.ssl.keyStoreType: PKCS12server.ssl.keyAlias: tomcat\nhttps 요청#\n\n\n\n스프링 부트 참고\n\n","dateCreated":"2018-09-10T00:00:00+09:00","dateModified":"2025-01-31T20:33:58+09:00","datePublished":"2018-09-10T00:00:00+09:00","description":"Spring Boot 애플리케이션에서 HTTPS를 설정하여 보안 통신을 구현하는 방법을 설명합니다.","headline":"Spring Boot HTTPS 적용 하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/spring-https/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/spring-https/","keywords":"Spring, Network"}</script>
     <meta name="description" content="Spring Boot 애플리케이션에서 HTTPS를 설정하여 보안 통신을 구현하는 방법을 설명합니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Spring Boot HTTPS 적용 하기">
@@ -258,15 +258,17 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <h2><span id="spring-boot-https-jeogyonghagi">Spring Boot HTTPS 적용하기</span><a href="#spring-boot-https-jeogyonghagi" class="header-anchor">#</a></h2><p>스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.</p>
-<h2><span id="kiseutoeo-saengseong">키스토어 생성</span><a href="#kiseutoeo-saengseong" class="header-anchor">#</a></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000</span><br><span class="line"></span><br><span class="line">키 저장소 비밀번호 입력:</span><br><span class="line">새 비밀번호 다시 입력:</span><br><span class="line">이름과 성을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 단위 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">구/군/시 이름을 입력하십시오?</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">시/도 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">이 조직의 두 자리 국가 코드를 입력하십시오.</span><br><span class="line">  [Unknown]:  01</span><br><span class="line">CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?</span><br><span class="line">  [아니오]:  y</span><br></pre></td></tr></table></figure>
-
-<h2><span id="properties-seoljeong">properties 설정</span><a href="#properties-seoljeong" class="header-anchor">#</a></h2><h3><span id="yml">YML</span><a href="#yml" class="header-anchor">#</a></h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">keystore.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="string">cheese</span></span><br><span class="line">    <span class="attr">keyStoreType:</span> <span class="string">PKCS12</span></span><br><span class="line">    <span class="attr">keyAlias:</span> <span class="string">tomcat</span></span><br></pre></td></tr></table></figure>
-
-
-<h3><span id="properties">Properties</span><a href="#properties" class="header-anchor">#</a></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server.ssl.key-store: keystore.p12</span><br><span class="line">server.ssl.key-store-password: cheese</span><br><span class="line">server.ssl.keyStoreType: PKCS12</span><br><span class="line">server.ssl.keyAlias: tomcat</span><br></pre></td></tr></table></figure>
-
-<h2><span id="https-yoceong">https 요청</span><a href="#https-yoceong" class="header-anchor">#</a></h2><p><img src="https://github.com/cheese10yun/blog-sample/blob/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.38.png?raw=true" alt="스크린샷 2018-09-10 오전 2.01.38"></p>
+            <h2><span id="spring-boot-https-jeogyonghagi">Spring Boot HTTPS 적용하기</span><a href="#spring-boot-https-jeogyonghagi" class="header-anchor">#</a></h2>
+<p>스프링 부트에서는 정말 간단하게 Https를 적용할 수 있습니다.</p>
+<h2><span id="kiseutoeo-saengseong">키스토어 생성</span><a href="#kiseutoeo-saengseong" class="header-anchor">#</a></h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 4000</span><br><span class="line"></span><br><span class="line">키 저장소 비밀번호 입력:</span><br><span class="line">새 비밀번호 다시 입력:</span><br><span class="line">이름과 성을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 단위 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">조직 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">구/군/시 이름을 입력하십시오?</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">시/도 이름을 입력하십시오.</span><br><span class="line">  [Unknown]:  test</span><br><span class="line">이 조직의 두 자리 국가 코드를 입력하십시오.</span><br><span class="line">  [Unknown]:  01</span><br><span class="line">CN=test, OU=test, O=test, L=test, ST=test, C=01이(가) 맞습니까?</span><br><span class="line">  [아니오]:  y</span><br></pre></td></tr></table></figure>
+<h2><span id="properties-seoljeong">properties 설정</span><a href="#properties-seoljeong" class="header-anchor">#</a></h2>
+<h3><span id="yml">YML</span><a href="#yml" class="header-anchor">#</a></h3>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">keystore.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="string">cheese</span></span><br><span class="line">    <span class="attr">keyStoreType:</span> <span class="string">PKCS12</span></span><br><span class="line">    <span class="attr">keyAlias:</span> <span class="string">tomcat</span></span><br></pre></td></tr></table></figure>
+<h3><span id="properties">Properties</span><a href="#properties" class="header-anchor">#</a></h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server.ssl.key-store: keystore.p12</span><br><span class="line">server.ssl.key-store-password: cheese</span><br><span class="line">server.ssl.keyStoreType: PKCS12</span><br><span class="line">server.ssl.keyAlias: tomcat</span><br></pre></td></tr></table></figure>
+<h2><span id="https-yoceong">https 요청</span><a href="#https-yoceong" class="header-anchor">#</a></h2>
+<p><img src="https://github.com/cheese10yun/blog-sample/blob/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.38.png?raw=true" alt="스크린샷 2018-09-10 오전 2.01.38"></p>
 <p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/spring-https/assets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202018-09-10%20%EC%98%A4%EC%A0%84%202.01.42.png" alt="스크린샷 2018-09-10 오전 2.01.42"></p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8">스프링 부트</a> 참고</li>
@@ -373,14 +375,9 @@
 
         
         
-            
-        
-    </div>
-</article>
 
-
-<!-- Comment -->
-<!--  utteranc comment -->
+                
+                    <!--  utteranc comment -->
 
 <script src="https://utteranc.es/client.js"
         repo="cheese10yun/blog-comment"
@@ -391,6 +388,12 @@
         async>
 </script>
 
+                
+
+            
+        
+    </div>
+</article>
 
 
                 <footer id="footer" class="main-content-wrap">

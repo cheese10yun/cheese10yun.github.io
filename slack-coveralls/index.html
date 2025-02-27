@@ -18,7 +18,7 @@
             <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
         
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.\nCoveralls 소스코드의 커러지를 측정 해주는 도구입니다. Coveralls에 대한 자세한 설명은 Coveralls 를 참조해주세요.\nSlack Web Hook 설정#Incoming WebHooks 설정을 완료 하신경우 Coveralls 설정 으로 바로 넘어가시면 됩니다. Slack Web Hook 이미 한번 설정을 완료해서 스크린샷 화면이 조금 다를 수 있습니다.Slack Apps 페이지에서 Incoming WebHooks 를 설치합니다.\nSlack 체널중 Web Hook를 받을 체널을 선택합니다.\nWebhook URL 값을 확인할 수 있습니다. 이 Webhook URL 값으로 Coveralls 리포팅을 슬랙으로 받아 볼 수 있습니다.\nCoveralls 설정#\n\nCoveralls 연동되있는 Repository 왼쪽 상단의 setting 페이지로 이동합니다.\n\n\n\nWEBHOOK URL:  위에서 발급한 WEBHOOK URL 값을 입력합니다.\nCHANNEL : 위에서 생성한 체널를 입력합니다. 필수는 아닙니다.\n테스트 버튼을 클릭하여 슬랙으로 위 이미지처럼 메세지가 잘 오는지 확인합니다.\nSAVE NOTIFICATION 버튼을 누릅니다.\n\n\n설정을 완료하면 Travis CI 에서 배포 작업이 진행이 완료되면 Slack에서 Coveralls 에대한 리포팅 메세지가 자동으로 오게 됩니다.\n","dateCreated":"2018-03-17T00:00:00+09:00","dateModified":"2025-01-31T20:33:58+09:00","datePublished":"2018-03-17T00:00:00+09:00","description":"본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.","headline":"Slack + Coveralls 연동","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/slack-coveralls/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/slack-coveralls/","keywords":"Test"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"\n본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.\n\nCoveralls 소스코드의 커러지를 측정 해주는 도구입니다. Coveralls에 대한 자세한 설명은 Coveralls 를 참조해주세요.\nSlack Web Hook 설정#\nIncoming WebHooks 설정을 완료 하신경우 Coveralls 설정 으로 바로 넘어가시면 됩니다. Slack Web Hook 이미 한번 설정을 완료해서 스크린샷 화면이 조금 다를 수 있습니다.\n\nSlack Apps 페이지에서 Incoming WebHooks 를 설치합니다.\n\nSlack 체널중 Web Hook를 받을 체널을 선택합니다.\n\nWebhook URL 값을 확인할 수 있습니다. 이 Webhook URL 값으로 Coveralls 리포팅을 슬랙으로 받아 볼 수 있습니다.\nCoveralls 설정#\n\n\nCoveralls 연동되있는 Repository 왼쪽 상단의 setting 페이지로 이동합니다.\n\n\n\nWEBHOOK URL:  위에서 발급한 WEBHOOK URL 값을 입력합니다.\nCHANNEL : 위에서 생성한 체널를 입력합니다. 필수는 아닙니다.\n테스트 버튼을 클릭하여 슬랙으로 위 이미지처럼 메세지가 잘 오는지 확인합니다.\nSAVE NOTIFICATION 버튼을 누릅니다.\n\n\n설정을 완료하면 Travis CI 에서 배포 작업이 진행이 완료되면 Slack에서 Coveralls 에대한 리포팅 메세지가 자동으로 오게 됩니다.\n","dateCreated":"2018-03-17T00:00:00+09:00","dateModified":"2025-01-31T20:33:58+09:00","datePublished":"2018-03-17T00:00:00+09:00","description":"본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.","headline":"Slack + Coveralls 연동","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/slack-coveralls/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/slack-coveralls/","keywords":"Test"}</script>
     <meta name="description" content="본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Slack + Coveralls 연동">
@@ -264,12 +264,19 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <p><a target="_blank" rel="noopener" href="https://coveralls.io/github/dev-cheese/cheese"><img src="https://coveralls.io/repos/github/dev-cheese/cheese/badge.svg" alt="Coverage Status"></a></p>
-<p><strong>본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.</strong><br><img src="https://i.imgur.com/sHagJxo.png"></p>
+<p><strong>본 포스팅은 이미 Travis Ci +  Coveralls 연동이 이루어져있다는 가정하고 Coveralls Slack 연동을 중점으로 다루겠습니다.</strong><br>
+<img src="https://i.imgur.com/sHagJxo.png" alt></p>
 <p>Coveralls 소스코드의 커러지를 측정 해주는 도구입니다. Coveralls에 대한 자세한 설명은 <a target="_blank" rel="noopener" href="https://blog.outsider.ne.kr/954">Coveralls</a> 를 참조해주세요.</p>
-<h2><span id="slack-web-hook-seoljeong">Slack Web Hook 설정</span><a href="#slack-web-hook-seoljeong" class="header-anchor">#</a></h2><p><strong>Incoming WebHooks 설정을 완료 하신경우 Coveralls 설정 으로 바로 넘어가시면 됩니다. Slack Web Hook 이미 한번 설정을 완료해서 스크린샷 화면이 조금 다를 수 있습니다.</strong><br><img src="https://i.imgur.com/78QivsI.png"><br>Slack Apps 페이지에서 <strong>Incoming WebHooks</strong> 를 설치합니다.</p>
-<p><img src="https://i.imgur.com/i99lWHM.png"><br>Slack 체널중 Web Hook를 받을 체널을 선택합니다.</p>
-<p><img src="https://i.imgur.com/0dnlJWv.png"><br>Webhook URL 값을 확인할 수 있습니다. 이 Webhook URL 값으로 Coveralls 리포팅을 슬랙으로 받아 볼 수 있습니다.</p>
-<h2><span id="coveralls-seoljeong">Coveralls 설정</span><a href="#coveralls-seoljeong" class="header-anchor">#</a></h2><p><img src="https://i.imgur.com/YqYWP7U.png" alt="1"></p>
+<h2><span id="slack-web-hook-seoljeong">Slack Web Hook 설정</span><a href="#slack-web-hook-seoljeong" class="header-anchor">#</a></h2>
+<p><strong>Incoming WebHooks 설정을 완료 하신경우 Coveralls 설정 으로 바로 넘어가시면 됩니다. Slack Web Hook 이미 한번 설정을 완료해서 스크린샷 화면이 조금 다를 수 있습니다.</strong><br>
+<img src="https://i.imgur.com/78QivsI.png" alt><br>
+Slack Apps 페이지에서 <strong>Incoming WebHooks</strong> 를 설치합니다.</p>
+<p><img src="https://i.imgur.com/i99lWHM.png" alt><br>
+Slack 체널중 Web Hook를 받을 체널을 선택합니다.</p>
+<p><img src="https://i.imgur.com/0dnlJWv.png" alt><br>
+Webhook URL 값을 확인할 수 있습니다. 이 Webhook URL 값으로 Coveralls 리포팅을 슬랙으로 받아 볼 수 있습니다.</p>
+<h2><span id="coveralls-seoljeong">Coveralls 설정</span><a href="#coveralls-seoljeong" class="header-anchor">#</a></h2>
+<p><img src="https://i.imgur.com/YqYWP7U.png" alt="1"></p>
 <ul>
 <li>Coveralls 연동되있는 Repository 왼쪽 상단의 setting 페이지로 이동합니다.</li>
 </ul>
@@ -280,7 +287,7 @@
 <li>테스트 버튼을 클릭하여 슬랙으로 위 이미지처럼 메세지가 잘 오는지 확인합니다.</li>
 <li>SAVE NOTIFICATION 버튼을 누릅니다.</li>
 </ol>
-<p><img src="https://i.imgur.com/sHagJxo.png"></p>
+<p><img src="https://i.imgur.com/sHagJxo.png" alt></p>
 <p><strong>설정을 완료하면 Travis CI 에서 배포 작업이 진행이 완료되면 Slack에서 Coveralls 에대한 리포팅 메세지가 자동으로 오게 됩니다.</strong></p>
 
             
@@ -384,14 +391,9 @@
 
         
         
-            
-        
-    </div>
-</article>
 
-
-<!-- Comment -->
-<!--  utteranc comment -->
+                
+                    <!--  utteranc comment -->
 
 <script src="https://utteranc.es/client.js"
         repo="cheese10yun/blog-comment"
@@ -402,6 +404,12 @@
         async>
 </script>
 
+                
+
+            
+        
+    </div>
+</article>
 
 
                 <footer id="footer" class="main-content-wrap">
