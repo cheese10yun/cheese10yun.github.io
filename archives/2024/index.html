@@ -265,7 +265,7 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    Redis는 싱글 스레드로 동작하는 인메모리 데이터베이스로, 모든 요청을 순차적으로 처리합니다. 이러한 특성 때문에 많은 개발자들은 Redis 클라이언트인 Lettuce에서 제공하는 커넥션 풀의 필요성과 이점에 대해 의문을 가질 수 있습니다.
+                    Redis의 싱글 스레드 특성에도 불구하고, Lettuce 커넥션 풀은 비동기 및 논블로킹 방식을 통해 빠른 응답과 효율적인 자원 관리를 구현하는 방법을 Hikari와 비교하여 설명합니다.
                     
                         <a
                             href="/redis-lettuce-connection/"
@@ -400,7 +400,7 @@
             </div>
             
                 <div class="postShorten-excerpt">
-                    Spring Boot는 기본적으로 HikariCP를 내장된 커넥션 풀로 지원하며, 이를 통해 데이터베이스 연결을 효율적으로 관리할 수 있습니다. 이번 포스팅에서는 Spring Boot 환경에서 HikariCP의 설정을 최적화하여 TPS 변화에 유연하게 대응하는 방법을 알아보겠습니다.
+                    Spring Boot에서 HikariCP를 활용해 MySQL 커넥션 풀의 성능 한계를 극복하고, TPS 변화에 따라 효율적으로 대응하는 설정 방법을 설명합니다.
                     
                         <a
                             href="/mysql-connection-pool-timeout-1/"
