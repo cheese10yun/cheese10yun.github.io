@@ -9,8 +9,8 @@
 
 
     <url>
-        <loc>https://cheese10yun.github.io/redis-lettuce-connection/</loc>
-        <lastmod>2025-03-25T16:50:44.723Z</lastmod>
+        <loc>https://cheese10yun.github.io/fastcampus-spirng-batch/</loc>
+        <lastmod>2025-05-07T11:06:14.577Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -18,7 +18,15 @@
 
     <url>
         <loc>https://cheese10yun.github.io/mysql-connection-pool-timeout-1/</loc>
-        <lastmod>2025-03-25T16:49:15.622Z</lastmod>
+        <lastmod>2025-03-29T06:56:03.451Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://cheese10yun.github.io/redis-lettuce-connection/</loc>
+        <lastmod>2025-03-25T16:50:44.723Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
