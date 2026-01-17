@@ -9,6 +9,14 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/querydsl-batch-insert/</loc>
+        <lastmod>2026-01-17T15:58:59.367Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-data-mongo-update-guide-1/</loc>
         <lastmod>2025-12-17T22:27:41.268Z</lastmod>
         <changefreq>weekly</changefreq>
