@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM" />
+    <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
+    <meta name="generator" content="Yun Blog">
+    <title>필드 단위 변경 이력(History) 추적 시스템 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"들어가며#운영 환경에서 데이터 변경 이력을 추적해야 하는 경우가 자주 발생합니다. 특히 주문 정보 수정, 가맹점 수수료율 변경 등 중요한 데이터가 어떻게 변경되었는지 필드 단위로 명확하게 기록하고 확인할 수 있어야 합니다.\n예를 들어, 운영자가 주문 내역에서 배송 주소만 변경했을 때, 전체 주문 데이터를 다시 저장하는 것보다 “어떤 필드가 어떻게 변경되었는지”를 명확히 기록하면 다음과 같은 이점이 있습니다:\n\n변경 이력 추적이 명확해집니다\n승인 프로세스에서 변경 내용 검토가 용이합니다\n디버깅 및 감사(Audit) 목적으로 활용할 수 있습니다\n데이터 롤백 시 정확한 변경 지점을 파악할 수 있습니다\n\n이번 포스트에서는 Kotlin과 Jackson을 활용하여 복잡한 중첩 객체의 변경사항을 자동으로 추적하는 시스템을 구현하는 방법을 알아보겠습니다.\n문제 상황#다음과 같은 주문(Order) 데이터가 있다고 가정해봅시다.\n변경 전 데이터#123456789101112131415161718192021222324252627282930313233343536&#123;  &quot;order_id&quot;: &quot;ORD123456&quot;,  &quot;customer&quot;: &#123;    &quot;customer_id&quot;: &quot;CUST7890&quot;,    &quot;name&quot;: &quot;홍길동&quot;,    &quot;contact&quot;: &#123;      &quot;email&quot;: &quot;hong@example.com&quot;,      &quot;phone&quot;: &quot;010-1234-5678&quot;,      &quot;address&quot;: &#123;        &quot;street&quot;: &quot;서울특별시 종로구&quot;,        &quot;city&quot;: &quot;서울&quot;,        &quot;zip_code&quot;: &quot;03000&quot;,        &quot;country&quot;: &quot;KR&quot;      &#125;    &#125;  &#125;,  &quot;items&quot;: [    &#123;      &quot;product&quot;: &#123;        &quot;product_id&quot;: &quot;PROD001&quot;,        &quot;product_name&quot;: &quot;노트북&quot;,        &quot;category&quot;: &#123;          &quot;main_category&quot;: &quot;전자제품&quot;,          &quot;sub_category&quot;: &quot;컴퓨터&quot;        &#125;      &#125;,      &quot;quantity&quot;: 1,      &quot;price&quot;: 1500000    &#125;  ],  &quot;payment&quot;: &#123;    &quot;method&quot;: &quot;신용카드&quot;,    &quot;transaction_id&quot;: &quot;TXN987654321&quot;,    &quot;status&quot;: &quot;완료&quot;  &#125;&#125;\n\n변경 후 데이터#123456789101112131415161718192021222324252627282930313233343536&#123;  &quot;order_id&quot;: &quot;ORD123456&quot;,  &quot;customer&quot;: &#123;    &quot;customer_id&quot;: &quot;CUST7890&quot;,    &quot;name&quot;: &quot;홍길동&quot;,    &quot;contact&quot;: &#123;      &quot;email&quot;: &quot;hong@example.com&quot;,      &quot;phone&quot;: &quot;010-1234-5678&quot;,      &quot;address&quot;: &#123;        &quot;street&quot;: &quot;서울특별시 강남구&quot;,        &quot;city&quot;: &quot;서울&quot;,        &quot;zip_code&quot;: &quot;03000&quot;,        &quot;country&quot;: &quot;KR&quot;      &#125;    &#125;  &#125;,  &quot;items&quot;: [    &#123;      &quot;product&quot;: &#123;        &quot;product_id&quot;: &quot;PROD001&quot;,        &quot;product_name&quot;: &quot;노트북&quot;,        &quot;category&quot;: &#123;          &quot;main_category&quot;: &quot;전자제품&quot;,          &quot;sub_category&quot;: &quot;컴퓨터&quot;        &#125;      &#125;,      &quot;quantity&quot;: 1,      &quot;price&quot;: 1400000    &#125;  ],  &quot;payment&quot;: &#123;    &quot;method&quot;: &quot;신용카드&quot;,    &quot;transaction_id&quot;: &quot;TXN987654322&quot;,    &quot;status&quot;: &quot;완료&quot;  &#125;&#125;\n\n위 두 데이터를 비교하면 다음 필드들이 변경되었습니다:\n\ncustomer.contact.address.street: “서울특별시 종로구” → “서울특별시 강남구”\nitems[0].price: 1500000 → 1400000\npayment.transaction_id: “TXN987654321” → “TXN987654322”\n\n이러한 변경사항을 자동으로 감지하고 추적하려면 어떻게 해야 할까요?\nIntelliJ의 Diff 기능처럼#IntelliJ IDE를 사용해보신 분들은 아시겠지만, 두 파일을 비교할 때 매우 직관적으로 변경 사항을 표시해줍니다.\n\n우리가 구현하려는 시스템도 이와 유사하게 두 객체를 비교하여 변경된 필드만 추출하는 것입니다.\n구현 방법#1. 핵심 라이브러리: zjsonpatch#JSON 객체 간의 차이를 계산하기 위해 zjsonpatch 라이브러리를 사용합니다. 이 라이브러리는 RFC 6902 JSON Patch 표준을 구현하여 두 JSON 문서의 차이를 효과적으로 계산합니다.\n12345// build.gradle.ktsdependencies &#123;    implementation(&quot;com.flipkart.zjsonpatch:zjsonpatch:0.4.14&quot;)    implementation(&quot;com.fasterxml.jackson.module:jackson-module-kotlin&quot;)&#125;\n\n2. DiffComparisonManager 구현#전체 코드는 다음과 같습니다:\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107package com.example.boot3mongoimport com.fasterxml.jackson.core.JsonGeneratorimport com.fasterxml.jackson.databind.JsonNodeimport com.fasterxml.jackson.databind.JsonSerializerimport com.fasterxml.jackson.databind.PropertyNamingStrategiesimport com.fasterxml.jackson.databind.SerializerProviderimport com.fasterxml.jackson.databind.module.SimpleModuleimport com.fasterxml.jackson.module.kotlin.jacksonObjectMapperimport com.flipkart.zjsonpatch.JsonDiffimport org.bson.types.ObjectIdtypealias DiffValueTracker = Map&lt;String, DiffValue&lt;String, String&gt;&gt;typealias DiffTriple = Triple&lt;String, String, String&gt;object DiffComparisonManager &#123;    private val diffMapper = jacksonObjectMapper()        .apply &#123;            registerModules(                SimpleModule().apply &#123;                    propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE                    addSerializer(ObjectId::class.java, ObjectIdSerializer())                &#125;            )        &#125;    fun &lt;T&gt; calculateDifference(        originItem: T,        newItem: T    ): DiffValueTracker &#123;        val originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originItem)        val newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)        val diff = JsonDiff.asJson(originalNode, newNode)        return when &#123;            diff.size() &gt; 0 -&gt; &#123;                diff.mapNotNull &#123; diffNode -&gt;                    val (path, originValue, newValue) = extractDiffValue(diffNode, originalNode, newNode)                    Pair(                        first = path,                        second = DiffValue(originValue, newValue)                    )                &#125;                    .toMap()            &#125;            else -&gt; emptyMap()        &#125;    &#125;    fun &lt;T, K, S&gt; calculateDifferences(        originItems: List&lt;T&gt;,        newItems: List&lt;T&gt;,        associateByKey: (T) -&gt; K,        groupByKey: (T) -&gt; S    ): Map&lt;S, DiffValueTracker&gt; &#123;        val originalAssociate = originItems.associateBy(associateByKey)        val newAssociate = newItems.associateBy(associateByKey)        val changes = newAssociate.flatMap &#123; (id, newItem) -&gt;            val originalItem = originalAssociate[id]            when &#123;                originalItem != null -&gt; &#123;                    val originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originalItem)                    val newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)                    val diffNode = JsonDiff.asJson(originalNode, newNode)                    when &#123;                        diffNode.size() &gt; 0 -&gt; &#123;                            diffNode.mapNotNull &#123; node -&gt;                                val (path, originValue, newValue) = extractDiffValue(node, originalNode, newNode)                                Triple(                                    first = groupByKey(newItem),                                    second = path,                                    third = DiffValue(origin = originValue, new = newValue)                                )                            &#125;                        &#125;                        else -&gt; emptyList()                    &#125;                &#125;                else -&gt; emptyList()            &#125;        &#125;        return changes            .groupBy(&#123; it.first &#125;, &#123; it.second to it.third &#125;)            .mapValues &#123; (_, value) -&gt; value.toMap() &#125;    &#125;    private fun extractDiffValue(node: JsonNode, originalNode: JsonNode, newNode: JsonNode): DiffTriple &#123;        val path = node.get(&quot;path&quot;).asText().removePrefix(&quot;/&quot;)        val originValue = originalNode.at(&quot;/$path&quot;).asText()        val newValue = newNode.at(&quot;/$path&quot;).asText()        return DiffTriple(path, originValue, newValue)    &#125;&#125;data class DiffValue&lt;out A, out B&gt;(    val origin: A,    val new: B)class ObjectIdSerializer : JsonSerializer&lt;ObjectId&gt;() &#123;    override fun serialize(value: ObjectId, gen: JsonGenerator, serializers: SerializerProvider) &#123;        gen.writeString(value.toString())    &#125;&#125;\n\n3. 코드 상세 설명#3.1 Jackson ObjectMapper 설정#123456789private val diffMapper = jacksonObjectMapper()    .apply &#123;        registerModules(            SimpleModule().apply &#123;                propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE                addSerializer(ObjectId::class.java, ObjectIdSerializer())            &#125;        )    &#125;\n\n\nSnake Case 변환: Kotlin의 camelCase 필드명을 JSON의 snake_case로 자동 변환합니다\nObjectId 직렬화: MongoDB의 ObjectId를 문자열로 변환하는 커스텀 Serializer를 등록합니다\n이를 통해 productName → product_name으로 자동 변환되어 일관된 필드명으로 추적할 수 있습니다\n\n3.2 calculateDifference 함수#단일 객체 간의 차이를 계산하는 핵심 함수입니다.\n12345678910111213141516171819202122232425fun &lt;T&gt; calculateDifference(    originItem: T,    newItem: T): DiffValueTracker &#123;    // 1. Kotlin 객체를 JsonNode로 변환    val originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originItem)    val newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)        // 2. JsonDiff로 차이 계산    val diff = JsonDiff.asJson(originalNode, newNode)        // 3. 차이가 있으면 변경 정보 추출    return when &#123;        diff.size() &gt; 0 -&gt; &#123;            diff.mapNotNull &#123; diffNode -&gt;                val (path, originValue, newValue) = extractDiffValue(diffNode, originalNode, newNode)                Pair(                    first = path,                    second = DiffValue(originValue, newValue)                )            &#125;.toMap()        &#125;        else -&gt; emptyMap()    &#125;&#125;\n\n동작 과정:\n\n객체를 JsonNode로 변환: Kotlin 객체를 Jackson의 JsonNode로 변환하여 JSON 구조로 다룰 수 있게 합니다\nJsonDiff 계산: JsonDiff.asJson()을 사용하여 두 JsonNode 간의 차이를 계산합니다\n변경 정보 추출: 각 diff node에서 경로(path), 이전 값(originValue), 새 값(newValue)을 추출합니다\n결과 반환: Map&lt;String, DiffValue&gt; 형태로 반환합니다\n\n\nKey: 필드 경로 (예: customer/contact/address/street)\nValue: DiffValue(origin, new) 객체\n\n3.3 extractDiffValue 함수#123456private fun extractDiffValue(node: JsonNode, originalNode: JsonNode, newNode: JsonNode): DiffTriple &#123;    val path = node.get(&quot;path&quot;).asText().removePrefix(&quot;/&quot;)    val originValue = originalNode.at(&quot;/$path&quot;).asText()    val newValue = newNode.at(&quot;/$path&quot;).asText()    return DiffTriple(path, originValue, newValue)&#125;\n\n\npath 추출: diff node에서 변경된 필드의 경로를 추출합니다 (예: /customer/contact/address/street)\n슬래시 제거: 경로 앞의 /를 제거하여 깔끔한 key로 만듭니다\n값 추출: JsonNode의 at() 메서드로 해당 경로의 값을 추출합니다\nTriple 반환: (경로, 이전값, 새값)을 하나의 Triple로 반환합니다\n\n3.4 calculateDifferences 함수 (복수 객체 처리)#여러 객체를 비교할 때 사용하는 함수입니다.\n123456fun &lt;T, K, S&gt; calculateDifferences(    originItems: List&lt;T&gt;,    newItems: List&lt;T&gt;,    associateByKey: (T) -&gt; K,      // 매칭용 키 (예: ID)    groupByKey: (T) -&gt; S            // 그룹화용 키): Map&lt;S, DiffValueTracker&gt;\n\n\nassociateByKey: 원본과 새로운 데이터를 매칭하기 위한 키 (예: orderId, productId)\ngroupByKey: 결과를 그룹화하기 위한 키\n여러 객체를 한 번에 처리하고 각 객체별 변경사항을 그룹화하여 반환합니다\n\n테스트 코드로 검증하기#다양한 케이스를 테스트하여 구현이 올바르게 동작하는지 확인했습니다.\n1. 단일 필드 변경 감지#1234567891011121314151617181920212223@Testfun `calculateDifference - 단일 객체의 변경 사항을 감지한다`() &#123;    // Given    val originalProduct = Product(        productId = &quot;PROD001&quot;,        productName = &quot;노트북&quot;,        category = Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)    )    val newProduct = Product(        productId = &quot;PROD001&quot;,        productName = &quot;울트라 노트북&quot;,        category = Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)    )    // When    val result = DiffComparisonManager.calculateDifference(originalProduct, newProduct)    // Then    then(result).hasSize(1)    then(result[&quot;product_name&quot;]).isNotNull    then(result[&quot;product_name&quot;]?.origin).isEqualTo(&quot;노트북&quot;)    then(result[&quot;product_name&quot;]?.new).isEqualTo(&quot;울트라 노트북&quot;)&#125;\n\n결과:\n123456&#123;  &quot;product_name&quot;: &#123;    &quot;origin&quot;: &quot;노트북&quot;,    &quot;new&quot;: &quot;울트라 노트북&quot;  &#125;&#125;\n\n2. 중첩된 객체의 변경 감지#1234567891011121314151617181920212223@Testfun `calculateDifference - 중첩된 객체의 변경 사항을 감지한다`() &#123;    // Given    val originalProduct = Product(        productId = &quot;PROD001&quot;,        productName = &quot;노트북&quot;,        category = Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)    )    val newProduct = Product(        productId = &quot;PROD001&quot;,        productName = &quot;노트북&quot;,        category = Category(&quot;전자제품&quot;, &quot;노트북&quot;)    )    // When    val result = DiffComparisonManager.calculateDifference(originalProduct, newProduct)    // Then    then(result).hasSize(1)    then(result[&quot;category/sub_category&quot;]).isNotNull    then(result[&quot;category/sub_category&quot;]?.origin).isEqualTo(&quot;컴퓨터&quot;)    then(result[&quot;category/sub_category&quot;]?.new).isEqualTo(&quot;노트북&quot;)&#125;\n\n결과:\n123456&#123;  &quot;category/sub_category&quot;: &#123;    &quot;origin&quot;: &quot;컴퓨터&quot;,    &quot;new&quot;: &quot;노트북&quot;  &#125;&#125;\n\n중첩 객체의 필드는 category/sub_category 형태로 경로가 명확히 표시됩니다.슬래시(/)를 구분자로 사용하여 객체의 계층 구조를 표현하므로, 어떤 깊이의 중첩 객체라도 경로만으로 정확한 위치를 파악할 수 있습니다.\n3. 여러 필드 동시 변경 감지#1234567891011121314151617181920212223242526@Testfun `calculateDifference - 여러 필드의 변경 사항을 감지한다`() &#123;    // Given    val originalItem = Item(        product = Product(&quot;PROD001&quot;, &quot;노트북&quot;, Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)),        quantity = 2,        price = 1500000    )    val newItem = Item(        product = Product(&quot;PROD001&quot;, &quot;울트라 노트북&quot;, Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)),        quantity = 3,        price = 1400000    )    // When    val result = DiffComparisonManager.calculateDifference(originalItem, newItem)    // Then    then(result).hasSize(3)    then(result[&quot;product/product_name&quot;]?.origin).isEqualTo(&quot;노트북&quot;)    then(result[&quot;product/product_name&quot;]?.new).isEqualTo(&quot;울트라 노트북&quot;)    then(result[&quot;quantity&quot;]?.origin).isEqualTo(&quot;2&quot;)    then(result[&quot;quantity&quot;]?.new).isEqualTo(&quot;3&quot;)    then(result[&quot;price&quot;]?.origin).isEqualTo(&quot;1500000&quot;)    then(result[&quot;price&quot;]?.new).isEqualTo(&quot;1400000&quot;)&#125;\n\n결과:\n1234567891011121314&#123;  &quot;product/product_name&quot;: &#123;    &quot;origin&quot;: &quot;노트북&quot;,    &quot;new&quot;: &quot;울트라 노트북&quot;  &#125;,  &quot;quantity&quot;: &#123;    &quot;origin&quot;: &quot;2&quot;,    &quot;new&quot;: &quot;3&quot;  &#125;,  &quot;price&quot;: &#123;    &quot;origin&quot;: &quot;1500000&quot;,    &quot;new&quot;: &quot;1400000&quot;  &#125;&#125;\n\n한 번의 비교로 여러 필드의 변경사항을 모두 추적할 수 있으며, 각 필드별로 이전 값과 새로운 값이 명확하게 구분됩니다.\n4. 깊은 중첩 구조 변경 감지#123456789101112131415161718192021222324252627282930313233343536373839404142@Testfun `calculateDifference - 깊게 중첩된 객체의 변경 사항을 감지한다`() &#123;    // Given    val originalOrder = Order(        orderId = &quot;ORD123&quot;,        customer = Customer(            customerId = &quot;CUST001&quot;,            name = &quot;홍길동&quot;,            contact = Contact(                email = &quot;hong@example.com&quot;,                phone = &quot;010-1234-5678&quot;,                address = Address(&quot;서울특별시 종로구&quot;, &quot;서울&quot;, &quot;03001&quot;, &quot;대한민국&quot;)            )        ),        items = emptyList(),        payment = Payment(&quot;신용카드&quot;, &quot;TXN001&quot;, &quot;완료&quot;)    )    val newOrder = Order(        orderId = &quot;ORD123&quot;,        customer = Customer(            customerId = &quot;CUST001&quot;,            name = &quot;홍길동&quot;,            contact = Contact(                email = &quot;hong@example.com&quot;,                phone = &quot;010-1234-5678&quot;,                address = Address(&quot;서울특별시 강남구&quot;, &quot;서울&quot;, &quot;06001&quot;, &quot;대한민국&quot;)            )        ),        items = emptyList(),        payment = Payment(&quot;신용카드&quot;, &quot;TXN001&quot;, &quot;완료&quot;)    )    // When    val result = DiffComparisonManager.calculateDifference(originalOrder, newOrder)    // Then    then(result).hasSize(2)    then(result[&quot;customer/contact/address/street&quot;]?.origin).isEqualTo(&quot;서울특별시 종로구&quot;)    then(result[&quot;customer/contact/address/street&quot;]?.new).isEqualTo(&quot;서울특별시 강남구&quot;)    then(result[&quot;customer/contact/address/zip_code&quot;]?.origin).isEqualTo(&quot;03001&quot;)    then(result[&quot;customer/contact/address/zip_code&quot;]?.new).isEqualTo(&quot;06001&quot;)&#125;\n\n결과:\n12345678910&#123;  &quot;customer/contact/address/street&quot;: &#123;    &quot;origin&quot;: &quot;서울특별시 종로구&quot;,    &quot;new&quot;: &quot;서울특별시 강남구&quot;  &#125;,  &quot;customer/contact/address/zip_code&quot;: &#123;    &quot;origin&quot;: &quot;03001&quot;,    &quot;new&quot;: &quot;06001&quot;  &#125;&#125;\n\n4단계 깊이의 중첩 구조(customer/contact/address/street)도 정확히 추적합니다.\n5. Null 처리#123456789101112131415@Testfun `calculateDifference - null에서 값으로 변경을 감지한다`() &#123;    // Given    data class TestData(val name: String, val description: String?)    val original = TestData(&quot;테스트&quot;, null)    val new = TestData(&quot;테스트&quot;, &quot;설명 추가&quot;)    // When    val result = DiffComparisonManager.calculateDifference(original, new)    // Then    then(result).hasSize(1)    then(result[&quot;description&quot;]?.origin).isEmpty()    then(result[&quot;description&quot;]?.new).isEqualTo(&quot;설명 추가&quot;)&#125;\n\n결과:\n123456&#123;  &quot;description&quot;: &#123;    &quot;origin&quot;: &quot;&quot;,    &quot;new&quot;: &quot;설명 추가&quot;  &#125;&#125;\n\n5-2. 값에서 null로 변경#123456789101112131415@Testfun `calculateDifference - 값에서 null로 변경을 감지한다`() &#123;    // Given    data class TestData(val name: String, val description: String?)    val original = TestData(&quot;테스트&quot;, &quot;기존 설명&quot;)    val new = TestData(&quot;테스트&quot;, null)    // When    val result = DiffComparisonManager.calculateDifference(original, new)    // Then    then(result).hasSize(1)    then(result[&quot;description&quot;]?.origin).isEqualTo(&quot;기존 설명&quot;)    then(result[&quot;description&quot;]?.new).isEmpty()&#125;\n\n결과:\n123456&#123;  &quot;description&quot;: &#123;    &quot;origin&quot;: &quot;기존 설명&quot;,    &quot;new&quot;: &quot;&quot;  &#125;&#125;\n\nnull 값의 변경도 정확하게 추적되며, null은 빈 문자열로 표시됩니다.\n6. 변경 없는 경우#123456789101112131415@Testfun `calculateDifference - 동일한 객체는 변경 사항이 없다`() &#123;    // Given    val product = Product(        productId = &quot;PROD001&quot;,        productName = &quot;노트북&quot;,        category = Category(&quot;전자제품&quot;, &quot;컴퓨터&quot;)    )    // When    val result = DiffComparisonManager.calculateDifference(product, product)    // Then    then(result).isEmpty()&#125;\n\n결과:\n1&#123;&#125;\n\n동일한 객체를 비교하면 빈 Map이 반환되어, 불필요한 변경 이력이 저장되지 않습니다.\n7. 실제 주문 데이터 변경 추적#12345678910111213141516171819202122232425@Testfun `주문 데이터의 필드 변경을 확인한다`() &#123;    // Given    val originalOrder: Order = diffMapper.readValue(readFile(&quot;/diff-origin.json&quot;))    val newOrder: Order = diffMapper.readValue(readFile(&quot;/diff-new.json&quot;))    // When    val result = DiffComparisonManager.calculateDifferences(        originItems = listOf(originalOrder),        newItems = listOf(newOrder),        associateByKey = &#123; it.orderId &#125;,        groupByKey = &#123; it.orderId &#125;    )    // Then    val differences = result[&quot;ORD123456&quot;]    then(differences).isNotNull    then(differences!!.size).isEqualTo(3)    then(differences[&quot;customer/contact/address/street&quot;]?.origin).isEqualTo(&quot;서울특별시 종로구&quot;)    then(differences[&quot;customer/contact/address/street&quot;]?.new).isEqualTo(&quot;서울특별시 강남구&quot;)    then(differences[&quot;items/0/price&quot;]?.origin).isEqualTo(&quot;1500000&quot;)    then(differences[&quot;items/0/price&quot;]?.new).isEqualTo(&quot;1400000&quot;)    then(differences[&quot;payment/transaction_id&quot;]?.origin).isEqualTo(&quot;TXN987654321&quot;)    then(differences[&quot;payment/transaction_id&quot;]?.new).isEqualTo(&quot;TXN987654322&quot;)&#125;\n\n결과:\n12345678910111213141516&#123;  &quot;ORD123456&quot;: &#123;    &quot;customer/contact/address/street&quot;: &#123;      &quot;origin&quot;: &quot;서울특별시 종로구&quot;,      &quot;new&quot;: &quot;서울특별시 강남구&quot;    &#125;,    &quot;items/0/price&quot;: &#123;      &quot;origin&quot;: &quot;1500000&quot;,      &quot;new&quot;: &quot;1400000&quot;    &#125;,    &quot;payment/transaction_id&quot;: &#123;      &quot;origin&quot;: &quot;TXN987654321&quot;,      &quot;new&quot;: &quot;TXN987654322&quot;    &#125;  &#125;&#125;\n\n실제 JSON 파일에서 읽어온 복잡한 주문 데이터도 정확하게 변경사항을 추적합니다. calculateDifferences 함수는 여러 객체를 처리하고 그룹화된 결과를 반환합니다.\n활용 방안#1. 승인 프로세스에 활용#12345678910111213141516171819202122232425data class ApprovalRequest(    @Id    val id: ObjectId = ObjectId(),    val requestType: String,    val targetId: String,    val changes: DiffValueTracker,       // 어떤 필드가 어떻게 변경될지    val requestedBy: String,    val status: ApprovalStatus = ApprovalStatus.PENDING)// 승인 요청 생성fun createFeeChangeApproval(merchantId: String, currentFee: MerchantFee, newFee: MerchantFee, userId: String) &#123;    val changes = DiffComparisonManager.calculateDifference(currentFee, newFee)        val approvalRequest = ApprovalRequest(        requestType = &quot;MERCHANT_FEE_CHANGE&quot;,        targetId = merchantId,        changes = changes,        requestedBy = userId    )    approvalRequestRepository.save(approvalRequest)        // 승인권자에게 알림 전송    notifyApprovers(approvalRequest)&#125;\n\n2. 감사 로그 및 모니터링#123456789101112131415161718// 중요 필드 변경 모니터링fun monitorCriticalChanges(changes: DiffValueTracker, entityType: String) &#123;    val criticalFields = setOf(        &quot;payment/method&quot;,        &quot;customer/contact/address/street&quot;,        &quot;items/0/price&quot;    )        changes.keys.filter &#123; it in criticalFields &#125;        .forEach &#123; field -&gt;            val change = changes[field]!!            logger.warn(                &quot;Critical field changed in $entityType: $field - &quot; +                &quot;from &#x27;$&#123;change.origin&#125;&#x27; to &#x27;$&#123;change.new&#125;&#x27;&quot;            )            // 알림 전송, 메트릭 기록 등        &#125;&#125;\n\n장점과 고려사항#장점#\n자동화: 수동으로 변경 필드를 비교할 필요 없이 자동으로 추적합니다\n타입 안정성: Kotlin의 제네릭을 활용하여 타입 안전하게 구현됩니다\n중첩 객체 지원: 깊은 중첩 구조도 경로로 명확히 표시합니다\n저장소 독립성: 특정 데이터베이스에 의존하지 않는 순수한 로직으로 구현되어, MongoDB, PostgreSQL, MySQL 등 어떤 저장소에도 저장할 수 있습니다\n가독성: 변경 내역이 명확한 key-value 형태로 저장됩니다\n\n고려사항#\n성능: 큰 객체나 대량의 데이터를 비교할 때는 성능을 고려해야 합니다\n배열 처리: 배열의 순서가 바뀌면 전체가 변경된 것으로 인식될 수 있습니다\n저장 공간: 모든 변경 이력을 저장하면 데이터가 빠르게 증가할 수 있습니다\n민감 정보: 비밀번호 등 민감한 정보는 이력에서 제외하는 로직이 필요합니다\n\n마치며#이번 포스트에서는 Kotlin과 Jackson, zjsonpatch를 활용하여 필드 단위 변경 이력 추적 시스템을 구현하는 방법을 알아보았습니다.\n복잡한 중첩 객체의 변경사항을 자동으로 추적하고 명확한 경로로 표시하는 이 시스템은 다음과 같은 상황에서 유용하게 활용할 수 있습니다:\n\n주문&#x2F;결제 정보 변경 이력 추적\n가맹점 정보 변경 승인 프로세스\n감사(Audit) 로그 시스템\n데이터 동기화 및 충돌 감지\n\n실제 프로덕션 환경에 적용할 때는 성능과 저장 공간, 민감 정보 처리 등을 충분히 고려하여 상황에 맞게 커스터마이징하시기 바랍니다.\n","dateCreated":"2026-02-16T00:00:00+09:00","dateModified":"2026-02-16T17:35:37+09:00","datePublished":"2026-02-16T00:00:00+09:00","description":"객체의 필드 변경 이력을 자동으로 추적해, 무엇이 어떻게 바뀌었는지 명확히 기록합니다.","headline":"필드 단위 변경 이력(History) 추적 시스템","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/diff-history-part-1/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/diff-history-part-1/","keywords":"Kotlin, Guide"}</script>
+    <meta name="description" content="객체의 필드 변경 이력을 자동으로 추적해, 무엇이 어떻게 바뀌었는지 명확히 기록합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="필드 단위 변경 이력(History) 추적 시스템">
+<meta property="og:url" content="https://cheese10yun.github.io/diff-history-part-1/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="객체의 필드 변경 이력을 자동으로 추적해, 무엇이 어떻게 바뀌었는지 명확히 기록합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/boot3-mongo/docs/json-diff-1.png">
+<meta property="article:published_time" content="2026-02-15T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-16T08:35:37.831Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="Guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/boot3-mongo/docs/json-diff-1.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    
+    
+<link rel="stylesheet" href="/assets/css/toc.css">
+
+    
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            필드 단위 변경 이력(History) 추적 시스템
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2026-02-16T00:00:00+09:00">
+	
+		    2026/02/16
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2><span id="deuleogamyeo">들어가며</span><a href="#deuleogamyeo" class="header-anchor">#</a></h2><p>운영 환경에서 데이터 변경 이력을 추적해야 하는 경우가 자주 발생합니다. 특히 주문 정보 수정, 가맹점 수수료율 변경 등 중요한 데이터가 어떻게 변경되었는지 필드 단위로 명확하게 기록하고 확인할 수 있어야 합니다.</p>
+<p>예를 들어, 운영자가 주문 내역에서 배송 주소만 변경했을 때, 전체 주문 데이터를 다시 저장하는 것보다 “어떤 필드가 어떻게 변경되었는지”를 명확히 기록하면 다음과 같은 이점이 있습니다:</p>
+<ul>
+<li>변경 이력 추적이 명확해집니다</li>
+<li>승인 프로세스에서 변경 내용 검토가 용이합니다</li>
+<li>디버깅 및 감사(Audit) 목적으로 활용할 수 있습니다</li>
+<li>데이터 롤백 시 정확한 변경 지점을 파악할 수 있습니다</li>
+</ul>
+<p>이번 포스트에서는 Kotlin과 Jackson을 활용하여 복잡한 중첩 객체의 변경사항을 자동으로 추적하는 시스템을 구현하는 방법을 알아보겠습니다.</p>
+<h2><span id="munje-sanghwang">문제 상황</span><a href="#munje-sanghwang" class="header-anchor">#</a></h2><p>다음과 같은 주문(Order) 데이터가 있다고 가정해봅시다.</p>
+<h3><span id="byeongyeong-jeon-deiteo">변경 전 데이터</span><a href="#byeongyeong-jeon-deiteo" class="header-anchor">#</a></h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;order_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ORD123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;customer&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;customer_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CUST7890&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;홍길동&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;contact&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hong@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;phone&quot;</span><span class="punctuation">:</span> <span class="string">&quot;010-1234-5678&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 종로구&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;zip_code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;03000&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;country&quot;</span><span class="punctuation">:</span> <span class="string">&quot;KR&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;items&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;product&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;product_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PROD001&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;product_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;노트북&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;main_category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;전자제품&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;sub_category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;컴퓨터&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;quantity&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">1500000</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payment&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;신용카드&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;transaction_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;TXN987654321&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;완료&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3><span id="byeongyeong-hu-deiteo">변경 후 데이터</span><a href="#byeongyeong-hu-deiteo" class="header-anchor">#</a></h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;order_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ORD123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;customer&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;customer_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;CUST7890&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;홍길동&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;contact&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;hong@example.com&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;phone&quot;</span><span class="punctuation">:</span> <span class="string">&quot;010-1234-5678&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;street&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 강남구&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;zip_code&quot;</span><span class="punctuation">:</span> <span class="string">&quot;03000&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;country&quot;</span><span class="punctuation">:</span> <span class="string">&quot;KR&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;items&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;product&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;product_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PROD001&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;product_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;노트북&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;main_category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;전자제품&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;sub_category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;컴퓨터&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;quantity&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">1400000</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payment&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;method&quot;</span><span class="punctuation">:</span> <span class="string">&quot;신용카드&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;transaction_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;TXN987654322&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;완료&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>위 두 데이터를 비교하면 다음 필드들이 변경되었습니다:</p>
+<ul>
+<li><code>customer.contact.address.street</code>: “서울특별시 종로구” → “서울특별시 강남구”</li>
+<li><code>items[0].price</code>: 1500000 → 1400000</li>
+<li><code>payment.transaction_id</code>: “TXN987654321” → “TXN987654322”</li>
+</ul>
+<p>이러한 변경사항을 자동으로 감지하고 추적하려면 어떻게 해야 할까요?</p>
+<h2><span id="intellijyi-diff-gineungceoreom">IntelliJ의 Diff 기능처럼</span><a href="#intellijyi-diff-gineungceoreom" class="header-anchor">#</a></h2><p>IntelliJ IDE를 사용해보신 분들은 아시겠지만, 두 파일을 비교할 때 매우 직관적으로 변경 사항을 표시해줍니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/refs/heads/master/boot3-mongo/docs/json-diff-1.png"></p>
+<p>우리가 구현하려는 시스템도 이와 유사하게 두 객체를 비교하여 변경된 필드만 추출하는 것입니다.</p>
+<h2><span id="guhyeon-bangbeob">구현 방법</span><a href="#guhyeon-bangbeob" class="header-anchor">#</a></h2><h3><span id="1-haegsim-raibeureori-zjsonpatch">1. 핵심 라이브러리: zjsonpatch</span><a href="#1-haegsim-raibeureori-zjsonpatch" class="header-anchor">#</a></h3><p>JSON 객체 간의 차이를 계산하기 위해 <code>zjsonpatch</code> 라이브러리를 사용합니다. 이 라이브러리는 RFC 6902 JSON Patch 표준을 구현하여 두 JSON 문서의 차이를 효과적으로 계산합니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// build.gradle.kts</span></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation(<span class="string">&quot;com.flipkart.zjsonpatch:zjsonpatch:0.4.14&quot;</span>)</span><br><span class="line">    implementation(<span class="string">&quot;com.fasterxml.jackson.module:jackson-module-kotlin&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="2-diffcomparisonmanager-guhyeon">2. DiffComparisonManager 구현</span><a href="#2-diffcomparisonmanager-guhyeon" class="header-anchor">#</a></h3><p>전체 코드는 다음과 같습니다:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.boot3mongo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonGenerator</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JsonNode</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JsonSerializer</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.PropertyNamingStrategies</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.SerializerProvider</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.module.SimpleModule</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.module.kotlin.jacksonObjectMapper</span><br><span class="line"><span class="keyword">import</span> com.flipkart.zjsonpatch.JsonDiff</span><br><span class="line"><span class="keyword">import</span> org.bson.types.ObjectId</span><br><span class="line"></span><br><span class="line"><span class="keyword">typealias</span> DiffValueTracker = Map&lt;String, DiffValue&lt;String, String&gt;&gt;</span><br><span class="line"><span class="keyword">typealias</span> DiffTriple = Triple&lt;String, String, String&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">object</span> DiffComparisonManager &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> diffMapper = jacksonObjectMapper()</span><br><span class="line">        .apply &#123;</span><br><span class="line">            registerModules(</span><br><span class="line">                SimpleModule().apply &#123;</span><br><span class="line">                    propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE</span><br><span class="line">                    addSerializer(ObjectId::<span class="keyword">class</span>.java, ObjectIdSerializer())</span><br><span class="line">                &#125;</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">calculateDifference</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        originItem: <span class="type">T</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        newItem: <span class="type">T</span></span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span>: DiffValueTracker &#123;</span><br><span class="line">        <span class="keyword">val</span> originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originItem)</span><br><span class="line">        <span class="keyword">val</span> newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)</span><br><span class="line">        <span class="keyword">val</span> diff = JsonDiff.asJson(originalNode, newNode)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">when</span> &#123;</span><br><span class="line">            diff.size() &gt; <span class="number">0</span> -&gt; &#123;</span><br><span class="line">                diff.mapNotNull &#123; diffNode -&gt;</span><br><span class="line">                    <span class="keyword">val</span> (path, originValue, newValue) = extractDiffValue(diffNode, originalNode, newNode)</span><br><span class="line">                    Pair(</span><br><span class="line">                        first = path,</span><br><span class="line">                        second = DiffValue(originValue, newValue)</span><br><span class="line">                    )</span><br><span class="line">                &#125;</span><br><span class="line">                    .toMap()</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> -&gt; emptyMap()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, K, S&gt;</span> <span class="title">calculateDifferences</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        originItems: <span class="type">List</span>&lt;<span class="type">T</span>&gt;,</span></span></span><br><span class="line"><span class="params"><span class="function">        newItems: <span class="type">List</span>&lt;<span class="type">T</span>&gt;,</span></span></span><br><span class="line"><span class="params"><span class="function">        associateByKey: (<span class="type">T</span>) -&gt; <span class="type">K</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">        groupByKey: (<span class="type">T</span>) -&gt; <span class="type">S</span></span></span></span><br><span class="line"><span class="params"><span class="function">    )</span></span>: Map&lt;S, DiffValueTracker&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> originalAssociate = originItems.associateBy(associateByKey)</span><br><span class="line">        <span class="keyword">val</span> newAssociate = newItems.associateBy(associateByKey)</span><br><span class="line">        <span class="keyword">val</span> changes = newAssociate.flatMap &#123; (id, newItem) -&gt;</span><br><span class="line">            <span class="keyword">val</span> originalItem = originalAssociate[id]</span><br><span class="line">            <span class="keyword">when</span> &#123;</span><br><span class="line">                originalItem != <span class="literal">null</span> -&gt; &#123;</span><br><span class="line">                    <span class="keyword">val</span> originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originalItem)</span><br><span class="line">                    <span class="keyword">val</span> newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)</span><br><span class="line">                    <span class="keyword">val</span> diffNode = JsonDiff.asJson(originalNode, newNode)</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">when</span> &#123;</span><br><span class="line">                        diffNode.size() &gt; <span class="number">0</span> -&gt; &#123;</span><br><span class="line">                            diffNode.mapNotNull &#123; node -&gt;</span><br><span class="line">                                <span class="keyword">val</span> (path, originValue, newValue) = extractDiffValue(node, originalNode, newNode)</span><br><span class="line"></span><br><span class="line">                                Triple(</span><br><span class="line">                                    first = groupByKey(newItem),</span><br><span class="line">                                    second = path,</span><br><span class="line">                                    third = DiffValue(origin = originValue, new = newValue)</span><br><span class="line">                                )</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> -&gt; emptyList()</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> -&gt; emptyList()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> changes</span><br><span class="line">            .groupBy(&#123; it.first &#125;, &#123; it.second to it.third &#125;)</span><br><span class="line">            .mapValues &#123; (_, value) -&gt; value.toMap() &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">extractDiffValue</span><span class="params">(node: <span class="type">JsonNode</span>, originalNode: <span class="type">JsonNode</span>, newNode: <span class="type">JsonNode</span>)</span></span>: DiffTriple &#123;</span><br><span class="line">        <span class="keyword">val</span> path = node.<span class="keyword">get</span>(<span class="string">&quot;path&quot;</span>).asText().removePrefix(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">        <span class="keyword">val</span> originValue = originalNode.at(<span class="string">&quot;/<span class="variable">$path</span>&quot;</span>).asText()</span><br><span class="line">        <span class="keyword">val</span> newValue = newNode.at(<span class="string">&quot;/<span class="variable">$path</span>&quot;</span>).asText()</span><br><span class="line">        <span class="keyword">return</span> DiffTriple(path, originValue, newValue)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">DiffValue</span>&lt;<span class="type">out A, out B</span>&gt;(</span><br><span class="line">    <span class="keyword">val</span> origin: A,</span><br><span class="line">    <span class="keyword">val</span> new: B</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ObjectIdSerializer</span> : <span class="type">JsonSerializer</span>&lt;<span class="type">ObjectId</span>&gt;() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">serialize</span><span class="params">(value: <span class="type">ObjectId</span>, gen: <span class="type">JsonGenerator</span>, serializers: <span class="type">SerializerProvider</span>)</span></span> &#123;</span><br><span class="line">        gen.writeString(value.toString())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="3-kodeu-sangse-seolmyeong">3. 코드 상세 설명</span><a href="#3-kodeu-sangse-seolmyeong" class="header-anchor">#</a></h3><h4><span id="3-1-jackson-objectmapper-seoljeong">3.1 Jackson ObjectMapper 설정</span><a href="#3-1-jackson-objectmapper-seoljeong" class="header-anchor">#</a></h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> diffMapper = jacksonObjectMapper()</span><br><span class="line">    .apply &#123;</span><br><span class="line">        registerModules(</span><br><span class="line">            SimpleModule().apply &#123;</span><br><span class="line">                propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE</span><br><span class="line">                addSerializer(ObjectId::<span class="keyword">class</span>.java, ObjectIdSerializer())</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Snake Case 변환</strong>: Kotlin의 camelCase 필드명을 JSON의 snake_case로 자동 변환합니다</li>
+<li><strong>ObjectId 직렬화</strong>: MongoDB의 ObjectId를 문자열로 변환하는 커스텀 Serializer를 등록합니다</li>
+<li>이를 통해 <code>productName</code> → <code>product_name</code>으로 자동 변환되어 일관된 필드명으로 추적할 수 있습니다</li>
+</ul>
+<h4><span id="3-2-calculatedifference-hamsu">3.2 calculateDifference 함수</span><a href="#3-2-calculatedifference-hamsu" class="header-anchor">#</a></h4><p>단일 객체 간의 차이를 계산하는 핵심 함수입니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">calculateDifference</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    originItem: <span class="type">T</span>,</span></span></span><br><span class="line"><span class="params"><span class="function">    newItem: <span class="type">T</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>: DiffValueTracker &#123;</span><br><span class="line">    <span class="comment">// 1. Kotlin 객체를 JsonNode로 변환</span></span><br><span class="line">    <span class="keyword">val</span> originalNode = diffMapper.valueToTree&lt;JsonNode&gt;(originItem)</span><br><span class="line">    <span class="keyword">val</span> newNode = diffMapper.valueToTree&lt;JsonNode&gt;(newItem)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. JsonDiff로 차이 계산</span></span><br><span class="line">    <span class="keyword">val</span> diff = JsonDiff.asJson(originalNode, newNode)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 차이가 있으면 변경 정보 추출</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">when</span> &#123;</span><br><span class="line">        diff.size() &gt; <span class="number">0</span> -&gt; &#123;</span><br><span class="line">            diff.mapNotNull &#123; diffNode -&gt;</span><br><span class="line">                <span class="keyword">val</span> (path, originValue, newValue) = extractDiffValue(diffNode, originalNode, newNode)</span><br><span class="line">                Pair(</span><br><span class="line">                    first = path,</span><br><span class="line">                    second = DiffValue(originValue, newValue)</span><br><span class="line">                )</span><br><span class="line">            &#125;.toMap()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> -&gt; emptyMap()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>동작 과정:</strong></p>
+<ol>
+<li><strong>객체를 JsonNode로 변환</strong>: Kotlin 객체를 Jackson의 JsonNode로 변환하여 JSON 구조로 다룰 수 있게 합니다</li>
+<li><strong>JsonDiff 계산</strong>: <code>JsonDiff.asJson()</code>을 사용하여 두 JsonNode 간의 차이를 계산합니다</li>
+<li><strong>변경 정보 추출</strong>: 각 diff node에서 경로(path), 이전 값(originValue), 새 값(newValue)을 추출합니다</li>
+<li><strong>결과 반환</strong>: <code>Map&lt;String, DiffValue&gt;</code> 형태로 반환합니다</li>
+</ol>
+<ul>
+<li>Key: 필드 경로 (예: <code>customer/contact/address/street</code>)</li>
+<li>Value: <code>DiffValue(origin, new)</code> 객체</li>
+</ul>
+<h4><span id="3-3-extractdiffvalue-hamsu">3.3 extractDiffValue 함수</span><a href="#3-3-extractdiffvalue-hamsu" class="header-anchor">#</a></h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">extractDiffValue</span><span class="params">(node: <span class="type">JsonNode</span>, originalNode: <span class="type">JsonNode</span>, newNode: <span class="type">JsonNode</span>)</span></span>: DiffTriple &#123;</span><br><span class="line">    <span class="keyword">val</span> path = node.<span class="keyword">get</span>(<span class="string">&quot;path&quot;</span>).asText().removePrefix(<span class="string">&quot;/&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> originValue = originalNode.at(<span class="string">&quot;/<span class="variable">$path</span>&quot;</span>).asText()</span><br><span class="line">    <span class="keyword">val</span> newValue = newNode.at(<span class="string">&quot;/<span class="variable">$path</span>&quot;</span>).asText()</span><br><span class="line">    <span class="keyword">return</span> DiffTriple(path, originValue, newValue)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>path 추출</strong>: diff node에서 변경된 필드의 경로를 추출합니다 (예: <code>/customer/contact/address/street</code>)</li>
+<li><strong>슬래시 제거</strong>: 경로 앞의 <code>/</code>를 제거하여 깔끔한 key로 만듭니다</li>
+<li><strong>값 추출</strong>: JsonNode의 <code>at()</code> 메서드로 해당 경로의 값을 추출합니다</li>
+<li><strong>Triple 반환</strong>: (경로, 이전값, 새값)을 하나의 Triple로 반환합니다</li>
+</ul>
+<h4><span id="3-4-calculatedifferences-hamsu-bogsu-gaegce-ceori">3.4 calculateDifferences 함수 (복수 객체 처리)</span><a href="#3-4-calculatedifferences-hamsu-bogsu-gaegce-ceori" class="header-anchor">#</a></h4><p>여러 객체를 비교할 때 사용하는 함수입니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, K, S&gt;</span> <span class="title">calculateDifferences</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    originItems: <span class="type">List</span>&lt;<span class="type">T</span>&gt;,</span></span></span><br><span class="line"><span class="params"><span class="function">    newItems: <span class="type">List</span>&lt;<span class="type">T</span>&gt;,</span></span></span><br><span class="line"><span class="params"><span class="function">    associateByKey: (<span class="type">T</span>) -&gt; <span class="type">K</span>,      <span class="comment">// 매칭용 키 (예: ID)</span></span></span></span><br><span class="line"><span class="params"><span class="function">    groupByKey: (<span class="type">T</span>) -&gt; <span class="type">S</span>            <span class="comment">// 그룹화용 키</span></span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>: Map&lt;S, DiffValueTracker&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>associateByKey</strong>: 원본과 새로운 데이터를 매칭하기 위한 키 (예: orderId, productId)</li>
+<li><strong>groupByKey</strong>: 결과를 그룹화하기 위한 키</li>
+<li>여러 객체를 한 번에 처리하고 각 객체별 변경사항을 그룹화하여 반환합니다</li>
+</ul>
+<h2><span id="teseuteu-kodeuro-geomjeunghagi">테스트 코드로 검증하기</span><a href="#teseuteu-kodeuro-geomjeunghagi" class="header-anchor">#</a></h2><p>다양한 케이스를 테스트하여 구현이 올바르게 동작하는지 확인했습니다.</p>
+<h3><span id="1-danil-pildeu-byeongyeong-gamji">1. 단일 필드 변경 감지</span><a href="#1-danil-pildeu-byeongyeong-gamji" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 단일 객체의 변경 사항을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> originalProduct = Product(</span><br><span class="line">        productId = <span class="string">&quot;PROD001&quot;</span>,</span><br><span class="line">        productName = <span class="string">&quot;노트북&quot;</span>,</span><br><span class="line">        category = Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">val</span> newProduct = Product(</span><br><span class="line">        productId = <span class="string">&quot;PROD001&quot;</span>,</span><br><span class="line">        productName = <span class="string">&quot;울트라 노트북&quot;</span>,</span><br><span class="line">        category = Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(originalProduct, newProduct)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">1</span>)</span><br><span class="line">    then(result[<span class="string">&quot;product_name&quot;</span>]).isNotNull</span><br><span class="line">    then(result[<span class="string">&quot;product_name&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;노트북&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;product_name&quot;</span>]?.new).isEqualTo(<span class="string">&quot;울트라 노트북&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;product_name&quot;: &#123;</span><br><span class="line">    &quot;origin&quot;: &quot;노트북&quot;,</span><br><span class="line">    &quot;new&quot;: &quot;울트라 노트북&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="2-jungceobdoen-gaegceyi-byeongyeong-gamji">2. 중첩된 객체의 변경 감지</span><a href="#2-jungceobdoen-gaegceyi-byeongyeong-gamji" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 중첩된 객체의 변경 사항을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> originalProduct = Product(</span><br><span class="line">        productId = <span class="string">&quot;PROD001&quot;</span>,</span><br><span class="line">        productName = <span class="string">&quot;노트북&quot;</span>,</span><br><span class="line">        category = Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">val</span> newProduct = Product(</span><br><span class="line">        productId = <span class="string">&quot;PROD001&quot;</span>,</span><br><span class="line">        productName = <span class="string">&quot;노트북&quot;</span>,</span><br><span class="line">        category = Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;노트북&quot;</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(originalProduct, newProduct)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">1</span>)</span><br><span class="line">    then(result[<span class="string">&quot;category/sub_category&quot;</span>]).isNotNull</span><br><span class="line">    then(result[<span class="string">&quot;category/sub_category&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;컴퓨터&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;category/sub_category&quot;</span>]?.new).isEqualTo(<span class="string">&quot;노트북&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;category/sub_category&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;컴퓨터&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;노트북&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>중첩 객체의 필드는 <code>category/sub_category</code> 형태로 경로가 명확히 표시됩니다.<br>슬래시(<code>/</code>)를 구분자로 사용하여 객체의 계층 구조를 표현하므로, 어떤 깊이의 중첩 객체라도 경로만으로 정확한 위치를 파악할 수 있습니다.</p>
+<h3><span id="3-yeoreo-pildeu-dongsi-byeongyeong-gamji">3. 여러 필드 동시 변경 감지</span><a href="#3-yeoreo-pildeu-dongsi-byeongyeong-gamji" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 여러 필드의 변경 사항을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> originalItem = Item(</span><br><span class="line">        product = Product(<span class="string">&quot;PROD001&quot;</span>, <span class="string">&quot;노트북&quot;</span>, Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)),</span><br><span class="line">        quantity = <span class="number">2</span>,</span><br><span class="line">        price = <span class="number">1500000</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">val</span> newItem = Item(</span><br><span class="line">        product = Product(<span class="string">&quot;PROD001&quot;</span>, <span class="string">&quot;울트라 노트북&quot;</span>, Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)),</span><br><span class="line">        quantity = <span class="number">3</span>,</span><br><span class="line">        price = <span class="number">1400000</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(originalItem, newItem)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">3</span>)</span><br><span class="line">    then(result[<span class="string">&quot;product/product_name&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;노트북&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;product/product_name&quot;</span>]?.new).isEqualTo(<span class="string">&quot;울트라 노트북&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;quantity&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;2&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;quantity&quot;</span>]?.new).isEqualTo(<span class="string">&quot;3&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;price&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;1500000&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;price&quot;</span>]?.new).isEqualTo(<span class="string">&quot;1400000&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;product/product_name&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;노트북&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;울트라 노트북&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;quantity&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1500000&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1400000&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>한 번의 비교로 여러 필드의 변경사항을 모두 추적할 수 있으며, 각 필드별로 이전 값과 새로운 값이 명확하게 구분됩니다.</p>
+<h3><span id="4-gipeun-jungceob-gujo-byeongyeong-gamji">4. 깊은 중첩 구조 변경 감지</span><a href="#4-gipeun-jungceob-gujo-byeongyeong-gamji" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 깊게 중첩된 객체의 변경 사항을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> originalOrder = Order(</span><br><span class="line">        orderId = <span class="string">&quot;ORD123&quot;</span>,</span><br><span class="line">        customer = Customer(</span><br><span class="line">            customerId = <span class="string">&quot;CUST001&quot;</span>,</span><br><span class="line">            name = <span class="string">&quot;홍길동&quot;</span>,</span><br><span class="line">            contact = Contact(</span><br><span class="line">                email = <span class="string">&quot;hong@example.com&quot;</span>,</span><br><span class="line">                phone = <span class="string">&quot;010-1234-5678&quot;</span>,</span><br><span class="line">                address = Address(<span class="string">&quot;서울특별시 종로구&quot;</span>, <span class="string">&quot;서울&quot;</span>, <span class="string">&quot;03001&quot;</span>, <span class="string">&quot;대한민국&quot;</span>)</span><br><span class="line">            )</span><br><span class="line">        ),</span><br><span class="line">        items = emptyList(),</span><br><span class="line">        payment = Payment(<span class="string">&quot;신용카드&quot;</span>, <span class="string">&quot;TXN001&quot;</span>, <span class="string">&quot;완료&quot;</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">val</span> newOrder = Order(</span><br><span class="line">        orderId = <span class="string">&quot;ORD123&quot;</span>,</span><br><span class="line">        customer = Customer(</span><br><span class="line">            customerId = <span class="string">&quot;CUST001&quot;</span>,</span><br><span class="line">            name = <span class="string">&quot;홍길동&quot;</span>,</span><br><span class="line">            contact = Contact(</span><br><span class="line">                email = <span class="string">&quot;hong@example.com&quot;</span>,</span><br><span class="line">                phone = <span class="string">&quot;010-1234-5678&quot;</span>,</span><br><span class="line">                address = Address(<span class="string">&quot;서울특별시 강남구&quot;</span>, <span class="string">&quot;서울&quot;</span>, <span class="string">&quot;06001&quot;</span>, <span class="string">&quot;대한민국&quot;</span>)</span><br><span class="line">            )</span><br><span class="line">        ),</span><br><span class="line">        items = emptyList(),</span><br><span class="line">        payment = Payment(<span class="string">&quot;신용카드&quot;</span>, <span class="string">&quot;TXN001&quot;</span>, <span class="string">&quot;완료&quot;</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(originalOrder, newOrder)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">2</span>)</span><br><span class="line">    then(result[<span class="string">&quot;customer/contact/address/street&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;서울특별시 종로구&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;customer/contact/address/street&quot;</span>]?.new).isEqualTo(<span class="string">&quot;서울특별시 강남구&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;customer/contact/address/zip_code&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;03001&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;customer/contact/address/zip_code&quot;</span>]?.new).isEqualTo(<span class="string">&quot;06001&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;customer/contact/address/street&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 종로구&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 강남구&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;customer/contact/address/zip_code&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;03001&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;06001&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>4단계 깊이의 중첩 구조(<code>customer/contact/address/street</code>)도 정확히 추적합니다.</p>
+<h3><span id="5-null-ceori">5. Null 처리</span><a href="#5-null-ceori" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - <span class="literal">null</span>에서 값으로 변경을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">TestData</span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> description: String?)</span><br><span class="line">    <span class="keyword">val</span> original = TestData(<span class="string">&quot;테스트&quot;</span>, <span class="literal">null</span>)</span><br><span class="line">    <span class="keyword">val</span> new = TestData(<span class="string">&quot;테스트&quot;</span>, <span class="string">&quot;설명 추가&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(original, new)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">1</span>)</span><br><span class="line">    then(result[<span class="string">&quot;description&quot;</span>]?.origin).isEmpty()</span><br><span class="line">    then(result[<span class="string">&quot;description&quot;</span>]?.new).isEqualTo(<span class="string">&quot;설명 추가&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;설명 추가&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3><span id="5-2-gabseseo-nullro-byeongyeong">5-2. 값에서 null로 변경</span><a href="#5-2-gabseseo-nullro-byeongyeong" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 값에서 <span class="literal">null</span>로 변경을 감지한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">TestData</span>(<span class="keyword">val</span> name: String, <span class="keyword">val</span> description: String?)</span><br><span class="line">    <span class="keyword">val</span> original = TestData(<span class="string">&quot;테스트&quot;</span>, <span class="string">&quot;기존 설명&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> new = TestData(<span class="string">&quot;테스트&quot;</span>, <span class="literal">null</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(original, new)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).hasSize(<span class="number">1</span>)</span><br><span class="line">    then(result[<span class="string">&quot;description&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;기존 설명&quot;</span>)</span><br><span class="line">    then(result[<span class="string">&quot;description&quot;</span>]?.new).isEmpty()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;기존 설명&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>null 값의 변경도 정확하게 추적되며, null은 빈 문자열로 표시됩니다.</p>
+<h3><span id="6-byeongyeong-eobsneun-gyeongu">6. 변경 없는 경우</span><a href="#6-byeongyeong-eobsneun-gyeongu" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `calculateDifference - 동일한 객체는 변경 사항이 없다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> product = Product(</span><br><span class="line">        productId = <span class="string">&quot;PROD001&quot;</span>,</span><br><span class="line">        productName = <span class="string">&quot;노트북&quot;</span>,</span><br><span class="line">        category = Category(<span class="string">&quot;전자제품&quot;</span>, <span class="string">&quot;컴퓨터&quot;</span>)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifference(product, product)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    then(result).isEmpty()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>동일한 객체를 비교하면 빈 Map이 반환되어, 불필요한 변경 이력이 저장되지 않습니다.</p>
+<h3><span id="7-silje-jumun-deiteo-byeongyeong-cujeog">7. 실제 주문 데이터 변경 추적</span><a href="#7-silje-jumun-deiteo-byeongyeong-cujeog" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `주문 데이터의 필드 변경을 확인한다`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">    <span class="keyword">val</span> originalOrder: Order = diffMapper.readValue(readFile(<span class="string">&quot;/diff-origin.json&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> newOrder: Order = diffMapper.readValue(readFile(<span class="string">&quot;/diff-new.json&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When</span></span><br><span class="line">    <span class="keyword">val</span> result = DiffComparisonManager.calculateDifferences(</span><br><span class="line">        originItems = listOf(originalOrder),</span><br><span class="line">        newItems = listOf(newOrder),</span><br><span class="line">        associateByKey = &#123; it.orderId &#125;,</span><br><span class="line">        groupByKey = &#123; it.orderId &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Then</span></span><br><span class="line">    <span class="keyword">val</span> differences = result[<span class="string">&quot;ORD123456&quot;</span>]</span><br><span class="line">    then(differences).isNotNull</span><br><span class="line">    then(differences!!.size).isEqualTo(<span class="number">3</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;customer/contact/address/street&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;서울특별시 종로구&quot;</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;customer/contact/address/street&quot;</span>]?.new).isEqualTo(<span class="string">&quot;서울특별시 강남구&quot;</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;items/0/price&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;1500000&quot;</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;items/0/price&quot;</span>]?.new).isEqualTo(<span class="string">&quot;1400000&quot;</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;payment/transaction_id&quot;</span>]?.origin).isEqualTo(<span class="string">&quot;TXN987654321&quot;</span>)</span><br><span class="line">    then(differences[<span class="string">&quot;payment/transaction_id&quot;</span>]?.new).isEqualTo(<span class="string">&quot;TXN987654322&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>결과:</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;ORD123456&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;customer/contact/address/street&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 종로구&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;서울특별시 강남구&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;items/0/price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1500000&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1400000&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;payment/transaction_id&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;origin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;TXN987654321&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;new&quot;</span><span class="punctuation">:</span> <span class="string">&quot;TXN987654322&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>실제 JSON 파일에서 읽어온 복잡한 주문 데이터도 정확하게 변경사항을 추적합니다. <code>calculateDifferences</code> 함수는 여러 객체를 처리하고 그룹화된 결과를 반환합니다.</p>
+<h2><span id="hwalyong-bangan">활용 방안</span><a href="#hwalyong-bangan" class="header-anchor">#</a></h2><h3><span id="1-seungin-peuroseseue-hwalyong">1. 승인 프로세스에 활용</span><a href="#1-seungin-peuroseseue-hwalyong" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">ApprovalRequest</span>(</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">val</span> id: ObjectId = ObjectId(),</span><br><span class="line">    <span class="keyword">val</span> requestType: String,</span><br><span class="line">    <span class="keyword">val</span> targetId: String,</span><br><span class="line">    <span class="keyword">val</span> changes: DiffValueTracker,       <span class="comment">// 어떤 필드가 어떻게 변경될지</span></span><br><span class="line">    <span class="keyword">val</span> requestedBy: String,</span><br><span class="line">    <span class="keyword">val</span> status: ApprovalStatus = ApprovalStatus.PENDING</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 승인 요청 생성</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createFeeChangeApproval</span><span class="params">(merchantId: <span class="type">String</span>, currentFee: <span class="type">MerchantFee</span>, newFee: <span class="type">MerchantFee</span>, userId: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> changes = DiffComparisonManager.calculateDifference(currentFee, newFee)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">val</span> approvalRequest = ApprovalRequest(</span><br><span class="line">        requestType = <span class="string">&quot;MERCHANT_FEE_CHANGE&quot;</span>,</span><br><span class="line">        targetId = merchantId,</span><br><span class="line">        changes = changes,</span><br><span class="line">        requestedBy = userId</span><br><span class="line">    )</span><br><span class="line">    approvalRequestRepository.save(approvalRequest)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 승인권자에게 알림 전송</span></span><br><span class="line">    notifyApprovers(approvalRequest)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="2-gamsa-rogeu-mic-moniteoring">2. 감사 로그 및 모니터링</span><a href="#2-gamsa-rogeu-mic-moniteoring" class="header-anchor">#</a></h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 중요 필드 변경 모니터링</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">monitorCriticalChanges</span><span class="params">(changes: <span class="type">DiffValueTracker</span>, entityType: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> criticalFields = setOf(</span><br><span class="line">        <span class="string">&quot;payment/method&quot;</span>,</span><br><span class="line">        <span class="string">&quot;customer/contact/address/street&quot;</span>,</span><br><span class="line">        <span class="string">&quot;items/0/price&quot;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    changes.keys.filter &#123; it <span class="keyword">in</span> criticalFields &#125;</span><br><span class="line">        .forEach &#123; field -&gt;</span><br><span class="line">            <span class="keyword">val</span> change = changes[field]!!</span><br><span class="line">            logger.warn(</span><br><span class="line">                <span class="string">&quot;Critical field changed in <span class="variable">$entityType</span>: <span class="variable">$field</span> - &quot;</span> +</span><br><span class="line">                <span class="string">&quot;from &#x27;<span class="subst">$&#123;change.origin&#125;</span>&#x27; to &#x27;<span class="subst">$&#123;change.new&#125;</span>&#x27;&quot;</span></span><br><span class="line">            )</span><br><span class="line">            <span class="comment">// 알림 전송, 메트릭 기록 등</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2><span id="jangjeomgwa-goryeosahang">장점과 고려사항</span><a href="#jangjeomgwa-goryeosahang" class="header-anchor">#</a></h2><h3><span id="jangjeom">장점</span><a href="#jangjeom" class="header-anchor">#</a></h3><ol>
+<li><strong>자동화</strong>: 수동으로 변경 필드를 비교할 필요 없이 자동으로 추적합니다</li>
+<li><strong>타입 안정성</strong>: Kotlin의 제네릭을 활용하여 타입 안전하게 구현됩니다</li>
+<li><strong>중첩 객체 지원</strong>: 깊은 중첩 구조도 경로로 명확히 표시합니다</li>
+<li><strong>저장소 독립성</strong>: 특정 데이터베이스에 의존하지 않는 순수한 로직으로 구현되어, MongoDB, PostgreSQL, MySQL 등 어떤 저장소에도 저장할 수 있습니다</li>
+<li><strong>가독성</strong>: 변경 내역이 명확한 key-value 형태로 저장됩니다</li>
+</ol>
+<h3><span id="goryeosahang">고려사항</span><a href="#goryeosahang" class="header-anchor">#</a></h3><ol>
+<li><strong>성능</strong>: 큰 객체나 대량의 데이터를 비교할 때는 성능을 고려해야 합니다</li>
+<li><strong>배열 처리</strong>: 배열의 순서가 바뀌면 전체가 변경된 것으로 인식될 수 있습니다</li>
+<li><strong>저장 공간</strong>: 모든 변경 이력을 저장하면 데이터가 빠르게 증가할 수 있습니다</li>
+<li><strong>민감 정보</strong>: 비밀번호 등 민감한 정보는 이력에서 제외하는 로직이 필요합니다</li>
+</ol>
+<h2><span id="macimyeo">마치며</span><a href="#macimyeo" class="header-anchor">#</a></h2><p>이번 포스트에서는 Kotlin과 Jackson, zjsonpatch를 활용하여 필드 단위 변경 이력 추적 시스템을 구현하는 방법을 알아보았습니다.</p>
+<p>복잡한 중첩 객체의 변경사항을 자동으로 추적하고 명확한 경로로 표시하는 이 시스템은 다음과 같은 상황에서 유용하게 활용할 수 있습니다:</p>
+<ul>
+<li>주문&#x2F;결제 정보 변경 이력 추적</li>
+<li>가맹점 정보 변경 승인 프로세스</li>
+<li>감사(Audit) 로그 시스템</li>
+<li>데이터 동기화 및 충돌 감지</li>
+</ul>
+<p>실제 프로덕션 환경에 적용할 때는 성능과 저장 공간, 민감 정보 처리 등을 충분히 고려하여 상황에 맞게 커스터마이징하시기 바랍니다.</p>
+
+            
+
+
+        </div>
+    </div>
+    <!-- Table of Contents -->
+    <div id="toc-container">
+        <div class="toc-title">목차</div>
+        <ul id="toc-list"></ul>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/Guide/" rel="tag">Guide</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Kotlin/" rel="tag">Kotlin</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/querydsl-batch-insert/"
+                    data-tooltip="QueryDSL을 이용한 Batch Insert 성능 개선"
+                    aria-label="다음: QueryDSL을 이용한 Batch Insert 성능 개선"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/diff-history-part-1/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/diff-history-part-1/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+
+                
+                    <!--  giscus comment -->
+
+<script src="https://giscus.app/client.js"
+        data-repo="cheese10yun/blog-comment"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyMDU1MDM1OTk="
+        data-category="Q&amp;A"
+        data-category-id="DIC_kwDODD-8b84CT2XX"
+        data-mapping="og:title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="top"
+        data-theme="light"
+        data-lang=""
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+                
+
+            
+        
+    </div>
+</article>
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2026 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/querydsl-batch-insert/"
+                    data-tooltip="QueryDSL을 이용한 Batch Insert 성능 개선"
+                    aria-label="다음: QueryDSL을 이용한 Batch Insert 성능 개선"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/diff-history-part-1/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/diff-history-part-1/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/diff-history-part-1/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/diff-history-part-1/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+
+
+<script src="/assets/js/toc.js"></script>
+
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>

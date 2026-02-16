@@ -1,0 +1,778 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM" />
+    <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
+    <meta name="generator" content="Yun Blog">
+    <title>태그: Guide - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{}</script>
+    <meta name="description" content="기술 블로그">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Yun Blog">
+<meta property="og:url" content="https://cheese10yun.github.io/tags/Guide/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="기술 블로그">
+<meta property="og:locale" content="ko_KR">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Node">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Batch">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="기술 블로그">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="Mongo">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="2">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="2"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+    <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/diff-history-part-1/"
+                            aria-label=": 필드 단위 변경 이력(History) 추적 시스템"
+                        >
+                            필드 단위 변경 이력(History) 추적 시스템
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2026-02-16T00:00:00+09:00">
+	
+		    2026/02/16
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    객체의 필드 변경 이력을 자동으로 추적해, 무엇이 어떻게 바뀌었는지 명확히 기록합니다.
+                    
+                        <a
+                            href="/diff-history-part-1/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 필드 단위 변경 이력(History) 추적 시스템"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/spring-data-mongo-repository-2/"
+                            aria-label=": Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                        >
+                            Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2025-01-30T10:00:00+09:00">
+	
+		    2025/01/30
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    기존 Spring Data MongoDB Repository 확장 포스팅에서는 복잡한 쿼리 로직을 분리하여 상위 레벨에서는 구현 디테일을 신경 쓰지 않고, 데이터 접근 로직을 단순화할 수 있는 방법을 다루었습니다.
+                    
+                        <a
+                            href="/spring-data-mongo-repository-2/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Data MongoDB Repository 확장 - Aggregation 기반 페이징 처리"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/spring-data-mongo-test-setup/"
+                            aria-label=": MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법"
+                        >
+                            MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2023-11-12T00:00:00+09:00">
+	
+		    2023/11/12
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이 글은 내장 MongoDB(Flapdoodle)와 @DataMongoTest를 활용해 Spring Data MongoDB 애플리케이션의 테스트 환경을 간단하게 설정하는 방법을 소개합니다.
+                    
+                        <a
+                            href="/spring-data-mongo-test-setup/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": MongoDB 다양한 테스트 케이스를 커버할 수 있는 테스트 데이터 셋업 방법"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/spring-data-mongo-repository/"
+                            aria-label=": Spring Data MongoDB Repository 확장"
+                        >
+                            Spring Data MongoDB Repository 확장
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2023-11-04T00:00:00+09:00">
+	
+		    2023/11/04
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    Spring Data JPA에서 흔히 사용하는 Repository 확장 패턴을 Spring Data MongoDB에도 적용할 수 있습니다.
+                    
+                        <a
+                            href="/spring-data-mongo-repository/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Data MongoDB Repository 확장"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/code-design/"
+                            aria-label=": 좋은 코드 설계를 위한 답없는 고민들"
+                        >
+                            좋은 코드 설계를 위한 답없는 고민들
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2023-06-12T00:00:00+09:00">
+	
+		    2023/06/12
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    좋은 코드 설계를 위한 고민들을 평소에 많이 해왔고, 그에 관련한 학습들도 진행했었다. OOP, DDD, Clean Code, Clean Architecture 등등을 통해서 나름의 주관이 생겼으며 경력 초반에는 이런 것들을 지키기 위해 많이 노력해왔다.
+                    
+                        <a
+                            href="/code-design/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 좋은 코드 설계를 위한 답없는 고민들"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/external-infrastructure-testing/"
+                            aria-label=": 외부 인프라스트럭처 테스트 Mocking 테스트를 대하는 관점"
+                        >
+                            외부 인프라스트럭처 테스트 Mocking 테스트를 대하는 관점
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-10-10T00:00:00+09:00">
+	
+		    2022/10/10
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    외부 인프라에 의존하는 로직의 테스트는 HTTP 모킹 대신 인터페이스 기반의 Mock 구현체를 활용해 각 계층의 책임을 분리함으로써 효율적으로 작성할 수 있습니다.
+                    
+                        <a
+                            href="/external-infrastructure-testing/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": 외부 인프라스트럭처 테스트 Mocking 테스트를 대하는 관점"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/error-response-2/"
+                            aria-label=": MSA 환경에서 Error Response 서버로 전달하기"
+                        >
+                            MSA 환경에서 Error Response 서버로 전달하기
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2022-01-23T00:00:00+09:00">
+	
+		    2022/01/23
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    이전에 API Server에 Exception handling에 대해서 정리한 적 있습니다. 이번 포스팅에서는 여러 서버를 호출해서 예외가 발생하는 경우 Exception handling에 대한 포팅입니다.
+                    
+                        <a
+                            href="/error-response-2/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": MSA 환경에서 Error Response 서버로 전달하기"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/spring-batch-application/"
+                            aria-label=": Spring Batch Application 개발하면서 나름의 고찰 정리"
+                        >
+                            Spring Batch Application 개발하면서 나름의 고찰 정리
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2021-02-11T00:00:00+09:00">
+	
+		    2021/02/11
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    현재는 Spring Batch Application 개발을 대부분 개발을 하고 있어, 해당 프레임워크로 개발을 진행하면서 내 나름대로의 고찰을 정리해볼까 한다.
+                    
+                        <a
+                            href="/spring-batch-application/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Spring Batch Application 개발하면서 나름의 고찰 정리"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/jpa-test-support/"
+                            aria-label=": JPA 기반 테스트 코드 작성 팁"
+                        >
+                            JPA 기반 테스트 코드 작성 팁
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-03-01T00:00:00+09:00">
+	
+		    2020/03/01
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    JPA 기반으로 테스트 코드를 작성하면서 불편했던 부분을 소개하고 해결 방법에 관한 포스팅입니다.
+                    
+                        <a
+                            href="/jpa-test-support/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": JPA 기반 테스트 코드 작성 팁"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-right">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title">
+                    
+                        <a
+                            class="link-unstyled"
+                            href="/querydsl-support/"
+                            aria-label=": Querydsl Repository Support 활용"
+                        >
+                            Querydsl Repository Support 활용
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time datetime="2020-02-29T00:00:00+09:00">
+	
+		    2020/02/29
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-excerpt">
+                    JPA를 이용한다면 Querydsl Support를 사용하면 세부 구현체를 숨기고 Repository를 통해서 조회 쿼리를 제공해 줄 수 있어 장점이 있습니다.
+                    
+                        <a
+                            href="/querydsl-support/"
+                            class="postShorten-excerpt_link link"
+                            aria-label=": Querydsl Repository Support 활용"
+                        >
+                            계속 읽기
+                        </a>
+                        
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+        
+          <li class="pagination-next">
+            <a
+                class="btn btn--default btn--small"
+                href="/tags/Guide/page/2/"
+                aria-label="이전 포스트"
+            >
+              <span>이전 포스트</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+        <li class="pagination-number">page 1 of 4</li>
+    </ul>
+</div>
+
+</section>
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2026 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>
