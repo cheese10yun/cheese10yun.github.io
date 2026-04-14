@@ -1,0 +1,758 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="sBAfGubPxv1ol5QEVGgOJ4ggp5spK-zFFXpK-Pd2xZM" />
+    <meta name="naver-site-verification" content="a37ea649edf26e70c3de94f9cb034f9d6e11de3f" />
+    <meta name="generator" content="Yun Blog">
+    <title>QueryDSL을 이용한 Batch Update 성능 개선 - Yun Blog</title>
+    <meta name="author" content="Yun">
+    
+        <meta name="keywords" content="Node,Spring,Spring Boot,Spring Batch,Kotlin,기술 블로그,JPA,Mongo,MySQL,OOP,">
+    
+    
+    
+        
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss2.xml">
+        
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg"},"articleBody":"JPA를 사용하다 보면 대량의 데이터를 수정해야 하는 상황에서 Dirty Checking 방식의 성능 한계에 부딪히게 됩니다. 이번 포스팅에서는 JPA Dirty Checking의 성능 이슈를 살펴보고, QueryDSL의 SQLQueryFactory를 활용한 Batch Update로 성능을 획기적으로 개선하는 방법을 소개합니다.\n개요#대량의 데이터를 수정해야 할 때, 일반적으로 JPA의 Dirty Checking 방식을 사용합니다. 엔티티를 조회하여 영속성 컨텍스트에 올린 뒤 필드를 변경하면 트랜잭션 커밋 시점에 변경 감지가 일어나 UPDATE 쿼리가 실행되는 방식입니다. 하지만 데이터의 양이 늘어날수록 이 방식의 처리 속도는 급격히 느려질 수 있습니다. 엔티티 수만큼 개별적인 UPDATE 쿼리가 발생하기 때문입니다.\n이전 포스팅(QueryDSL을 이용한 Batch Insert 성능 개선)에서 Insert 성능 개선 방법을 소개한 적이 있습니다. Update도 동일한 접근으로 해결할 수 있습니다.\n이미 프로젝트에서 JPA와 QueryDSL을 사용하고 있다면, 추가적인 라이브러리 도입 없이 QueryDSL-SQL 모듈을 활용하여 Type-Safe하게 Batch Update를 구현할 수 있습니다. 이번 포스팅에서는 그 방법을 소개합니다.\nJPA Dirty Checking의 성능 이슈#JPA의 일반적인 Update 패턴은 엔티티를 조회하여 영속성 컨텍스트에 올린 뒤, 필드를 변경하고 트랜잭션이 커밋될 때 변경 감지(Dirty Checking)를 통해 UPDATE 쿼리를 실행하는 방식입니다.\n123456789@Transactionalfun updateWriters(ids: List&lt;Long&gt;) &#123;    val writers = writerRepository.findAllById(ids)    for (writer in writers) &#123;        writer.name = &quot;updated&quot;        writer.score = 100        // dirty checking → 트랜잭션 커밋 시 건별 UPDATE 발생    &#125;&#125;\n\n위 코드는 사용하기 편리하지만, 1,000개의 데이터를 수정하면 1,000번의 UPDATE 쿼리가 데이터베이스로 전송됩니다. 여기에 findAllById로 인한 SELECT 쿼리까지 더하면, 대량 수정 작업에서는 심각한 성능 저하의 원인이 됩니다.\nQueryDSL Batch Update 구현#QueryDSL-SQL 모듈을 사용하면 JPA 엔티티가 아닌 JDBC 레벨에서 직접 SQL을 구성하여 실행할 수 있습니다. 이를 통해 addBatch 기능을 활용한 Bulk Update를 구현할 수 있습니다.\n구현 코드 예시#SQLQueryFactory를 사용하여 Batch Update를 구현하는 방법은 다음과 같습니다.\n12345678910111213141516171819202122232425262728293031@Serviceclass BatchInsertService(    private val dataSource: DataSource) &#123;    private val sqlQueryFactory: SQLQueryFactory by lazy &#123;        SQLQueryFactory(Configuration(MySQLTemplates()), dataSource)    &#125;    @Transactional    fun batchUpdate(writers: List&lt;Writer&gt;): Long &#123;        // 1. 테이블 메타데이터 정의        val writerTable = RelationalPathBase(Writer::class.java, &quot;writer&quot;, null, &quot;writer&quot;)        // 2. SQLQueryFactory (공유 인스턴스 사용)        val update = sqlQueryFactory.update(writerTable)        // 3. 데이터를 Batch에 추가        for (writer in writers) &#123;            val id = requireNotNull(writer.id) &#123; &quot;Writer id must not be null&quot; &#125;            update                .set(QWriter.writer.name, writer.name)                .set(QWriter.writer.email, writer.email)                .set(QWriter.writer.score, writer.score)                .set(QWriter.writer.reputation, writer.reputation)                .set(QWriter.writer.active, writer.active)                .where(QWriter.writer.id.eq(id))                .addBatch() // 메모리에 쿼리 적재        &#125;        // 4. 일괄 실행        return update.execute()    &#125;&#125;\n\n코드 설명\n\nRelationalPathBase: SQL 쿼리 작성을 위해 대상 테이블의 메타데이터를 정의합니다. SQLQueryFactory는 RelationalPath 타입을 요구하기 때문에, JPA 엔티티 기반의 QWriter(EntityPathBase)를 테이블 참조로 직접 사용할 수 없어 별도로 정의합니다.\nQWriter.writer.*: 컬럼 참조에는 기존에 생성된 Q클래스의 path를 그대로 활용합니다.\naddBatch(): 루프를 돌며 데이터를 즉시 UPDATE 하지 않고, JDBC의 Batch 기능을 활용하기 위해 메모리에 쿼리 파라미터들을 쌓아둡니다.\nexecute(): 쌓여있는 Batch 쿼리를 데이터베이스로 한 번에 전송하여 실행합니다.\n\nInsert와의 구조적 차이#Batch Insert와 Batch Update는 동일한 addBatch + execute() 패턴을 사용하지만, 중요한 구조적 차이가 있습니다.\n\n\n\n항목\nBatch Insert\nBatch Update\n\n\n\nwhere 조건\n불필요\n필수\n\n\n테이블 참조\nRelationalPathBase\nRelationalPathBase (동일)\n\n\n컬럼 참조\nQWriter.writer.*\nQWriter.writer.* (동일)\n\n\nid 처리\n없음\nrequireNotNull 필요\n\n\n가장 중요한 차이는 where 조건입니다. where 없이 addBatch()를 호출하면 해당 UPDATE는 테이블 전체를 대상으로 실행되어 의도치 않은 전체 UPDATE가 발생할 수 있습니다. 반드시 where(QWriter.writer.id.eq(id))와 같이 대상 row를 특정해야 합니다.\n또한 EntityAuditing을 통해 상속받는 id 필드는 Long? (nullable) 타입이므로, requireNotNull로 null을 방어한 뒤 사용해야 컴파일 타입 안전성이 보장됩니다.\nBatch 동작 검증 방법#addBatch를 사용하면 SQL 내용 자체는 dirty checking과 동일하게 UPDATE writer SET ... WHERE id = ? 형태입니다. 쿼리 내용만으로는 실제로 batch가 동작하는지 구분하기 어렵습니다.\n실제 전송 방식의 차이는 JDBC URL에 profileSQL=true를 추가하면 로그로 확인할 수 있습니다.\n1jdbc:mysql://localhost:3306/mydb?rewriteBatchedStatements=true&amp;logger=Slf4JLogger&amp;profileSQL=true\n\n케이스 1 — dirty checking (N번 통신)\n12345678910[QUERY] update writer set active=1,email=&#x27;email-2&#x27;,name=&#x27;updated&#x27;... where id=2        [at ProxyPreparedStatement.executeUpdate][FETCH] [at ProxyPreparedStatement.executeUpdate][QUERY] update writer set active=1,email=&#x27;email-3&#x27;,name=&#x27;updated&#x27;... where id=3        [at ProxyPreparedStatement.executeUpdate][FETCH] [at ProxyPreparedStatement.executeUpdate][QUERY] update writer set active=1,email=&#x27;email-4&#x27;,name=&#x27;updated&#x27;... where id=4        [at ProxyPreparedStatement.executeUpdate][FETCH] [at ProxyPreparedStatement.executeUpdate]...\n\nexecuteUpdate가 건마다 호출되어 [QUERY] + [FETCH] 쌍이 건수만큼 반복됩니다. 10건이면 DB 서버로 10번 왕복합니다.\n케이스 2 — addBatch (1번 통신)\n1234567891011[QUERY] update writerset name = &#x27;new&#x27;where writer.id = 1;update writerset name = &#x27;new&#x27;where writer.id = 2;update writerset name = &#x27;new&#x27;where writer.id = 3;...update writerset name = &#x27;new&#x27;where writer.id = 28;\n\n[QUERY] 로그가 1개만 출력됩니다. 세미콜론으로 구분된 모든 쿼리가 하나의 패킷으로 전송되며, 28건이든 10,000건이든 DB 서버로 1번만 왕복합니다.\n구분 포인트 요약\n\n\n\n구분 기준\ndirty checking\naddBatch\n\n\n\n메서드명\nexecuteUpdate\nexecuteBatch ([QUERY] 수로 판단)\n\n\n[QUERY] 로그 수\nN개\n1개\n\n\n[FETCH] 존재\n건마다 존재\n없음\n\n\n쿼리 형태\n쿼리 1개씩\n;로 이어진 멀티 쿼리\n\n\nprofileSQL=true만 붙이면 로그 줄 수와 메서드명만으로 의도한 대로 batch가 동작하고 있는지 즉시 확인할 수 있습니다.\n성능 비교#성능 측정 코드#정확한 성능 측정을 위해 JPA Dirty Checking 방식과 QueryDSL addBatch의 실행 시간을 각각 측정했습니다.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182@Serviceclass BatchInsertService() &#123;    @Transactional    fun batchUpdate(writers: List&lt;WriterUpdate&gt;): Long &#123;        val writerTable = RelationalPathBase(Writer::class.java, &quot;writer&quot;, null, &quot;writer&quot;)        val update = sqlQueryFactory.update(writerTable)        // 데이터를 Batch에 추가        for (writer in writers) &#123;            val id = requireNotNull(writer.id) &#123; &quot;Writer id must not be null&quot; &#125;            update                .set(QWriter.writer.name, writer.name)                .where(QWriter.writer.id.eq(id))                .addBatch() // 메모리에 쿼리 적재        &#125;        // 일괄 실행        return update.execute()    &#125;    @Transactional    fun updateWriters(writers: List&lt;Writer&gt;) &#123;        for (writer in writers) &#123;            writer.name = &quot;updated&quot;            writerRepository.save(writer) // dirty checking → 트랜잭션 커밋 시 건별 UPDATE 발생        &#125;    &#125;&#125;@Testfun `dirty checking update test`() &#123;    val rowsList = listOf(100, 200, 500, 1_000, 2_000, 5_000, 10_000)    val iterations = 5    rowsList.forEach &#123; rows -&gt;        // 테스트 데이터 사전 삽입 (id 확보)        val writers = writerRepository.saveAll(            (1..rows).map &#123; Writer(name = &quot;name-$it&quot;, email = &quot;email-$it&quot;) &#125;        ).toList()        var totalTimeMillis = 0.0        for (i in 1..iterations) &#123;            val stopWatch = StopWatch()            stopWatch.start()            writerService.updateWriters(writers)            stopWatch.stop()            if (i &gt; 1) &#123; // 첫 회차 제외                totalTimeMillis += stopWatch.totalTimeMillis            &#125;        &#125;        val averageTimeMillis = totalTimeMillis / (iterations - 1)        println(&quot;$rows 건 dirty checking 평균 실행 시간: $&#123;averageTimeMillis&#125; ms&quot;)    &#125;&#125;@Testfun `batchUpdate test`() &#123;    val rowsList = listOf(100, 200, 500, 1_000, 2_000, 5_000, 10_000)    val iterations = 5    rowsList.forEach &#123; rows -&gt;        // 테스트 데이터 사전 삽입        val savedWriters = writerRepository.saveAll(            (1..rows).map &#123; Writer(name = &quot;name-$it&quot;, email = &quot;email-$it&quot;) &#125;        )        val updates = savedWriters.map &#123; WriterUpdate(id = it.id!!, name = &quot;new&quot;) &#125;        var totalTimeMillis = 0.0        for (i in 1..iterations) &#123;            val stopWatch = StopWatch()            stopWatch.start()            batchInsertService.batchUpdate(updates)            stopWatch.stop()            if (i &gt; 1) &#123; // 첫 회차 제외                totalTimeMillis += stopWatch.totalTimeMillis            &#125;        &#125;        val averageTimeMillis = totalTimeMillis / (iterations - 1)        println(&quot;$rows 건 QueryDSL Batch Update 평균 실행 시간: $&#123;averageTimeMillis&#125; ms&quot;)    &#125;&#125;\n\n측정 방식 설명\n\n반복 측정: 각 데이터 구간(100건 ~ 10,000건)마다 총 5회 반복하여 측정했습니다.\nWarm-up 고려: 테스트 실행 시 첫 번째 회차는 결과에서 제외했습니다. 커넥션 풀 초기화 등 초기 비용이 포함되어 결과가 왜곡되는 것을 방지하기 위함입니다.\n평균값 산출: 첫 회차를 제외한 나머지 4회의 실행 시간을 합산하여 평균값을 산출했습니다.\n\n성능 측정 결과#JPA Dirty Checking과 QueryDSL addBatch를 사용했을 때의 성능 차이를 비교한 결과입니다.\n\n\n\n\nrows\ndirty checking (ms)\nadd batch (ms)\n성능 개선율\n\n\n\n100\n265.5\n28.5\n89.3%\n\n\n200\n368.5\n45.5\n87.7%\n\n\n500\n808.75\n103.5\n87.2%\n\n\n1,000\n1,647.25\n191.5\n88.4%\n\n\n2,000\n3,315.0\n392.0\n88.2%\n\n\n5,000\n8,593.5\n928.25\n89.2%\n\n\n10,000\n16,530.75\n2,063.0\n87.5%\n\n\n\nbar (dirty checking): JPA save(writer)를 루프에서 건별 호출 — UPDATE N번 개별 전송\nline (add batch): QueryDSL SQLQueryFactory의 addBatch — N개의 UPDATE를 1번의 네트워크 왕복으로 전송\n\n\n참고: 이 측정은 애플리케이션 서버와 데이터베이스가 **동일한 로컬 환경(loopback)**에서 수행된 결과입니다. Loopback 통신은 실제 네트워크 대비 레이턴시가 거의 없는 이상적인 조건임에도 불구하고 이 정도의 성능 차이가 발생합니다. 실제 운영 환경처럼 애플리케이션 서버와 DB 서버가 별도의 네트워크에 위치한다면, 건별로 전송하는 dirty checking 방식은 네트워크 왕복 비용이 쿼리 수만큼 누적되어 성능 차이가 훨씬 더 크게 벌어질 수 있습니다.\n\n결론#대량의 데이터를 수정해야 하는 배치성 작업에서는 JPA의 Dirty Checking 방식보다 JDBC Batch Update를 사용하는 것이 성능 측면에서 훨씬 유리합니다.\nInsert와 마찬가지로, 오직 Batch Update 성능 개선만을 위해 별도의 라이브러리를 도입하는 것은 프로젝트의 복잡도를 높일 수 있습니다. 이미 JPA와 QueryDSL을 사용 중인 환경이라면, QueryDSL-SQL을 활용하는 것이 추가적인 학습 곡선이나 설정의 번거로움 없이 Type-Safe하게 성능을 극대화할 수 있는 가장 효율적인 대안입니다.\nInsert와 Update 모두 동일한 addBatch + execute() 패턴을 사용하지만, Update에서는 반드시 where 조건으로 대상 row를 특정해야 한다는 점을 기억하세요.\n","dateCreated":"2026-04-14T00:00:00+09:00","dateModified":"2026-04-14T23:49:27+09:00","datePublished":"2026-04-14T00:00:00+09:00","description":"JPA 환경에서 QueryDSL-SQL을 활용해 대량 데이터 업데이트 성능을 획기적으로 개선하는 방법을 소개합니다.","headline":"QueryDSL을 이용한 Batch Update 성능 개선","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://cheese10yun.github.io/querydsl-batch-update/"},"publisher":{"@type":"Organization","name":"Yun","sameAs":["https://github.com/cheese10yun"],"image":"yun-icon.jpg","logo":{"@type":"ImageObject","url":"yun-icon.jpg"}},"url":"https://cheese10yun.github.io/querydsl-batch-update/","keywords":"Performance, JPA, ORM, Querydsl"}</script>
+    <meta name="description" content="JPA 환경에서 QueryDSL-SQL을 활용해 대량 데이터 업데이트 성능을 획기적으로 개선하는 방법을 소개합니다.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="QueryDSL을 이용한 Batch Update 성능 개선">
+<meta property="og:url" content="https://cheese10yun.github.io/querydsl-batch-update/index.html">
+<meta property="og:site_name" content="Yun Blog">
+<meta property="og:description" content="JPA 환경에서 QueryDSL-SQL을 활용해 대량 데이터 업데이트 성능을 획기적으로 개선하는 방법을 소개합니다.">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/query-dsl/docs/images/Update_Performance.svg">
+<meta property="article:published_time" content="2026-04-13T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-14T14:49:27.249Z">
+<meta property="article:author" content="Yun">
+<meta property="article:tag" content="Performance">
+<meta property="article:tag" content="JPA">
+<meta property="article:tag" content="ORM">
+<meta property="article:tag" content="Querydsl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/query-dsl/docs/images/Update_Performance.svg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://cheese10yun.github.io/assets/images/yun-icon.jpg"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/all.css">
+
+    
+<link rel="stylesheet" href="/assets/css/jquery.fancybox.css">
+
+    
+<link rel="stylesheet" href="/assets/css/thumbs.css">
+
+    
+<link rel="stylesheet" href="/assets/css/tranquilpeak.css">
+
+    
+    
+<link rel="stylesheet" href="/assets/css/toc.css">
+
+    
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-90907312-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-90907312-1');
+    </script>
+
+
+    
+
+    
+        
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5813739623204880" crossorigin="anonymous"></script>
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Yun Blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="링크 열기: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="저자에 대해 더 알아보기"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+                </a>
+                <h4 class="sidebar-profile-name">Yun</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>기술 블로그</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/"
+                            
+                            rel="noopener"
+                            title="Home"
+                        >
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-tags"
+                            
+                            rel="noopener"
+                            title="태그"
+                        >
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">태그</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/all-archives"
+                            
+                            rel="noopener"
+                            title="아카이브"
+                        >
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">아카이브</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="https://github.com/cheese10yun"
+                            
+                                target="_blank"
+                            
+                            rel="noopener"
+                            title="GitHub"
+                        >
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a
+                            class="sidebar-button-link "
+                            href="/rss2.xml"
+                            
+                            rel="noopener"
+                            title="RSS"
+                        >
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            QueryDSL을 이용한 Batch Update 성능 개선
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2026-04-14T00:00:00+09:00">
+	
+		    2026/04/14
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>JPA를 사용하다 보면 대량의 데이터를 수정해야 하는 상황에서 Dirty Checking 방식의 성능 한계에 부딪히게 됩니다. 이번 포스팅에서는 JPA Dirty Checking의 성능 이슈를 살펴보고, QueryDSL의 <code>SQLQueryFactory</code>를 활용한 Batch Update로 성능을 획기적으로 개선하는 방법을 소개합니다.</p>
+<h2><span id="gaeyo">개요</span><a href="#gaeyo" class="header-anchor">#</a></h2><p>대량의 데이터를 수정해야 할 때, 일반적으로 JPA의 Dirty Checking 방식을 사용합니다. 엔티티를 조회하여 영속성 컨텍스트에 올린 뒤 필드를 변경하면 트랜잭션 커밋 시점에 변경 감지가 일어나 UPDATE 쿼리가 실행되는 방식입니다. 하지만 데이터의 양이 늘어날수록 이 방식의 처리 속도는 급격히 느려질 수 있습니다. 엔티티 수만큼 개별적인 UPDATE 쿼리가 발생하기 때문입니다.</p>
+<p>이전 포스팅(<a href="https://cheese10yun.github.io/querydsl-batch-insert/">QueryDSL을 이용한 Batch Insert 성능 개선</a>)에서 Insert 성능 개선 방법을 소개한 적이 있습니다. Update도 동일한 접근으로 해결할 수 있습니다.</p>
+<p>이미 프로젝트에서 JPA와 QueryDSL을 사용하고 있다면, 추가적인 라이브러리 도입 없이 <strong>QueryDSL-SQL</strong> 모듈을 활용하여 Type-Safe하게 Batch Update를 구현할 수 있습니다. 이번 포스팅에서는 그 방법을 소개합니다.</p>
+<h2><span id="jpa-dirty-checkingyi-seongneung-isyu">JPA Dirty Checking의 성능 이슈</span><a href="#jpa-dirty-checkingyi-seongneung-isyu" class="header-anchor">#</a></h2><p>JPA의 일반적인 Update 패턴은 엔티티를 조회하여 영속성 컨텍스트에 올린 뒤, 필드를 변경하고 트랜잭션이 커밋될 때 변경 감지(Dirty Checking)를 통해 UPDATE 쿼리를 실행하는 방식입니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">updateWriters</span><span class="params">(ids: <span class="type">List</span>&lt;<span class="type">Long</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> writers = writerRepository.findAllById(ids)</span><br><span class="line">    <span class="keyword">for</span> (writer <span class="keyword">in</span> writers) &#123;</span><br><span class="line">        writer.name = <span class="string">&quot;updated&quot;</span></span><br><span class="line">        writer.score = <span class="number">100</span></span><br><span class="line">        <span class="comment">// dirty checking → 트랜잭션 커밋 시 건별 UPDATE 발생</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>위 코드는 사용하기 편리하지만, 1,000개의 데이터를 수정하면 1,000번의 UPDATE 쿼리가 데이터베이스로 전송됩니다. 여기에 <code>findAllById</code>로 인한 SELECT 쿼리까지 더하면, 대량 수정 작업에서는 심각한 성능 저하의 원인이 됩니다.</p>
+<h2><span id="querydsl-batch-update-guhyeon">QueryDSL Batch Update 구현</span><a href="#querydsl-batch-update-guhyeon" class="header-anchor">#</a></h2><p>QueryDSL-SQL 모듈을 사용하면 JPA 엔티티가 아닌 JDBC 레벨에서 직접 SQL을 구성하여 실행할 수 있습니다. 이를 통해 <code>addBatch</code> 기능을 활용한 Bulk Update를 구현할 수 있습니다.</p>
+<h3><span id="guhyeon-kodeu-yesi">구현 코드 예시</span><a href="#guhyeon-kodeu-yesi" class="header-anchor">#</a></h3><p><code>SQLQueryFactory</code>를 사용하여 Batch Update를 구현하는 방법은 다음과 같습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BatchInsertService</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> dataSource: DataSource</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> sqlQueryFactory: SQLQueryFactory <span class="keyword">by</span> lazy &#123;</span><br><span class="line">        SQLQueryFactory(Configuration(MySQLTemplates()), dataSource)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">batchUpdate</span><span class="params">(writers: <span class="type">List</span>&lt;<span class="type">Writer</span>&gt;)</span></span>: <span class="built_in">Long</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 테이블 메타데이터 정의</span></span><br><span class="line">        <span class="keyword">val</span> writerTable = RelationalPathBase(Writer::<span class="keyword">class</span>.java, <span class="string">&quot;writer&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;writer&quot;</span>)</span><br><span class="line">        <span class="comment">// 2. SQLQueryFactory (공유 인스턴스 사용)</span></span><br><span class="line">        <span class="keyword">val</span> update = sqlQueryFactory.update(writerTable)</span><br><span class="line">        <span class="comment">// 3. 데이터를 Batch에 추가</span></span><br><span class="line">        <span class="keyword">for</span> (writer <span class="keyword">in</span> writers) &#123;</span><br><span class="line">            <span class="keyword">val</span> id = requireNotNull(writer.id) &#123; <span class="string">&quot;Writer id must not be null&quot;</span> &#125;</span><br><span class="line">            update</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.name, writer.name)</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.email, writer.email)</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.score, writer.score)</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.reputation, writer.reputation)</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.active, writer.active)</span><br><span class="line">                .<span class="keyword">where</span>(QWriter.writer.id.eq(id))</span><br><span class="line">                .addBatch() <span class="comment">// 메모리에 쿼리 적재</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4. 일괄 실행</span></span><br><span class="line">        <span class="keyword">return</span> update.execute()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>코드 설명</strong></p>
+<ul>
+<li><strong>RelationalPathBase</strong>: SQL 쿼리 작성을 위해 대상 테이블의 메타데이터를 정의합니다. <code>SQLQueryFactory</code>는 <code>RelationalPath</code> 타입을 요구하기 때문에, JPA 엔티티 기반의 <code>QWriter</code>(<code>EntityPathBase</code>)를 테이블 참조로 직접 사용할 수 없어 별도로 정의합니다.</li>
+<li><strong>QWriter.writer.</strong>*: 컬럼 참조에는 기존에 생성된 Q클래스의 path를 그대로 활용합니다.</li>
+<li><strong>addBatch()</strong>: 루프를 돌며 데이터를 즉시 UPDATE 하지 않고, JDBC의 Batch 기능을 활용하기 위해 메모리에 쿼리 파라미터들을 쌓아둡니다.</li>
+<li><strong>execute()</strong>: 쌓여있는 Batch 쿼리를 데이터베이스로 한 번에 전송하여 실행합니다.</li>
+</ul>
+<h3><span id="insertwayi-gujojeog-cai">Insert와의 구조적 차이</span><a href="#insertwayi-gujojeog-cai" class="header-anchor">#</a></h3><p>Batch Insert와 Batch Update는 동일한 <code>addBatch</code> + <code>execute()</code> 패턴을 사용하지만, 중요한 구조적 차이가 있습니다.</p>
+<table>
+<thead>
+<tr>
+<th align="left">항목</th>
+<th align="left">Batch Insert</th>
+<th align="left">Batch Update</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>where</code> 조건</td>
+<td align="left">불필요</td>
+<td align="left"><strong>필수</strong></td>
+</tr>
+<tr>
+<td align="left">테이블 참조</td>
+<td align="left"><code>RelationalPathBase</code></td>
+<td align="left"><code>RelationalPathBase</code> (동일)</td>
+</tr>
+<tr>
+<td align="left">컬럼 참조</td>
+<td align="left"><code>QWriter.writer.*</code></td>
+<td align="left"><code>QWriter.writer.*</code> (동일)</td>
+</tr>
+<tr>
+<td align="left">id 처리</td>
+<td align="left">없음</td>
+<td align="left"><code>requireNotNull</code> 필요</td>
+</tr>
+</tbody></table>
+<p>가장 중요한 차이는 <strong><code>where</code> 조건</strong>입니다. <code>where</code> 없이 <code>addBatch()</code>를 호출하면 해당 UPDATE는 테이블 전체를 대상으로 실행되어 의도치 않은 전체 UPDATE가 발생할 수 있습니다. 반드시 <code>where(QWriter.writer.id.eq(id))</code>와 같이 대상 row를 특정해야 합니다.</p>
+<p>또한 <code>EntityAuditing</code>을 통해 상속받는 <code>id</code> 필드는 <code>Long?</code> (nullable) 타입이므로, <code>requireNotNull</code>로 null을 방어한 뒤 사용해야 컴파일 타입 안전성이 보장됩니다.</p>
+<h3><span id="batch-dongjag-geomjeung-bangbeob">Batch 동작 검증 방법</span><a href="#batch-dongjag-geomjeung-bangbeob" class="header-anchor">#</a></h3><p><code>addBatch</code>를 사용하면 SQL 내용 자체는 dirty checking과 동일하게 <code>UPDATE writer SET ... WHERE id = ?</code> 형태입니다. 쿼리 내용만으로는 실제로 batch가 동작하는지 구분하기 어렵습니다.</p>
+<p>실제 전송 방식의 차이는 JDBC URL에 <code>profileSQL=true</code>를 추가하면 로그로 확인할 수 있습니다.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:mysql://localhost:3306/mydb?rewriteBatchedStatements=true&amp;logger=Slf4JLogger&amp;profileSQL=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>케이스 1 — dirty checking (N번 통신)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[QUERY] update writer set active=1,email=&#x27;email-2&#x27;,name=&#x27;updated&#x27;... where id=2</span><br><span class="line">        [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">[FETCH] [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">[QUERY] update writer set active=1,email=&#x27;email-3&#x27;,name=&#x27;updated&#x27;... where id=3</span><br><span class="line">        [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">[FETCH] [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">[QUERY] update writer set active=1,email=&#x27;email-4&#x27;,name=&#x27;updated&#x27;... where id=4</span><br><span class="line">        [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">[FETCH] [at ProxyPreparedStatement.executeUpdate]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><code>executeUpdate</code>가 건마다 호출되어 <code>[QUERY] + [FETCH]</code> 쌍이 건수만큼 반복됩니다. 10건이면 DB 서버로 <strong>10번 왕복</strong>합니다.</p>
+<p><strong>케이스 2 — addBatch (1번 통신)</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[QUERY] update writer</span><br><span class="line">set name = &#x27;new&#x27;</span><br><span class="line">where writer.id = 1;update writer</span><br><span class="line">set name = &#x27;new&#x27;</span><br><span class="line">where writer.id = 2;update writer</span><br><span class="line">set name = &#x27;new&#x27;</span><br><span class="line">where writer.id = 3;</span><br><span class="line">...</span><br><span class="line">update writer</span><br><span class="line">set name = &#x27;new&#x27;</span><br><span class="line">where writer.id = 28;</span><br></pre></td></tr></table></figure>
+
+<p><code>[QUERY]</code> 로그가 <strong>1개</strong>만 출력됩니다. 세미콜론으로 구분된 모든 쿼리가 하나의 패킷으로 전송되며, 28건이든 10,000건이든 DB 서버로 <strong>1번만 왕복</strong>합니다.</p>
+<p><strong>구분 포인트 요약</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">구분 기준</th>
+<th align="left">dirty checking</th>
+<th align="left">addBatch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">메서드명</td>
+<td align="left"><code>executeUpdate</code></td>
+<td align="left"><code>executeBatch</code> (<code>[QUERY]</code> 수로 판단)</td>
+</tr>
+<tr>
+<td align="left"><code>[QUERY]</code> 로그 수</td>
+<td align="left">N개</td>
+<td align="left"><strong>1개</strong></td>
+</tr>
+<tr>
+<td align="left"><code>[FETCH]</code> 존재</td>
+<td align="left">건마다 존재</td>
+<td align="left">없음</td>
+</tr>
+<tr>
+<td align="left">쿼리 형태</td>
+<td align="left">쿼리 1개씩</td>
+<td align="left"><code>;</code>로 이어진 멀티 쿼리</td>
+</tr>
+</tbody></table>
+<p><code>profileSQL=true</code>만 붙이면 로그 줄 수와 메서드명만으로 의도한 대로 batch가 동작하고 있는지 즉시 확인할 수 있습니다.</p>
+<h2><span id="seongneung-bigyo">성능 비교</span><a href="#seongneung-bigyo" class="header-anchor">#</a></h2><h3><span id="seongneung-ceugjeong-kodeu">성능 측정 코드</span><a href="#seongneung-ceugjeong-kodeu" class="header-anchor">#</a></h3><p>정확한 성능 측정을 위해 JPA Dirty Checking 방식과 QueryDSL <code>addBatch</code>의 실행 시간을 각각 측정했습니다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BatchInsertService</span>() &#123;</span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">batchUpdate</span><span class="params">(writers: <span class="type">List</span>&lt;<span class="type">WriterUpdate</span>&gt;)</span></span>: <span class="built_in">Long</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> writerTable = RelationalPathBase(Writer::<span class="keyword">class</span>.java, <span class="string">&quot;writer&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;writer&quot;</span>)</span><br><span class="line">        <span class="keyword">val</span> update = sqlQueryFactory.update(writerTable)</span><br><span class="line">        <span class="comment">// 데이터를 Batch에 추가</span></span><br><span class="line">        <span class="keyword">for</span> (writer <span class="keyword">in</span> writers) &#123;</span><br><span class="line">            <span class="keyword">val</span> id = requireNotNull(writer.id) &#123; <span class="string">&quot;Writer id must not be null&quot;</span> &#125;</span><br><span class="line">            update</span><br><span class="line">                .<span class="keyword">set</span>(QWriter.writer.name, writer.name)</span><br><span class="line">                .<span class="keyword">where</span>(QWriter.writer.id.eq(id))</span><br><span class="line">                .addBatch() <span class="comment">// 메모리에 쿼리 적재</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 일괄 실행</span></span><br><span class="line">        <span class="keyword">return</span> update.execute()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">updateWriters</span><span class="params">(writers: <span class="type">List</span>&lt;<span class="type">Writer</span>&gt;)</span></span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (writer <span class="keyword">in</span> writers) &#123;</span><br><span class="line">            writer.name = <span class="string">&quot;updated&quot;</span></span><br><span class="line">            writerRepository.save(writer) <span class="comment">// dirty checking → 트랜잭션 커밋 시 건별 UPDATE 발생</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `dirty checking update test`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> rowsList = listOf(<span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1_000</span>, <span class="number">2_000</span>, <span class="number">5_000</span>, <span class="number">10_000</span>)</span><br><span class="line">    <span class="keyword">val</span> iterations = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">    rowsList.forEach &#123; rows -&gt;</span><br><span class="line">        <span class="comment">// 테스트 데이터 사전 삽입 (id 확보)</span></span><br><span class="line">        <span class="keyword">val</span> writers = writerRepository.saveAll(</span><br><span class="line">            (<span class="number">1.</span>.rows).map &#123; Writer(name = <span class="string">&quot;name-<span class="variable">$it</span>&quot;</span>, email = <span class="string">&quot;email-<span class="variable">$it</span>&quot;</span>) &#125;</span><br><span class="line">        ).toList()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> totalTimeMillis = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1.</span>.iterations) &#123;</span><br><span class="line">            <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">            stopWatch.start()</span><br><span class="line">            writerService.updateWriters(writers)</span><br><span class="line">            stopWatch.stop()</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (i &gt; <span class="number">1</span>) &#123; <span class="comment">// 첫 회차 제외</span></span><br><span class="line">                totalTimeMillis += stopWatch.totalTimeMillis</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">val</span> averageTimeMillis = totalTimeMillis / (iterations - <span class="number">1</span>)</span><br><span class="line">        println(<span class="string">&quot;<span class="variable">$rows</span> 건 dirty checking 평균 실행 시간: <span class="subst">$&#123;averageTimeMillis&#125;</span> ms&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> `batchUpdate test`<span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> rowsList = listOf(<span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1_000</span>, <span class="number">2_000</span>, <span class="number">5_000</span>, <span class="number">10_000</span>)</span><br><span class="line">    <span class="keyword">val</span> iterations = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">    rowsList.forEach &#123; rows -&gt;</span><br><span class="line">        <span class="comment">// 테스트 데이터 사전 삽입</span></span><br><span class="line">        <span class="keyword">val</span> savedWriters = writerRepository.saveAll(</span><br><span class="line">            (<span class="number">1.</span>.rows).map &#123; Writer(name = <span class="string">&quot;name-<span class="variable">$it</span>&quot;</span>, email = <span class="string">&quot;email-<span class="variable">$it</span>&quot;</span>) &#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> updates = savedWriters.map &#123; WriterUpdate(id = it.id!!, name = <span class="string">&quot;new&quot;</span>) &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> totalTimeMillis = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1.</span>.iterations) &#123;</span><br><span class="line">            <span class="keyword">val</span> stopWatch = StopWatch()</span><br><span class="line">            stopWatch.start()</span><br><span class="line">            batchInsertService.batchUpdate(updates)</span><br><span class="line">            stopWatch.stop()</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (i &gt; <span class="number">1</span>) &#123; <span class="comment">// 첫 회차 제외</span></span><br><span class="line">                totalTimeMillis += stopWatch.totalTimeMillis</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">val</span> averageTimeMillis = totalTimeMillis / (iterations - <span class="number">1</span>)</span><br><span class="line">        println(<span class="string">&quot;<span class="variable">$rows</span> 건 QueryDSL Batch Update 평균 실행 시간: <span class="subst">$&#123;averageTimeMillis&#125;</span> ms&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>측정 방식 설명</strong></p>
+<ul>
+<li><strong>반복 측정</strong>: 각 데이터 구간(100건 ~ 10,000건)마다 총 <strong>5회</strong> 반복하여 측정했습니다.</li>
+<li><strong>Warm-up 고려</strong>: 테스트 실행 시 <strong>첫 번째 회차는 결과에서 제외</strong>했습니다. 커넥션 풀 초기화 등 초기 비용이 포함되어 결과가 왜곡되는 것을 방지하기 위함입니다.</li>
+<li><strong>평균값 산출</strong>: 첫 회차를 제외한 나머지 <strong>4회의 실행 시간</strong>을 합산하여 평균값을 산출했습니다.</li>
+</ul>
+<h3><span id="seongneung-ceugjeong-gyeolgwa">성능 측정 결과</span><a href="#seongneung-ceugjeong-gyeolgwa" class="header-anchor">#</a></h3><p>JPA Dirty Checking과 QueryDSL <code>addBatch</code>를 사용했을 때의 성능 차이를 비교한 결과입니다.</p>
+<p><img src="https://raw.githubusercontent.com/cheese10yun/blog-sample/master/query-dsl/docs/images/Update_Performance.svg" alt="Update Performance"></p>
+<table>
+<thead>
+<tr>
+<th align="left">rows</th>
+<th align="left">dirty checking (ms)</th>
+<th align="left">add batch (ms)</th>
+<th align="left">성능 개선율</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">100</td>
+<td align="left">265.5</td>
+<td align="left">28.5</td>
+<td align="left">89.3%</td>
+</tr>
+<tr>
+<td align="left">200</td>
+<td align="left">368.5</td>
+<td align="left">45.5</td>
+<td align="left">87.7%</td>
+</tr>
+<tr>
+<td align="left">500</td>
+<td align="left">808.75</td>
+<td align="left">103.5</td>
+<td align="left">87.2%</td>
+</tr>
+<tr>
+<td align="left">1,000</td>
+<td align="left">1,647.25</td>
+<td align="left">191.5</td>
+<td align="left">88.4%</td>
+</tr>
+<tr>
+<td align="left">2,000</td>
+<td align="left">3,315.0</td>
+<td align="left">392.0</td>
+<td align="left">88.2%</td>
+</tr>
+<tr>
+<td align="left">5,000</td>
+<td align="left">8,593.5</td>
+<td align="left">928.25</td>
+<td align="left">89.2%</td>
+</tr>
+<tr>
+<td align="left">10,000</td>
+<td align="left">16,530.75</td>
+<td align="left">2,063.0</td>
+<td align="left">87.5%</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>bar (dirty checking)</strong>: JPA <code>save(writer)</code>를 루프에서 건별 호출 — UPDATE N번 개별 전송</li>
+<li><strong>line (add batch)</strong>: QueryDSL SQLQueryFactory의 addBatch — N개의 UPDATE를 1번의 네트워크 왕복으로 전송</li>
+</ul>
+<blockquote>
+<p><strong>참고</strong>: 이 측정은 애플리케이션 서버와 데이터베이스가 **동일한 로컬 환경(loopback)**에서 수행된 결과입니다. Loopback 통신은 실제 네트워크 대비 레이턴시가 거의 없는 이상적인 조건임에도 불구하고 이 정도의 성능 차이가 발생합니다. 실제 운영 환경처럼 애플리케이션 서버와 DB 서버가 <strong>별도의 네트워크</strong>에 위치한다면, 건별로 전송하는 dirty checking 방식은 네트워크 왕복 비용이 쿼리 수만큼 누적되어 성능 차이가 훨씬 더 크게 벌어질 수 있습니다.</p>
+</blockquote>
+<h2><span id="gyeolron">결론</span><a href="#gyeolron" class="header-anchor">#</a></h2><p>대량의 데이터를 수정해야 하는 배치성 작업에서는 JPA의 Dirty Checking 방식보다 JDBC Batch Update를 사용하는 것이 성능 측면에서 훨씬 유리합니다.</p>
+<p>Insert와 마찬가지로, 오직 Batch Update 성능 개선만을 위해 별도의 라이브러리를 도입하는 것은 프로젝트의 복잡도를 높일 수 있습니다. 이미 JPA와 QueryDSL을 사용 중인 환경이라면, <strong>QueryDSL-SQL</strong>을 활용하는 것이 추가적인 학습 곡선이나 설정의 번거로움 없이 Type-Safe하게 성능을 극대화할 수 있는 가장 효율적인 대안입니다.</p>
+<p>Insert와 Update 모두 동일한 <code>addBatch</code> + <code>execute()</code> 패턴을 사용하지만, Update에서는 반드시 <code>where</code> 조건으로 대상 row를 특정해야 한다는 점을 기억하세요.</p>
+
+            
+
+
+        </div>
+    </div>
+    <!-- Table of Contents -->
+    <div id="toc-container">
+        <div class="toc-title">목차</div>
+        <ul id="toc-list"></ul>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">태그</span><br/>
+                
+    <a class="tag tag--primary tag--small t-none-link" href="/tags/JPA/" rel="tag">JPA</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/ORM/" rel="tag">ORM</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Performance/" rel="tag">Performance</a> <a class="tag tag--primary tag--small t-none-link" href="/tags/Querydsl/" rel="tag">Querydsl</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/diff-history-part-1/"
+                    data-tooltip="필드 단위 변경 이력(History) 추적 시스템"
+                    aria-label="다음: 필드 단위 변경 이력(History) 추적 시스템"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/querydsl-batch-update/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/querydsl-batch-update/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+
+                
+                    <!--  giscus comment -->
+
+<script src="https://giscus.app/client.js"
+        data-repo="cheese10yun/blog-comment"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyMDU1MDM1OTk="
+        data-category="Q&amp;A"
+        data-category-id="DIC_kwDODD-8b84CT2XX"
+        data-mapping="og:title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="top"
+        data-theme="light"
+        data-lang=""
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+                
+
+            
+        
+    </div>
+</article>
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2026 Yun. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">이전</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/diff-history-part-1/"
+                    data-tooltip="필드 단위 변경 이력(History) 추적 시스템"
+                    aria-label="다음: 필드 단위 변경 이력(History) 추적 시스템"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">다음</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="이 포스트 공유하기"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/querydsl-batch-update/"
+                    title="Facebook에 공유하기"
+                    aria-label="Facebook에 공유하기"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/querydsl-batch-update/"
+                    title="Twitter에 공유하기"
+                    aria-label="Twitter에 공유하기"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="맨 위로">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://cheese10yun.github.io/querydsl-batch-update/"
+                        aria-label="Facebook에 공유하기"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Facebook에 공유하기</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://cheese10yun.github.io/querydsl-batch-update/"
+                        aria-label="Twitter에 공유하기"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Twitter에 공유하기</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/yun-icon.jpg" alt="저자 이미지"/>
+        
+            <h4 id="about-card-name">Yun</h4>
+        
+            <div id="about-card-bio"><p>기술 블로그</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/jquery.js"></script>
+
+
+<script src="/assets/js/jquery.fancybox.js"></script>
+
+
+<script src="/assets/js/thumbs.js"></script>
+
+
+<script src="/assets/js/tranquilpeak.js"></script>
+
+
+
+<script src="/assets/js/toc.js"></script>
+
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+
+    </body>
+</html>
