@@ -9,6 +9,14 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/test-feedback-encapsulation.md/</loc>
+        <lastmod>2026-04-23T06:30:25.321Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/querydsl-cursor-pagination/</loc>
         <lastmod>2026-04-19T14:13:40.376Z</lastmod>
         <changefreq>weekly</changefreq>
