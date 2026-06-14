@@ -9,8 +9,16 @@
 
 
     <url>
+        <loc>https://cheese10yun.github.io/claude-code-statusline-custom/</loc>
+        <lastmod>2026-06-14T14:26:10.900Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://cheese10yun.github.io/spring-data-mongodb-update-performance/</loc>
-        <lastmod>2026-04-26T19:07:27.753Z</lastmod>
+        <lastmod>2026-05-10T08:06:17.577Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
